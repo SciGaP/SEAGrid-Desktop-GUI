@@ -1,0 +1,165 @@
+#
+# An unexpected error has been detected by HotSpot Virtual Machine:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x6d00afb0, pid=316, tid=4032
+#
+# Java VM: Java HotSpot(TM) Client VM (1.5.0-b64 mixed mode, sharing)
+# Problematic frame:
+# C  [awt.dll+0xafb0]
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00842840):  JavaThread "AWT-EventQueue-0" [_thread_in_native, id=4032]
+
+siginfo: ExceptionCode=0xc0000005, reading address 0x000073df
+
+Registers:
+EAX=0x00001cf0, EBX=0x102d0001, ECX=0x0000001f, EDX=0x0000001f
+ESP=0x1026f15c, EBP=0x233131d0, ESI=0x000000f0, EDI=0x00000004
+EIP=0x6d00afb0, EFLAGS=0x00090202
+
+Top of Stack: (sp=0x1026f15c)
+0x1026f15c:   fffffffc 008428fc 6d11c3f8 00000004
+0x1026f16c:   ffeeeeee 6d130410 6d1303d0 00000000
+0x1026f17c:   00000000 00000002 6d001a56 00000030
+0x1026f18c:   000001ba 000001ba 00000185 6d130450
+0x1026f19c:   1026f20c 6d11c3f8 1026f200 00842840
+0x1026f1ac:   2ac8b8d0 1026f34c 2b4e9bb0 00853750
+0x1026f1bc:   00000004 6d11c3f8 00000000 00850060
+0x1026f1cc:   00000004 0000001e 000001be 000001a3 
+
+Instructions: (pc=0x6d00afb0)
+0x6d00afa0:   e6 f8 c1 e0 05 c1 e9 03 03 c6 03 d1 83 c5 04 43
+0x6d00afb0:   8a 04 82 47 88 43 ff 8b 44 24 30 83 e7 07 48 89 
+
+
+Stack: [0x10230000,0x10270000),  sp=0x1026f15c,  free space=252k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [awt.dll+0xafb0]
+
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  sun.java2d.loops.Blit.Blit(Lsun/java2d/SurfaceData;Lsun/java2d/SurfaceData;Ljava/awt/Composite;Lsun/java2d/pipe/Region;IIIIII)V+0
+j  sun.java2d.pipe.DrawImage.blitSurfaceData(Lsun/java2d/SunGraphics2D;Lsun/java2d/pipe/Region;Lsun/java2d/SurfaceData;Lsun/java2d/SurfaceData;Lsun/java2d/loops/SurfaceType;Lsun/java2d/loops/SurfaceType;IIIIIILjava/awt/Color;)V+97
+j  sun.java2d.pipe.DrawImage.renderImageCopy(Lsun/java2d/SunGraphics2D;Ljava/awt/Image;Ljava/awt/Color;IIIIII)Z+75
+j  sun.java2d.pipe.DrawImage.copyImage(Lsun/java2d/SunGraphics2D;Ljava/awt/Image;IILjava/awt/Color;)Z+45
+j  sun.java2d.pipe.DrawImage.copyImage(Lsun/java2d/SunGraphics2D;Ljava/awt/Image;IILjava/awt/Color;Ljava/awt/image/ImageObserver;)Z+15
+j  sun.java2d.SunGraphics2D.drawImage(Ljava/awt/Image;IILjava/awt/Color;Ljava/awt/image/ImageObserver;)Z+18
+j  sun.java2d.SunGraphics2D.drawImage(Ljava/awt/Image;IILjava/awt/image/ImageObserver;)Z+7
+j  javax.swing.JComponent.paintWithOffscreenBuffer(Ljavax/swing/JComponent;Ljava/awt/Graphics;IIIILjava/awt/Image;)V+232
+j  javax.swing.JComponent.paintDoubleBuffered(Ljavax/swing/JComponent;Ljava/awt/Component;Ljava/awt/Graphics;IIII)Z+131
+j  javax.swing.JComponent.paint(Ljava/awt/Graphics;)V+211
+j  java.awt.GraphicsCallback$PaintCallback.run(Ljava/awt/Component;Ljava/awt/Graphics;)V+2
+j  sun.awt.SunGraphicsCallback.runOneComponent(Ljava/awt/Component;Ljava/awt/Rectangle;Ljava/awt/Graphics;Ljava/awt/Shape;I)V+155
+j  sun.awt.SunGraphicsCallback.runComponents([Ljava/awt/Component;Ljava/awt/Graphics;I)V+104
+j  java.awt.Container.paint(Ljava/awt/Graphics;)V+62
+j  sun.awt.RepaintArea.paintComponent(Ljava/awt/Component;Ljava/awt/Graphics;)V+6
+j  sun.awt.RepaintArea.paint(Ljava/lang/Object;Z)V+326
+j  sun.awt.windows.WComponentPeer.handleEvent(Ljava/awt/AWTEvent;)V+63
+j  java.awt.Component.dispatchEventImpl(Ljava/awt/AWTEvent;)V+765
+j  java.awt.Container.dispatchEventImpl(Ljava/awt/AWTEvent;)V+42
+j  java.awt.Window.dispatchEventImpl(Ljava/awt/AWTEvent;)V+19
+j  java.awt.Component.dispatchEvent(Ljava/awt/AWTEvent;)V+2
+j  java.awt.EventQueue.dispatchEvent(Ljava/awt/AWTEvent;)V+46
+j  java.awt.EventDispatchThread.pumpOneEventForHierarchy(ILjava/awt/Component;)Z+200
+j  java.awt.EventDispatchThread.pumpEventsForHierarchy(ILjava/awt/Conditional;Ljava/awt/Component;)V+26
+j  java.awt.EventDispatchThread.pumpEvents(ILjava/awt/Conditional;)V+4
+j  java.awt.EventDispatchThread.pumpEvents(Ljava/awt/Conditional;)V+3
+j  java.awt.EventDispatchThread.run()V+9
+v  ~StubRoutines::call_stub
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x00853e80 JavaThread "TimerQueue" daemon [_thread_blocked, id=1636]
+  0x0084f4f0 JavaThread "DestroyJavaVM" [_thread_blocked, id=588]
+=>0x00842840 JavaThread "AWT-EventQueue-0" [_thread_in_native, id=4032]
+  0x0083f550 JavaThread "AWT-Windows" daemon [_thread_in_native, id=1428]
+  0x0083fad0 JavaThread "AWT-Shutdown" [_thread_blocked, id=4016]
+  0x00839310 JavaThread "Java2D Disposer" daemon [_thread_blocked, id=4036]
+  0x00831b90 JavaThread "Low Memory Detector" daemon [_thread_blocked, id=4088]
+  0x0082f2b0 JavaThread "CompilerThread0" daemon [_thread_blocked, id=2256]
+  0x0082e110 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=304]
+  0x0082d3c0 JavaThread "Finalizer" daemon [_thread_blocked, id=1640]
+  0x0082c110 JavaThread "Reference Handler" daemon [_thread_blocked, id=1052]
+
+Other Threads:
+  0x0082b310 VMThread [id=1676]
+  0x00832740 WatcherThread [id=1664]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap
+ def new generation   total 576K, used 55K [0x22bd0000, 0x22c70000, 0x230b0000)
+  eden space 512K,  10% used [0x22bd0000, 0x22bddca0, 0x22c50000)
+  from space 64K,   0% used [0x22c50000, 0x22c50000, 0x22c60000)
+  to   space 64K,   0% used [0x22c60000, 0x22c60000, 0x22c70000)
+ tenured generation   total 4076K, used 3116K [0x230b0000, 0x234ab000, 0x26bd0000)
+   the space 4076K,  76% used [0x230b0000, 0x233bb058, 0x233bb200, 0x234ab000)
+ compacting perm gen  total 8192K, used 415K [0x26bd0000, 0x273d0000, 0x2abd0000)
+   the space 8192K,   5% used [0x26bd0000, 0x26c37c78, 0x26c37e00, 0x273d0000)
+    ro space 8192K,  66% used [0x2abd0000, 0x2b127960, 0x2b127a00, 0x2b3d0000)
+    rw space 12288K,  46% used [0x2b3d0000, 0x2b9643a8, 0x2b964400, 0x2bfd0000)
+
+Dynamic libraries:
+0x00400000 - 0x0040c000 	C:\Program Files\Java\jdk1.5.0\bin\javaw.exe
+0x7c900000 - 0x7c9b0000 	C:\WINDOWS\system32\ntdll.dll
+0x7c800000 - 0x7c8f4000 	C:\WINDOWS\system32\kernel32.dll
+0x77dd0000 - 0x77e6b000 	C:\WINDOWS\system32\ADVAPI32.dll
+0x77e70000 - 0x77f01000 	C:\WINDOWS\system32\RPCRT4.dll
+0x77d40000 - 0x77dd0000 	C:\WINDOWS\system32\USER32.dll
+0x77f10000 - 0x77f56000 	C:\WINDOWS\system32\GDI32.dll
+0x77c10000 - 0x77c68000 	C:\WINDOWS\system32\MSVCRT.dll
+0x76390000 - 0x763ad000 	C:\WINDOWS\system32\IMM32.DLL
+0x629c0000 - 0x629c9000 	C:\WINDOWS\system32\LPK.DLL
+0x74d90000 - 0x74dfb000 	C:\WINDOWS\system32\USP10.dll
+0x6d640000 - 0x6d7c5000 	C:\Program Files\Java\jdk1.5.0\jre\bin\client\jvm.dll
+0x76b40000 - 0x76b6d000 	C:\WINDOWS\system32\WINMM.dll
+0x6d280000 - 0x6d288000 	C:\Program Files\Java\jdk1.5.0\jre\bin\hpi.dll
+0x76bf0000 - 0x76bfb000 	C:\WINDOWS\system32\PSAPI.DLL
+0x6d610000 - 0x6d61c000 	C:\Program Files\Java\jdk1.5.0\jre\bin\verify.dll
+0x6d300000 - 0x6d31d000 	C:\Program Files\Java\jdk1.5.0\jre\bin\java.dll
+0x6d630000 - 0x6d63f000 	C:\Program Files\Java\jdk1.5.0\jre\bin\zip.dll
+0x6d000000 - 0x6d166000 	C:\Program Files\Java\jdk1.5.0\jre\bin\awt.dll
+0x73000000 - 0x73026000 	C:\WINDOWS\system32\WINSPOOL.DRV
+0x774e0000 - 0x7761d000 	C:\WINDOWS\system32\ole32.dll
+0x5ad70000 - 0x5ada8000 	C:\WINDOWS\system32\uxtheme.dll
+0x73760000 - 0x737a9000 	C:\WINDOWS\system32\ddraw.dll
+0x73bc0000 - 0x73bc6000 	C:\WINDOWS\system32\DCIMAN32.dll
+0x73940000 - 0x73a10000 	C:\WINDOWS\system32\D3DIM700.DLL
+0x6d240000 - 0x6d27d000 	C:\Program Files\Java\jdk1.5.0\jre\bin\fontmanager.dll
+0x755c0000 - 0x755ee000 	C:\WINDOWS\system32\msctfime.ime
+0x74720000 - 0x7476b000 	C:\WINDOWS\system32\Msctf.dll
+0x7c9c0000 - 0x7d1d4000 	C:\WINDOWS\system32\shell32.dll
+0x77f60000 - 0x77fd6000 	C:\WINDOWS\system32\SHLWAPI.dll
+0x773d0000 - 0x774d2000 	C:\WINDOWS\WinSxS\x86_Microsoft.Windows.Common-Controls_6595b64144ccf1df_6.0.2600.2180_x-ww_a84f1ff9\comctl32.dll
+0x5d090000 - 0x5d127000 	C:\WINDOWS\system32\comctl32.dll
+0x6d4c0000 - 0x6d4d3000 	C:\Program Files\Java\jdk1.5.0\jre\bin\net.dll
+0x71ab0000 - 0x71ac7000 	C:\WINDOWS\system32\WS2_32.dll
+0x71aa0000 - 0x71aa8000 	C:\WINDOWS\system32\WS2HELP.dll
+0x6d4e0000 - 0x6d4e9000 	C:\Program Files\Java\jdk1.5.0\jre\bin\nio.dll
+
+VM Arguments:
+java_command: PreferencesWindow
+
+Environment Variables:
+JAVA_HOME=c:\program files\Java\jdk1.5.0
+CLASSPATH=.;D:\Gridchem\java_cup_v10k;\D:\Gridchem\jflex-1.4.1
+PATH=C:\Program Files\Microsoft Visual Studio\Common\Tools;C:\Program Files\Microsoft Visual Studio\Common\Msdev98\BIN;C:\Program Files\Microsoft Visual Studio\DF98\BIN;C:\Program Files\Microsoft Visual Studio\VC98\BIN;C:\program files\texmf\miktex\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;c:\matlab\bin\win32;C:\Program Files\Java\jdk1.5.0\bin;C:\Program Files\Microsoft Visual Studio\Common\Tools\WinNT;C:\Program Files\Microsoft Visual Studio\Common\MSDev98\Bin;C:\Program Files\Microsoft Visual Studio\Common\Tools;C:\Program Files\Microsoft Visual Studio\VC98\bin;C:\Program Files\SSH Communications Security\SSH Secure Shell;MAVEN_HOME\bin
+USERNAME=xli16
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=x86 Family 15 Model 2 Stepping 7, GenuineIntel
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows XP Build 2600 Service Pack 2
+
+CPU:total 1 family 15, cmov, cx8, fxsr, mmx, sse, sse2, ht
+
+Memory: 4k page, physical 523704k(53408k free), swap 1279164k(778284k free)
+
+vm_info: Java HotSpot(TM) Client VM (1.5.0-b64) for windows-x86, built on Sep 15 2004 03:00:31 by "java_re" with MS VC++ 6.0
+

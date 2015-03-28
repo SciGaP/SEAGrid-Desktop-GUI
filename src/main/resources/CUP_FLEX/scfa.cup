@@ -1,0 +1,102 @@
+import java_cup.runtime.*;
+import javax.swing.*;
+import java.util.*;
+import java.io.*; 
+
+
+
+/*
+OUTPUT FORMAT:____________________________________________________________
+1NSERCH=   0    
+         more text 
+ SCF Done:  E(RHF) =  -7.85284496695     A.U. after    8 cycles  
+         more text
+ Maximum Force            0.000000     0.000450     YES
+ RMS     Force            0.000000     0.000300     YES
+         more text
+TO MONITOR:____________________________________________________________
+ iteration, energy
+
+MANUALLY ADD TO CUP-GENERATED CLASS IN SCFaParser.java:________________
+
+
+//add to CUP$SCFaParser$actions
+public ParseSCF2 parseSCF;
+
+//add to the constructor of CUP$SCFaParser$actions
+ parseSCF = new ParseSCF2();
+
+*/
+
+action code {: 
+  //__________________________________
+  public static boolean DEBUG = true;
+  private static JTable table;               
+  private static final String tableLabel = "SCF Intermediate Results:";
+// private static String cycle = "0";
+ 
+  
+  public static JTable getTable() {
+    return table;
+  }
+
+  public static String getTableLabel() {
+    return tableLabel;
+  }
+
+//   }
+:}
+
+
+
+
+terminal           FOUNDITER, SCFDONE, NSearch, Energ, MaxGrad, RmsGrad;
+terminal Integer     ITERATION;
+terminal Float     ENERGY, MGRAD, RGRAD;
+non terminal  startpt, scfintro, scfpat, scfcycle, cycle, grad1, grad2;
+
+
+
+
+/* ___________
+   The grammer */
+
+startpt ::= scfintro
+           scfpat 
+            SCFDONE
+            {: if (DEBUG) System.out.println("CUP:gopt:  end of parse tree "); 
+ 	       table = new JTable();
+	
+//       table = parseSCF.getTable();
+ 	     :}
+             ;
+
+
+
+
+scfintro ::=
+   FOUNDITER 
+   {: if (DEBUG) System.out.println("CUP:scfa:  found the start of Iteration"); :}
+;
+
+scfpat ::= scfpat scfcycle
+   {: if (DEBUG) System.out.println("CUP:scfa: in scfpat"); :}
+   |
+   scfcycle
+;
+
+scfcycle ::= NSearch ITERATION:iter
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:scfa: ITERATION  "+iter);
+ :}
+cycle
+;
+
+
+
+
+cycle ::= Energ ENERGY:ener
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:scfa:  ENERGY "+ener); 
+ :}
+ ;

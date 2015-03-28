@@ -1,0 +1,1245 @@
+<root>
+  <input Group="DATA">
+    <requiredif>
+      <Not>
+        <Entity Group="DATA"/>
+      </Not>
+    </requiredif>
+  </input>
+
+  <input Group="BASIS">
+    <exclude>
+      <Entity Group="CONTRL" Keyword="RELWFN" Value="NESC"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="STO">
+    <requires>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </requires>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="N21">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS" Value="2"/>
+      <Entity Group="BASIS" Keyword="NGAUSS" Value="4"/>
+      <Entity Group="BASIS" Keyword="NGAUSS" Value="5"/>
+    </exclude>
+    <requires>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </requires>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="N31">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS" Value="2"/>
+      <Entity Group="BASIS" Keyword="NGAUSS" Value="3"/>
+    </exclude>
+    <requires>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </requires>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="N311">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS" Value="2"/>
+      <Entity Group="BASIS" Keyword="NGAUSS" Value="3"/>
+      <Entity Group="BASIS" Keyword="NGAUSS" Value="4"/>
+      <Entity Group="BASIS" Keyword="NGAUSS" Value="5"/>
+    </exclude>
+    <requires>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </requires>
+  </input>
+  <input Group="BASIS" Keyword="NGAUSS">
+    <exclude>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="MINI"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="MIDI"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="DZV"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="DH"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="TZV"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="MC"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="CCn"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="ACCn"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="CCnC"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="ACCnC"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="PCn"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="APCn"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="SBKJC"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="HW"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="MNDO"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="AM1"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="PM3"/>
+    </exclude>
+  </input>
+
+  <input Group="BASIS" Keyword="GBASIS" Value="MINI">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="MIDI">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="DZV">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="DH">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="TZV">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="MC">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="CCn">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="ACCn">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="CCnC">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="ACCnC">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="PCn">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="APCn">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="SBKJC">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="HW">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="MNDO">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="AM1">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="GBASIS" Value="PM3">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NGAUSS"/>
+    </exclude>
+  </input>
+
+  <input Group="BASIS" Keyword="NGAUSS" Value="2">
+    <exclude>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="N21"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="N31"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="N311"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="NGAUSS" Value="3">
+    <exclude>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="N31"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="N311"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="NGAUSS" Value="4">
+    <exclude>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="N21"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="N311"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="NGAUSS" Value="5">
+    <exclude>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="N21"/>
+      <Entity Group="BASIS" Keyword="GBASIS" Value="N311"/>
+    </exclude>
+  </input>
+
+  <input Group="BASIS" Keyword="NDFUNC" Value="0">
+    <exclude>
+      <Entity Group="BASIS" Keyword="SPLIT2"/>
+      <Entity Group="BASIS" Keyword="SPLIT3"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="NDFUNC" Value="1">
+    <exclude>
+      <Entity Group="BASIS" Keyword="SPLIT2"/>
+      <Entity Group="BASIS" Keyword="SPLIT3"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="NPFUNC" Value="0">
+    <exclude>
+      <Entity Group="BASIS" Keyword="SPLIT2"/>
+      <Entity Group="BASIS" Keyword="SPLIT3"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="NPFUNC" Value="1">
+    <exclude>
+      <Entity Group="BASIS" Keyword="SPLIT2"/>
+      <Entity Group="BASIS" Keyword="SPLIT3"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="SPLIT2">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NDFUNC" Value="0"/>
+      <Entity Group="BASIS" Keyword="NDFUNC" Value="1"/>
+      <Entity Group="BASIS" Keyword="NDFUNC" Value="3"/>
+      <Entity Group="BASIS" Keyword="NPFUNC" Value="0"/>
+      <Entity Group="BASIS" Keyword="NPFUNC" Value="1"/>
+      <Entity Group="BASIS" Keyword="NPFUNC" Value="3"/>
+    </exclude>
+  </input>
+  <input Group="BASIS" Keyword="SPLIT3">
+    <exclude>
+      <Entity Group="BASIS" Keyword="NDFUNC" Value="0"/>
+      <Entity Group="BASIS" Keyword="NDFUNC" Value="1"/>
+      <Entity Group="BASIS" Keyword="NDFUNC" Value="2"/>
+      <Entity Group="BASIS" Keyword="NPFUNC" Value="0"/>
+      <Entity Group="BASIS" Keyword="NPFUNC" Value="1"/>
+      <Entity Group="BASIS" Keyword="NPFUNC" Value="2"/>
+    </exclude>
+  </input>
+
+
+  <input Group="CONTRL" Keyword="SCFTYP" Value="RHF">
+    <exclude>
+      <Entity Group="SCF" Keyword="UHFNOS"/>
+    </exclude>
+  </input>
+  <input Group="CONTRL" Keyword="SCFTYP" Value="ROHF">
+    <exclude>
+      <Entity Group="CONTRL" Keyword="CITYP" Value="CIS"/>
+      <Entity Group="SCF" Keyword="UHFNOS"/>
+      <Entity Group="SCF" Keyword="NCO" />
+      <Entity Group="SCF" Keyword="NSETO"/>
+      <Entity Group="SCF" Keyword="NO"/>
+      <Entity Group="SCF" Keyword="NPAIR"/>
+      <Entity Group="SCF" Keyword="CICOEF"/>
+      <Entity Group="SCF" Keyword="AVACO"/>
+      <Entity Group="CIS" />
+      <Entity Group="CISVEC" />
+      <Entity Group="SCMI"/>
+      <Entity Group="MCSCF"/>
+      <Entity Group="DET"/>
+      <Entity Group="DRT"/>
+      <Entity Group="MRMP"/>
+      <Entity Group="MCQDPT"/>
+      <Entity Group="TDHF"/>
+      <Entity Group="TDHFX"/>
+    </exclude>
+  </input>
+  <input Group="CONTRL" Keyword="SCFTYP" Value="UHF">
+    <exclude>
+      <Entity Group="CONTRL" Keyword="CITYP" Value="CIS"/>
+      <Entity Group="SCF" Keyword="MVOQ"/>
+      <Entity Group="SCF" Keyword="ACAVO"/>
+      <Entity Group="SCF" Keyword="PACAVO"/>
+      <Entity Group="MOFRZ"/>
+    </exclude>
+  </input>
+  <input Group="CONTRL" Keyword="SCFTYP" Value="GVB">
+    <exclude>
+      <Entity Group="CONTRL" Keyword="MPLEVL" Value="2"/>
+      <Entity Group="CONTRL" Keyword="DFTTYP"/>
+      <Entity Group="DFT" Keyword="METHOD"/>
+      <Entity Group="SCF" Keyword="FDIFF"/>
+      <Entity Group="SCF" Keyword="SWDIIS"/>
+      <Entity Group="SCF" Keyword="UHFNOS"/>
+      <Entity Group="SCF" Keyword="MVOQ" Value="-1"/>
+      <Entity Group="SCF" Keyword="VTSCAL"/>
+      <Entity Group="DFT"/>
+    </exclude>
+    <requires>
+      <Entity Group="SCF"/>
+    </requires>
+  </input>
+  <input Group="CONTRL" Keyword="SCFTYP" Value="MCSCF">
+    <exclude>
+      <Entity Group="CONTRL" Keyword="DFTTYP"/>
+      <Entity Group="DFT" Keyword="METHOD"/>
+      <Entity Group="SCF" Keyword="DIRSCF"/>
+      <Entity Group="SCF" Keyword="FDIFF"/>
+      <Entity Group="SCF" Keyword="UHFNOS"/>
+      <Entity Group="SCF" Keyword="MVOQ"/>
+      <Entity Group="SCF" Keyword="ACAVO"/>
+      <Entity Group="SCF" Keyword="PACAVO"/>
+      <Entity Group="SCF" Keyword="VTSCAL"/>
+      <Entity Group="DFT"/>
+      <Entity Group="MOFRZ"/>
+    </exclude>
+  </input>
+  <input Group="CONTRL" Keyword="SCFTYP" Value="NONE">
+    <exclude>
+      <Entity Group="CONTRL" Keyword="MPLEVL" Value="2"/>
+      <Entity Group="CONTRL" Keyword="DFTTYP"/>
+      <Entity Group="DFT" Keyword="METHOD"/>
+      <Entity Group="SCF" Keyword="DIRSCF"/>
+      <Entity Group="SCF" Keyword="FDIFF"/>
+      <Entity Group="SCF" Keyword="UHFNOS"/>
+      <Entity Group="SCF" Keyword="MVOQ"/>
+      <Entity Group="SCF" Keyword="ACAVO"/>
+      <Entity Group="SCF" Keyword="PACAVO"/>
+      <Entity Group="SCF" Keyword="VTSCAL"/>
+      <Entity Group="DFT"/>
+      <Entity Group="MOFRZ"/>
+    </exclude>
+  </input>
+  <input Group="CONTRL" Keyword="RELWFN" Value="NESC">
+    <exclude>
+      <Entity Group="BASIS"/>
+    </exclude>
+  </input>
+  <input Group="CONTRL" Keyword="DFTTYP">
+    <exclude>
+      <Entity Group="CONTRL" Keyword="MPLEVL"/>
+      <Entity Group="CONTRL" Keyword="CITYP"/>
+      <Entity Group="CONTRL" Keyword="CCTYP"/>
+    </exclude>
+  </input>
+  <input Group="CONTRL" Keyword="MPLEVL">
+    <exclude>
+      <Entity Group="CONTRL" Keyword="DFTTYP"/>
+      <Entity Group="CONTRL" Keyword="CITYP"/>
+      <Entity Group="CONTRL" Keyword="CCTYP"/>
+    </exclude>
+  </input>
+  <input Group="CONTRL" Keyword="CITYP">
+    <exclude>
+      <Entity Group="CONTRL" Keyword="MPLEVL"/>
+      <Entity Group="CONTRL" Keyword="DFTTYP"/>
+      <Entity Group="CONTRL" Keyword="CCTYP"/>
+    </exclude>
+  </input>
+  <input Group="CONTRL" Keyword="CCTYP">
+    <exclude>
+      <Entity Group="CONTRL" Keyword="MPLEVL"/>
+      <Entity Group="CONTRL" Keyword="DFTTYP"/>
+      <Entity Group="CONTRL" Keyword="CITYP"/>
+    </exclude>
+  </input>
+
+
+  <input Group="ZMAT" Keyword="IFZMAT">
+    <availableonlyif>
+      <Entity Group="ZMAT" Keyword="DLC" Value=".TRUE."/>
+    </availableonlyif>
+  </input>
+  <input Group="ZMAT" Keyword="FVALUE">
+    <availableonlyif>
+      <Entity Group="ZMAT" Keyword="DLC" Value=".TRUE."/>
+    </availableonlyif>
+  </input>
+
+
+  <input Group="SCF">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="UHF"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="ROHF"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="SCF" Keyword="DIRSCF" Value=".FALSE.">
+    <exclude>
+      <Entity Group="SCF" Keyword="FDIFF"/>
+    </exclude>
+  </input>
+  <input Group="SCF" Keyword="SOSCF">
+    <excludedif>
+      <Or>
+        <Entity Group="SCF" Keyword="NONCONV" Value=".TRUE."/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="UHF"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="ROHF"/>
+        <Entity Group="CONTRL" Keyword="DFTTYP" />
+      </Or>
+    </excludedif>
+  </input>
+  <input Group="SCF" Keyword="NONCONV" Value=".TRUE.">
+    <exclude>
+      <Entity Group="SCF" Keyword="CONV"/>
+      <Entity Group="SCF" Keyword="SOGTOL"/>
+      <Entity Group="SCF" Keyword="ETHRSH"/>
+      <Entity Group="SCF" Keyword="MAXDII"/>
+      <Entity Group="SCF" Keyword="SWDIIS"/>
+      <Entity Group="SCF" Keyword="DEMCUT"/>
+      <Entity Group="SCF" Keyword="DMPCUT"/>
+    </exclude>
+  </input>
+  <input Group="SCF" Keyword="DEM">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="SCF" Keyword="VTSCAL">
+    <excludedif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="RUNTYP" Value="ENERGY"/>
+        <Entity Group="CONTRL" Keyword="RUNTYP" Value="OPTIMIZE"/>
+        <Entity Group="CONTRL" Keyword="RUNTYP" Value="SADPOINT"/>
+      </Or>
+    </excludedif>
+  </input>
+  <input Group="SCF" Keyword="SCALF">
+    <availableonlyif>
+      <Entity Group="SCF" Keyword="VTSCAL" Value=".TRUE."/>
+    </availableonlyif>
+  </input>
+  <input Group="SCF" Keyword="MAXVT">
+    <availableonlyif>
+      <Entity Group="SCF" Keyword="VTSCAL" Value=".TRUE."/>
+    </availableonlyif>
+  </input>
+  <input Group="SCF" Keyword="VTCONV">
+    <availableonlyif>
+      <Entity Group="SCF" Keyword="VTSCAL" Value=".TRUE."/>
+    </availableonlyif>
+  </input>
+  <input Group="SCF" Keyword="NCO">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="SCF" Keyword="NSETO">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="SCF" Keyword="NO">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="SCF" Keyword="NPAIR">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="SCF" Keyword="CICOEF">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="SCF" Keyword="COUPLE">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="SCF" Keyword="F">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="SCF" Keyword="ALPHA">
+    <excludedif>
+      <Not>
+        <Or>
+          <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+          <Entity Group="CONTRL" Keyword="SCFTYP" Value="ROHF"/>
+        </Or>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="SCF" Keyword="BETA">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="ROHF"/>
+      </Not>
+    </excludedif>
+  </input>
+
+  <input Group="CIS">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="CITYP" Value="CIS"/>
+      </Not>
+    </excludedif>
+    <requiredif>
+      <Entity Group="CONTRL" Keyword="CITYP" Value="CIS"/>
+    </requiredif>
+  </input>
+  <input Group="CIS" Keyword="CISPRP">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="RUNTYP" Value="ENERGY"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="CIS" Keyword="RDCISV">
+    <requires>
+      <Entity Group="CISVEC"/>
+    </requires>
+  </input>
+
+  <input Group="VEC">
+    <requiredif>
+      <Entity Group="GUESS" Keyword="GUESS" Value="MOREAD"/>
+    </requiredif>
+  </input>
+
+  <input Group="CISVEC">
+    <requiredif>
+      <Entity Group="CIS" Keyword="RDCISV" Value=".TRUE."/>
+    </requiredif>
+  </input>
+
+  <input Group="SCF" Keyword="CICOEF">
+    <requiredif>
+      <And>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+        <Not>
+          <Entity Group="GUESS" Keyword="GUESS" Value="SKIP"/>
+        </Not>
+      </And>
+    </requiredif>
+  </input>
+
+  <input Group="GUESS" Keyword="GUESS" Value="MOREAD">
+    <requires>
+      <Entity Group="VEC"/>
+      <Entity Group="MOFRZ"/>
+    </requires>
+  </input>
+  <input Group="GUESS" Keyword="GUESS" Value="RDMINI">
+    <requires>
+      <Entity Group="VEC"/>
+    </requires>
+    <excludedif>
+      <Or>
+        <Entity Group="BASIS" Keyword="GBASIS" Value="SBKJC"/>
+        <Entity Group="BASIS" Keyword="GBASIS" Value="HW"/>
+      </Or>
+    </excludedif>
+  </input>
+  <input Group="GUESS" Keyword="NORB">
+    <requiredif>
+      <Or>
+        <Entity Group="GUESS" Keyword="GUESS" Value="MOREAD"/>
+        <And>
+          <Entity Group="CONTRL" Keyword="CITYP"/>
+          <Not>
+            <Entity Group="CONTRL" Keyword="CITYP" Value="NONE"/>
+          </Not>
+        </And>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="MCSCF"/>
+      </Or>
+    </requiredif>
+    <availableonlyif>
+      <Or>
+        <Entity Group="GUESS" Keyword="GUESS" Value="MOREAD"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="CI"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="MCSCF"/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="GUESS" Keyword="MIX">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="SCFTYP" Value="UHF"/>
+    </availableonlyif>
+  </input>
+  <input Group="GUESS" Keyword="JORDER">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="UHF"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="GUESS" Keyword="INSORB">
+    <requires>
+      <Entity Group="VEC"/>
+    </requires>
+    <excludedif>
+      <Not>
+        <Entity Group="GUESS" Keyword="GUESS" Value="HUCKEL"/>
+      </Not>
+    </excludedif>
+  </input>
+
+  <input Group="MP2">
+    <availableonlyif>
+      <And>
+        <Or>
+          <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+          <Entity Group="CONTRL" Keyword="SCFTYP" Value="UHF"/>
+          <Entity Group="CONTRL" Keyword="SCFTYP" Value="ROHF"/>
+        </Or>
+        <Entity Group="CONTRL" Keyword="MPLEVL" Value="2"/>
+      </And>
+    </availableonlyif>
+  </input>
+  <input Group="MP2" Keyword="NBCORE">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="UHF"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="MP2" Keyword="MP2PRP">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="RUNTYP" Value="ENERGY"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="MP2" Keyword="OSPT">
+    <excludedif>
+      <Not>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="ROHF"/>
+      </Not>
+    </excludedif>
+  </input>
+  <input Group="MP2" Keyword="LMOMP2">
+    <excludedif>
+      <Or>
+        <Not>
+          <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+        </Not>
+        <Entity Group="CONTRL" Keyword="PARALL" Value=".TRUE."/>
+      </Or>
+    </excludedif>
+  </input>
+  <input Group="MP2" Keyword="CPHFBS" Value="BASISMO" >
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+      <Entity Group="MOFRZ" Keyword="FRZ" Value=".FALSE."/>
+    </availableonlyif>
+  </input>
+  <input Group="MP2" Keyword="CPHFBS" Value="BASISAO" >
+    <availableonlyif>
+      <Or>
+        <And>
+          <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+          <Entity Group="MOFRZ" Keyword="FRZ" Value=".TRUE."/>
+        </And>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="ROHF"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="UHF"/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="MP2" Keyword="NWORD">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="PARALL" Value=".FALSE."/>
+        <And>
+          <Entity Group="CONTRL" Keyword="PARALL" Value=".TRUE."/>
+          <Entity Group="CONTRL" Keyword="SCFTYP" Value="ROHF"/>
+          <Entity Group="MP2" Keyword="OSPT" Value="RMP"/>
+        </And>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="MP2" Keyword="NWORD">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="PARALL" Value=".FALSE."/>
+        <And>
+          <Entity Group="CONTRL" Keyword="PARALL" Value=".TRUE."/>
+          <Entity Group="CONTRL" Keyword="SCFTYP" Value="ROHF"/>
+          <Entity Group="MP2" Keyword="OSPT" Value="RMP"/>
+        </And>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="MP2" Keyword="AOINTS">
+    <excludedif>
+      <Entity Group="CONTRL" Keyword="PARALL" Value=".FALSE."/>
+    </excludedif>
+  </input>
+
+  <input Group="MOFRZ">
+    <requires>
+      <Entity Group="GUESS" Keyword="GUESS" Value="MOREAD"/>
+    </requires>
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="ROHF"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+      </Or>
+    </availableonlyif>
+  </input>
+
+  <input Group="CCINP">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="CCTYP"/>
+    </availableonlyif>
+  </input>
+  <input Group="CCINP" Keyword="CCPRP">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="CCTYP" Value="CCSD"/>
+      <Entity Group="CONTRL" Keyword="CCTYP" Value="CR-CCL"/>
+      <Entity Group="CONTRL" Keyword="CCTYP" Value="EOM-CCSD"/>
+      <Entity Group="CONTRL" Keyword="CCTYP" Value="CR-EOM"/>
+    </availableonlyif>
+  </input>
+
+  <input Group="MOPAC">
+    <availableonlyif>
+      <Or>
+        <Entity Group="BASIS" Keyword="GBASIS" Value="PM3"/>
+        <Entity Group="BASIS" Keyword="GBASIS" Value="AM1"/>
+        <Entity Group="BASIS" Keyword="GBASIS" Value="MNDO"/>
+      </Or>
+    </availableonlyif>
+  </input>
+
+  <input Group="SCFMI">
+    <availableonlyif>
+      <And>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+        <Or>
+          <Entity Group="DFT"/>
+          <Entity Group="CONTRL" Keyword="MPLEVEL" Value="2"/>
+          <Entity Group="CONTRL" Keyword="CCTYP"/>
+          <Entity Group="CONTRL" Keyword="CITYP"/>
+        </Or>
+      </And>
+    </availableonlyif>
+  </input>
+
+  <input Group="EOMINP">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="CCTYP" Value="EOM-CCSD"/>
+        <Entity Group="CONTRL" Keyword="CCTYP" Value="CR-EOM"/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="EOMINP" Keyword="MEOM" Value="3">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CCINP" Keyword="CCPRP" Value=".TRUE."/>
+        <Entity Group="EOMINP" Keyword="CCPRPE" Value=".TRUE."/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="EOMINP" Keyword="MEOM" Value="4">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CCINP" Keyword="CCPRP" Value=".TRUE."/>
+        <Entity Group="EOMINP" Keyword="CCPRPE" Value=".TRUE."/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="EOMINP" Keyword="MTRIP">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="CCTYP" Value="CR-EOM"/>
+    </availableonlyif>
+  </input>
+  <input Group="EOMINP" Keyword="NOACT">
+    <excludedif>
+      <Entity Group="EOMINP" Keyword="MINIT" Value="2"/>
+    </excludedif>
+  </input>
+  <input Group="EOMINP" Keyword="NUACT">
+    <excludedif>
+      <Entity Group="EOMINP" Keyword="MINIT" Value="2"/>
+    </excludedif>
+  </input>
+  <input Group="EOMINP" Keyword="MOACT">
+    <excludedif>
+      <Entity Group="EOMINP" Keyword="MINIT" Value="2"/>
+    </excludedif>
+  </input>
+  <input Group="EOMINP" Keyword="CVGEOM">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="CCTYP" Value="EOM-CCSD"/>
+    </availableonlyif>
+  </input>
+  <input Group="EOMINP" Keyword="MAXEOM">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="CCTYP" Value="EOM-CCSD"/>
+    </availableonlyif>
+  </input>
+  <input Group="EOMINP" Keyword="MICEOM">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="CCTYP" Value="EOM-CCSD"/>
+    </availableonlyif>
+  </input>
+  <input Group="EOMINP" Keyword="CVGCI">
+    <availableonlyif>
+      <And>
+        <Entity Group="CONTRL" Keyword="CCTYP" Value="CR-EOM"/>
+        <Or>
+          <Entity Group="EOMINP" Keyword="MTRIP" Value="2"/>
+          <Entity Group="EOMINP" Keyword="MTRIP" Value="3"/>
+          <Entity Group="EOMINP" Keyword="MTRIP" Value="4"/>
+        </Or>
+      </And>
+    </availableonlyif>
+  </input>
+  <input Group="EOMINP" Keyword="MAXCI">
+    <availableonlyif>
+      <And>
+        <Entity Group="CONTRL" Keyword="CCTYP" Value="CR-EOM"/>
+        <Or>
+          <Entity Group="EOMINP" Keyword="MTRIP" Value="2"/>
+          <Entity Group="EOMINP" Keyword="MTRIP" Value="3"/>
+          <Entity Group="EOMINP" Keyword="MTRIP" Value="4"/>
+        </Or>
+      </And>
+    </availableonlyif>
+  </input>
+  <input Group="EOMINP" Keyword="MICCI">
+    <availableonlyif>
+      <And>
+        <Entity Group="CONTRL" Keyword="CCTYP" Value="CR-EOM"/>
+        <Or>
+          <Entity Group="EOMINP" Keyword="MTRIP" Value="2"/>
+          <Entity Group="EOMINP" Keyword="MTRIP" Value="3"/>
+          <Entity Group="EOMINP" Keyword="MTRIP" Value="4"/>
+        </Or>
+      </And>
+    </availableonlyif>
+  </input>
+
+  <input Group="RELWFN">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="RELWFN" Value="DK"/>
+        <Entity Group="CONTRL" Keyword="RELWFN" Value="RESC"/>
+        <Entity Group="CONTRL" Keyword="RELWFN" Value="NESC"/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="RELWFN" Keyword="NORDER">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RELWFN" Value="DK"/>
+    </availableonlyif>
+  </input>
+  <input Group="RELWFN" Keyword="MODEQR">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="RELWFN" Value="DK"/>
+        <Entity Group="CONTRL" Keyword="RELWFN" Value="RESC"/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="RELWFN" Keyword="MODEQR" Value="2">
+    <excludedif>
+      <Entity Group="CONTRL" Keyword="RELWFN" Value="RESC"/>
+    </excludedif>
+  </input>
+  <input Group="RELWFN" Keyword="MODEQR" Value="3">
+    <excludedif>
+      <Entity Group="CONTRL" Keyword="RELWFN" Value="RESC"/>
+    </excludedif>
+  </input>
+  <input Group="RELWFN" Keyword="NESOC">
+    <availableonlyif>
+      <And>
+        <Entity Group="CONTRL" Keyword="RUNTYP" Value="TRANSITN"/>
+        <Or>
+          <Entity Group="TRANST" Keyword="OPERAT" Value="HS01"/>
+          <Entity Group="TRANST" Keyword="OPERAT" Value="HS02P"/>
+          <Entity Group="TRANST" Keyword="OPERAT" Value="HS02"/>
+        </Or>
+      </And>
+    </availableonlyif>
+  </input>
+  <input Group="RELWFN" Keyword="QMTTOL">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="RELWFN" Value="DK"/>
+        <Entity Group="CONTRL" Keyword="RELWFN" Value="RESC"/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="RELWFN" Keyword="QRTOL">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="RELWFN" Value="DK"/>
+        <Entity Group="CONTRL" Keyword="RELWFN" Value="RESC"/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="RELWFN" Keyword="NVIB">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="RELWFN" Value="DK"/>
+        <Entity Group="CONTRL" Keyword="RELWFN" Value="RESC"/>
+      </Or>
+    </availableonlyif>
+  </input>
+
+  <input Group="ELMOM" Keyword="WHERE" Value="POINTS">
+    <requires>
+      <Entity Group="POINTS"/>
+    </requires>
+  </input>
+
+  <input Group="ELPOT" Keyword="WHERE" Value="POINTS">
+    <requires>
+      <Entity Group="POINTS"/>
+    </requires>
+  </input>
+  <input Group="ELPOT" Keyword="WHERE" Value="GRID">
+    <requires>
+      <Entity Group="GRID"/>
+    </requires>
+  </input>
+  <input Group="ELPOT" Keyword="WHERE" Value="PDC">
+    <requires>
+      <Entity Group="PDC"/>
+    </requires>
+  </input>
+
+  <input Group="ELDENS" Keyword="WHERE" Value="POINTS">
+    <requires>
+      <Entity Group="POINTS"/>
+    </requires>
+  </input>
+  <input Group="ELDENS" Keyword="WHERE" Value="GRID">
+    <requires>
+      <Entity Group="GRID"/>
+    </requires>
+  </input>
+
+  <input Group="ELFLDG" Keyword="WHERE" Value="POINTS">
+    <requires>
+      <Entity Group="POINTS"/>
+    </requires>
+  </input>
+
+  <input Group="RAMAN">
+    <excludedif>
+      <Or>
+        <Entity Group="BASIS" Keyword="GBASIS" Value="MNDO"/>
+        <Entity Group="BASIS" Keyword="GBASIS" Value="AM1"/>
+        <Entity Group="BASIS" Keyword="GBASIS" Value="PM3"/>
+        <Entity Group="EFRAG"/>
+        <Entity Group="FRAGNAME"/>
+        <Entity Group="FRGRPL"/>
+        <Entity Group="PRTEFP"/>
+        <Entity Group="DAMP"/>
+        <Entity Group="DAMPGS"/>
+        <Entity Group="PCM"/>
+        <Entity Group="PCMGRD"/>
+        <Entity Group="PCMCAV"/>
+        <Entity Group="TESCAV"/>
+        <Entity Group="NEWCAV"/>
+        <Entity Group="IEFPCM"/>
+        <Entity Group="PCMITR"/>
+        <Entity Group="DISBS"/>
+        <Entity Group="DISREP"/>
+        <Entity Group="SVP"/>
+        <Entity Group="SVPIRF"/>
+        <Entity Group="COSGMS"/>
+        <Entity Group="SCRF"/>
+      </Or>
+    </excludedif>
+  </input>
+
+  <input Group="NMR">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="NMR"/>
+    </availableonlyif>
+  </input>
+
+  <input Group="FFCALC">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="FFIELD"/>
+    </availableonlyif>
+  </input>
+
+  <input Group="TDHF">
+    <requires>
+      <Entity Group="CONTRL" Keyword="NOSYM" Value="1"/>
+    </requires>
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="TDHF"/>
+      <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+    </availableonlyif>
+  </input>
+
+  <input Group="TDHFX">
+    <requires>
+      <Entity Group="CONTRL" Keyword="NOSYM" Value="1"/>
+    </requires>
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="TDHFX"/>
+      <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+    </availableonlyif>
+  </input>
+
+  <input Group="STATPT">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="RUNTYP" Value="OPTIMIZE"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="SADPOINT"/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="STATPT" Keyword="TRUPD">
+    <excludedif>
+      <Or>
+        <Entity Group="STATPT" Keyword="METHOD" Value="NR"/>
+        <Entity Group="STATPT" Keyword="METHOD" Value="SCHLEGEL"/>
+        <Entity Group="STATPT" Keyword="METHOD" Value="CONOPT"/>
+      </Or>
+    </excludedif>
+  </input>
+  <input Group="STATPT" Keyword="TRMAX">
+    <excludedif>
+      <Or>
+        <Entity Group="STATPT" Keyword="METHOD" Value="NR"/>
+        <Entity Group="STATPT" Keyword="METHOD" Value="SCHLEGEL"/>
+        <Entity Group="STATPT" Keyword="METHOD" Value="CONOPT"/>
+      </Or>
+    </excludedif>
+  </input>
+  <input Group="STATPT" Keyword="TRMIN">
+    <excludedif>
+      <Or>
+        <Entity Group="STATPT" Keyword="METHOD" Value="NR"/>
+        <Entity Group="STATPT" Keyword="METHOD" Value="SCHLEGEL"/>
+        <Entity Group="STATPT" Keyword="METHOD" Value="CONOPT"/>
+      </Or>
+    </excludedif>
+  </input>
+  <input Group="STATPT" Keyword="IFOLOW">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="SADPOINT"/>
+    </availableonlyif>
+  </input>
+  <input Group="STATPT" Keyword="UPHESS" Value="SCHLEGEL">
+    <requiredif>
+      <Entity Group="STATPT" Keyword="METHOD" Value="SCHLEGEL"/>
+    </requiredif>
+  </input>
+  <input Group="STATPT" Keyword="NNEG">
+    <availableonlyif>
+      <Entity Group="STATPT" Keyword="METHOD" Value="SCHLEGEL"/>
+    </availableonlyif>
+  </input>
+  <input Group="STATPT" Keyword="RMIN">
+    <availableonlyif>
+      <Entity Group="STATPT" Keyword="METHOD" Value="SCHLEGEL"/>
+    </availableonlyif>
+  </input>
+  <input Group="STATPT" Keyword="RMAX">
+    <availableonlyif>
+      <Entity Group="STATPT" Keyword="METHOD" Value="SCHLEGEL"/>
+    </availableonlyif>
+  </input>
+  <input Group="STATPT" Keyword="RLIM">
+    <availableonlyif>
+      <Entity Group="STATPT" Keyword="METHOD" Value="SCHLEGEL"/>
+    </availableonlyif>
+  </input>
+
+  <input Group="TRUDGE">
+    <requiredif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="TRUDGE"/>
+    </requiredif>
+  </input>
+
+  <input Group="TRURST">
+    <requiredif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="TRUDGE"/>
+    </requiredif>
+  </input>
+
+  <input Group="FORCE">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="RUNTYP" Value="HESSIAN"/>
+        <Entity Group="CONTRL" Keyword="RUNTYP" Value="OPTIMIZE"/>
+        <Entity Group="CONTRL" Keyword="RUNTYP" Value="SADPOINT"/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="FORCE" Keyword="METHOD" Value="ANALYTIC">
+    <availableonlyif>
+      <Or>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+        <Entity Group="CONTRL" Keyword="SCFTYP" Value="ROHF"/>
+        <And>
+          <Entity Group="CONTRL" Keyword="SCFTYP" Value="GVB"/>
+          <Or>
+            <Not>
+              <Entity Group="SCF" Keyword="NPAIR"/>
+            </Not>
+            <Entity Group="SCF" Keyword="NPAIR" Value="0"/>
+            <Entity Group="SCF" Keyword="NPAIR" Value="1"/>
+          </Or>
+        </And>
+        <Entity Group="MCSCF" Keyword="CISTEP" Value="ALDET"/>
+      </Or>
+    </availableonlyif>
+  </input>
+  <input Group="FORCE" Keyword="RDHESS">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="HESSIAN"/>
+      <Entity Group="HESS"/>
+    </availableonlyif>
+  </input>
+  <input Group="FORCE" Keyword="PURIFY">
+    <availableonlyif>
+      <Entity Group="ZMAT"/>
+    </availableonlyif>
+  </input>
+  <input Group="FORCE" Keyword="PRTIFC">
+    <availableonlyif>
+      <Entity Group="ZMAT"/>
+    </availableonlyif>
+  </input>
+  <input Group="FORCE" Keyword="NVIB">
+    <availableonlyif>
+      <Entity Group="FORCE" Keyword="METHOD" Value="FULLNUM"/>
+    </availableonlyif>
+  </input>
+  <input Group="FORCE" Keyword="VIBSIZ">
+    <availableonlyif>
+      <Not>
+        <Entity Group="FORCE" Keyword="METHOD" Value="ANALYTIC"/>
+      </Not>
+    </availableonlyif>
+  </input>
+  <input Group="FORCE" Keyword="DECOMP" Value=".TRUE.">
+    <availableonlyif>
+      <Entity Group="ZMAT"/>
+    </availableonlyif>
+  </input>
+
+  <input Group="CPHF">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="HESSIAN"/>
+    </availableonlyif>
+  </input>
+  <input Group="CPHF" Keyword="CPHF" Value="AODDI">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="SCFTYP" Value="RHF"/>
+    </availableonlyif>
+  </input>
+
+  <input Group="MASS">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="HESSIAN"/>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="IRC"/>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="DRC"/>
+    </availableonlyif>
+  </input>
+
+  <input Group="VSCF">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="VSCF"/>
+    </availableonlyif>
+  </input>
+
+  <input Group="VIBSCF">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="VSCF"/>
+    </availableonlyif>
+  </input>
+
+  <input Group="SURF">
+    <availableonlyif>
+      <Entity Group="CONTRL" Keyword="RUNTYP" Value="SURFACE"/>
+    </availableonlyif>
+  </input>
+  <input Group="SURF" Keyword="RUNTP1">
+    <requires>
+      <Entity Group="SURF" Keyword="RUNTP2"/>
+    </requires>
+  </input>
+  <input Group="SURF" Keyword="RUNTP2">
+    <requires>
+      <Entity Group="SURF" Keyword="RUNTP1"/>
+    </requires>
+  </input>
+  <input Group="SURF" Keyword="SCFTP1">
+    <requires>
+      <Entity Group="SURF" Keyword="SCFTP2"/>
+    </requires>
+  </input>
+  <input Group="SURF" Keyword="SCFTP2">
+    <requires>
+      <Entity Group="SURF" Keyword="SCFTP1"/>
+    </requires>
+  </input>
+  <input Group="SURF" Keyword="MPLEVL1">
+    <requires>
+      <Entity Group="SURF" Keyword="MPLEVL2"/>
+    </requires>
+  </input>
+  <input Group="SURF" Keyword="MPLEVL2">
+    <requires>
+      <Entity Group="SURF" Keyword="MPLEVL1"/>
+    </requires>
+  </input>
+  <input Group="SURF" Keyword="CITYP1">
+    <requires>
+      <Entity Group="SURF" Keyword="CITYP2"/>
+    </requires>
+  </input>
+  <input Group="SURF" Keyword="CITYP2">
+    <requires>
+      <Entity Group="SURF" Keyword="CITYP1"/>
+    </requires>
+  </input>
+  <input Group="SURF" Keyword="CCTYP1">
+    <requires>
+      <Entity Group="SURF" Keyword="CCTYP2"/>
+    </requires>
+  </input>
+  <input Group="SURF" Keyword="CCTYP2">
+    <requires>
+      <Entity Group="SURF" Keyword="CCTYP1"/>
+    </requires>
+  </input>
+  <input Group="SURF" Keyword="DFTYP1">
+    <requires>
+      <Entity Group="SURF" Keyword="DFTYP2"/>
+    </requires>
+  </input>
+  <input Group="SURF" Keyword="DFTYP2">
+    <requires>
+      <Entity Group="SURF" Keyword="DFTYP1"/>
+    </requires>
+  </input>
+</root>

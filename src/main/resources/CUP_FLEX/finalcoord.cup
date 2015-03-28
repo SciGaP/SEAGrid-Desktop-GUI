@@ -1,0 +1,129 @@
+import java_cup.runtime.*;
+import javax.swing.*;
+import java.util.*;
+import java.io.*; 
+
+
+
+/*
+OUTPUT FORMAT:____________________________________________________________
+1NSERCH=   0    
+         more text 
+ SCF Done:  E(RHF) =  -7.85284496695     A.U. after    8 cycles  
+         more text
+ Maximum Force            0.000000     0.000450     YES
+ RMS     Force            0.000000     0.000300     YES
+         more text
+TO MONITOR:____________________________________________________________
+ iteration, energy
+
+MANUALLY ADD TO CUP-GENERATED CLASS IN SCFaParser.java:________________
+
+
+//add to CUP$SCFaParser$actions
+public ParseSCF2 parseSCF;
+
+//add to the constructor of CUP$SCFaParser$actions
+ parseSCF = new ParseSCF2();
+
+*/
+
+action code {: 
+  //__________________________________
+  public static boolean DEBUG = true;
+  private static JTable table;               
+  private static final String tableLabel = "SCF Intermediate Results:";
+// private static String cycle = "0";
+ 
+  
+  public static JTable getTable() {
+    return table;
+  }
+
+  public static String getTableLabel() {
+    return tableLabel;
+  }
+
+//   }
+:}
+
+
+
+
+terminal      INPUT1, FOUNDITER, SCFDONE, DASH1, DASH2;
+terminal Integer INPUT2, INPUT3, INPUT4, ITERATION;
+terminal Float     ENERGY, INPUT5, INPUT6, INPUT7;
+non terminal  startpt, scfintro, scfpat, scfcycle, cycle, grad1, grad2;
+non terminal inp2, inp3, inp5, inp6, inp7, cycle1, cycle2, cycle3;
+
+
+/* ___________
+   The grammer */
+
+startpt ::= scfintro
+           scfpat 
+            SCFDONE
+             ;
+
+
+
+
+scfintro ::=
+   FOUNDITER 
+   {: if (DEBUG) System.out.println("CUP:Input:  found the start of Iteration"); :}
+;
+
+scfpat ::= scfpat scfcycle
+   {: if (DEBUG) System.out.println("CUP:Input: in scfpat"); :}
+   |
+   scfcycle
+;
+
+scfcycle ::= INPUT1 DASH1 cycle1 DASH2
+;
+
+cycle1 ::= cycle1 cycle2
+  |
+  cycle2
+;
+
+cycle2 ::= 
+inp2
+inp3 
+INPUT4
+inp5
+inp6
+inp7
+;
+
+
+inp2 ::= INPUT2:in2
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:Input:  center number "+in2);
+ :}
+ ;
+
+
+inp3 ::= INPUT3:in3
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:Input:  atomic number "+in3); 
+ :}
+ ;
+
+inp5 ::= INPUT5:in5
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:Input:  x coordinate "+in5);
+ :}
+ ;
+
+inp6 ::= INPUT6:in6
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:Input:  y coordinate "+in6);
+ :}
+ ;
+
+inp7 ::= INPUT7:in7
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:Input:  z coordinate "+in7);
+ :}
+ ;

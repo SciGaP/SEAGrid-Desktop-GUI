@@ -1,0 +1,27 @@
+import java_cup.runtime.*;
+
+parser code {: ///public static boolean DEBUG = false; :}
+
+init with {: if(Settings.DEBUG) System.out.println("CUP:mp2to5c:  entry"); :};
+
+terminal E2, EUMP2, MP4_T, E3, E4_DQ, E4_SDQ, E4_SDTQ, EUMP3, UMP4_DQ, UMP4_SDQ, UMP4_SDTQ;
+terminal String FCOPT, FCOPT2, ALGOPT, MP2OPT, VAR, LIM, FLOAT;
+non terminal Object startpt, element;
+
+/* ___________
+   The grammer */
+
+startpt ::= startpt element
+            |
+            element
+            ;
+
+element ::=
+	ALGOPT:s
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5c:  Algorithm Option:  "+s);
+	   ParseMP2to5.put("Algorithm Option:  ", s); :}
+	|
+	MP2OPT:s
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5c:  MP2-Specific Option: "+s);
+	   ParseMP2to5.put("MP2-Specific Option: ", s); :}
+	;

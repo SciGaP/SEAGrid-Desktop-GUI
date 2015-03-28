@@ -1,0 +1,62 @@
+import java_cup.runtime.*;
+import javax.swing.*;
+import java.util.*;
+import java.io.*; 
+
+
+
+/*
+OUTPUT FORMAT:____________________________________________________________
+1NSERCH=   0    
+         more text 
+         NSERCH=  0     ENERGY=     -76.5352218               
+         more text
+              MAXIMUM GRADIENT =  0.2313886    RMS GRADIENT = 0.0944646    
+         more text
+TO MONITOR:____________________________________________________________
+ iteration, energy
+
+MANUALLY ADD TO CUP-GENERATED CLASS IN SCFaParser.java:________________
+
+
+//add to CUP$SCFaParser$actions
+public ParseSCF2 parseSCF;
+
+//add to the constructor of CUP$SCFaParser$actions
+ parseSCF = new ParseSCF2();
+
+*/
+
+action code {: 
+  //__________________________________
+  public static boolean DEBUG = true;
+ 
+:}
+
+
+
+
+terminal           FOUNDITER, SCFDONE;
+terminal     RUNTYP, RUNTYP1;
+non terminal  startpt, scfintro, scfpat, scfcycle, en, grad1, grad2, en1;
+non terminal String rtyp, rtyp1;
+
+
+
+/* ___________
+   The grammer */
+
+startpt ::= scfintro 
+ {: if (DEBUG) System.out.println("CUP:gaussian:  end of parse tree "); 
+	
+ 	     :}
+             ;
+
+
+
+
+scfintro ::=
+   FOUNDITER  RUNTYP 
+   {: if (DEBUG) System.out.println("CUP:gaussian:  found FOUNDITER "); :}
+
+;

@@ -1,0 +1,35 @@
+/Main.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/action_part.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/action_production.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/assoc.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/emit.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/internal_error.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/lalr_item.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/lalr_item_set.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/lalr_state.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/lalr_transition.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/lexer.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/lr_item_core.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/makefile.winnt/1.1/Wed Jun  1 17:23:14 2005//TGridChem2_client_windows
+/non_terminal.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/nonassoc_action.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/parse_action.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/parse_action_row.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/parse_action_table.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/parse_reduce_row.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/parse_reduce_table.java/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/parser.cup/1.1.1.1/Tue Apr 26 16:34:02 2005//TGridChem2_client_windows
+/parser.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows
+/production.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows
+/production_part.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows
+/reduce_action.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows
+D/runtime////
+/shift_action.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows
+D/simple_calc////
+/sym.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows
+/symbol.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows
+/symbol_part.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows
+/symbol_set.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows
+/terminal.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows
+/terminal_set.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows
+/version.java/1.1.1.1/Tue Apr 26 16:34:03 2005//TGridChem2_client_windows

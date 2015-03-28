@@ -1,0 +1,115 @@
+import java_cup.runtime.*;
+import javax.swing.*;
+import java.util.*;
+
+
+
+
+/*
+MANUALLY ADD TO CUP-GENERATED CLASS IN SCFbParser.java:________________
+
+ //add to CUP$SCFbParser$actions
+ public ParseSCF2 parseSCF;
+
+ //add to the constructor of CUP$SCFbParser$actions
+ parseSCF = new ParseSCF2();
+
+*/
+action code {: 
+  //__________________________________
+  public static boolean DEBUG = true; 
+  private static JTable table;               
+  private static final String tableLabel = "SCF Final Results:";
+  
+  public static JTable getTable() {
+    return table;
+  }
+
+  public static String getTableLabel() {
+    return tableLabel;
+  }
+:}
+
+
+
+
+terminal            FOUNDSCF, FOUNDLENX, CYCLE, PASS, IDIAG, ENERGY, DELTAE, DIIS, ATCYCLE, COEFF, TEE, GAP, NK, IS, IE, NO09, NV01, LTEF, GTEF, ERR, RMSDP, MAXDP, COLON, SCFDONE, ERHF, CONVG, S2, MINUSVT, AU, KE, PE, EE, EQUALS, DUMMY, LEAVE;
+terminal String     INT, LENXINT;
+terminal String     FLOAT;
+non terminal Object startpt, scfintro, scfpat, scfcycle, floats, at, en, rms, co, scffinal;
+
+
+
+
+/* ___________
+   The grammer */
+
+startpt ::= scfintro
+            scffinal
+            {: if (DEBUG) System.out.println("CUP:scfa:  found scfintro scffinal");
+ 	       table = new JTable();
+	       table = parseSCF.getTable();
+             :}
+            LEAVE
+            {: if (DEBUG) System.out.println("CUP:scfb:  found LEAVE"); 
+             :}
+             ;
+
+
+
+
+scfintro ::=
+FOUNDSCF 
+{: if (DEBUG) System.out.println("CUP:scfb:  found SCF"); :}
+FOUNDLENX LENXINT:i
+{: if (DEBUG) System.out.println("CUP:scfb:  LENX --> "+i); 
+ :}
+;
+
+
+
+
+scffinal ::= 
+SCFDONE
+{: if (DEBUG) System.out.println("CUP:scfb:  scfdone "); :}
+ERHF EQUALS FLOAT:e
+{: //_____________________________________________________
+if (DEBUG) System.out.println("CUP:scfb:  ERHF "+e); 
+parseSCF.putField("E(RHF)", e);
+ :}
+AU INT:i DUMMY
+{: //___________________________________________________
+if (DEBUG) System.out.println("CUP:scfb:  AU "+i); 
+parseSCF.putField("AU", i);
+ :} 
+CONVG EQUALS FLOAT:c
+{: //______________________________________________________
+if (DEBUG) System.out.println("CUP:scfb:  CONVG "+c); 
+parseSCF.putField("CONVG", c);
+ :}
+MINUSVT EQUALS FLOAT:m
+{: //________________________________________________________
+if (DEBUG) System.out.println("CUP:scfb:  MINUSVT "+m); 
+parseSCF.putField("-V/T", m);
+ :}
+S2 EQUALS FLOAT:s2
+{: //____________________________________________________
+if (DEBUG) System.out.println("CUP:scfb:  S2 "+s2);
+parseSCF.putField("S2", s2);
+ :}
+KE EQUALS FLOAT:ke
+{: //____________________________________________________
+if (DEBUG) System.out.println("CUP:scfb:  KE "+ke); 
+parseSCF.putField("KE", ke);
+ :}
+PE EQUALS FLOAT:pe
+{: //____________________________________________________
+if (DEBUG) System.out.println("CUP:scfb:  PE "+pe); 
+parseSCF.putField("PE", pe);
+ :}
+EE EQUALS FLOAT:ee
+{: //____________________________________________________
+if (DEBUG) System.out.println("CUP:scfb:  EE "+ee); 
+parseSCF.putField("EE", ee);
+ :}
+ ;

@@ -1,0 +1,166 @@
+import java_cup.runtime.*;
+import javax.swing.*;
+import java.util.*;
+import java.io.*; 
+
+
+
+/*
+OUTPUT FORMAT:____________________________________________________________
+1NSERCH=   0    
+         more text 
+ SCF Done:  E(RHF) =  -7.85284496695     A.U. after    8 cycles  
+         more text
+ Maximum Force            0.000000     0.000450     YES
+ RMS     Force            0.000000     0.000300     YES
+         more text
+TO MONITOR:____________________________________________________________
+ iteration, energy
+
+MANUALLY ADD TO CUP-GENERATED CLASS IN SCFaParser.java:________________
+
+
+//add to CUP$SCFaParser$actions
+public ParseSCF2 parseSCF;
+
+//add to the constructor of CUP$SCFaParser$actions
+ parseSCF = new ParseSCF2();
+
+*/
+
+action code {: 
+  //__________________________________
+  public static boolean DEBUG = true;
+  private static JTable table;               
+  private static final String tableLabel = "SCF Intermediate Results:";
+// private static String cycle = "0";
+ 
+  
+  public static JTable getTable() {
+    return table;
+  }
+
+  public static String getTableLabel() {
+    return tableLabel;
+  }
+
+//   }
+:}
+
+
+
+
+terminal           FOUNDITER1, SCFDONE1, NSearch1, Energ1, MaxGrad1, RmsGrad1;
+terminal           MPStart, NMP, MPEnerg, MPMax, MPRms, MPDONE;
+terminal Integer     ITERATION1, MPITER;
+terminal Float     ENERGY1, MGRAD1, RGRAD1, MPENERGY, MPMGRAD, MPRGRAD;
+non terminal  startpt, scfintro, scfpat, scfcycle, cycle, grad1, grad2;
+non terminal mp2, mpintro, mppat, mpcycle, mpcycle1, force1, force2;
+
+
+
+/* ___________
+   The grammer */
+
+startpt ::= scfintro
+           scfpat 
+           SCFDONE1
+           mp2
+            MPDONE
+            {: if (DEBUG) System.out.println("CUP:gopt:  end of parse tree "); 
+ 	     :}
+             ;
+
+
+
+
+scfintro ::=
+   FOUNDITER1 
+   {: if (DEBUG) System.out.println("CUP:gopt:  found the start of Iteration"); :}
+;
+
+scfpat ::= scfpat scfcycle 
+   {: if (DEBUG) System.out.println("CUP:gopt: in scfpat"); :}
+   |
+   scfcycle
+// Originally:  SCFDONE1 
+;
+
+scfcycle ::= Energ1 ENERGY1:e
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:gopt:  ENERGY "+e);
+ :}
+cycle
+;
+
+
+
+
+cycle ::= NSearch1 ITERATION1:c
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:gopt:  ITERATION "+c); 
+ :}
+grad1
+grad2
+ ;
+
+grad1 ::= MaxGrad1  MGRAD1:mg
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:gopt: Maximum Force "+mg);
+ :}
+;
+
+grad2 ::= RmsGrad1  RGRAD1:rg
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:gopt: RMS Force "+rg);
+ :}
+;
+
+mp2 ::= mpintro mppat
+{:
+    if (DEBUG) System.out.println("CUP:g1: in mp2 mpintro mppat");
+ :}
+;
+
+mpintro ::=
+MPStart
+{:
+   if (DEBUG) System.out.println("CUP:g1: MPSTart ");
+ :}
+;
+
+mppat ::= mppat mpcycle1
+{:
+  if (DEBUG) System.out.println("CUP:g1: in mppat");
+ :}
+|
+mpcycle1
+;
+
+mpcycle1 ::= MPEnerg MPENERGY:mpen
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:g1:  ENERGY "+mpen);
+ :}
+mpcycle
+;
+
+
+mpcycle ::= NMP MPITER:it
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:g1:  MP ITERATION "+it);
+ :}
+force1
+force2
+;
+
+force1 ::= MPMax  MPMGRAD:mpmg
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:g1: MP Maximum Force "+mpmg);
+ :}
+;
+ 
+force2 ::= MPRms  MPRGRAD:mprg
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:g1: MP RMS Force "+mprg);
+ :}
+;

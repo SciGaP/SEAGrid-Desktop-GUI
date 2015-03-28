@@ -1,0 +1,132 @@
+import java_cup.runtime.*;
+import javax.swing.*;
+import java.util.*;
+import java.io.*; 
+
+
+
+/*
+OUTPUT FORMAT:____________________________________________________________
+          --------------------------
+                 RHF SCF CALCULATION
+          --------------------------
+ 
+     NUCLEAR ENERGY =         6.1221376700
+     MAXIT =   30     NPUNCH=    2
+     EXTRAP=T  DAMP=F  SHIFT=F  RSTRCT=F  DIIS=F  DEM=F  SOSCF=F
+     DENSITY CONV=  1.00E-05
+     MEMORY REQUIRED FOR RHF STEP=     30441 WORDS.
+ 
+ ITER EX DEM    TOTAL ENERGY       E CHANGE  DENSITY CHANGE    DIIS ERROR
+   1  0  0      -37.172577283   -37.172577283   0.380764107   0.000000000
+   2  1  0      -37.227975620    -0.055398337   0.131481807   0.000000000
+   3  2  0      -37.231732248    -0.003756628   0.046548652   0.000000000
+   4  3  0      -37.232193210    -0.000460963   0.016847695   0.000000000
+
+TO MONITOR:____________________________________________________________
+ iteration, energy
+
+MANUALLY ADD TO CUP-GENERATED CLASS IN SCFaParser.java:________________
+
+
+//add to CUP$SCFaParser$actions
+public ParseSCF2 parseSCF;
+
+//add to the constructor of CUP$SCFaParser$actions
+ parseSCF = new ParseSCF2();
+
+*/
+
+action code {: 
+  //__________________________________
+  public static boolean DEBUG = true;
+  private static JTable table;               
+  private static final String tableLabel = "SCF Intermediate Results:";
+// private static String cycle = "0";
+ 
+  
+  public static JTable getTable() {
+    return table;
+  }
+
+  public static String getTableLabel() {
+    return tableLabel;
+  }
+
+/*  public static void main(String[] args) throws IOException {
+     File temp = new File("temporary");
+     boolean append = true;
+     try{ 
+     FileWriter temp1 = new FileWriter(temp, append);
+     PrintWriter temp2 = new PrintWriter(temp1);}
+
+     catch (FileNotFoundException e)  {
+          System.out.println("no file, dude!");
+       }  */
+//   }
+:}
+
+
+
+
+terminal            FOUNDITER, SCFDONE;
+terminal Integer     INT1, INT2, INT3, INTCycle;
+terminal Float     FLOAT, FLOAT1, FLOAT2, FLOAT3, ENERGY, FLOAT4;
+terminal Float FLOAT5, FLOAT6, FLOAT7, FLOAT8;
+non terminal  startpt, scfintro, scfpat, scfcycle, en;
+
+
+
+
+/* ___________
+   The grammer */
+
+startpt ::= scfintro
+           scfpat 
+            SCFDONE
+            {: if (DEBUG) System.out.println("CUP:gscfa:  end of parse tree "); 
+ 	       table = new JTable();
+	
+//       table = parseSCF.getTable();
+ 	     :}
+             ;
+
+
+
+
+scfintro ::=
+   FOUNDITER 
+   {: if (DEBUG) System.out.println("CUP:gscfa:  found start of SCF Iteration"); :}
+;
+
+scfpat ::= scfpat scfcycle
+   {: if (DEBUG) System.out.println("CUP:gscfa: in scfpat"); :}
+   |
+   scfcycle
+;
+
+scfcycle ::=
+INTCycle:c
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:gscfa:scfcycle:  ITERATION "+c);
+//  temp2.print(c);
+//   temp2.print(" "); 
+//  cycle = c;
+ 
+//  parseSCF.putField("iteration "+cycle, cycle);
+ :}
+en
+FLOAT1 FLOAT2 FLOAT3 FLOAT4 FLOAT5 FLOAT6 FLOAT7 FLOAT8
+;
+
+
+
+
+en ::= 
+ENERGY:e 
+{: //___________________________________________________________________
+   if (DEBUG) System.out.println("CUP:gscfa:scfcycle:  ENERGY "+e); 
+//   temp2.println(e);
+//  parseSCF.putField("iteration "+cycle, "energy", e);
+ :}
+ ;

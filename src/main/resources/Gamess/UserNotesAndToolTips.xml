@@ -1,0 +1,3315 @@
+<root>
+  <UserNotes>
+    <UserNote Group="GUESS" Keyword="GUESS" Value="MOREAD">
+      if running MP2, CI, or MCSCF computation with
+      GUESS=MOREAD then
+      for property evaluation use RUNTYP=ENERGY instead of
+      RUNTYP=PROP
+    </UserNote>
+    <UserNote Group="GUESS" Keyword="GUESS" Value="RDMINI">
+      $VEC group data must be from a converged computation
+      that used GBASIS=MINI containing no polarization functions
+    </UserNote>
+    <UserNote Group="GUESS" Keyword="GUESS" Value="FMO">
+      Orbitals being read in must be from previous FMO run
+      using MODPRP=1
+    </UserNote>
+    <UserNote Group="GUESS" Keyword="NORB">
+      If SCFTYP=UHF and NORB not selected, only the occupied alpha
+      and beta orbitals should be given
+
+      If SCFTYP=UHF and NORB is selected, both the alpha and beta
+      orbitals must contain NORB vectors
+    </UserNote>
+    <UserNote Group="EOMINP" Keyword="GROUP">
+      if GROUP is set to C1 then Abelian Symmetry = OFF
+    </UserNote>
+    <UserNote Group="EOMINP" Keyword="MINIT">
+      It is recommended that you select MINIT=2 as the default selection
+      of 1 may result in convergence problems or missed states if the
+      calculated states have significant doubly excited character.
+    </UserNote>
+    <UserNote Group="BASIS" Keyword="RELWFN" Value="DK">
+      Although any ordinary basis set can be used here, results may be inaccurate
+      when using basis sets without relativistic corrections. At a minimum the
+      contraction coefficients should be modified to account for relativistic effects
+      such as s-orbital contraction. In addition reoptimization of the any non-
+      relativistic exponents may be necessary.
+
+      Additional information on relativistically-derived basis sets that can be used
+      here may be found in the Help menu.
+    </UserNote>
+    <UserNote Group="BASIS" Keyword="RELWFN" Value="RESC">
+      Although any ordinary basis set can be used here, results may be inaccurate
+      when using basis sets without relativistic corrections. At a minimum the
+      contraction coefficients should be modified to account for relativistic effects
+      such as s-orbital contraction. In addition reoptimization of the any non-
+      relativistic exponents may be necessary.
+
+      Additional information on relativistically-derived basis sets that can be used
+      here may be found in the Help menu.
+    </UserNote>
+    <UserNote Group="BASIS" Keyword="RELWFN" Value="NESC">
+      Three separate basis sets must be provided for this computation – one for the
+      large components ($DATAL), one for the small components ($DATAS), and
+      one averaged basis set ($DATA).  You also must use COORD=UNIQUE style
+      input in each of the three $DATA() input groups.
+
+      Additional information on relativistically-derived basis sets that can be used
+      here may be found in the Help menu.
+    </UserNote>
+    <UserNote Group="RAMAN" Keyword="EFIELD">
+      This computation must follow a previous run using RUNTYP=HESSIAN
+      and the $GRAD and $HESS groups from that run must be included as
+      inputs within this run.
+    </UserNote>
+    <UserNote Group="FFCALC" Keyword="SYM">
+      See the Help menu for detailed information on the breaking
+      of molecular symmetry by an applied electric field
+    </UserNote>
+    <UserNote Group="FFCALC" Keyword="EFIELD">
+      Finite field calculations require large basis sets as well as very
+      accurate wavefunctions, which often can result in problems with
+      convergence. To improve the likelihood of getting convergence,
+
+      include certain keywords in your input file that can increase both
+      integral accuracy and wavefunction convergence, such as
+
+      $CONTRL  ICUT=20  ITOL=30  $END
+      $SCF  CONV=1.0D-7  FDIFF=.FALSE.  $END
+    </UserNote>
+    <UserNote Group="TDHF">
+      You must include NOSYM=1 in the $CONTRL group within your
+      input file since the Fock matrices computed using time-dependent
+      HF are not symmetric.
+    </UserNote>
+    <UserNote Group="TDHF" Keyword="FREQ">
+      The energy values entered for this keyword must be in atomic
+      units (Hartrees). See the Help menu for information on converting
+      wavenumbers and wavelengths to Hartrees.
+    </UserNote>
+    <UserNote Group="TDHFX">
+      You must include NOSYM=1 and ISPHER=0 in the $CONTRL
+      group within your input file since the Fock matrices computed
+      using time-dependent HF are not symmetric and this computation
+      cannot use spherical harmonics. In addition it is suggested that
+      you set CONV=1.0D-06 in the $SCF input group
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="ALPHA">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="BETA">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="BETA_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="GAMMA">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="GAMMA_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="POCKELS">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="POCKELS_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="OR">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="OR_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="SHG">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="SHG_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="KERR">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="KERR_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="ESHG">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="ESHG_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="THG">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="THG_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="DFWM">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="DFWM_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="DMDX_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="DADX">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="DADX_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="DBDX">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="DBDX_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="D2ADX2_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="D2BDX2_NI">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="RAMAN">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="HRAMAN">
+      Laser energies must be given in Hartrees
+    </UserNote>
+    <UserNote Group="TDHFX" Keyword="FREE">
+      Laser energies must be given in Hartrees"
+    </UserNote>
+    <UserNote Group="STATPT">
+      The value specified for the keyword NZVAR in the $CONTRL input
+      group determines if the search for stationary points is conducted in
+      Cartesian or internal coordinates
+    </UserNote>
+    <UserNote Group="STATPT" Keyword="METHOD" Value="CONOPT">
+      The starting geometry for this optimization
+      algorithm, which can be use for locating
+      transitions states, must be a minimum.
+    </UserNote>
+    <UserNote Group="STATPT" Keyword="PROJCT">
+      Set PROJCT=.FALSE. if POSITION=FIXED
+      is used during EFP computation
+    </UserNote>
+    <UserNote Group="TRUDGE" Keyword="P">
+      If this keyword is selected, the molecular geometry
+      must be given in Angstroms and degrees
+    </UserNote>
+    <UserNote Group="TRURST" Keyword="TOLR">
+      For geometry optimization the values that give results
+      closest to those obtained with gradient methods are:
+      TOLF=0.0001, TOLR=0.001, FNOISE=0.00001
+    </UserNote>
+    <UserNote Group="FORCE" Keyword="TEMP">
+      For a temperature of absolute zero, use TEMP=0.001
+    </UserNote>
+    <UserNote Group="FORCE" Keyword="FREQ">
+      Enter imaginary frequencies as negative values
+    </UserNote>
+    <UserNote Group="VSCF" Keyword="IMODE">
+      If this keyword is selected, set NCOUP = 1 in this input group
+    </UserNote>
+    <UserNote Group="VSCF" Keyword="PROJCT">
+      Set this keyword equal to .TRUE. if IFREEZ is specified in
+      $STATPT input group
+    </UserNote>
+    <UserNote Group="VSCF" Keyword="READV">
+      Set this keyword equal to .TRUE. if $VIBSCF input group
+      is included in input file
+    </UserNote>
+    <UserNote Group="VIBSCF">
+      Copy data from the IRCDATA file written out in a partially
+      completed previous run.
+    </UserNote>
+  </UserNotes>
+  <ToolTips>
+    <ToolTip Group="CONTRL">
+      chemical control data
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="SCFTYP">
+      specifies the self-consistent field
+      wavefunction.  You may choose from
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="SCFTYP" Value="RHF">
+      Restricted Hartree Fock calculation (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="SCFTYP" Value="UHF">
+      Unrestricted Hartree Fock calculation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="SCFTYP" Value="ROHF">
+      Restricted open shell Hartree-Fock.
+      (high spin, see GVB for low spin)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="SCFTYP" Value="GVB">
+      Generalized valence bond wavefunction
+      or OCBSE type ROHF. (needs $SCF input)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="SCFTYP" Value="MCSCF">
+      Multiconfigurational SCF wavefunction
+      (this requires $DET or $DRT input)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="SCFTYP" Value="NONE">
+      indicates a single point computation,
+      rereading a converged SCF function.
+      This option requires that you select
+      CITYP=ALDET, ORMAS, FSOCI, GENCI, or
+      GUGA, requesting only RUNTYP=ENERGY or
+      TRANSITN, and using GUESS=MOREAD.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="MPLEVL">
+      chooses Moller-Plesset perturbation
+      theory level, after the SCF.  See the
+      $MP2 group (or $MRMP for MCSCF).
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="MPLEVL" Value="0">
+      skip the MP computation (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="MPLEVL" Value="2">
+      perform second order energy correction.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="CITYP">
+      chooses CI computation after the SCF,
+      for any SCFTYP except UHF.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CITYP" Value="NONE">
+      skips the CI. (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CITYP" Value="CIS">
+      single excitations from a SCFTYP=RHF
+      reference, only.  This is for the
+      treatment of excited states, with
+      analytic nuclear gradients available.
+      See the $CIS input group.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CITYP" Value="ALDET">
+      runs the Ames Laboratory determinant
+      full CI package, requiring $CIDET.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CITYP" Value="ORMAS">
+      runs an Occupation Restricted Multiple
+      Active Space determinant CI.  The input
+      is $CIDET and $ORMAS.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CITYP" Value="FSOCI">
+      runs a full second order CI using
+      determinants, see $CIDET and $SODET.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CITYP" Value="GENCI">
+      runs a determinant CI program that
+      permits arbitrary specification of
+      the determinants, requiring $CIGEN.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CITYP" Value="GUGA">
+      runs the Unitary Group CI package,
+      which requires $CIDRT input. Analytic
+      gradients are available only for RHF,
+      so for other SCFTYPs, you may choose
+      only RUNTYP=ENERGY, TRUDGE, SURFACE,
+      FFIELD, TRANSITN.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="CCTYP">
+      chooses a Coupled-Cluster (CC calculation for the
+      ground state and, optionally, Equation of Motion
+      Coupled-Cluster (EOMCC) computation for excited
+      states, both performed after SCF (SCFTYP=RHF only).
+      See also $CCINP and $EOMINP.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="NONE">
+      skips CC computation (default).
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="LCCD">
+      perform a coupled-cluster calculation
+      using the linearized coupled-cluster
+      method with double excitations.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="CCD">
+      perform a CC calculation using the
+      coupled-cluster method with doubles.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="CCSD">
+      perform a CC calculation with both
+      single and double excitations.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="CCSD(T)">
+      in addition to CCSD, the non-iterative
+      triples corrections are computed, giving
+      standard CCSD[T] and CCSD(T) energies.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="R-CC">
+      in addition to all CCSD(T) calculations,
+      compute the renormalized R-CCSD[T] and
+      R-CCSD(T) energies.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="CR-CC">
+      in addition to all R-CC calculations,
+      the completely renormalized CR-CCSD[T]
+      and CR-CCSD(T) energies are computed.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="CR-CCL">
+      in addition to a CCSD ground state, the
+      non-iterative triples energy correction
+      defining the rigorously size extensive
+      completely renormalized CR-CC(2,3), also
+      called CR-CCSD(T)_L theory, is computed.
+      Ground state only (zero NSTATE vector)
+      CCTYP=CR-EOM type CR-EOMCCSD(T) energies
+      and CCSD properties are also generated.
+      For further information about accuracy,
+      and A to D energy types, see REFS.DOC.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="CCSD(TQ)">
+      in addition to all R-CC calculations,
+      non-iterative triple and quadruple
+      corrections are used, to give CCSD(TQ)
+      and various R-CCSD(TQ) energies.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="CR-CC(Q)">
+      in addition to all CR-CC and CCSD(TQ)
+      calculations, the CR-CCSD(TQ) energies
+      are obtained.
+
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="EOM-CCSD">
+      in addition to a CCSD ground state,
+      excited states are calculated using the
+      equation of motion coupled-cluster
+      method with singles and doubles.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="CCTYP" Value="CR-EOM">
+      in addition to the CCSD and EOM-CCSD,
+      noniterative triples corrections to CCSD
+      ground-state and EOM-CCSD excited-state
+      energies are found, using completely
+      renormalized CR-EOMCCSD(T) approaches.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="RELWFN" Value="NONE">
+      (default)  See also the $RELWFN input group.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RELWFN" Value="DK">
+      Douglas-Kroll transformation, available at
+      the 1st, 2nd, or 3rd order.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RELWFN" Value="RESC">
+      relativistic elimination of small component,
+      the method of T. Nakajima and K. Hirao,
+      available at 2nd order only.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RELWFN" Value="NESC">
+      normalised elimination of small component,
+      the method of K. Dyall, 2nd order only.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="RUNTYP">
+      specifies the type of computation, for
+      example at a single geometry point:
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="ENERGY">
+      Molecular energy. (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="GRADIENT">
+      Molecular energy plus gradient.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="HESSIAN">
+      Molecular energy plus gradient plus
+      second derivatives, including harmonic
+      harmonic vibrational analysis.  See the
+      $FORCE and $CPHF input groups.
+
+      multiple geometry options:
+
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="OPTIMIZE">
+      Optimize the molecular geometry using
+      analytic energy gradients. See $STATPT.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="TRUDGE">
+      Non-gradient total energy minimization.
+      See groups $TRUDGE and $TRURST.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="SADPOINT">
+      Locate saddle point (transition state).
+      See the $STATPT group.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="MEX">
+      Locate minimum energy crossing point on
+      the intersection seam of two potential
+      energy surfaces.  See $MEX input.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="IRC">
+      Follow intrinsic reaction coordinate.
+      See the $IRC group.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="VSCF">
+      Compute anharmonic vibrational
+      corrections (see $VSCF)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="DRC">
+      Follow dynamic reaction coordinate.
+      See the $DRC group.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="MD">
+      molecular dynamics trajectory, see $MD.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="GLOBOP">
+      Monte Carlo-type global optimization.
+      See $GLOBOP.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="OPTFMO">
+      genuine FMO geometry optimization using
+      nearly analytic gradient (see $OPTFMO).
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="GRADEXTR">
+      Trace gradient extremal.  See $GRADEX.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="SURFACE">
+      Scan linear cross sections of the
+      potential energy surface.  See $SURF.
+
+      single geometry property options:
+
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="PROP">
+      Properties will be calculated.  A $DATA
+      deck and converged $VEC group should be
+      input.  Optionally, orbital localization
+      can be done.  See $ELPOT, etc.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="RAMAN">
+      computes Raman intensities, see $RAMAN.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="NMR">
+      NMR shielding tensors for closed shell
+      molecules by the GIAO method.  See $NMR.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="MOROKUMA">
+      Performs monomer energy decomposition.
+      See the $MOROKM group.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="TRANSITN">
+      Compute radiative transition moment or
+      spin-orbit coupling.  See $TRANST group.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="FFIELD">
+      applies finite electric fields, most
+      commonly to extract polarizabilities.
+      See the $FFCALC group.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="TDHF">
+      analytic computation of time dependent
+      polarizabilities.  See the $TDHF group.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="TDHFX">
+      extended TDHF package, including nuclear
+      polarizability derivatives, and Raman
+      and Hyper-Raman spectra.  See $TDHFX.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="RUNTYP" Value="MAKEFP">
+      creates an effective fragment potential.
+      See $DAMP, $DAMPGS, $STONE, $PDC...
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="NUMGRD">
+      Flag to allow numerical differentiation
+      of the energy.  Each gradient requires
+      the energy be computed twice (forward
+      and backward displacements) along each
+      totally symmetric modes.  It is thus
+      recommended only for systems with just a
+      few symmetry unique atoms in $DATA.
+      The default is .FALSE.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="EXETYP" Value="RUN">
+      Actually do the run. (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="EXETYP" Value="CHECK">
+      Wavefunction and energy will not be
+      evaluated.  This lets you speedily
+      check input and memory requirements.
+      See the overview section for details.
+      Note that you must set PARALL=.TRUE.
+      in $SYSTEM to test distributed memory
+      allocations.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="EXETYP" Value="DEBUG">
+      Massive amounts of output are printed,
+      useful only if you hate trees.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="EXETYP" Value="ROUTINE">
+      Maximum output is generated by the
+      routine named.  Check the source for
+      the routines this applies to.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="ICHARG">
+      Molecular charge.  (default=0, neutral)
+      ICHARG and MULT are used directly for RHF, UHF, ROHF.
+      For GVB, these are implicit in the $SCF input, while
+      for MCSCF or CI, these are implicit in $DRT/$CIDRT or
+      $DET/$CIDET input.  You must still give them correctly.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="MULT">
+      Multiplicity of the electronic state
+      = 1         singlet (default)
+      = 2,3,...   doublet, triplet, and so on.
+
+      ICHARG and MULT are used directly for RHF, UHF, ROHF.
+      For GVB, these are implicit in the $SCF input, while
+      for MCSCF or CI, these are implicit in $DRT/$CIDRT or
+      $DET/$CIDET input.  You must still give them correctly.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="COORD">
+      choice for molecular geometry in $DATA.
+
+      Note: the choices CART, ZMT, ZMTMPC require input of all
+      atoms in the molecule.  They also orient the molecule, and
+      then determine which atoms are unique.  The reorientation
+      is likely to change the order of the atoms from what you
+      input.  When the point group contains a 3-fold or higher
+      rotation axis, the degenerate moments of inertia often
+      cause problems choosing correct symmetry unique axes, in
+      which case you must use COORD=UNIQUE rather than Z-
+      matrices.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="COORD" Value="UNIQUE">
+      only the symmetry unique atoms will be
+      given, in Cartesian coords (default).
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="COORD" Value="HINT">
+      only the symmetry unique atoms will be
+      given, in Hilderbrandt style internals.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="COORD" Value="CART">
+      Cartesian coordinates will be input.
+      Please read the warning just below!!!
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="COORD" Value="ZMT">
+      GAUSSIAN style internals will be input.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="COORD" Value="ZMTMPC">
+      MOPAC style internals will be input.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="COORD" Value="FRAGONLY">
+      means no part of the system is treated
+      by ab initio means, hence $DATA is not
+      given. The system is defined by $EFRAG.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="UNITS">
+      distance units, any angles must be in degrees.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="UNITS" Value="ANGS">
+      Angstroms (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="UNITS" Value="BOHR">
+      Bohr atomic units
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="NZVAR">
+      Use Cartesian coordinates (default).
+
+      If COORD=ZMT or ZMTMPC, and $ZMAT is not given:
+      the internal coordinates will be those defining
+      the molecule in $DATA.  In this case, $DATA may
+      not contain any dummy atoms.  M is usually
+      3N-6, or 3N-5 for linear.
+
+      For other COORD choices, or if $ZMAT is given:
+      the internal coordinates will be those defined
+      in $ZMAT.  This allows more sophisticated
+      internal coordinate choices.  M is ordinarily
+      3N-6 (3N-5), unless $ZMAT has linear bends.
+
+      NZVAR refers mainly to the coordinates used by OPTIMIZE
+      or SADPOINT runs, but may also print the internal's
+      values for other run types.  You can use internals to
+      define the molecule, but Cartesians during optimizations!
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="PP">
+      pseudopotential selection.
+      Pseudopotentials may be of two types,
+      the nodeless ECP or "effective core
+      potentials", and the MCP, or "model core
+      potentials" producing valence orbitals
+      with the correct radial nodal structure.
+      At present, ECPs have analytic nuclear
+      gradients and Hessians, while MCPs do
+      not have analytic nuclear derivatives.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="PP" Value="NONE">
+      all electron calculation (default).
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="PP" Value="READ">
+      read ECP potentials in the $ECP group.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="PP" Value="SBKJC">
+      use Stevens, Basch, Krauss, Jasien,
+      Cundari ECP potentials for all heavy
+      atoms (Li-Rn are available).
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="PP" Value="HW">
+      use Hay, Wadt ECP potentials for heavy
+      atoms (Na-Xe are available).
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="PP" Value="MCP">
+      use Huzinaga's Model Core Potentials.
+      The correct MCP potential will be chosen
+      to match the requested MCP valence basis
+      set (see $BASIS).
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="LOCAL">
+      controls orbital localization.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="LOCAL" Value="NONE">
+      Skip localization (default).
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="LOCAL" Value="BOYS">
+      Do Foster-Boys localization.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="LOCAL" Value="RUEDNBRG">
+      Do Edmiston-Ruedenberg localization.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="LOCAL" Value="POP">
+      Do Pipek-Mezey population localization.
+      See the $LOCAL group.   Localization
+      does not work for SCFTYP=GVB or CITYP.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="ISPHER">
+      Spherical Harmonics option
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="ISPHER" Value="-1">
+      Use Cartesian basis functions to construct
+      symmetry-adapted linear combination (SALC)
+      of basis functions.  The SALC space is the
+      linear variation space used.  (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="ISPHER" Value="0">
+      Use spherical harmonic functions to create
+      SALC functions, which are then expressed
+      in terms of Cartesian functions.  The
+      contaminants are not dropped, hence this
+      option has EXACTLY the same variational
+      space as ISPHER=-1.  The only benefit to
+      obtain from this is a population analysis
+      in terms of pure s,p,d,f,g functions.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="ISPHER" Value="+1">
+      Same as ISPHER=0, but the function space
+      is truncated to eliminate all contaminant
+      Cartesian functions [3S(D), 3P(F), 4S(G),
+      and 3D(G)] before constructing the SALC
+      functions.  The computation corresponds
+      to the use of a spherical harmonic basis.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="QMTTOL">
+      linear dependence threshhold
+      Any functions in the SALC variational space whose
+      eigenvalue of the overlap matrix is below this
+      tolerence is considered to be linearly dependent.
+      Such functions are dropped from the variational
+      space.  What is dropped is not individual basis
+      functions, but rather some linear combination(s)
+      of the entire basis set that represent the linear
+      dependent part of the function space.  The default
+      is a reasonable value for most purposes, 1.0E-6.
+
+      When many diffuse functions are used, it is common
+      to see the program drop some combinations.  On
+      occasion, in multi-ring molecules, we have raised
+      QMTTOL to 3.0E-6 to obtain SCF convergence, at the
+      cost of some energy.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="MAXIT">
+      Maximum number of SCF iteration cycles.  This
+      pertains only to RHF, UHF, ROHF, or GVB runs.
+      See also MAXIT in $MCSCF.  (default = 30)
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="MOLPLT">
+      flag that produces an input deck for a molecule
+      drawing program distributed with GAMESS.
+      (default is .FALSE.)
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="PLTORB">
+      flag that produces an input deck for an orbital
+      plotting program distributed with GAMESS.
+      (default is .FALSE.)
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="AIMPAC">
+      flag to create an input deck for Bader's Atoms
+      In Molecules properties code. (default=.FALSE.)
+      For information about this program, see the URL
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="FRIEND">
+      string to prepare input to other quantum
+      programs, choose from
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="FRIEND" Value="HONDO">
+      for HONDO 8.2
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="FRIEND" Value="MELDF">
+      for MELDF
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="FRIEND" Value="GAMESSUK">
+      for GAMESS (UK Daresbury version)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="FRIEND" Value="GAUSSIAN">
+      for Gaussian 9x
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="FRIEND" Value="ALL">
+      for all of the above
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="NPRINT">
+      Print/punch control flag
+      See also EXETYP for debug info.
+      (options -7 to 5 are primarily debug)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="-7">
+      Extra printing from Boys localization.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="-6">
+      debug for geometry searches
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="-5">
+      minimal output
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="-4">
+      print 2e-contribution to gradient.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="-3">
+      print 1e-contribution to gradient.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="-2">
+      normal printing, no punch file
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="1">
+      extra printing for basis,symmetry,ZMAT
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="2">
+      extra printing for MO guess routines
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="3">
+      print out property and 1e- integrals
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="4">
+      print out 2e- integrals
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="5">
+      print out SCF data for each cycle.
+      (Fock and density matrices, current MOs
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="6">
+      same as 7, but wider 132 columns output.
+      This option isn't perfect.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="7">
+      normal printing and punching (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="8">
+      more printout than 7. The extra output
+      is (AO) Mulliken and overlap population
+      analysis, eigenvalues, Lagrangians, ...
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NPRINT" Value="9">
+      everything in 8 plus Lowdin population
+      analysis, final density matrix.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="NOSYM">
+      = 0     the symmetry specified in $DATA is used
+      as much as possible in integrals, SCF,
+      gradients, etc.  (this is the default)
+
+      = 1     the symmetry specified in the $DATA group
+      is used to build the molecule, then
+      symmetry is not used again.   Some GVB
+      or MCSCF runs (those without a totally
+      symmetric charge density) require you
+      request no symmetry.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="INTTYP">
+      selects the integral package(s) used, all of which
+      produce equally accurate results.  This is therefore
+      used only for debugging purposes.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="INTTYP" Value="BEST">
+      use the fastest integral code available for
+      any particular shell quartet (default):
+      s,p,L or s,p,d,L rotated axis code first.
+      ERIC s,p,d,f,g precursor transfer equation
+      code second, up to 5 units total ang. mom.
+      Rys quadrature for general s,p,d,f,g,L,
+      or for uncontracted quartets.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="INTTYP" Value="ROTAXIS">
+      means don't use ERIC at all, e.g. rotated
+      axis codes, or else Rys quadrature.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="INTTYP" Value="ERIC">
+      means don't use rotated axis codes, e.g.
+      ERIC code, or else Rys quadrature.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="INTTYP" Value="RYSQUAD">
+      means use Rys quadrature for everything.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="GRDTYP" Value="BEST">
+      use the Schlegel routines for sp gradient
+      blocks, and HONDO/Rys polynomial code for
+      all other gradient integrals.  (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="GRDTYP" Value="HONDO">
+      use HONDO/Rys for all integral derivatives.
+      This option produces very slightly more
+      accurate gradients but is rather slower.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="NORMF" Value="0">
+      normalize the basis functions (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NORMF" Value="1">
+      no normalization
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="NORMP" Value="0">
+      input contraction coefficients refer to
+      normalized Gaussian primitives. (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="NORMP" Value="1">
+      the opposite.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="ITOL">
+      primitive cutoff factor (default=20)
+
+      =n     products of primitives whose exponential
+      factor is less than 10**(-n) are skipped.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="ICUT">
+      = n     integrals less than 10.0**(-n) are not
+      saved on disk. (default = 9).  Direct
+      SCF will calculate to a cutoff 1.0d-10
+      or 5.0d-11 depending on FDIFF=.F. or .T.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="IREST">
+      restart control options
+      (for OPTIMIZE run restarts, see $STATPT)
+      Note that this option is unreliable!
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="IREST" Value="-1">
+      reuse dictionary file from previous run,
+      useful with GEOM=DAF and/or GUESS=MOSAVED.
+      Otherwise, this option is the same as 0.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="IREST" Value="0">
+      normal run (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="IREST" Value="1">
+      2e restart (1-e integrals and MOs saved)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="IREST" Value="2">
+      SCF restart (1-,2-e integrls and MOs saved)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="IREST" Value="3">
+      1e gradient restart
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="IREST" Value="4">
+      2e gradient restart
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="GEOM">
+      select where to obtain molecular geometry
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="GEOM" Value="INPUT">
+      from $DATA input (default for IREST=0)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="GEOM" Value="DAF">
+      read from DICTNRY file (default otherwise)
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="DFTTYP">
+      Many choices are given below, perhaps the most sensible are
+      local functional: SVWN
+      pure DFT GGA functionals: BP86, BLYP, PW91, PBE
+      hybrid DFT GGA functionals: B3LYP, PBE0, X3LYP
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="NONE">
+      means ab initio computation (default)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="SLATER">
+      Slater exchange
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="BECKE">
+      Becke 1988 exchange
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="GILL">
+      Gill 1996 exchange
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="OPTX">
+      Handy-Cohen exchange
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PW91X">
+      Perdew-Wang 1991 exchange
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PBEX">
+      Perdew-Burke-Ernzerhof exchange
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="VWN">
+      Vosko-Wilk-Nusair correlation, using
+      their electron gas formula 5 (VWN5)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="VWN1">
+      Vosko-Wilke-Nusair correlation, using
+      their e- gas formula 1, with RPA params.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PZ81">
+      Perdew-Zener 1981 correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="P86">
+      Perdew 1986 correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="LYP">
+      Lee-Yang-Parr correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PW91C">
+      Perdew-Wang 1991 correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PBEC">
+      Perdew-Burke-Ernzerhof correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="OP">
+      One-parameter Progressive correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="SVWN">
+      SLATER exchange + VWN5 correlation
+      Called LDA/LSDA in physics for RHF/UHF.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="BLYP">
+      BECKE exchange + LYP correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="BOP">
+      BECKE exchange + OP correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="BP86">
+      BECKE exchange + P86 correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="GVWN">
+      GILL exchange + VWN5 correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="GPW91">
+      GILL exchange + PW91 correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PBEVWN">
+      PBE exchange + VWN5 correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PBEOP">
+      PBE exchange + OP correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PW91PBE">
+      PW91 exchange + PBE correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="OLYP">
+      OPTX exchange + LYP correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PW91">
+      PW91 exchange + PW91 correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PBE">
+      PBE exchange + PBE correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="BHHLYP">
+      HF and BECKE exchange + LYP correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="B3LYP">
+      This is a hybrid method combining five
+      functionals, namely Becke + Slater + HF
+      exchange and LYP + VWN5 correlation.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="B3LYP1">
+      Use VWN1 in place of VWN5, matching the
+      e- gas formula chosen by some programs.
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PBE0">
+      A hybrid made from PBE
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="X3LYP">
+      HF + Slater + Becke88 + PW91 exchange,
+      and LYP + VWN1 correlation.
+    </ToolTip>
+
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="XALPHA">
+      X-Alpha exchange (alpha=0.7)
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="DEPRISTO">
+      Depristo/Kress exchange
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="CAMA">
+      Handy et al's mods to Becke exchange
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="HALF">
+      50-50 mix of Becke and HF exchange
+      correlation functionals:
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="VWN">
+      Vosko/Wilke/Nusair correlation, formula 5
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="PWLOC">
+      Perdew/Wang local correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="LYP">
+      Lee/Yang/Parr correlation
+      exchange/correlation functionals:
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="BVWN">
+      Becke exchange + VWN5 correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="BPWLOC">
+      Becke exchange + Perdew/Wang correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="B3LYP">
+      hybrid HF/Becke/LYP using VWN formula 5
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="CAMB">
+      CAMA exchange + Cambridge correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="XVWN">
+      Xalpha exchange + VWN5 correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="XPWLOC">
+      Xalpha exchange + Perdew/Wang correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="SVWN">
+      Slater exchange + VWN5 correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="SPWLOC">
+      Slater exchange + PWLOC correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="WIGNER">
+      Wigner exchange + correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="WS">
+      Wigner scaled exchange + correlation
+    </ToolTip>
+    <ToolTip Group="CONTRL" Keyword="DFTTYP" Value="WIGEXP">
+      Wigner exponential exchange + correlation
+    </ToolTip>
+    
+    
+
+
+    <ToolTip Group="SYSTEM">
+      computer related options         INPUTA:START
+      
+      This group provides global control information for
+      your computer's operation.  This is system related input,
+      and will not seem particularly chemical to you
+    </ToolTip>
+
+    <ToolTip Group="SYSTEM" Keyword="MWORDS">
+      the maximum replicated memory which your job can
+      use, on every node.  This is given in units of
+      1,000,000 words (as opposed to 1024*1024 words),
+      where a word is defined as 64 bits.  (default=1)
+      (In case finer control over the memory is needed,
+      this value can be given in units of words with
+      the old keyword MEMORY instead of MWORDS.)
+    </ToolTip>
+
+    <ToolTip Group="SYSTEM" Keyword="MEMDDI">
+      the grand total memory needed for the distributed
+      data interface (DDI) storage, given in units of
+      1,000,000 words. See Chapter 5 of this manual for
+      an extended explanation of running with MEMDDI.
+
+      note: the memory required on each processor for a run using
+      p processors is therefore MEMDDI/p + MWORDS.
+    </ToolTip>
+
+    <ToolTip Group="SYSTEM" Keyword="TIMLIM">
+      time limit, in minutes.  Set to about 95 percent
+      of the time limit given to the batch job (if you
+      use a queueing system) so that GAMESS can stop
+      itself gently.  (default=525600.0 minutes)
+    </ToolTip>
+
+    <ToolTip Group="SYSTEM" Keyword="PARALL">
+      a flag to cause the distributed data parallel
+      MP2 program to execute the parallel algorithm,
+      even if you are running on only one node.
+      The main purpose of this is to allow you to
+      do EXETYP=CHECK runs to learn what the correct
+      value of MEMDDI needs to be.
+    </ToolTip>
+
+    <ToolTip Group="SYSTEM" Keyword="KDIAG">
+      diagonalization control switch
+    </ToolTip>
+    <ToolTip Group="SYSTEM" Keyword="KDIAG" Value="0">
+      use a vectorized diagonalization routine
+      if one is available on your machine,
+      else use EVVRSP. (default)
+    </ToolTip>
+    <ToolTip Group="SYSTEM" Keyword="KDIAG" Value="1">
+      use EVVRSP diagonalization.  This may
+      be more accurate than KDIAG=0.
+    </ToolTip>
+    <ToolTip Group="SYSTEM" Keyword="KDIAG" Value="2">
+      use GIVEIS diagonalization
+      (not as fast or reliable as EVVRSP)
+    </ToolTip>
+    <ToolTip Group="SYSTEM" Keyword="KDIAG" Value="3">
+      use JACOBI diagonalization
+      (this is the slowest method)
+    </ToolTip>
+
+    <ToolTip Group="SYSTEM" Keyword="COREFL">
+      a flag to indicate whether or not GAMESS
+      should produce a "core" file for debugging
+      when subroutine ABRT is called to kill
+      a job.  This variable pertains only to
+      UNIX operating systems.  (default=.FALSE.)
+    </ToolTip>
+
+    <ToolTip Group="SYSTEM" Keyword="BALTYP">
+      Parallel load balance scheme:
+      = LOOP   uses static load balancing.
+      = NXTVAL uses dynamic load balancing (DLB).
+      (default = NXTVAL)
+    </ToolTip>
+
+    <ToolTip Group="SYSTEM" Keyword="NODEXT">
+      array specifying node extentions in GDDI for each
+      file.  Non-zero values force no extension.
+      E.g., NODEXT(40)=1 forces file 40 (file numbers
+      are unit numbers used in GAMESS, see "rungms" or
+      PROG.DOC) to have the name of $JOB.F40 on all
+      nodes, rather than $JOB.F40, $JOB.F40.001,
+      $JOB.F40.002 etc. This is convenient for FMO
+      restart jobs, so that the file name need not be
+      changed for each node, when copying the restart
+      file. Note that on machines when several CPUs use
+      the same directory (e.g., SMP) NODEXT should be
+      zero. (default: all zeros)
+    </ToolTip>
+    
+    
+    
+    
+    <ToolTip Group="BASIS">
+      basis set                         INPUTB:BASISS
+
+      This group allows certain standard basis sets to be
+      easily requested.  If this group is omitted, the basis set
+      must be given in the $DATA group input.
+    </ToolTip>
+
+    <ToolTip Group="BASIS" Keyword="GBASIS">
+      requests various Gaussian basis sets
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="MINI">
+      Huzinaga's 3 gaussian minimal basis set.
+      Available H-Rn."
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="MIDI">
+      Huzinaga's 21 split valence basis set.
+      Available H-Rn."
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="STO">
+      Pople's STO-NG minimal basis set.
+      Available H-Xe, for NGAUSS=2,3,4,5,6."
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="N21">
+      Pople's N-21G split valence basis set.
+      Available H-Xe, for NGAUSS=3.
+      Available H-Ar, for NGAUSS=6."
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="N31">
+      Pople's N-31G split valence basis set.
+      Available H-Ne,P-Cl for NGAUSS=4.
+      Available H-He,C-F for NGAUSS=5.
+      Available H-Zn, for NGAUSS=6.
+      For Ga-Kr, N31 selects the BC basis."
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="N311">
+      Pople's "triple="" split=""" N-311G basis set.
+      Available H-Ne, for NGAUSS=6.
+      Selecting N311 implies MC for Na-Ar.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="DZV">
+      "double="" zeta="" valence=""" basis set.
+      a synonym for DH for H,Li,Be-Ne,Al-Cl.
+      (14s,9p,3d)/[5s,3p,1d] for K-Ca.
+      (14s,11p,5d/[6s,4p,1d] for Ga-Kr.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="DH">
+      Dunning/Hay "double="" zeta=""" basis set.
+      (3s)/[2s] for H.
+      (9s,4p)/[3s,2p] for Li.
+      (9s,5p)/[3s,2p] for Be-Ne.
+      (11s,7p)/[6s,4p] for Al-Cl.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="TZV">
+      "triple="" zeta="" valence=""" basis set.
+      (5s)/[3s] for H.
+      (10s,3p)/[4s,3p] for Li.
+      (10s,6p)/[5s,3p] for Be-Ne.
+      a synonym for MC for Na-Ar.
+      (14s,9p)/[8s,4p] for K-Ca.
+      (14s,11p,6d)/[10s,8p,3d] for Sc-Zn.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="MC">
+      McLean/Chandler "triple="" split=""" basis.
+      (12s,9p)/[6s,5p] for Na-Ar.
+      Selecting MC implies 6-311G for H-Ne.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="CCn">
+      Dunning-type Correlation Consistent basis
+      sets, officially called cc-pVnZ.
+      Use n = D,T,Q,5,6 to indicate the level of
+      polarization.  These provide a hierachy of
+      basis sets suitable for recovering the
+      correlation energy.
+      Available for H-He, Li-Ne, Na-Ar, Ca, Ga-Kr
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="ACCn">
+      As CCn, but augmented with a set of diffuse
+      functions, e.g. aug-cc-pVnZ.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="CCnC">
+      As CCn, but augmented with tight functions
+      for recovering core and core-valence
+      correlation, e.g. cc-pCVnZ.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="ACCnC">
+      As CCn, but augmented with both tight and
+      diffuse functions, e.g. aug-cc-pCVnZ.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="PCn">
+      Jensen Polarization Consistent basis sets.
+      n = 0,1,2,3,4 indicates the level of
+      polarization. (n=0 is unpolarized, n=1 is
+      DZP, n=2 is TZP, etc.). These provide a
+      hierachy of basis sets suitable for DFT and
+      HF calculations.
+      Available for H, C,N,O,F, Si,P,S,Cl
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="APCn">
+      As PCn, but augmented with a set of diffuse
+      functions.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="SBKJC">
+      Stevens/Basch/Krauss/Jasien/Cundari
+      valence basis set, for Li-Rn.  This choice
+      implies an unscaled -31G basis for H-He.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="HW">
+      Hay/Wadt valence basis.
+      This is a -21 split, available Na-Xe,
+      except for the transition metals.
+      This implies a 3-21G basis for H-Ne.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="MCP-DZP">
+      a family of double, triple, and quadruple zeta
+      quality valence basis sets, which are akin to the
+      correlation consistent sets, in that these include
+      increasing levels of polarization (and so do not
+      require "supplements" like NDFUNC or DIFFSP) and
+      must be used as spherical harmonics (see ISPHER).
+      These are available for main group atoms, Li-Rn.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="MCP-TZP">
+      a family of double, triple, and quadruple zeta
+      quality valence basis sets, which are akin to the
+      correlation consistent sets, in that these include
+      increasing levels of polarization (and so do not
+      require "supplements" like NDFUNC or DIFFSP) and
+      must be used as spherical harmonics (see ISPHER).
+      These are available for main group atoms, Li-Rn.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="MCP-QZP">
+      a family of double, triple, and quadruple zeta
+      quality valence basis sets, which are akin to the
+      correlation consistent sets, in that these include
+      increasing levels of polarization (and so do not
+      require "supplements" like NDFUNC or DIFFSP) and
+      must be used as spherical harmonics (see ISPHER).
+      These are available for main group atoms, Li-Rn.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="IMCP-SR1">
+      valence basis sets to be used with the improved
+      MCPs with scalar relativistic effects.
+      These are available for transition metals except
+      La, and the main group elements B-Ne, P-Ar, Ge,
+      Kr, Sb, Xe, Rn.
+      The 1 and 2 refer to addition of first and second
+      polarization shells, so again don't use any of the
+      "supplements" and do use spherical harmonics.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="IMCP-SR2">
+      valence basis sets to be used with the improved
+      MCPs with scalar relativistic effects.
+      These are available for transition metals except
+      La, and the main group elements B-Ne, P-Ar, Ge,
+      Kr, Sb, Xe, Rn.
+      The 1 and 2 refer to addition of first and second
+      polarization shells, so again don't use any of the
+      "supplements" and do use spherical harmonics.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="IMCP-NR1">
+      closely related valence basis sets, but with
+      nonrelativistic model core potentials.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="IMCP-NR2">
+      closely related valence basis sets, but with
+      nonrelativistic model core potentials.
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="MNDO">
+      selects MNDO model hamiltonian
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="AM1">
+      selects AM1 model hamiltonian
+    </ToolTip>
+    <ToolTip Group="BASIS" Keyword="GBASIS" Value="PM3">
+      selects PM3 model hamiltonian
+    </ToolTip>
+
+    <ToolTip Group="BASIS" Keyword="NGAUSS">
+      the number of Gaussians (N).   This parameter
+      pertains only to GBASIS=STO, N21, N31, or N311.
+    </ToolTip>
+
+    <ToolTip Group="BASIS" Keyword="NDFUNC">
+      number of heavy atom polarization functions to
+      be used.  These are usually d functions, except
+      for MINI/MIDI.  The term "heavy" means Na on up
+      when GBASIS=STO, HW, or N21, and from Li on up
+      otherwise.  The value may not exceed 3.  The
+      variable POLAR selects the actual exponents to
+      be used, see also SPLIT2 and SPLIT3. (default=0)
+    </ToolTip>
+
+    <ToolTip Group="BASIS" Keyword="NFFUNC">
+      number of heavy atom f type polarization
+      functions to be used on Li-Cl.  This may only
+      be input as 0 or 1.  (default=0)
+    </ToolTip>
+
+    <ToolTip Group="BASIS" Keyword="NPFUNC">
+      number of light atom, p type polarization
+      functions to be used on H-He.  This may not
+      exceed 3, see also POLAR.  (default=0)
+    </ToolTip>
+
+    <ToolTip Group="BASIS" Keyword="DIFFSP">
+      flag to add diffuse sp (L) shell to heavy atoms.
+      Heavy means Li-F, Na-Cl, Ga-Br, In-I, Tl-At.
+      The default is .FALSE.
+    </ToolTip>
+
+    <ToolTip Group="BASIS" Keyword="DIFFS">
+      flag to add diffuse s shell to hydrogens.
+      The default is .FALSE.
+    </ToolTip>
+
+    <ToolTip Group="BASIS" Keyword="POLAR">
+      exponent of polarization functions
+      = POPLE     (default for all other cases)
+      = POPN311   (default for GBASIS=N311, MC)
+      = DUNNING   (default for GBASIS=DH, DZV)
+      = HUZINAGA  (default for GBASIS=MINI, MIDI)
+      = HONDO7    (default for GBASIS=TZV)
+    </ToolTip>
+    
+    <ToolTip Group="BASIS" Keyword="SPLIT2">
+      an array of splitting factors used when NDFUNC
+      or NPFUNC is 2.  Default=2.0,0.5
+    </ToolTip>
+
+    <ToolTip Group="BASIS" Keyword="SPLIT3">
+      an array of splitting factors used when NDFUNC
+      or NPFUNC is 3.  Default=4.00,1.00,0.25
+    </ToolTip>
+
+    <ToolTip Group="BASIS" Keyword="EXTFIL">
+      a flag to read basis sets from an external file,
+      defined by EXTBAS, rather than from a $DATA group.
+      (default=.false.)
+    </ToolTip>
+    
+    
+    
+    
+
+    <ToolTip Group="DATA">
+      molecule, geometry, basis set     INPUTB:MOLE
+    </ToolTip>
+
+    
+    
+    
+    <ToolTip Group="ZMAT">
+      internal coordinates              ZMATRX:ZMATIN
+    </ToolTip>
+
+    <ToolTip Group="ZMAT" Value="IZMAT">
+      Example - a nonlinear triatomic, atom 2 in the middle:
+      $ZMAT IZMAT(1)=1,1,2,  2,1,2,3,  1,2,3  $END
+      This sets up two bonds and the angle between them.
+      The blanks between each coordinate definition are
+      not necessary, but improve readability mightily.
+    </ToolTip>
+
+    <ToolTip Group="ZMAT" Value="DLC">
+      is a flag to request delocalized coordinates.
+      (default is .FALSE.)
+    </ToolTip>
+
+    <ToolTip Group="ZMAT" Value="AUTO">
+      is a flag to generate all redundant coordinates,
+      automatically.  The DLC space will consist of all
+      non-redundant combinations of these which can be
+      found.  The list of redundant coordinates will
+      consist of bonds, angles, and torsions only.
+      (default is .FALSE.)
+    </ToolTip>
+
+    <ToolTip Group="ZMAT" Value="NONVDW">
+      is an array of atom pairs which are to be joined
+      by a bond, but might be skipped by the routine
+      that automatically includes all distances shorter
+      than the sum of van der Waals radii.  Any angles
+      and torsions associated with the new bond(s) are
+      also automatically included.
+    </ToolTip>
+
+    <ToolTip Group="ZMAT" Value="IXZMAT">
+      is an extra array of simple internal coordinates
+      which you want to have added to the list generated
+      by AUTO.  Unlike NONVDW, IXZMAT will add only the
+      coordinate(s) you specify.
+    </ToolTip>
+
+    <ToolTip Group="ZMAT" Value="IRZMAT">
+      is an array of simple internal coordinates which
+      you would like to remove from the AUTO list of
+      redundant coordinates.  It is sometimes necessary
+      to remove a torsion if other torsions around a bond
+      are being frozen, to obtain a nonsingular G matrix.
+    </ToolTip>
+
+    <ToolTip Group="ZMAT" Value="IFZMAT">
+      is an array of simple internal coordinates which
+      you would like to freeze.  See also FVALUE below.
+      Note that IFZMAT/FVALUE work only with DLC, see the
+      IFREEZ option in $STATPT to freeze coordinates if
+      you wish to freeze simple or natural coordinates.
+    </ToolTip>
+
+    <ToolTip Group="ZMAT" Value="FVALUE">
+      is an array of values to which the internal
+      coordinates should be constrained.  It is not
+      necessary to input $DATA such that the initial
+      values match these desired final values, but it is
+      helpful if the initial values are not too far away.
+    </ToolTip>
+
+    <ToolTip Group="ZMAT" Value="SIJ">
+      is a transformation matrix of dimension NZVAR x M,
+      used to transform the NZVAR internal coordinates in
+      IZMAT into M new internal coordinates.  SIJ is a
+      sparse matrix, so only the non-zero elements are
+      given, by using the IJS array described below.
+      The columns of SIJ will be normalized by GAMESS.
+      (Default: SIJ = I, unit matrix)
+    </ToolTip>
+
+    <ToolTip Group="ZMAT" Value="IJS">
+      is an array of pairs of indices, giving the row and
+      column index of the entries in SIJ.
+
+      example - if the above triatomic is water, using
+      IJS(1) = 1,1, 3,1,   1,2, 3,2,   2,3
+      SIJ(1) = 1.0, 1.0,   1.0,-1.0,   1.0
+
+      gives the matrix S=  1.0   1.0   0.0
+      0.0   0.0   1.0
+      1.0  -1.0   0.0
+    </ToolTip>
+
+    
+    
+    
+    <ToolTip Group="LIBE">
+      linear bend coordinates           ZMATRX:LIBE
+      
+      A degenerate linear bend occurs in two orthogonal planes,
+      which are specified with the help of a point A.  The first
+      bend occurs in a plane containing the atoms I,J,K and the
+      user input point A.  The second bend is in the plane
+      perpendicular to this, and containing I,J,K.  One such
+      point must be given for each pair of bends used.
+    </ToolTip>
+
+    <ToolTip Group="LIBE" Keyword="APTS">
+      APTS(1)= x1,y1,z1,x2,y2,z2,...  for linear bends 1,2,...
+
+      Note that each linear bend serves as two coordinates, so
+      that if you enter 2 linear bends (HCCH, for example), the
+      correct value of NZVAR is M-2, where M=3N-6 or 3N-5, as
+      appropriate.
+    </ToolTip>
+
+    
+    
+    <ToolTip Group="SCF">
+      HF-SCF wavefunction control       SCFLIB:SCFIN
+      
+      This group of parameters provides additional control
+      over the RHF, UHF, ROHF, or GVB SCF steps
+    </ToolTip>
+
+    <ToolTip Group="SCF" Keyword="DIRSCF">
+      A flag to activate a direct SCF calculation,
+      which is implemented for all the Hartree-Fock
+      type wavefunctions:  RHF, ROHF, UHF, and GVB.
+      This keyword also selects direct MP2 computation.
+      The default of .FALSE. stores integrals on disk
+      storage for a conventional SCF calculation.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="FDIFF">
+      A flag to compute only the change in the Fock
+      matrices since the previous iteration, rather
+      than recomputing all two electron contributions.
+      This saves much CPU time in the later iterations.
+      This pertains only to direct SCF. This option is
+      implemented only for the RHF, ROHF, UHF cases.
+
+      Cases with many diffuse functions in the basis
+      set sometimes oscillate at the end, rather than
+      converging.  Turning this parameter off will
+      normally give convergence.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="NOCONV">
+      = .TRUE. means neither SOSCF nor DIIS will be used.
+      = .FALSE. (Default), making the choice of the
+      primary converger as follows:
+      for RHF, GVB, or Abelian group ROHF: SOSCF.
+      for any DFT, UHF, or non-Abelian ROHF: DIIS.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="DIIS">
+      Selects Pulay's DIIS interpolation.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="SOSCF">
+      Selects second order SCF orbital optimization.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="EXTRAP">
+      Selects Pople extrapolation of the Fock matrix.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="DAMP">
+      Selects Davidson damping of the Fock matrix.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="SHIFT">
+      Selects level shifting of the Fock matrix.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="RSTRCT">
+      Selects restriction of orbital interchanges.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="DEM">
+      Selects direct energy minimization, which is
+      implemented only for RHF.  (default=.FALSE.)
+
+      defaults for     EXTRAP  DAMP  SHIFT RSTRCT  DIIS  SOSCF
+      ab initio:         T      F      F      F     F/T   T/F
+      semiempirical:     T      F      F      F      F     F
+
+      The above parameters are implemented for all SCF
+      wavefunction types, except that DIIS will work for GVB
+      only for those cases with NPAIR=0 or NPAIR=1.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="CONV">
+      SCF density convergence criteria.
+      Convergence is reached when the density change
+      between two consecutive SCF cycles is less than
+      this in absolute value.  One more cycle will be
+      executed after reaching convergence.   Less
+      accuracy in CONV gives questionable gradients.
+      The default is 1.0d-05, except runs involving
+      CI or MP2 gradients or CC energies use 1.0d-06.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="SOGTOL">
+      Second order gradient tolerance.  SOSCF will be
+      initiated when the orbital gradient falls below
+      this threshold.  (default=0.25 au)
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="ETHRSH">
+      energy error threshold for initiating DIIS.  The
+      DIIS error is the largest element of e=FDS-SDF.
+      Increasing ETHRSH forces DIIS on sooner.
+      (default = 0.5 Hartree)
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="MAXDII">
+      Maximum size of the DIIS linear equations, so
+      that at most MAXDII-1 Fock matrices are used
+      in the interpolation.  (default=10)
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="SWDIIS">
+      Density matrix convergence at which to switch
+      from DIIS to SOSCF.  A value of zero means to
+      keep using DIIS at all geometries, which is the
+      default.  However, it may be useful to have
+      DIIS work only at the first geometry, in the
+      initial iterations, for example transition
+      metal ECP runs which has a less good Huckel
+      guess, and then use SOSCF for the final SCF
+      iterations at the first geometry, and ever
+      afterwards.  A suggested usage might be
+      DIIS=.TRUE. ETHRSH=2.0 SWDIIS=0.005.
+      This option is not programmed for GVB.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="DEMCUT">
+      Direct energy minimization will not be done
+      once the density matrix change falls below
+      this threshold.  (Default=0.5)
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="DMPCUT">
+      Damping factor lower bound cutoff.  The damping
+      damping factor will not be allowed to drop
+      below this value. (default=0.0)
+      note: The damping factor need not be zero to achieve
+      valid convergence (see Hsu, Davidson, and
+      Pitzer, J.Chem.Phys., 65, 609 (1976), see
+      especially the section on convergence control),
+      but it should not be astronomical either.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="NPUNCH">
+      PUNCH file output option (file xxx.dat)
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="NPUNCH" Value="0">
+      Do not punch out the final orbitals
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="NPUNCH" Value="1">
+      Punch out the occupied orbitals
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="NPUNCH" Value="2">
+      (Default) punch out occupied and virtual orbitals
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="NPREO">
+      Energy and orbital printing options, applying
+      after other output options, for example NPRINT=-5
+      for no orbital output overrules this keyword.
+      Orbitals from NPREO(1) to NPREO(2) and orbital
+      energies from NPREO(3) to NPREO(4) are printed.
+      Positive values indicate plain ordinal numbers.
+      Non-positive values are relative to HOMO.
+      For NPREO(1) and (3), 0 is HOMO, -1 is HOMO+1 etc.
+      For NPREO(2) and (4), 0 is HOMO, -1 is HOMO+1 etc.
+      Numbers exceeding the total orbital count are
+      automatically adjusted to the maximum value.
+      Orbitals printed by NPREO(1) and NPREO(2) will
+      always have the orbital energy labels attached,
+      NPREO(3) to NPREO(4) define separate print-out of
+      the orbital energies.
+      HOMO here means the highest occupied orbital,
+      assuming a singlet RHF orbital occupation, that
+      is to say NE/2, no matter what SCFTYP is.
+      To print only the HOMO and LUMO LCAO coefficients.
+      and all orbital energies, enter:
+      NPREO(1)=0,-1,1,9999
+      Default: 1,9999,2,1 (meaning print all orbitals,
+      but no separate list of orbital energies).
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="UHFNOS">
+      flag controlling generation of the natural
+      orbitals of a UHF function. (default=.FALSE.)
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="MVOQ">
+      0  Skip MVO generation (default)
+      = n  Form modified virtual orbitals, using a cation
+      with n electrons removed.   Implemented for
+      RHF, ROHF, and GVB.   If necessary to reach a
+      closed shell cation, the program might remove
+      n+1 electrons.  Typically, n will be about 6.
+      = -1 The cation used will have each valence orbital
+      half filled, to produce MVOs with valence-like
+      character in all regions of the molecule.
+      Implemented for RHF and ROHF only.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="ACAVO">
+      Flag to request Approximate Correlation-Adapted
+      Virtual Orbitals.  Implemented for RHF, ROHF,
+      and GVB.  The default is .FALSE.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="PACAVO">
+      Parameters used to define the ACAVO generating
+      operator, which is defined as
+      a*T + b*Vne + c*Jcore + d*Jval + e*Kcore + f*Kval
+      The default corresponds to Whitten orbitals,
+      J.L.Whitten, J.Chem.Phys.  56, 458-546(1972)
+      which maximize the exchange interaction with
+      the valence orbitals, PACAVO(1)=0,0,0,0,0,-1.0.
+      A set of parameters which may produce a lower
+      CI-SD energy, is 0.02,0.02,0.0,0.10,0.0,-1.0.
+      Of course, the normal canonical virtuals come
+      from PACAVO(1)=1.0,1.0,2.0,2.0,-1.0,-1.0.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="VTSCAL">
+      A flag to request that the virial theorem be
+      satisfied.  An analysis of the total energy
+      as an exact sum of orbital kinetic energies
+      is printed.  The default is .FALSE.
+
+      This option is implemented for RHF, UHF, and ROHF,
+      for RUNTYP=ENERGY, OPTIMIZE, or SADPOINT.  Related
+      input is as follows:
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="SCALF">
+      initial exponent scale factor when VTSCAL is
+      in use, useful when restarting.  The default
+      is 1.0.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="MAXVT">
+      maximum number of iterations (at a single
+      geometry) to satisfy the energy virial theorem.
+      The default is 20.
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="VTCONV">
+      convergence criterion for the VT, which is
+      satisfied when 2 +  + R x dE/dR is less
+      than VTCONV.  The default is 1.0D-6 Hartree.
+
+      For more information on this option, which is most
+      economically employed during a geometry search, see
+      M.Lehd and F.Jensen, J.Comput.Chem. 12, 1089-1096(1991).
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="NCO">
+      The number of closed shell orbitals.(default=0).
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="NSETO">
+      The number of sets of open shells in the
+      function.  Maximum of 10. (default=0)
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="NO">
+      An array giving the degeneracy of each open
+      shell set.  Give NSETO values.
+      (default=0,0,0,...).
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="NPAIR">
+      The number of geminal pairs in the -GVB-
+      function.  Maximum of 12.  The default
+      corresponds to open shell SCF (default=0).
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="CICOEF">
+      An array of ordered pairs of CI coefficients
+      for the -GVB- pairs.  For example, a two pair
+      case for water, say, might be
+      CICOEF(1)=0.95,-0.05,0.95,-0.05.  If not
+      normalized, as in the default, they will be.
+      This parameter is useful in restarting a GVB
+      run, with the current CI coefficients.
+      (default = 0.90,-0.20,0.90,-0.20,...)
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="COUPLE">
+      A switch controlling the input of F, ALPHA,
+      and BETA.  The default is to ignore F, ALPHA,
+      and BETA unless you set this .TRUE., to read
+      them in.  Note that ALPHA and BETA can be
+      given for -ROHF- canonicalization, as well
+      as -GVB-.  (Default=.FALSE.)
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="F">
+      An vector of fractional occupations.
+
+      Default depends on the state chosen.
+      Defaults for the most commonly occuring
+      cases are internally stored
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="ALPHA">
+      An array of A coupling coefficients given in
+      lower triangular order.
+
+      Default depends on the state chosen.
+      Defaults for the most commonly occuring
+      cases are internally stored
+    </ToolTip>
+    <ToolTip Group="SCF" Keyword="BETA">
+      An array of B coupling coefficients given in
+      lower triangular order.
+
+      Default depends on the state chosen.
+      Defaults for the most commonly occuring
+      cases are internally stored
+    </ToolTip>
+    
+    
+    
+
+    <ToolTip Group="SCFMI">
+      SCF-MI input control data         SCFMI :MIINP
+    </ToolTip>
+
+    <ToolTip Group="SCFMI" Keyword="NFRAGS">
+      Number of distinct fragments present.  Both
+      the supermolecule and its constituent monomers
+      must be well described as closed shells by RHF
+      wavefunctions.
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="NF">
+      An array containing the number of doubly
+      occupied MOs for each fragment.
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="MF">
+      An array containing the number of atomic basis
+      functions located on each fragment.
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="ITER">
+      Maximum number of SCF-MI cycles, overriding
+      the usual MAXIT value.  (default is 50).
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="DTOL">
+      SCF-MI density convergence criteria.
+      (default is 1.0d-10)
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="ALPHA">
+      Possible level shift parameter.
+      (default is 0.0, meaning shifting is not used)
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="DIISON">
+      A flag to active the DIIS convergence.
+      (default is .TRUE.)
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="MXDIIS">
+      The maximum number of previous effective Fock
+      and overlap matrices to be used in DIIS
+      (default=10)
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="DIISTL">
+      The density change value at which DIIS starts.
+      (default=0.01)
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="ITLOC">
+      Maximum number of iteration in the localization
+      step (Default is 50)
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="CNVLOC">
+      Convergence parameter for the localization.
+      (default is .01).
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="IOPT">
+      Prints additional debug information.
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="IOPT" Value="0">
+      Standard outout (default)
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="IOPT" Value="1">
+      Print for each SCF-MI cycle MOs, overlap
+      between the MOs, CPU times.=""
+    </ToolTip>
+    <ToolTip Group="SCFMI" Keyword="IOPT" Value="2">
+      Print some extra informations in secular
+      systems solution."
+    </ToolTip>
+    
+    
+    
+    <ToolTip Group="DFT">
+      density functional theory         DFT   :DFTINP
+
+      This group permits the use of various one electron
+      (usually empirical) operators instead of the true many
+      electron Hamiltonian.  Two programs are provided, METHOD=
+      GRID or GRIDFREE.  The programs have different functionals
+      available, and so the keyword DFTTYP (which is entered in
+      $CONTRL) and other associated inputs are documented
+      separately below.  Every functional that has the same name
+      in both lists is an identical functional, but each METHOD
+      has a few functionals that are missing in the other.
+
+      Achieving a self-consistent field with DFT is rather
+      more difficult than for normal HF, so DIIS is the default
+      converger.
+
+      Both DFT programs will run in parallel. See the next
+      page for a listing of possible functionals, for the two
+      programs.
+    </ToolTip>
+
+    <ToolTip Group="DFT" Keyword="METHOD">
+      Selects grid based DFT or grid free DFT.
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="METHOD" Value="GRID">
+      Grid based DFT (default)
+
+      The grid based DFT uses a typical grid quadrature to
+      compute integrals over the rather complicated functionals.
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="METHOD" Value="GRIDFREE">
+      Grid free DFT
+
+      The grid free implementation is based on the use of the
+      resolution of the identity to simplify integrals so that
+      they may be analytically evaluated, without using grid
+      quadratures.  The grid free DFT computations in their
+      present form have various numerical errors, primarily in
+      the gradient vectors.  Please do not use the grid-free DFT
+      program without reading the discussion in the 'Further
+      References' section regarding the gradient accuracy.
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="LCFLAG">
+      flag to turn on the long range correction (LC),
+      which smoothly replaces the DFT exchange by the
+      RHF exchange at long inter-electron distances.
+      This option can only be used with a pure exchange
+      functional (Becke) and any correlation functional,
+      so its use is restricted to BLYP, BOP, and BVWN.
+      In particular, B3LYP has a fixed admixture of RHF
+      exchange and so it cannot work with the LC option.
+      See H.Ikura, T.Tsuneda, T.Yanai, and K.Hirao,
+      J.Chem.Phys. 115, 3540 (2001).
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="NRAD">
+      number of radial grids in Euler-Maclaurin
+      quadrature. (default=96)
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="NTHE">
+      number of angle theta grids in Gauss-Legendre
+      quadrature. (default=12)
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="NPHI">
+      number of angle phi grids in Gauss-Legendre
+      quadrature.  NPHI should be double NTHE so that
+      points are spherically distributed. (default=24)
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="SWITCH">
+      when the change in the density matrix between
+      iterations falls below this threshhold, switch
+      to use of the desired full grid (default=3.0E-4)
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="NRAD0">
+      same as NRAD, but defines initial (smaller) grid.
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="NTHE0">
+      same as NTHE, but defines initial (smaller) grid.
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="NPHI0">
+      same as NPHI, but defines initial (smaller) grid.
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="SWOFF">
+      turn off DFT, to perform pure SCF iterations,
+      until the density matrix convergence falls below
+      this threshold.  This option is independent of
+      SWITCH and can be used with or without it. It is
+      reasonable to pick SWOFF > SWITCH > CONV in $SCF.
+      SWOFF pertains only to the first geometry that the
+      run computes, and is automatically disabled if you
+      choose GUESS=MOREAD to provide initial orbitals.
+      The default is 5.0d-3.
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="THRESH">
+      threshold for ignoring small contributions to the
+      Fock matrix.  The default is designed to produce
+      no significant energy loss, even when the grid is
+      as good as "army grade".  If for some reason you
+      want to turn all threshhold tests off, of course
+      requiring more CPU, enter 1.0e-15.
+      default: 1.0e-4/Natoms/NRAD/NTHE/NPHI
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="GTHRE">
+      threshold applied to gradients, similar to THRESH.
+      &lt; 1 assign this value to all thresholds
+      = 1 use the default thresholds (default).
+      &gt; 1 divide default thresholds by this value.
+      For example if you wish to increase accuracy due
+      to threshold cut-offs, set GTHRE=10. The default
+      introduces an of roughly 1e-7 (a.u./bohr) in the
+      gradient.
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="AUXFUN" Value="AUX0">
+      uses no auxiliary basis set for resolution
+      of the identity, limiting accuracy.
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="AUXFUN" Value="AUX3">
+      uses the 3rd generation of RI basis sets,
+      These are available for the elements H to
+      Ar, but have been carefully considered for
+      H-Ne only.  (DEFAULT)"
+    </ToolTip>
+    <ToolTip Group="DFT" Keyword="THREE">
+      a flag to use a resolution of the identity to
+      turn four center overlap integrals into three
+      center integrals.  This can be used only if
+      no auxiliary basis is employed. (default=.FALSE.)
+    </ToolTip>
+    
+    
+    
+
+    <ToolTip Group="MP2">
+      2nd order Moller-Plesset          MP2   :MP2INP
+    </ToolTip>
+
+    <ToolTip Group="MP2" Keyword="NACORE">
+      n Omits the first n occupied orbitals from the
+      calculation.  The default for n is the number
+      of chemical core orbitals.
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="NBCORE">
+      Same as NACORE, for the beta orbitals of UHF.
+      It is almost always the same value as NACORE.
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="MP2PRP">
+      a flag to turn on property computation for jobs
+      jobs with RUNTYP=ENERGY.  This is appreciably
+      more expensive than just evaluating the second
+      order energy correction alone, so the default
+      is to skip properties.  Properties are always
+      computed during gradient runs, when they are
+      an almost free byproduct. (default=.FALSE.)
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="OSPT">
+      selects open shell spin-restricted perturbation.
+      This parameter applies only when SCFTYP=ROHF.
+      Please see the 'further information' section for
+      more information about this choice.
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="OSPT" Value="ZAPT">
+      picks Z-averaged perturbation theory. (default)
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="OSPT" Value="RMP">
+      picks RMP (aka ROHF-MBPT) perturbation theory.
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="CODE">
+      The default is CODE=SERIAL when p=1, provided PARALL is
+      .FALSE. in $SYSTEM.  When p>1, or PARALL=.TRUE., the
+      default becomes CODE=DDI.  However, if FMO is in use, the
+      default for parallel runs is CODE=IMS.  The "SERIAL" code
+      for OSPT=RMP will actually run with modest scalability when
+      p>1.
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="LMOMP2">
+      A flag to analyze the closed shell MP2 energy
+      in terms of localized orbitals.  Any type of
+      localized orbital may be used.  This option
+      is implemented only for RHF, and its selection
+      forces use of the METHOD=3 transformation, in
+      serial runs only.  The default is .FALSE.
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="NOSYM">
+      disables the orbital symmetry test completely.
+      This is not recommended, as loss of orbital
+      symmetry is likely to mean a bad calculation.
+      It has the same meaning as the keyword in
+      $CONTRL, but just for the MP2 step. (Default=0)
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="CUTOFF">
+      transformed integral retention threshold, the
+      default is 1.0d-9 (1.0d-12 in FMO runs).
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="CPHFBS">
+      BASISMO solves the response equations during
+      gradient computations in the MO basis.  This
+      is programmed only for RHF references without
+      frozen core orbitals, when it is the default.
+      =   BASISAO solves the response equations using
+      AO integrals, for frozen core MP2 with a RHF
+      reference, or for ROHF or UHF based MP2.
+
+      The next 3 input variables apply to any CODE=SERIAL MP2
+      run, or to parallel ROHF+MP2 runs using OSPT=RMP.
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="NWORD">
+      controls memory usage.  The default uses all
+      available memory.  Applies to CODE=SERIAL.
+      (default=0)
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="METHOD">
+      n  selects transformation method, 2 being the
+      segmented transformation, and 3 being a more
+      conventional two phase bin sort implementation.
+      3 requires more disk, but less memory.  The
+      default is to attempt method 2 first, and
+      method 3 second.  Applies only to CODE=SERIAL.
+    </ToolTip>
+    <ToolTip Group="MP2" Keyword="AOINTS">
+      defines AO integral storage during conventional
+      integral transformations, during parallel runs.
+      DUP stores duplicated AO lists on each node, and
+      is the default for parallel computers with slow
+      interprocessor communication, e.g. ethernet.
+      DIST distributes the AO integral file across all
+      nodes, and is the default for parallel
+      computers with high speed communications.
+      Applies only to parallel OSPT=RMP runs.
+    </ToolTip>
+
+    <ToolTip Group="CIS">
+      singly excited CI                 CISGRD:CISINP
+
+      The CIS method (singly excited CI) is the simplest way
+      to treat excited states.  By Brillouin's Theorem, a single
+      determinant reference such as RHF will have zero matrix
+      elements with singly substituted determinants.  The ground
+      state reference therefore has no mixing with the excited
+      states treated with singles only.
+
+      Some issues making CIS rather less than a black box method are:
+      a) any states characterized by important doubles are
+      simply missing from the calculation.
+      b) excited states commonly possess Rydberg (diffuse)
+      character, so the AO basis used must allow this.
+      c) excited states often have different point group
+      symmetry than the ground state, so the starting
+      geometries for these states must reflect their
+      actual symmetry.
+      d) excited state surfaces frequently cross, and thus
+      root flipping may very well occur.
+    </ToolTip>
+
+    <ToolTip Group="CIS" Keyword="NACORE">
+      n Omits the first n occupied orbitals from the
+      calculation.  The default for n is the number
+      of chemical core orbitals.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="NSTATE">
+      Number of states to be found (excluding the
+      ground state, which is the RHF determinant).
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="IROOT">
+      State for which properties and/or gradient will
+      be calculated.  Only one state can be chosen.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="HAMTYP">
+      Type of CI Hamiltonian to use.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="HAMTYP" Value="SAPS">
+      spin-adapted antisymmetrized product of
+      the desired MULT will be used (default)
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="HAMTYP" Value="DETS">
+      determinant based, so both singlets and
+      triplets will be obtained.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="MULT">
+      Multiplicity (1 or 3) of the singly excited
+      SAPS (the reference is necessarily single RHF).
+      Only relevant for SAPS based run.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="DIAGZN">
+      Hamiltonian diagonalization method.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="DIAGZN" Value="DAVID">
+      use Davidson diagonalization.  (default)
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="DIAGZN" Value="FULL">
+      construct the full matrix in memory and
+      diagonalize, thus determining all states
+      (not recommended except for small cases).
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="DGAPRX">
+      Flag to control whether approximate diagonal
+      elements of the CIS Hamiltonian (based only on
+      the orbital energies) are used in the Davidson
+      algorithm.  Note, this only affects the rate of
+      convergence, not the resulting final energies.
+      If set .FALSE., the exact diagonal elements are
+      determined and used.  Default=.TRUE.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="NGSVEC">
+      Dimension of the Hamiltonian submatrix that is
+      diagonalized to form the initial CI vectors.
+      The default is the greater of NSTATE*2 and 10.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="MXVEC">
+      Maximum number of expansion basis vectors in the
+      iterative subspace during Davidson iterations,
+      before the expansion basis is truncated.  The
+      default is the larger of 8*NSTATE and NGSVEC.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="NDAVIT">
+      Maximum number of Davidson iterations.
+      Default=50.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="DAVCVG">
+      Convergence criterion for Davidson eigenvectors.
+      Eigenvector accuracy is proportional to DAVCVG,
+      while the energy accuracy is proportional to its
+      square.  The default is 1.0E-05.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="CISPRP">
+      Flag to request the determination of CIS level
+      properties, using the relaxed density.  Relevant
+      to RUNTYP=ENERGY jobs, although the default is
+      .FALSE. because additional CPHF calculation will
+      be required.  Properties are a normal by
+      product of runs involving the CIS gradient.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="CHFSLV">
+      Chooses type of CPHF solver to use.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="CHFSLV" Value="CONJG">
+      selects an ordinary preconditioned
+      conjugate gradient solver.  (default="")
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="CHFSLV" Value="DIIS">
+      selects a diis-like iterative solver.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="RDCISV">
+      Flag to read CIS vectors from a $CISVEC group
+      in the input file.  Default is .FALSE.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="MNMEDG">
+      Flag to force the use of the minimal amount of
+      memory in construction of the CIS Hamiltonian
+      diagonal elements.  This is only relevant when
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="DGAPRX">
+      .FALSE., and is meant for debug purposes.
+      The default is .FALSE.
+    </ToolTip>
+    <ToolTip Group="CIS" Keyword="MNMEOP">
+      Flag to force the use of the minimal amount of
+      memory during the Davidson iterations. This is
+      for debug purposes. The default is .FALSE.
+    </ToolTip>
+    
+    
+    
+    <ToolTip Group="CISVEC">
+      vectors for CIS                   CISGRD:CISVRD
+      
+      This is formatted data generated by a previous CIS run, to
+      be read back in as starting vectors.  Sometimes molecular
+      orbital phase changes make these CI vectors problematic.
+    </ToolTip>
+
+    
+    
+    <ToolTip Group="CCINP">
+      coupled cluster input             CCSDT :CCINP
+
+      This group controls a coupled-cluster calculation of
+      any type specified by CCTYP in $CONTRL.  The reference
+      orbitals may be RHF or high spin ROHF.  If this input group
+      is not given, as is usually the case, all valence electrons
+      will be correlated.
+    </ToolTip>
+
+    <ToolTip Group="CCINP" Keyword="NCORE">
+      Gives the number of frozen core orbitals to be
+      omitted from the CC calculation.  The default
+      is the number of chemical core orbitals.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="NFZV">
+      The number of frozen virtual orbitals to be
+      omitted from the calculation.  (default is 0)
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="MAXCC">
+      Defines the maximum number of CCSD (or LCCD, CCD)
+      iterations.  This parameter also applies to ROHF's
+      left CC vector solver, but not RHF's left vector.
+      See MAXCCL for RHF.  (default=30)
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="ICONV">
+      Defines the convergence criterion for the cluster
+      amplitudes, as 10**(-ICONV).  The ROHF reference
+      also uses this for its left eigenstate solver, but
+      see CVGEOM in $EOMINP for RHF references.
+      (default is 7, but it tightens to 8 for FMO-CC.)
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="CCPRP">
+      A flag to select computation of the CCSD level
+      ground state density matrix (see also CCPRPE in
+      $EOMINP for EOM-CCSD level excited states).  The
+      computation takes significant extra time, to
+      obtain left eigenstates, so the default is .FALSE.
+      except for CCTYP=CR-CCL where the work required
+      for properties must be done anyway.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="MAXCCL">
+      iteration limit on the left eigenstate needed by
+      CCSD properties, or CR-CCL energies.
+      This is just a synonym for MAXEOM in $EOMINP.
+      If you want to alter the left state's convergence
+      tolerance, use CVGEOM in $EOMINP.  The right state
+      convergence is set by MAXCC and ICONV above.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="NWORD">
+      a limit on memory to be used in the CC steps.
+      The default is 0, meaning all memory available
+      will be used.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="IREST">
+      defines the restart option.  If the value of IREST
+      is greater or equal 3, program will restart from
+      the earlier CC run.  This requires saving the disk
+      file CCREST from the previous CC run.  Values of
+      IREST between 0 and 3 should not be used.  In
+      general, the value of IREST is used by the program
+      to set the iteration counter in the restarted run.
+      The default is 0, meaning no restart is attempted.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="MXDIIS">
+      defines the number of cluster amplitude vectors
+      from previous iterations to be included in the
+      DIIS extrapolation during the CCSD (or LCCD, CCD)
+      iterative process.  The default value of MXDIIS is
+      5 for all but small problems.  The DIIS solver can
+      be disengaged by entering MXDIIS = 0.  It is not
+      necessary to change the default value of MXDIIS,
+      unless the CC equations do not converge in spite
+      of increasing the value of MAXCC.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="AMPTSH">
+      defines a threshold for eliminating small cluster
+      amplitudes from the CC calculations.  Amplitudes
+      with absolute values smaller than AMPTSH are set
+      to zero.  The default is to retain all small
+      amplitudes, meaning fully accurate CC iterations.
+      Default = 0.0.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="MULT">
+      spin multiplicity to use in the CC computation.
+      The value of MULT given in the $CONTRL group
+      determines the spin state for the ROHF reference
+      orbitals, and is the default for the CC step.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="IOPMET">
+      method for the cr-CC(2,3) triples correction.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="IOPMET" Value="0">
+      means try 1 and then try 2 (default)
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="IOPMET" Value="1">
+      The high memory option
+      This option uses the most memory, but the least
+      disk storage and the least CPU time.=""
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="IOPMET" Value="2">
+      The high disk option
+      This option uses least memory, by storing a large
+      disk file.  Time is slightly more than IOPMET=1,
+      but the disk file is (NO**3 * NU**3)/6 words,
+      where NO = correlated orbitals, and NU= virtuals.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="IOPMET" Value="3">
+      The high I/O option
+      This option requires slightly more memory than 2,
+      and slightly more disk than 1, but does much I/O.
+      It is also the slowest of the three choices.
+      Check runs will print memory needed by all three options.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="KREST" Value="0">
+      fresh start for the CCSD equations (default)
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="KREST" Value="1">
+      restart from AMPROCC file of a previous run
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="KMICRO">
+      n performs DIIS extrapolation of the open shell
+      CCSD, every n iterations (default is 6)
+      Enter 0 to avoid using the DIIS converger.
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="LREST" Value="0">
+      Fresh start for the left equations (default)
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="LREST" Value="1">
+      restart from AMPROCC file of a previous run
+    </ToolTip>
+    <ToolTip Group="CCINP" Keyword="LMICRO">
+      n performs DIIS extrapolation of the open shell
+      left equations, every n iterations (default is 5)
+      Enter 0 to avoid using the DIIS converger.
+    </ToolTip>
+    
+    
+
+    <ToolTip Group="EOMINP">
+      equation of motion CC             EOMCC :EOMINP
+
+      This group controls the calculation of excited states
+      by the equation of motion coupled cluster with single and
+      double excitations, with optional triples corrections.  The
+      input group permits selection of how many states are
+      computed (machine time is linear in the number of states).
+      Since the default is only one excited state in the totally
+      symmetric representation, it is usually necessary to give
+      this group.  The input also allows selection of various
+      computational procedures.
+    </ToolTip>
+
+    <ToolTip Group="EOMINP" Keyword="GROUP">
+      The name of the Abelian group to be used, which
+      may be only one of the groups shown in the
+      table below. The default is taken from $DATA,
+      and is reset to C1 if the group is non-Abelian.
+      The purpose is to let the Abelian symmetry be
+      turned off by setting GROUP=C1, if desired.
+      Symmetry is used to help with the initial
+      excited state selection, for controlling
+      the EOMCC calculations, and for labeling the
+      calculated states in the output (not to speed
+      up the calculations).
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="NSTATE">
+      An array of up to 8 integers telling how many
+      singlet excited states of each symmetry type
+      should be computed. The default is
+      NSTATE(1)=1,0,0,0,0,0,0,0 which means 1 excited
+      totally symmetric singlet state is to be found.
+      The choice of NSTATE(1)=0,0,0,0,0,0,0,0 means
+      calculating the ground state only, yielding the
+      new types of ground-state CR-CCSD(T) corrections
+      labeled as types I, II, and III (see MTRIP).
+
+      irreducible representation symmetry table:
+      irrep  1    2    3    4    5    6    7    8
+      C1   A
+      C2   A    B
+      Cs   A'   A''
+      Ci   Ag   Au
+      C2v  A1   A2   B1   B2
+      C2h  Ag   Au   Bg   Bu
+      D2   A    B1   B2   B3
+      D2h  Ag   Au   B1g  B1u  B2g  B2u  B3g  B3u
+      Note that this differs from $DET, $MCQDPT, etc!
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="IROOT">
+      selects the state whose energy is to be saved
+      for further calculations (default IROOT(1)=1,0).
+      The first integer lists the irrep number, from
+      the same table as NSTATE.  The second lists
+      the number of the excited state.  The default
+      corresponds to the ground state (labeled as
+      state 0), as this state must lie in the totally
+      symmetric representation.  IROOT(1)=3,2 means
+      the second excited state of symmetry B1, if the
+      if the point group is C2v.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="CCPRPE">
+      A flag to select computation of the EOM-CCSD level
+      excited state density matrices (see also CCPRP in
+      $CCINP for ground states).  The computation takes
+      extra time, to obtain left eigenstates, so the
+      default is .FALSE.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MEOM">
+      selects the solver for the EOMCCSD calculations:
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MEOM" Value="0">
+      one EOMCCSD root at a time, united iterative
+      space for all calculated roots (default)
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MEOM" Value="1">
+      one root at a time, separate iterative space for
+      each calculated root
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MEOM" Value="2">
+      The Hirao-Nakatsuji multi-root solver
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MEOM" Value="3">
+      one root at a time, separate iterative space for
+      all computed right/left roots. (compare to 1)
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MEOM" Value="4">
+      one root at a time, united iterative spaces
+      for each right/left root (compare to 0).
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MTRIP">
+      selects the type of noniterative triples
+      corrections to EOMCCSD energies:
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MTRIP" Value="1">
+      compute the CR-EOMCCSD(T) triples corrections
+      termed type I and II in the output. This is the
+      default, which skips the iterative CISD
+      calculations needed to construct the
+      CR-EOMCCSD(T) triples corrections of type III.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MTRIP" Value="2">
+      After performing an additional CISD calculation,
+      evaluate all types of the CR-EOMCCSD(T) triples
+      corrections, including types I, II, and III.
+      This choice of MTRIP uses approximately 50 %
+      more memory, but less CPU time than MTRIP=4.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MTRIP" Value="3">
+      Evaluate the CR-EOMCCSD(T) corrections of type
+      III only. As with MTRIP=2, this calculation
+      includes the iterative CISD calculation, which
+      is needed to construct the type III triples
+      corrections, in addition to the EOMCCSD and
+      CR-EOMCCSD(T) calculations.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MTRIP" Value="4">
+      Carry out MTRIP=1 calculations, followed by
+      MTRIP=3 calculations, thus evaluating all types
+      of the CR-EOMCCSD(T) corrections (types I, II,
+      and III in the output). As with MTRIP=2, this
+      calculation includes the CISD iterations, which
+      are needed to construct the type III triples
+      corrections, in addition to the EOMCCSD and
+      CR-EOMCCSD(T) calculations. Compared to
+      MTRIP=2, this choice of MTRIP uses less memory,
+      but more CPU time.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MCI">
+      selects the solver for the CISD step, which
+      is irrelevant unless MTRIP is bigger than 1.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MCI" Value="1">
+      One root at a time, separate iterative space for
+      each calculated root (default)
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MCI" Value="2">
+      The Hirao-Nakatsuji multi-root solver (slower)
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MINIT">
+      selects the initial guess procedure for both the
+      EOMCCSD and CISD iterations (when MTRIP>1).
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MINIT" Value="1">
+      (not a default, but HIGHLY RECOMMENDED). Use
+      EOMCCSd to start the EOMCCSD iterations and use
+      CISd to start the CISD iterations during the
+      CR-EOMCCSD(T), type III, calculations.
+      This means that the initial guesses for the
+      calculated states are defined using all single
+      excitations (letter S in EOMCCSd and CISd) and a
+      small subset of double excitations (the little d
+      in EOMCCSd and CISd) defined by active orbitals
+      or orbital range specified by the user. The
+      inclusion of a small set of active doubles
+      in addition to all singles in the initial guess
+      facilitates finding excited states characterized
+      by relatively large doubly excited amplitudes.
+      This choice of MINIT is strongly recommended.
+      (see NOACT, NUACT, and MOACT).
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MINIT" Value="2">
+      Use CIS wave functions as initial guesses for
+      the EOMCCSD and possible CISD calculations.
+      This is the default, but may cause severe
+      convergence difficulties or even miss some
+      states entirely if the calculated states have
+      significant doubly excited character. MINIT=1 is
+      much better in these situations and strongly
+      recommended, particularly when there is a chance
+      of having low-lying states with nonnegligible
+      bi-excited or multi-configurational character.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="NOACT">
+      The number of occupied MOs in the active space
+      for the EOMCCSd and CISd initial guesses.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="NUACT">
+      The number of unoccupied MOs in the active space
+      for the EOMCCSd and CISd initial guesses.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MOACT">
+      Array allowing explicit selection of the active
+      orbitals used to define the EOMCCSd and CISd
+      initial guesses. If not provided, the MOACT
+      array is filled such that the NOACT highest
+      occupied and NUACT lowest unoccupied orbitals
+      are selected.  If MOACT array is given, the
+      number of values in it must equal NOACT + NUACT.
+
+      MINIT=1 NOACT=3 NUACT=5
+      MOACT(1)=13,14,15, 19,20,24,25,30
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="CVGEOM">
+      convergence criterion on the EOMCCSD excitation
+      amplitudes R1 and R2 (default=1.0d-4).
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MAXEOM">
+      maximum number of iterations in the EOMCCSD
+      calculations (default=50). For MEOM=0 or 1,
+      this is the maximum number of iterations per
+      each calculated state. For MEOM=2, this is
+      the maximum number of iterations for all
+      states of the EOMCCSD multi-root procedure.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MICEOM">
+      Maximum number of microiterations in the
+      EOMCCSD calculations (default=80). Rarely used.
+      For MEOM=1 (separate iterative space for each
+      root), this is the maximum number of
+      microiterations for each calculated state.
+      For MEOM=0 or 2 (united iterative space
+      for all calculated roots), this is the
+      maximum number of microiterations for all
+      calculated states. It is much better to
+      perform calculations with MICEOM &gt; MAXEOM
+      (i.e., in a single iteration cycle). If
+      for some reason the EOMCCSD convergence is
+      very slow and the iterative space becomes
+      very large, it may be worth changing the
+      default MICEOM value to MICEOM &lt; MAXEOM
+      to reduce the disk usage. This is not
+      going to happen too often and normally there
+      is no need to change the default MICEOM value.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="CVGCI">
+      convergence criterion for the CISD expansion
+      coefficients (default=1.0d-4).
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MAXCI">
+      maximum number of iterations in the CISD
+      calculation (default=50). For MCI=1, this
+      is the maximum number of iterations per each
+      calculated CISD state. For MCI=2, this is
+      the maximum number of iterations for all
+      states of the CISD multi-root procedure.
+    </ToolTip>
+    <ToolTip Group="EOMINP" Keyword="MICCI">
+      maximum number of microiterations in the
+      CISD calculation (default=80). Rarely used.
+      For MCI=1 (separate iterative space for each
+      root), this is the maximum number of
+      microiterations for each calculated state.
+      For MCI=2 (united iterative space for all
+      calculated roots), this is the maximum
+      number of microiterations for all calculated
+      states. In analogy to MICEOM, it is much
+      better to perform the CISD calculations with
+      MICCI &gt; MAXCI (i.e., in a single iteration
+      cycle).
+    </ToolTip>
+    
+    
+    
+    <ToolTip Group="MOPAC">
+      semi-empirical specification      MPCMOL:MOLDAT
+
+      This group affects only semi-empirical jobs, which are
+      selected in $BASIS by keyword GBASIS.
+    </ToolTip>
+
+    <ToolTip Group="MOPAC" Keyword="PEPTID">
+      Flag for peptide bond correction.
+      By default a molecular mechanics-style torsion
+      potential term is added for every peptide bond
+      linkage found.  The intent is to correct these
+      torsions to be closer to planar than they would
+      otherwise be in the semi-empirical model.  Here,
+      the peptide bond means any
+
+      O       H
+      \\     /
+      C----N
+      /      \
+              X
+
+      One such torsion is added for O-C-N-H and one for
+      O-C-N-X.  This term is parameterized as in MOPAC6.
+      Default=.TRUE.
+    </ToolTip>
+    
+    
+
+    <ToolTip Group="GUESS">
+      initial orbital selection         GUESS :GUESMO
+
+      This group controls the selection of initial molecular
+      orbitals.
+    </ToolTip>
+
+    <ToolTip Group="GUESS" Keyword="GUESS">
+      Selects type of initial orbital guess.
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="GUESS" Value="HUCKEL">
+      Carry out an extended Huckel calculation
+      using a Huzinaga MINI basis set, and
+      project this onto the current basis.
+      This is implemented for atoms up to Rn,
+      and will work for any all electron or
+      ECP basis set.  (default for most runs)
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="GUESS" Value="HCORE">
+      Diagonalize the one electron Hamiltonian
+      to obtain the initial guess orbitals.
+      This method is applicable to any basis
+      set, but does not work as well as the
+      HUCKEL guess.
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="GUESS" Value="MOREAD">
+      Read in formatted vectors punched by an
+      earlier run.  This requires a $VEC group,
+      and you MUST pay attention to NORB below.
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="GUESS" Value="RDMINI">
+      Read in a $VEC group from a converged
+      calculation that used GBASIS=MINI and no
+      polarization functions, and project these
+      orbitals onto the current basis.  Do not
+      use this option if the current basis
+      involve ECP basis sets.
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="GUESS" Value="MOSAVED">
+      (default for restarts)  The initial
+      orbitals are read from the DICTNRY file
+      of the earlier run.
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="GUESS" Value="SKIP">
+      Bypass initial orbital selection.  The
+      initial orbitals and density matrix are
+      assumed to be in the DICTNRY file.  Mostly
+      used for RUNTYP=HESSIAN when the hessian
+      is being read in from the input.
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="GUESS" Value="FMO">
+      Read orbitals from the DICTNRY file, from
+      previous FMO run with MODPRP=1.
+    </ToolTip>
+
+    <ToolTip Group="GUESS" Keyword="PRTMO">
+      a flag to control printing of the initial guess.
+      (default=.FALSE.)
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="PUNMO">
+      a flag to control punching of the initial guess.
+      (default=.FALSE.)"
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="MIX">
+      rotate the alpha and beta HOMO and LUMO orbitals
+      so as to generate inequivalent alpha and beta
+      orbital spaces.  This pertains to UHF singlets
+      only.  This may require use of NOSYM=1 in $CONTRL
+      depending on your situation.  (default=.FALSE.)"
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="NORB">
+      The number of orbitals to be read in the $VEC
+      group.  This applies only to GUESS=MOREAD."
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="NORDER">
+      Orbital reordering switch.
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="NORDER" Value="0">
+      No reordering (default)
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="NORDER" Value="1">
+      Reorder according to IORDER and JORDER."
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="IORDER">
+      Reordering instructions.
+      Input to this array gives the new molecular
+      orbital order.  For example, IORDER(3)=4,3 will
+      interchange orbitals 3 and 4, while leaving the
+      other MOs in the original order.  This parameter
+      applies to all orbitals (alpha and beta) except
+      for -UHF-, where it only affects the alpha MOs.
+      (default is IORDER(i)=i )"
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="JORDER">
+      Reordering instructions.
+      Same as IORDER, but for the beta MOs of -UHF-."
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="INSORB">
+      the first INSORB orbitals specified in the $VEC
+      group will be inserted into the Huckel guess,
+      making the guess a hybrid of HUCKEL/MOREAD.  This
+      keyword is meaningful only when GUESS=HUCKEL, and
+      it is useful mainly for QM/MM runs where some
+      orbitals (buffer) are frozen and need to be
+      transferred to the initial guess vector set,
+      see $MOFRZ.  (default=0)"
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="PURIFY">
+      flag to symmetrize starting orbitals.  This is the
+      most soundly based of the possible procedures.
+      However it may fail in complicated groups when the
+      orbitals are very unsymmetric.  (default=.FALSE.)"
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="TOLZ">
+      level below which MO coefficients will be set
+      to zero.  (default=1.0E-7)"
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="TOLE">
+      level at which MO coefficients will be equated.
+      This is a relative level, coefficients are set
+      equal if one agrees in magnitude to TOLE times
+      the other.  (default=5.0E-5)
+    </ToolTip>
+    <ToolTip Group="GUESS" Keyword="SYMDEN">
+      project the initial density in order to generate
+      symmetric orbitals.  This may be useful if the
+      HUCKEL or HCORE guess types give orbitals of
+      impure symmetry (?'s present).  The procedure
+      will generate a fairly high starting energy, and
+      thus its use may not be a good idea for orbitals
+      of the quality of MOREAD.  (default=.FALSE.)"
+    </ToolTip>
+    
+    
+    
+
+    <ToolTip Group="VEC">
+      orbitals              (formatted) GUESS :READMO
+
+      This group consists of formatted vectors, as written
+      onto file PUNCH in a previous run.  It is considered good
+      form to retain the titling comment cards punched before
+      the $VEC card, as a reminder to yourself of the origin of
+      the orbitals.
+
+      For Morokuma decompositions, the names of this group
+      are $VEC1, $VEC2, ... for each monomer, computed in the
+      identical orientation as the supermolecule.  For transition
+      moment or spin-orbit coupling runs, orbitals for states
+      one and possibly two are $VEC1 and $VEC2.
+    </ToolTip>
+
+    
+    
+    <ToolTip Group="MOFRZ">
+      freezes MOs during SCF runs       EFPCOV:MFRZIN
+
+      This group controls freezing the molecular orbitals
+      of your choice during the SCF procedure.  If you choose
+      this option, select DIIS in $SCF since SOSCF will not
+      converge as well.  GUESS=MOREAD is required in $GUESS.
+    </ToolTip>
+
+    <ToolTip Group="MOFRZ" Keyword="FRZ">
+      flag which triggers MO freezing. (default=.FALSE.)
+    </ToolTip>
+
+    <ToolTip Group="MOFRZ" Keyword="IFRZ">
+      an array of MOs in the input $VEC set which are
+      to be frozen.  There is no default for this.
+    </ToolTip> 
+    
+    
+    
+    
+    <ToolTip Group="STATPT">
+      geometry search control           STATPT:SETSIG
+    </ToolTip>
+
+    <ToolTip Group="TRUDGE">
+      nongradient optimization          TRUDGE:TRUINP
+    </ToolTip>
+
+    <ToolTip Group="TRURST">
+      restart data for TRUDGE           TRUDGE:TRUDGX
+    </ToolTip>
+
+    <ToolTip Group="FORCE">
+      hessian, normal coordinates       HESS  :HESSX
+    </ToolTip>
+
+    <ToolTip Group="CPHF">
+      coupled-Hartree-Fock options      CPHF  :CPINP
+    </ToolTip>
+
+    <ToolTip Group="MASS">
+      isotope selection                 VIBANL:RAMS
+    </ToolTip>
+
+    <ToolTip Group="HESS">
+      force constant matrix (formatted) HESS  :FCMIN
+    </ToolTip>
+
+    <ToolTip Group="GRAD">
+      gradient vector       (formatted) HESS  :EGIN
+    </ToolTip>
+
+    <ToolTip Group="DIPDR">
+      dipole deriv. matrix  (formatted) HESS  :DDMIN
+    </ToolTip>
+
+    <ToolTip Group="VIB">
+      HESSIAN restart data  (formatted) HESS  :HSSNUM
+    </ToolTip>
+
+    <ToolTip Group="VIB2">
+      HESSIAN restart data  (formatted) HESS  :HSSFUL
+    </ToolTip>
+
+    <ToolTip Group="VSCF">
+      vibrational anharmonicity         VSCF  :VSCFIN
+    </ToolTip>
+
+    <ToolTip Group="VIBSCF">
+      VSCF restart data (formatted)     VSCF  :VGRID
+    </ToolTip>
+
+    <ToolTip Group="IRC">
+      intrinsic reaction path           RXNCRD:IRCX
+    </ToolTip>
+
+    <ToolTip Group="DRC">
+      dynamic reaction path             DRC   :DRCDRV
+    </ToolTip>
+
+    <ToolTip Group="MEX">
+      minimum energy crossing point     MEXING:MEXINP
+    </ToolTip>
+
+    <ToolTip Group="MD">
+      molecular dynamics trajectory     MDEFP :MDX
+    </ToolTip>
+
+    <ToolTip Group="GLOBOP">
+      Monte Carlo global optiization    GLOBOP:GLOPDR
+    </ToolTip>
+
+    <ToolTip Group="GRADEX">
+      gradient extremal path            GRADEX:GRXSET
+    </ToolTip>
+
+    <ToolTip Group="SURF">
+      potential surface scan            SURF  :SRFINP
+    </ToolTip>
+
+    <ToolTip Group="LOCAL">
+      localized molecular orbitals      LOCAL :LMOINP
+    </ToolTip>
+
+    <ToolTip Group="TWOEI">
+      J,K integrals         (formatted) LOCCD :TWEIIN
+    </ToolTip>
+
+    <ToolTip Group="TRUNCN">
+      localized orbital truncations     EFPCOV:TRNCIN
+    </ToolTip>
+
+    <ToolTip Group="ELMOM">
+      electrostatic moments             PRPLIB:INPELM
+    </ToolTip>
+
+    <ToolTip Group="ELPOT">
+      electrostatic potential           PRPLIB:INPELP
+    </ToolTip>
+
+    <ToolTip Group="ELDENS">
+      electron density                  PRPLIB:INPELD
+    </ToolTip>
+
+    <ToolTip Group="ELFLDG">
+      electric field/gradient           PRPLIB:INPELF
+    </ToolTip>
+
+    <ToolTip Group="POINTS">
+      property calculation points       PRPLIB:INPPGS
+    </ToolTip>
+
+    <ToolTip Group="GRID">
+      property calculation mesh         PRPLIB:INPPGS
+    </ToolTip>
+
+    <ToolTip Group="PDC">
+      MEP fitting mesh                  PRPLIB:INPPDC
+    </ToolTip>
+
+    <ToolTip Group="MOLGRF">
+      orbital plots                     PARLEY:PLTMEM
+    </ToolTip>
+
+    <ToolTip Group="STONE">
+      distributed multipole analysis    PRPPOP:STNRD
+    </ToolTip>
+
+    <ToolTip Group="RAMAN">
+      Raman intensity                   RAMAN :RAMANX
+    </ToolTip>
+
+    <ToolTip Group="ALPDR">
+      alpha polar. der. (formatted)     RAMAN :ADMIN
+    </ToolTip>
+
+    <ToolTip Group="NMR">
+      NMR shielding tensors             NMR   :NMRX
+    </ToolTip>
+
+    <ToolTip Group="MOROKM">
+      Morokuma energy decomposition     MOROKM:MOROIN
+    </ToolTip>
+
+    <ToolTip Group="FFCALC">
+      finite field polarizabilities     FFIELD:FFLDX
+    </ToolTip>
+
+    <ToolTip Group="TDHF">
+      time dependent HF of NLO props    TDHF  :TDHFX
+
+      This group permits the analytic calculation of various
+      static and/or frequency dependent polarizabilities, with
+      an emphasis on important NLO properties such as second and
+      third harmonic generation.  The method is programmed only
+      for closed shell wavefunctions, at the semi-empirical or
+      ab initio level.  Ab initio calculations may be direct SCF,
+      or parallel, if desired.
+    </ToolTip>
+
+    <ToolTip Group="TDHFX">
+      TDHF for NLO, Raman, hyperRaman   TDX:FINDTDHFX
+
+      This group permits the analytical determination of
+      static and/or frequency dependent polarizabilities and
+      hyperpolarizabilities (alpha, beta, and gamma), as well as
+      their first- and second-order geometrical derivatives (of
+      alpha and beta).  This permits the prediction of dynamic
+      (nonresonant) Raman and hyper-Raman spectra, yielding both
+      intensities and depolarizations.  The method is only
+      available for closed shell systems (RHF).
+    </ToolTip>
+
+    <ToolTip Group="EFRAG">
+      effective fragment potentials     EFINP :EFINP
+    </ToolTip>
+
+    <ToolTip Group="FRAGNAME">
+      specific named fragment pot.     EFINP :RDSTFR
+    </ToolTip>
+
+    <ToolTip Group="FRGRPL">
+      inter-fragment repulsion          EFINP :RDDFRL
+    </ToolTip>
+
+    <ToolTip Group="PRTEFP">
+      simplified EFP generation         EFINP :PREFIN
+    </ToolTip>
+
+    <ToolTip Group="DAMP">
+      EFP multipole screening fit       CHGPEN:CGPINP
+    </ToolTip>
+
+    <ToolTip Group="DAMPGS">
+      initial guess screening params    CHGPEN:CGPINP
+    </ToolTip>
+
+    <ToolTip Group="PCM">
+      polarizable continuum model       PCM   :PCMINP
+    </ToolTip>
+
+    <ToolTip Group="PCMGRD">
+      PCM gradient contrl               PCMCV2:PCMGIN
+    </ToolTip>
+
+    <ToolTip Group="PCMCAV">
+      PCM cavity generation             PCM   :MAKCAV
+    </ToolTip>
+
+    <ToolTip Group="TESCAV">
+      PCM cavity tesselation            PCMCV2:TESIN
+    </ToolTip>
+
+    <ToolTip Group="NEWCAV">
+      PCM escaped charge cavity         PCM   :DISREP
+    </ToolTip>
+
+    <ToolTip Group="IEFPCM">
+      PCM integral equation form. data  PCM   :IEFDAT
+    </ToolTip>
+
+    <ToolTip Group="PCMITR">
+      PCM iterative IEF input           PCMIEF:ITIEFIN
+    </ToolTip>
+
+    <ToolTip Group="DISBS">
+      PCM dispersion basis set          PCMDIS:ENLBS
+    </ToolTip>
+
+    <ToolTip Group="DISREP">
+      PCM dispersion/repulsion          PCMVCH:MORETS
+    </ToolTip>
+
+    <ToolTip Group="SVP">
+      Surface Volume Polarization model SVPINP:SVPINP
+    </ToolTip>
+
+    <ToolTip Group="SVPIRF">
+      reaction field points (formatted) SVPINP:SVPIRF
+    </ToolTip>
+
+    <ToolTip Group="COSGMS">
+      conductor-like screening model    COSMO :COSMIN
+    </ToolTip>
+
+    <ToolTip Group="SCRF">
+      self consistent reaction field    SCRF  :ZRFINP
+    </ToolTip>
+
+    <ToolTip Group="ECP">
+      effective core potentials         ECPLIB:ECPPAR
+    </ToolTip>
+
+    <ToolTip Group="MCP">
+      model core potentials             MCPINP:MMPRED
+    </ToolTip>
+
+    <ToolTip Group="RELWFN">
+      scalar relativistic integrals     INPUTB:RWFINP
+    </ToolTip>
+
+    <ToolTip Group="EFIELD">
+      external electric field           PRPLIB:INPEF
+    </ToolTip>
+
+    <ToolTip Group="INTGRL">
+      2e- integrals                     INT2A :INTIN
+    </ToolTip>
+
+    <ToolTip Group="FMM">
+      fast multipole method             QMFM  :QFMMIN
+    </ToolTip>
+
+    <ToolTip Group="TRANS">
+      integral transformation           TRANS :TRFIN
+    </ToolTip>
+
+    <ToolTip Group="FMO">
+      define FMO fragments              FMOIO :FMOMIN
+    </ToolTip>
+
+    <ToolTip Group="FMOPRP">
+      FMO properties and convergers     FMOIO :FMOPIN
+    </ToolTip>
+
+    <ToolTip Group="FMOXYZ">
+      atomic coordinates for FMO        FMOIO :FMOXYZ
+    </ToolTip>
+
+    <ToolTip Group="OPTFMO">
+      input for special FMO optimizer   FMOGRD:OPTFMO
+    </ToolTip>
+
+    <ToolTip Group="FMOLMO">
+      localized MO for FMO boundaries   FMOIO :FMOLMO
+    </ToolTip>
+
+    <ToolTip Group="FMOBND">
+      FMO bond cleavage definition      FMOIO :FMOBON
+    </ToolTip>
+
+    <ToolTip Group="FMOENM">
+      monomer energies for FMO restart  FMOIO :EMINOU
+    </ToolTip>
+
+    <ToolTip Group="FMOEND">
+      dimer energies for FMO restart    FMOIO :EDIN
+    </ToolTip>
+
+    <ToolTip Group="OPTRST">
+      OPTFMO restart data               FMOGRD:RSTOPT
+    </ToolTip>
+
+    <ToolTip Group="GDDI">
+      group DDI definition              INPUTA:GDDINP
+    </ToolTip>
+
+    <ToolTip Group="CIINP">
+      control over CI calculation       GAMESS:WFNCI
+    </ToolTip>
+
+    <ToolTip Group="DET">
+      determinant full CI for MCSCF     ALDECI:DETINP
+    </ToolTip>
+
+    <ToolTip Group="CIDET">
+      determinant full CI               ALDECI:DETINP
+    </ToolTip>
+
+    <ToolTip Group="GEN">
+      determinant general CI for MCSCF  ALGNCI:GCIINP
+    </ToolTip>
+
+    <ToolTip Group="CIGEN">
+      determinant general CI            ALGNCI:GCIINP
+    </ToolTip>
+
+    <ToolTip Group="ORMAS">
+      determinant multiple active space ORMAS :FCINPT
+    </ToolTip>
+
+    <ToolTip Group="GCILST">
+      general CI determinant list       ALGNCI:GCIGEN
+    </ToolTip>
+
+    <ToolTip Group="SODET">
+      determinant second order CI       FSODCI:SOCINP
+    </ToolTip>
+
+    <ToolTip Group="DRT">
+      GUGA distinct row table for MCSCF GUGDRT:ORDORB
+    </ToolTip>
+
+    <ToolTip Group="CIDRT">
+      GUGA CI (CSF) distinct row table  GUGDRT:ORDORB
+    </ToolTip>
+
+    <ToolTip Group="MCSCF">
+      control over MCSCF calculation    MCSCF :MCSCF
+    </ToolTip>
+
+    <ToolTip Group="MRMP">
+      MRPT selection                    MP2   :MRMPIN
+    </ToolTip>
+
+    <ToolTip Group="DEMRPT">
+      det. multireference pert. theory  DEMRPT:DMRINP
+    </ToolTip>
+
+    <ToolTip Group="MCQDPT">
+      CSF multireference pert. theory   MCQDPT:MQREAD
+    </ToolTip>
+
+    <ToolTip Group="CISORT">
+      GUGA CI integral sorting          GUGSRT:GUGSRT
+    </ToolTip>
+
+    <ToolTip Group="GUGEM">
+      GUGA CI Hamiltonian matrix        GUGEM :GUGAEM
+    </ToolTip>
+
+    <ToolTip Group="GUGDIA">
+      GUGA CI diagonalization           GUGDGA:GUGADG
+    </ToolTip>
+
+    <ToolTip Group="GUGDM">
+      GUGA CI 1e- density matrix        GUGDM :GUGADM
+    </ToolTip>
+
+    <ToolTip Group="GUGDM2">
+      GUGA CI 2e- density matrix        GUGDM2:GUG2DM
+    </ToolTip>
+
+    <ToolTip Group="LAGRAN">
+      GUGA CI Lagrangian                LAGRAN:CILGRN
+    </ToolTip>
+
+    <ToolTip Group="TRFDM2">
+      GUGA CI 2e- density backtransform TRFDM2:TRF2DM
+    </ToolTip>
+
+    <ToolTip Group="TRANST">
+      transition moments, spin-orbit    TRNSTN:TRNSTX
+    </ToolTip>
+
+
+  </ToolTips>
+</root>

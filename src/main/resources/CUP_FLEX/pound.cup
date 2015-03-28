@@ -1,0 +1,60 @@
+import java_cup.runtime.*;
+import javax.swing.*;
+import java.util.*;
+
+
+
+
+/*
+MANUALLY ADD TO CUP-GENERATED CLASS IN Pound.java?????????
+
+ //add to CUP$Pound$actions
+ public LexerParserBroker broker;
+
+ //add to the constructor of CUP$Pound$actions
+ broker = new LexerParserBroker();
+
+*/
+action code {: 
+  //__________________________________
+  public static boolean DEBUG = true;
+:}
+
+
+
+
+terminal            LINK, PERCENT_SPEC, POUNDLINE;
+non terminal Object startpt, pattern;
+
+
+
+
+/* ___________
+   The grammer */
+
+startpt ::= POUNDLINE
+            |
+            POUNDLINE
+            pattern
+            ;
+
+pattern ::= pattern 
+	    LINK
+            POUNDLINE
+            |
+            pattern
+            LINK
+            PERCENT_SPEC
+            POUNDLINE
+            |
+            LINK 
+            POUNDLINE
+            |
+            LINK
+            PERCENT_SPEC
+	    POUNDLINE
+            ;
+
+
+
+

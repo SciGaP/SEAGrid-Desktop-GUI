@@ -1,0 +1,80 @@
+c
+c     calculate the bond stretch energy and first derivatives
+c
+      do i = 1, nbond
+         ia = ibnd(1,i)
+         ib = ibnd(2,i)
+         ideal = bl(i)
+         force = bk(i)
+c
+c     decide whether to compute the current interaction
+c
+         proceed = .true.
+         if (use_group)  call groups (proceed,fgrp,2,ia,ib,0,0,0)
+         if (proceed)  proceed = (use(ia) .or. use(ib))
+c
+c     compute the value of the bond length deviation
+c
+         if (proceed) then
+            xab = x(ia) - x(ib)
+            yab = y(ia) - y(ib)
+            zab = z(ia) - z(ib)
+            rab = sqrt(xab*xab + yab*yab + zab*zab)
+            dt = rab - ideal
+c
+c     Harmonic potential uses Taylor expansion of Morse potential
+c     through the fourth power of the bond length deviation
+c
+            if (bndtyp .eq. 'HARMONIC') then
+               dt2 = dt * dt
+               e = bndunit * force * dt2 * (1.0d0+cbnd*dt+qbnd*dt2)
+               deddt = 2.0d0 * bndunit * force * dt
+     &                    * (1.0d0+1.5d0*cbnd*dt+2.0d0*qbnd*dt2)
+c
+c     Morse potential uses energy = BDE * (1 - e**(-alpha*dt))**2)
+c     with the approximations alpha = sqrt(ForceConst/BDE) = -2
+c     and BDE = Bond Dissociation Energy = ForceConst/alpha**2
+c
+            else if (bndtyp .eq. 'MORSE') then
+               expterm = exp(-2.0d0*dt)
+               bde = 0.25d0 * bndunit * force
+               e = bde * (1.0d0-expterm)**2
+               deddt = 4.0d0 * bde * (1.0d0-expterm) * expterm
+            end if
+c
+c     scale the interaction based on its group membership
+c
+            if (use_group) then
+               e = e * fgrp
+               deddt = deddt * fgrp
+            end if
+c
+c     compute chain rule terms needed for derivatives
+c
+            if (rab .eq. 0.0d0) then
+               de = 0.0d0
+            else
+               de = deddt / rab
+            end if
+            dedx = de * xab
+            dedy = de * yab
+            dedz = de * zab
+c
+c     increment the total bond energy and first derivatives
+c
+            eb = eb + e
+            deb(1,ia) = deb(1,ia) + dedx
+            deb(2,ia) = deb(2,ia) + dedy
+            deb(3,ia) = deb(3,ia) + dedz
+            deb(1,ib) = deb(1,ib) - dedx
+            deb(2,ib) = deb(2,ib) - dedy
+            deb(3,ib) = deb(3,ib) - dedz
+c
+c     increment the internal virial diagonal components
+c
+            virx = virx + xab*dedx
+            viry = viry + yab*dedy
+            virz = virz + zab*dedz
+         end if
+      end do
+

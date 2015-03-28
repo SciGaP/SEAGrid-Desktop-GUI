@@ -1,0 +1,17 @@
+unknown dooley_proj test mjk mike4.cct.lsu.edu debug 00:30:00 /bin/echo /scratch/dooley null 4 05:38 04/14/2005 
+
+unknown dooley_proj help mjk mike4.cct.lsu.edu debug 00:30:00 /bin/echo /scratch/dooley null 4 05:41 04/14/2005 
+unknown dooley_proj help mjk mike4.cct.lsu.edu debug 00:30:00 /bin/echo /scratch/dooley null 4 05:46 04/14/2005 
+unknown dooley_proj date mjk mike4.cct.lsu.edu debug 00:30:00 /bin/date /scratch/dooley null 4 05:49 04/14/2005 
+unknown rdoole1_proj default_ssh_test mjk cu.ncsa.uiuc.edu debug 00:30:00 /usr/local/bin/g03 /scratch/rdoole1 null 4 05:54 04/14/2005 
+unknown rdoole1_proj water mjk cu.ncsa.uiuc.edu debug 00:30:00 /usr/local/bin/g03 /scratch/javax.swing.JTextField[,110,43,224x18,layout=javax.swing.plaf.basic.BasicTextUI$UpdateHandler,alignmentX=null,alignmentY=null,border=javax.swing.plaf.BorderUIResource$CompoundBorderUIResource@b345e1,flags=296,maximumSize=,minimumSize=,preferredSize=,caretColor=javax.swing.plaf.ColorUIResource[r=0,g=0,b=0],disabledTextColor=javax.swing.plaf.ColorUIResource[r=159,g=159,b=159],editable=true,margin=javax.swing.plaf.InsetsUIResource[top=0,left=0,bottom=0,right=0],selectedTextColor=javax.swing.plaf.ColorUIResource[r=0,g=0,b=0],selectionColor=javax.swing.plaf.ColorUIResource[r=217,g=217,b=170],columns=20,columnWidth=11,command=,horizontalAlignment=LEADING] null 4 05:58 04/14/2005 
+unknown rdoole1_proj water mjk cu.ncsa.uiuc.edu debug 00:30:00 /usr/apps/chemistry/g03 /scratch/users/rdoole1 /Users/doctordooley/water.inp 4 06:05 04/14/2005 
+unknown wrk030_proj water mjk ccg-login.ncsa.uiuc.edu batch 00:30:00 /usr/local/bin/qg03l ~/ /Users/doctordooley/water.inp 4 01:59 04/15/2005 
+unknown wrk030_proj default_test mjk ccg-login.ncsa.uiuc.edu debug 00:30:00 /usr/local/bin/qg03l ~ default_test.inp 4 02:34 04/15/2005 
+unknown doctordooley_proj default_test gaussian localhost normal 00:30:00 /bin/date ~/ default_test.inp 4 09:48 04/17/2005 
+unknown wrk010_proj exe_ssh_test mjk ccg-login.ncsa.uiuc.edu debug 00:30:00 /bin/date ~/ exe_ssh_test.inp 4 03:29 04/18/2005 
+unknown wrk010_proj default_test mjk ccg-login.ncsa.uiuc.edu debug 00:30:00 /bin/date /home/wrk010 default_test.inp 4 03:33 04/18/2005 
+unknown wrk010_proj default_test mjk ccg-login.ncsa.uiuc.edu debug 00:30:00 /bin/date ~/ default_test.inp 4 03:36 04/18/2005 
+unknown wrk010_proj gaus_test other ccg-login.ncsa.uiuc.edu normal 00:30:00 /usr/local/bin/qg03l /home/wrk010 gaus_test.inp 4 03:42 04/18/2005 
+unknown rdoole1_proj default_ssh_test mjk cu.ncsa.uiuc.edu debug 00:30:00 /usr/local/bin/qg03l /scratch/users/rdoole1 default_ssh_test.inp 4 03:45 04/18/2005 
+unknown rdoole1_proj default_ssh_test2 mjk cu.ncsa.uiuc.edu debug 00:30:00 /usr/local/bin/qg03 /scratch/users/rdoole1 default_ssh_test2.inp 4 03:49 04/18/2005 

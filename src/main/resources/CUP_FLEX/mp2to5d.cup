@@ -1,0 +1,63 @@
+import java_cup.runtime.*;
+
+parser code {: ///public static boolean DEBUG = false; :}
+
+init with {: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  entry"); :};
+
+terminal E2, EUMP2, MP4_T, E3, E4_DQ, E4_SDQ, E4_SDTQ, EUMP3, UMP4_DQ, UMP4_SDQ, UMP4_SDTQ;
+terminal String FCOPT, FCOPT2, ALGOPT, MP2OPT, VAR, LIM, FLOAT;
+non terminal Object startpt, element;
+
+/* ___________
+   The grammer */
+
+startpt ::= startpt element
+            |
+            element
+            ;
+
+element ::=
+	E2 FLOAT:f
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  E2"+f);
+           ParseMP2to5.put("E2", f); :}
+	|
+	EUMP2 FLOAT:f
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  MP2 energy EUMP2"+f);
+           ParseMP2to5.put("MP2 energy EUMP2", f); :}
+	|
+	MP4_T FLOAT:f
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  MP4(T)"+f);
+	   ParseMP2to5.put("MP4(T)", f); :}
+	|
+	E3 FLOAT:f
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  E3"+f);
+	   ParseMP2to5.put("E3", f); :}
+	|
+	E4_DQ FLOAT:f
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  E4(DQ)"+f);
+	   ParseMP2to5.put("E4(DQ)", f); :}
+	|
+	E4_SDQ FLOAT:f
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  E4(SDQ)"+f);
+	   ParseMP2to5.put("E4(SDQ)", f); :}
+	|
+	E4_SDTQ FLOAT:f
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  E4(SDTQ)"+f);
+	   ParseMP2to5.put("E4(SDTQ)", f); :}
+	|
+	EUMP3 FLOAT:f
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  MP3 correction EUMP3"+f);
+	   ParseMP2to5.put("MP3 correction EUMP3", f); :}
+	|
+	UMP4_DQ FLOAT:f
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  MP4 correction UMP4(DQ)"+f);
+	   ParseMP2to5.put("MP4 correction UMP4(DQ)", f); :}
+	|
+	UMP4_SDQ FLOAT:f
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  MP4 correction UMP4(SDQ)"+f);
+           ParseMP2to5.put("MP4 correction UMP4(SDQ)", f); :}
+	|
+	UMP4_SDTQ FLOAT:f
+	{: if(Settings.DEBUG) System.out.println("CUP:mp2to5d:  MP4 correction UMP4(SDTQ)"+f);
+           ParseMP2to5.put("MP4 correction UMP4(SDTQ)", f); :}
+	;

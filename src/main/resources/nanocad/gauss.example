@@ -1,0 +1,40 @@
+
+                   case 2: // Create a Gaussian Template close and go back to edit mode
+                   if (clearFlag == true) break;
+                    else
+                    {
+                    // runAsApplication 
+                    System.out.println(" Case 2 Gaussian Input Template being Generated");
+		    // 
+                    // call editjobpaneltextwindow and add text to display
+		    // RHB: change the text on the editJobPanel!!!
+		    // This should not take too terribly long to do now that
+		    // I have figured out where it goes
+		    String gaussOut = GaussianOutput(grp.getXYZ());
+		    // write to a file now
+		    boolean append = false;
+		    try
+		    {
+		    	File f = new File(defaultDirStr+fileSeparator
+				    + "tmp.txt");
+			FileWriter fw = new FileWriter(f, append);
+			fw.write(gaussOut);
+			System.err.println("gaussOut = ");
+			System.err.println(gaussOut);
+			fw.close();
+		    }
+		    catch (IOException ioe)
+		    {
+			System.err.println("newNanocad:output Gaussian:" +
+					"IOException");
+			System.err.println(ioe.toString());
+			ioe.printStackTrace();
+		    }
+			 
+
+		    //
+                    // close molecular editor
+		    this.setVisible(false);
+                    break;
+                    }
+

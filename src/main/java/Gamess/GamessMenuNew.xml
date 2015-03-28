@@ -1,0 +1,2210 @@
+﻿<gamessInput>
+  <Group Name="CONTRL">
+    <Menu MenuType="Dummy" DisplayName="Molecular Specification" ToolTip="Click it">
+      <MenuItem MenuType="Custom" DisplayName="Data"/>
+      <MenuItem MenuType="GroupFrame" DisplayName="Geometry">
+        <GroupFrame Group="CONTRL"  DisplayName="Geometry">
+          <keyword MenuType="COMBO" DisplayName="COORD">
+            <option>UNIQUE</option>
+            <option>HINT</option>
+            <option>CART</option>
+            <option>ZMT</option>
+            <option>ZMTMPC</option>
+            <option>FRAGONLY</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="UNITS">
+            <option>ANGS</option>
+            <option>BOHR</option>
+          </keyword>
+          <keyword MenuType="TEXTBOX" DisplayName="NZVAR">
+            <option Type="Int" Max="25">0</option>
+          </keyword>
+          <keyword MenuType="TEXTBOX" DisplayName="NOSYM">
+            <option>0</option>
+            <option>1</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="GEOM">
+            <option>INPUT</option>
+            <option>DAF</option>
+          </keyword>
+        </GroupFrame>
+      </MenuItem>
+      <MenuItem MenuType="GroupFrame" DisplayName="WaveFunction/ Orbitals">
+        <GroupFrame Group="CONTRL"  DisplayName="WaveFunction/ Orbitals">
+          <keyword MenuType="COMBO" DisplayName="LOCAL">
+            <option isDefault="True">NONE</option>
+            <option>BOYS</option>
+            <option>RUEDNBRG</option>
+            <option>POP</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="PP">
+            <option isDefault="True">NONE</option>
+            <option>READ</option>
+            <option>SBKJC</option>
+            <option>HW</option>
+            <option>MCP</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="ISPHER">
+            <option isDefault="True">-1</option>
+            <option>0</option>
+            <option>1</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="NORMF">
+            <option isDefault="True">0</option>
+            <option>1</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="NORMP">
+            <option isDefault="True">0</option>
+            <option>1</option>
+          </keyword>
+        </GroupFrame>
+      </MenuItem>
+      <MenuItem MenuType="GroupFrame" DisplayName="Computation">
+        <GroupFrame Group="CONTRL" DisplayName="Computation">
+          <keyword MenuType="COMBO" DisplayName="RELWFN" ToolTip="&lt;i&gt;if user selects &lt;b&gt;RELWFN = DK&lt;/b&gt; or &lt;b&gt;RESC:&lt;/b&gt;&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;Although any ordinary basis set can be used here, results may be inaccurate&lt;br/&gt;when using basis sets without relativistic corrections. At a minimum the&lt;br/&gt;contraction coefficients should be modified to account for relativistic effects&lt;br/&gt;such as s-orbital contraction. In addition reoptimization of the any non-relativistic&lt;br/&gt;exponents may be necessary.&lt;br/&gt;&lt;br/&gt;Additional information on relativistically-derived basis sets that can be used&lt;br/&gt;here may be found in the Help menu.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;if user selects &lt;b&gt;RELWFN = NESC&lt;/b&gt;:&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;Three separate basis sets must be provided for this computation – one for the&lt;br/&gt;large components ($DATAL), one for the small components ($DATAS), and &lt;br/&gt;&lt;br/&gt;one averaged basis set ($DATA).  You also must use COORD=UNIQUE style&lt;br/&gt;&lt;br/&gt;input in each of the three $DATA() input groups.&lt;br/&gt;&lt;br/&gt;Additional information on relativistically-derived basis sets that can be used&lt;br/&gt;here may be found in the Help menu.&lt;br/&gt;">
+            <option isDefault="True">NONE</option>
+            <option>DK</option>
+            <option>RESC</option>
+            <option>NESC</option>
+          </keyword>
+          <keyword group="SYSTEM" MenuType="COMBO" DisplayName="NUMGRD">
+            <option isDefault="True">.FALSE.</option>
+            <option>.TRUE.</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="EXETYP">
+            <option>RUN</option>
+            <option>CHECK</option>
+            <option>DEBUG</option>
+            <option>routine</option>
+          </keyword>
+          <keyword MenuType="TEXTBOX" DisplayName="MAXIT">
+            <option>30</option>
+          </keyword>
+          <keyword MenuType="TEXTBOX" DisplayName="QMTTOL">
+            <option>1.0E-6</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="MOLPLT">
+            <option isDefault="True">.FALSE.</option>
+            <option>.TRUE.</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="PLTORB">
+            <option isDefault="True">.FALSE.</option>
+            <option>.TRUE.</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="AIMPAC">
+            <option isDefault="True">.FALSE.</option>
+            <option>.TRUE.</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="FRIEND">
+            <option>HONDO</option>
+            <option>MELDF</option>
+            <option>GAMESSUK</option>
+            <option>GAUSSIAN</option>
+            <option>ALL</option>
+          </keyword>
+          <keyword MenuType="TEXTBOX" DisplayName="ITOL">
+            <option>20</option>
+          </keyword>
+          <keyword MenuType="TEXTBOX" DisplayName="ICUT">
+            <option>9</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="INTTYP">
+            <option>BEST</option>
+            <option>ROTAXIS</option>
+            <option>ERIC</option>
+            <option>RYSQUAD</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="GRPTYP">
+            <option>BEST</option>
+            <option>HONDO</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="NPRINT">
+            <option>-7</option>
+            <option>-6</option>
+            <option>-5</option>
+            <option>-4</option>
+            <option>-3</option>
+            <option>-2</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+          </keyword>
+        </GroupFrame>
+      </MenuItem>
+    </Menu>
+    <Menu MenuType="Keyword" ActionName="SCFTYP" DisplayName="Methods" ToolTip="#$CONTRL SCFTYP">
+      <Menu MenuType="Value" Keyword="SCFTYP" DisplayName="RHF" ToolTip="#$CONTRL SCFTYP RHF">
+        <CallLink id="1"/>
+      </Menu>
+      <Menu MenuType="Value" Keyword="SCFTYP" DisplayName="UHF" ToolTip="#$CONTRL SCFTYP UHF">
+        <CallLink id="1"/>
+      </Menu>
+      <Menu MenuType="Value" Keyword="SCFTYP" DisplayName="ROHF" ToolTip="#$CONTRL SCFTYP ROHF">
+        <CallLink id="1"/>
+      </Menu>
+      <Menu MenuType="Value" Keyword="SCFTYP" DisplayName="GVB" ToolTip="#$CONTRL SCFTYP GVB">
+        <CallLink id="1">
+          <Disable>
+            <item Name="MP2"></item>
+            <item Name="DFTTYP"></item>
+          </Disable>
+        </CallLink>
+      </Menu>
+      <Menu MenuType="Value" Keyword="SCFTYP" DisplayName="MCSCF" ToolTip="#$CONTRL SCFTYP MCSCF">
+        <CallLink id="1">
+          <Disable>
+            <item Name="DFTTYP"></item>
+          </Disable>
+        </CallLink>
+      </Menu>
+      <Menu MenuType="Value" Keyword="SCFTYP" DisplayName="NONE" ToolTip="#$CONTRL SCFTYP NONE">
+        <CallLink id="1">
+          <Disable>
+            <item Name="MP2"></item>
+            <item Name="DFTTYP"></item>
+          </Disable>
+        </CallLink>
+      </Menu>
+    </Menu>
+  </Group>
+  <Group Name="BASIS">
+    <Menu MenuType="Keyword" ActionName="GBASIS" DisplayName="Basis Set" ToolTip="#$BASIS GBASIS">
+      <Menu MenuType="Dummy" DisplayName="segmented contractions">
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="MINI" ToolTip="#$BASIS GBASIS MINI"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="MIDI" ToolTip="#$BASIS GBASIS MIDI"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="STO" ToolTip="#$BASIS GBASIS STO"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="N21" ToolTip="#$BASIS GBASIS N21"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="N31" ToolTip="#$BASIS GBASIS N31"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="N311" ToolTip="#$BASIS GBASIS N311"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="DZV" ToolTip="#$BASIS GBASIS DZV"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="DH" ToolTip="#$BASIS GBASIS DH"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="TZV" ToolTip="#$BASIS GBASIS TZV"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="MC" ToolTip="#$BASIS GBASIS MC"/>
+      </Menu>
+      <Menu MenuType="Dummy" DisplayName="systematic basis set families">
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="CCn" ToolTip="#$BASIS GBASIS CCn"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="ACCn" ToolTip="#$BASIS GBASIS ACCn"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="CCnC" ToolTip="#$BASIS GBASIS CCnC"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="ACCnC" ToolTip="#$BASIS GBASIS ACCnC"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="PCn" ToolTip="#$BASIS GBASIS PCn"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="APCn" ToolTip="#$BASIS GBASIS APCn"/>
+      </Menu>
+      <Menu MenuType="Dummy" DisplayName="ECP">
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="SBKJC" ToolTip="#$BASIS GBASIS SBKJC"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="HW" ToolTip="#$BASIS GBASIS HW"/>
+      </Menu>
+      <Menu MenuType="Dummy" DisplayName="MCP">
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="MCP-DZP" ToolTip="#$BASIS GBASIS MCP-DZP"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="MCP-TZP" ToolTip="#$BASIS GBASIS MCP-TZP"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="MCP-QZP" ToolTip="#$BASIS GBASIS MCP-QZP"/>
+      </Menu>
+      <Menu MenuType="Dummy" DisplayName="semiempirical basis sets">
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="MNDO" ToolTip="#$BASIS GBASIS MNDO"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="AM1" ToolTip="#$BASIS GBASIS AM1"/>
+        <MenuItem MenuType="Value" Keyword="GBASIS" DisplayName="PM3" ToolTip="#$BASIS GBASIS PM3"/>
+      </Menu>
+      <Seperator/>
+      <MenuItem MenuType="GroupFrame" DisplayName="supplementary functions">
+        <GroupFrame DisplayName="BASIS">
+          <keyword MenuType="COMBO" DisplayName="NGAUSS">
+            <option>0</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="NDFUNC">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="NFFUNC">
+            <option>0</option>
+            <option>1</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="NPFUNC">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="DIFFSP">
+            <option>.FALSE.</option>
+            <option>.TRUE.</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="DIFFS">
+            <option>.FALSE.</option>
+            <option>.TRUE.</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="POLAR">
+            <option>POPN311</option>
+            <option>DUNNING</option>
+            <option>HUZINGA</option>
+            <option>HONDO7</option>
+            <option>POPLE</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="SPLIT2">
+            <option>0.5</option>
+            <option>2.0</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="SPLIT3">
+            <option>0.25</option>
+            <option>1.00</option>
+            <option>2.0</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="EXTFIL">
+            <option>.FALSE.</option>
+            <option>.TRUE.</option>
+          </keyword>
+        </GroupFrame>
+      </MenuItem>
+    </Menu>
+  </Group>
+  <Group Name="CONTRL">
+    <Menu MenuType="Keyword" ActionName="RUNTYP" DisplayName="Runtype" ToolTip="#$CONTRL RUNTYP">
+      <Menu MenuType="Dummy" DisplayName="Gradient">
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="HESSIAN" ToolTip="#$CONTRL RUNTYP HESSIAN"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="OPTIMIZE" ToolTip="#$CONTRL RUNTYP OPTIMIZE"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="SADPOINT" ToolTip="#$CONTRL RUNTYP SADPOINT"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="MEX" ToolTip="#$CONTRL RUNTYP MEX"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="IRC" ToolTip="#$CONTRL RUNTYP IRC"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="VSCF" ToolTip="#$CONTRL RUNTYP VSCF"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="DRC" ToolTip="#$CONTRL RUNTYP DRC"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="MD" ToolTip="#$CONTRL RUNTYP MD"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="GLOBOP" ToolTip="#$CONTRL RUNTYP GLOBOP"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="OPTFMO" ToolTip="#$CONTRL RUNTYP OPTFMO"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="GRADEXTR" ToolTip="#$CONTRL RUNTYP GRADEXTR"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="PROP" ToolTip="#$CONTRL RUNTYP PROP"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="RAMAN" ToolTip="#$CONTRL RUNTYP RAMAN"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="NMR" ToolTip="#$CONTRL RUNTYP NMR"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="MOROKUMA" ToolTip="#$CONTRL RUNTYP MOROKUMA"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="TDHF" ToolTip="#$CONTRL RUNTYP TDHF"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="TDHFX" ToolTip="#$CONTRL RUNTYP TDHFX"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="MAKEFP" ToolTip="#$CONTRL RUNTYP MAKEFP"/>
+      </Menu>
+      <Menu MenuType="Dummy" DisplayName="Non-Gradient">
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="ENERGY" ToolTip="#$CONTRL RUNTYP ENERGY"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="TRUDGE" ToolTip="#$CONTRL RUNTYP TRUDGE"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="SURFACE" ToolTip="#$CONTRL RUNTYP SURFACE"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="FFIELD" ToolTip="#$CONTRL RUNTYP FFIELD"/>
+        <MenuItem MenuType="Value" Keyword="RUNTYP" DisplayName="TRANSITN" ToolTip="#$CONTRL RUNTYP TRANSITN"/>
+      </Menu>
+    </Menu>
+  </Group>
+  <Group Name="SYSTEM">
+    <Menu MenuType="Dummy" DisplayName="Input Groups">
+      <MenuItem MenuType="GroupFrame" DisplayName="System">
+        <GroupFrame DisplayName="System">
+          <keyword MenuType="TEXTBOX" DisplayName="MWORDS">
+            <option>1</option>
+          </keyword>
+          <keyword MenuType="TEXTBOX" DisplayName="MEMDDI">
+            <option>1</option>
+          </keyword>
+          <keyword MenuType="TEXTBOX" DisplayName="TIMLIM">
+            <option>525600.0</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="PARALL">
+            <option>.TRUE.</option>
+            <option>.FALSE.</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="KDIAG">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="COREFL">
+            <option>.FALSE.</option>
+            <option>.TRUE.</option>
+          </keyword>
+          <keyword MenuType="COMBO" DisplayName="BALTYP">
+            <option>LOOP</option>
+            <option>NXTVAL</option>
+          </keyword>
+        </GroupFrame>
+      </MenuItem>
+      <Seperator/>
+      <Menu MenuType="Dummy" DisplayName="Molecule, Basis Set &amp; Wfn">
+        <MenuItem MenuType="Dummy" DisplayName="CONTROL"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="BASIS"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="DATA"/>
+        <Menu Group="ZMAT"  MenuType="Dummy" DisplayName="ZMAT" ToolTip="#$ZMAT">
+          <MenuItem MenuType="Grid" DisplayName="IZMAT" ToolTip="#$ZMAT IZMAT">
+            <Grid Title="IZMAT" Heading="IZMAT(1) internal cordinates">
+              <GridModel>
+                <column DataType="Int">Code no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+              </GridModel>
+              <GridGroups>
+                <GridGroup RowSeperator=",  " ColumnSeperator="," Keyword="IZMAT(1)">
+                  <ColumnList>1..COL:1</ColumnList>
+                </GridGroup>
+              </GridGroups>
+            </Grid>
+          </MenuItem>
+          <MenuItem MenuType="Grid" DisplayName="IJS/SIJ" ToolTip="&lt;b&gt;SIJ:&lt;/b&gt; is a transformation matrix of dimension NZVAR x M,&lt;br/&gt;used to transform the NZVAR internal coordinates in&lt;br/&gt;IZMAT into M new internal coordinates.  SIJ is a&lt;br/&gt;sparse matrix, so only the non-zero elements are&lt;br/&gt;given, by using the IJS array described below.&lt;br/&gt;The columns of SIJ will be normalized by GAMESS.&lt;br/&gt;(Default: SIJ = I, unit matrix)&lt;br/&gt;&lt;br/&gt;&lt;b&gt;IJS:&lt;/b&gt; is an array of pairs of indices, giving the row and&lt;br/&gt;column index of the entries in SIJ.&lt;br/&gt;&lt;br/&gt;example - if the above triatomic is water, using&lt;br/&gt;IJS(1) = 1,1, 3,1,   1,2, 3,2,   2,3&lt;br/&gt;SIJ(1) = 1.0, 1.0,   1.0,-1.0,   1.0&lt;br/&gt;&lt;br/&gt;gives the matrix S=  1.0   1.0   0.0&lt;br/&gt;0.0   0.0   1.0&lt;br/&gt;1.0  -1.0   0.0&lt;br/&gt;">
+            <Grid Title="IJS/SIJ" Heading="IJS(1) SIJ(1) natural internal coordinates">
+              <GridModel>
+                <column>IJS row index</column>
+                <column>IJS col index</column>
+                <column>SIJ</column>
+              </GridModel>
+              <GridGroups>
+                <GridGroup RowSeperator=", " ColumnSeperator="," Keyword="IJS(1)">
+                  <ColumnList>1,2</ColumnList>
+                </GridGroup>
+                <GridGroup RowSeperator=", " ColumnSeperator="," Keyword="SIJ(1)">
+                  <ColumnList>3</ColumnList>
+                </GridGroup>
+              </GridGroups>
+            </Grid>
+          </MenuItem>
+          <Seperator/>
+          <MenuItem MenuType="Both" ActionName="DLC=.TRUE."  DisplayName="DLC" ToolTip="#$ZMAT DLC"/>
+          <MenuItem MenuType="Both" ActionName="AUTO=.TRUE."  DisplayName="AUTO" ToolTip="#$ZMAT AUTO"/>
+          <MenuItem MenuType="Grid" DisplayName="NONVDW" ToolTip="#$ZMAT NONVDW">
+            <Grid Title="NONVDW" Heading="NONVDW">
+              <GridModel>
+                <column>&lt;html&gt;N&lt;sub&gt;j&lt;/sub&gt;&lt;/html&gt;</column>
+                <column>&lt;html&gt;N&lt;sub&gt;k&lt;/sub&gt;&lt;/html&gt;</column>
+              </GridModel>
+              <GridGroups>
+                <GridGroup RowSeperator=", " ColumnSeperator="," Keyword="NONVDW">
+                  <ColumnList>1,2</ColumnList>
+                </GridGroup>
+              </GridGroups>
+            </Grid>
+          </MenuItem>
+          <Seperator/>
+          <MenuItem MenuType="Grid" DisplayName="IXZMAT" ToolTip="#$ZMAT IXZMAT">
+            <Grid Title="IXZMAT" Heading="IXMAT(1) internal cordinates">
+              <GridModel>
+                <column DataType="Int">Code no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+              </GridModel>
+              <GridGroups>
+                <GridGroup RowSeperator=",  " ColumnSeperator="," Keyword="IXZMAT(1)">
+                  <ColumnList>1..COL:1</ColumnList>
+                </GridGroup>
+              </GridGroups>
+            </Grid>
+          </MenuItem>
+          <MenuItem MenuType="Grid" DisplayName="IRZMAT" ToolTip="#$ZMAT IRZMAT">
+            <Grid Title="IRZMAT" Heading="IRZMAT(1) internal cordinates">
+              <GridModel>
+                <column DataType="Int">Code no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+              </GridModel>
+              <GridGroups>
+                <GridGroup RowSeperator=",  " ColumnSeperator="," Keyword="IRZMAT(1)">
+                  <ColumnList>1..COL:1</ColumnList>
+                </GridGroup>
+              </GridGroups>
+            </Grid>
+          </MenuItem>
+          <MenuItem MenuType="Grid" DisplayName="IFZMAT" ToolTip="#$ZMAT IFZMAT">
+            <Grid Title="IFZMAT" Heading="IFZMAT(1) internal cordinates">
+              <GridModel>
+                <column DataType="Int">Code no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+                <column>atom no.</column>
+              </GridModel>
+              <GridGroups>
+                <GridGroup RowSeperator=",  " ColumnSeperator="," Keyword="IFZMAT(1)">
+                  <ColumnList>1..COL:1</ColumnList>
+                </GridGroup>
+              </GridGroups>
+            </Grid>
+          </MenuItem>
+          <MenuItem MenuType="Grid" DisplayName="FVALUE" ToolTip="#$ZMAT FVALUE">
+            <Grid Title="FVALUE" Heading="FVALUE">
+              <GridModel>
+                <column>&lt;html&gt;N&lt;sub&gt;j&lt;/sub&gt;&lt;/html&gt;</column>
+              </GridModel>
+              <GridGroups>
+                <GridGroup RowSeperator=", " ColumnSeperator="," Keyword="FVALUE">
+                  <ColumnList>1</ColumnList>
+                </GridGroup>
+              </GridGroups>
+            </Grid>
+          </MenuItem>
+        </Menu>
+        <MenuItem Group="LIBE" MenuType="Grid" DisplayName="LIBE" ToolTip="#$LIBE">
+          <Grid GroupName="LIBE" Title="LIBE" Heading="APTS(1) linear bends">
+            <GridModel>
+              <column>X</column>
+              <column>Y</column>
+              <column>Z</column>
+            </GridModel>
+            <GridGroups>
+              <GridGroup RowSeperator="," ColumnSeperator="," Keyword="APTS(1)">
+                <ColumnList>1,2,3</ColumnList>
+              </GridGroup>
+            </GridGroups>
+          </Grid>
+        </MenuItem>
+        <Seperator/>
+        <MenuItem Group="GUESS" MenuType="GroupFrame" DisplayName="GUESS" ToolTip="#$GUESS">
+          <GroupFrame DisplayName="GUESS">
+            <keyword MenuType="COMBO" DisplayName="GUESS" ToolTip="&lt;b&gt;MOSAVED&lt;\b&gt; is the default for restarts.&lt;br/&gt;&lt;b&gt;HUCKEL&lt;\b&gt; is the default otherwise.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Note:&lt;/b&gt;&lt;ol&gt;&lt;li&gt;(if running &lt;b&gt;MP2&lt;/b&gt;, &lt;b&gt;CI&lt;/b&gt;, or &lt;b&gt;MCSCF&lt;/b&gt; computation with GUESS=MOREAD):&lt;br/&gt;For property evaluation use RUNTYP=ENERGY instead of &lt;b&gt;RUNTYP=PROP&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;$VEC&lt;/b&gt; group data must be from a converged computation that used &lt;b&gt;GBASIS=MINI&lt;/b&gt; containing no polarization functions&lt;/li&gt;&lt;li&gt;Orbitals being read in must be from previous FMO run using &lt;b&gt;MODPRP=1&lt;/b&gt;&lt;/li&gt;&lt;/ol&gt;">
+              <option isDefault="True">HUCKEL</option>
+              <option>HCORE</option>
+              <option>MOREAD</option>
+              <option>RDMINI</option>
+              <option>MOSAVED</option>
+              <option>SKIP</option>
+              <option>FMO</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NORB" ToolTip="&lt;b&gt;Note :&lt;/b&gt;  If &lt;b&gt;SCFTYP=UHF&lt;/b&gt; and &lt;b&gt;NORB&lt;/b&gt; not selected, only the occupied alpha and beta orbitals should be given&lt;br/&gt;If &lt;b&gt;SCFTYP=UHF&lt;/b&gt; and &lt;b&gt;NORB&lt;/b&gt; is selected, both the alpha and beta orbitals must contain &lt;b&gt;NORB&lt;/b&gt; vectors">
+              <option></option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MIX">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="NORDER">
+              <option isDefault="True">0</option>
+              <option>1</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="IORDER">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="JORDER">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName ="INSORB">
+              <option>0</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="PURIFY">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="TOLZ">
+              <option>1.0E-7</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="TOLE">
+              <option>5.0E-5</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="SYMDEN">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="PRTMO">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="PUNMO">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <MenuItem Group="VEC" MenuType="Textbox" DisplayName="VEC" ToolTip="#$VEC">
+          <TextBox/>
+        </MenuItem>
+        <Menu Group="MOFRZ" MenuType="Dummy" DisplayName="MOFRZ" ToolTip="#$MOFRZ">
+          <MenuItem MenuType="Both" ActionName="FRZ=.TRUE." DisplayName="FRZ" ToolTip="#$MOFRZ FRZ"/>
+          <MenuItem MenuType="Textbox" DisplayName="IFRZ" ToolTip="#$MOFRZ IFRZ">
+            <TextBox/>
+          </MenuItem>
+        </Menu>
+        <Seperator/>
+        <Menu Group="SCF" MenuType="Dummy" DisplayName="SCF" ToolTip="#$SCF">
+          <Menu MenuType="Dummy" DisplayName="DirectSCF">
+            <MenuItem MenuType="Both" ActionName="DIRSCF=.TRUE." DisplayName="DIRSCF" ToolTip="#$SCF DIRSCF"/>
+            <MenuItem MenuType="Both" ActionName="FDIFF=.FALSE." DisplayName="FDIFF" ToolTip="#$SCF FDIFF"/>
+          </Menu>
+          <Menu MenuType="Dummy" DisplayName="Convergence rate">
+            <MenuItem MenuType="Both" ActionName="NOCONV=.TRUE." DisplayName="NOCONV" ToolTip="#$SCF NOCONV"/>
+            <Menu MenuType="Keyword" DisplayName="SOSCF" ToolTip="#$SCF SOSCF">
+              <MenuItem MenuType="Value" Keyword="SOSCF" DisplayName=".TRUE." ToolTip="#$SCF SOSCF .TRUE."/>
+              <MenuItem MenuType="Value" Keyword="SOSCF" DisplayName=".FALSE." ToolTip="#$SCF SOSCF .TRUE."/>
+            </Menu>
+            <Menu MenuType="Keyword" DisplayName="DIIS" ToolTip="#$SCF DIIS">
+              <MenuItem MenuType="Value" Keyword="DIIS" DisplayName=".TRUE." ToolTip="#$SCF DIIS .TRUE."/>
+              <MenuItem MenuType="Value" Keyword="DIIS" DisplayName=".FALSE." ToolTip="#$SCF DIIS .FALSE."/>
+            </Menu>
+            <MenuItem MenuType="Both" ActionName="EXTRAP=.FALSE." DisplayName="EXTRAP" ToolTip="#$SCF EXTRAP"/>
+            <MenuItem MenuType="Both" ActionName="DAMP=.TRUE." DisplayName="DAMP" ToolTip="#$SCF DAMP"/>
+            <MenuItem MenuType="Both" ActionName="SHIFT=.TRUE." DisplayName="SHIFT" ToolTip="#$SCF SHIFT"/>
+            <MenuItem MenuType="Both" ActionName="RSTRCT=.TRUE." DisplayName="RSTRCT" ToolTip="#$SCF RSTRCT"/>
+            <MenuItem MenuType="Both" ActionName="DEM=.TRUE." DisplayName="DEM" ToolTip="#$SCF DEM"/>
+          </Menu>
+          <MenuItem MenuType="GroupFrame" DisplayName="Fine-tuning of convergers">
+            <GroupFrame DisplayName="Fine-tuning of convergers">
+              <keyword MenuType="TEXTBOX" DisplayName="CONV">
+                <option>1.0E-06</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="SOGTOL">
+                <option>0.25</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="ETHRSH">
+                <option>0.5</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="MAXDII">
+                <option>10</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="SWDIIS">
+                <option>0</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="DEMCUT">
+                <option>0.5</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="DMPCUT">
+                <option>0.0</option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+          <MenuItem MenuType="GroupFrame" DisplayName="Misc. options">
+            <GroupFrame DisplayName="Misc. options">
+              <keyword MenuType="COMBO" DisplayName="NPUNCH">
+                <option>0</option>
+                <option>1</option>
+                <option isDefault="True">2</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="NPREO">
+                <option Type="Int" Count="4">1,9999,2,1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="UHFNOS">
+                <option isDefault="True">.FALSE.</option>
+                <option>.TRUE.</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="MVOQ">
+                <option>0</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="ACAVO">
+                <option isDefault="True">.FALSE.</option>
+                <option>.TRUE.</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="PACAVO">
+                <option Type="Float" Count="6">0,0,0,0,0,-1.0</option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+          <MenuItem MenuType="GroupFrame" DisplayName="Virial scaling">
+            <GroupFrame DisplayName="Virial scaling">
+              <keyword MenuType="COMBO" DisplayName="VTSCAL">
+                <option isDefault="True">.FALSE.</option>
+                <option>.TRUE.</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="SCALF">
+                <option>1.0</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="MAXVT">
+                <option>20</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="VTCONV">
+                <option>1.0D-6</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="NCO">
+                <option>0</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="NSETO">
+                <option Max="10">0</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="NO">
+                <option Count="$SCF NSETO">0...</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="NPAIR">
+                <option Max="12">0</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="CICOEF">
+                <option Count="$SCF NPAIR">0.90,-0.20...</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="COUPLE">
+                <option isDefault="True">.FALSE.</option>
+                <option>.TRUE.</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="F">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="ALPHA">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="BETA">
+                <option></option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+        </Menu>
+        <MenuItem Group="SCFMI" MenuType="GroupFrame" DisplayName="SCFMI" ToolTip="#$SCFMI">
+          <GroupFrame DisplayName="SCFMI">
+            <keyword MenuType="TEXTBOX" DisplayName="NFRAGS">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NF">
+              <option Count="$SCFMI NFRAGS"></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="MF">
+              <option Count="$SCFMI NFRAGS"></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="ITER">
+              <option>50</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="DTOL">
+              <option>1.0D-10</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="ALPHA">
+              <option>0.0</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="DIISON">
+              <option isDefault="True">.TRUE.</option>
+              <option>.FALSE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="MXDIIS">
+              <option>10</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="DIISTL">
+              <option>0.01</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="ITLOC">
+              <option>50</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="CNVLOC">
+              <option>0.01</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="IOPT">
+              <option isDefault="True">0</option>
+              <option>1</option>
+              <option>2</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <Seperator/>
+        <Menu Group="DFT" MenuType="Dummy" DisplayName="DFT" ToolTip="#$DFT">
+          <MenuItem MenuType="GroupFrame" DisplayName="Grid-based DFT">
+            <GroupFrame DisplayName="Grid-based DFT">
+              <keyword MenuType="TEXTBOX" DisplayName="NRAD">
+                <option>96</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="NTHE">
+                <option>12</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="NPHI">
+                <option>24</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="SWITCH">
+                <option>3.0E-4</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="NRAD0" ToolTip="default = 24  if NRAD, NTHE, and NPHI equal their default settings. &lt;br/&gt;Otherwise, NRAD0 = max(NRAD/4, 24)">
+                <option>24</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="NTHE0" ToolTip="default = 8  if NRAD, NTHE, and NPHI equal their default settings. &lt;br/&gt;Otherwise, NTHE0 = max(NTHE/3, 8)">
+                <option>8</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="NPHI0" ToolTip="default = 16  if NRAD, NTHE, and NPHI equal their default settings. &lt;br/&gt;Otherwise, NPHI0 = max(NPHI/3, 16)">
+                <option>16</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="SWOFF">
+                <option>5.0D-3</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="THRESH" ToolTip="The default value for THRESH itself equal to 1.0E-4/Natoms/NRAD/NTHE/NPHI.&lt;br/&gt;This is automatically calculated internally.">
+                <option>1.0E-4</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="GTHRE">
+                <option>1</option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+          <MenuItem MenuType="GroupFrame" DisplayName="Grid-free DFT">
+            <GroupFrame DisplayName="Grid-free DFT">
+              <keyword MenuType="COMBO" DisplayName="AUXFUN" ToolTip="Note: AUX3 available only for elements H thru Ar">
+                <option>AUX0</option>
+                <option isDefault="True">AUX3</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="THREE">
+                <option isDefault="True">.FALSE.</option>
+                <option>.TRUE.</option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+        </Menu>
+        <Seperator/>
+        <MenuItem Group="MP2" MenuType="GroupFrame" DisplayName="MP2" ToolTip="#$MP2">
+          <GroupFrame DisplayName="">
+            <keyword MenuType="TEXTBOX" DisplayName="NACORE">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NBCORE">
+              <option></option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MP2PRP">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="OSPT">
+              <option isDefault="True">ZAPT</option>
+              <option>RMP</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="LMOMP2">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="NOSYM">
+              <option isDefault="True">0</option>
+              <option>1</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="CUTOFF" ToolTip="&lt;b&gt;default = 1.0D-9&lt;/b&gt; , except for &lt;b&gt;FMO&lt;/b&gt; runs&lt;br/&gt;&lt;b&gt;default = 1.0D-12&lt;/b&gt; for &lt;b&gt;FMO&lt;/b&gt; runs">
+              <option>1.0D-9</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="CPHFBS">
+              <option>BASISMO</option>
+              <option>BASISAO</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NWORD">
+              <option>0</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="METHOD">
+              <option isDefault="True">2</option>
+              <option>3</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="AOINTS">
+              <option isDefault="True">DIST</option>
+              <option>DUP</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <Seperator/>
+        <MenuItem MenuType="GroupFrame" DisplayName="CIS" ToolTip="#$CIS">
+          <GroupFrame Group="CIS" DisplayName="CIS">
+            <keyword MenuType="TEXTBOX" DisplayName="NACORE">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NSTATE">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="ISTATE">
+              <option></option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="HAMTYP">
+              <option isDefault="True">SAPS</option>
+              <option>DETS</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MULT">
+              <option>1</option>
+              <option>3</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="DIAGZN">
+              <option isDefault="True">DAVID</option>
+              <option>FULL</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="DGAPRX">
+              <option>.FALSE.</option>
+              <option isDefault="True">.TRUE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NGSVEC">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="MXVEC">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NDAVIT">
+              <option>50</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="DAVCVG">
+              <option>1.0E-5</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="CISPRP">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="CHFSLV">
+              <option isDefault="True">CONJG</option>
+              <option>DIIS</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="RDCISV">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MNMEDG" ToolTip="DGAPRX = .TRUE. is relevant only for DGAPRX = .FALSE. &lt;br/&gt;so if user selects True and DGAPRX = .TRUE. then reset &lt;br/&gt;MNMEDG = .FALSE.">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MNMEOP">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <MenuItem Group="CISVEC" MenuType="Textbox" DisplayName="CISVEC" ToolTip="#$CISVEC">
+          <TextBox/>
+        </MenuItem>
+        <Seperator/>
+        <MenuItem Group="CCINP" MenuType="GroupFrame" DisplayName="CCINP" ToolTip="#$CCINP">
+          <GroupFrame DisplayName="CCINP">
+            <keyword MenuType="TEXTBOX" DisplayName="NCORE">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NFZV">
+              <option>0</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="MAXCC">
+              <option>30</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="ICONV">
+              <option>7</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="CCPRP" ToolTip="Default = &lt;b&gt;..FALSE..&lt;/b&gt; if CCTYP = CR-CCL else &lt;b&gt;.True.&lt;/b&gt;">
+              <option>.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NWORD">
+              <option>0</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="IREST">
+              <option>0</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="MXDIIS">
+              <option>5</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="AMPTSH">
+              <option>0.0</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <MenuItem Group="EOMINP" MenuType="GroupFrame" DisplayName="EOMINP" ToolTip="#$EOMINP">
+          <GroupFrame DisplayName="EOMINP">
+            <keyword MenuType="COMBO" DisplayName="GROUP" ToolTip="&lt;b&gt;Note : &lt;/b&gt;if GROUP is set to C1 then Abelian Symmetry = OFF">
+              <option>C1</option>
+              <option>C2</option>
+              <option>Cs</option>
+              <option>Ci</option>
+              <option>C2v</option>
+              <option>C2h</option>
+              <option>D2</option>
+              <option>D2h</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NSTATE">
+              <option Type="Int" Count="8">1,0,0,0,0,0,0,0</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="IROOT">
+              <option Type="Int" Count="2">1,0</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="CCPRPE">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MEOM">
+              <option isDefault="True">0</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MTRIP">
+              <option isDefault="True">1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MCI">
+              <option isDefault="True">1</option>
+              <option>2</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MINIT" ToolTip="&lt;b&gt;Note :-&lt;/b&gt; It is recommended that you select MINIT=2 as the default selection&lt;br/&gt;of 1 may result in convergence problems or missed states if the&lt;br/&gt;calculated states have significant doubly excited character.&lt;br/&gt;">
+              <option isDefault="True">1</option>
+              <option>2</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NOACT">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NUACT">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="MOACT">
+              <option Count="$EOMINP NOACT $EOMNIP NUACT"></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="CVGEOM">
+              <option Type="String">1.0D-4</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="MAXEOM">
+              <option>50</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="MICEOM">
+              <option>80</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="CVGCI">
+              <option>1.0D-4</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="MAXCI">
+              <option>50</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="MICCI">
+              <option>80</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <Seperator/>
+        <Menu MenuType="Dummy" DisplayName="MOPAC" ToolTip="#$MOPAC">
+          <MenuItem Group="MOPAC" MenuType="Both" ActionName="PEPTID=.FALSE." DisplayName="PEPTID" ToolTip="#$MOPAC PEPTID"/>
+        </Menu>
+      </Menu>
+      <Menu MenuType="Dummy" DisplayName="MCSCG &amp;CI Wavefunction">
+        <MenuItem MenuType="Dummy" DisplayName="CI:"/>
+        <Menu Group="CIINP" MenuType="Dummy" DisplayName="  CIINP" ToolTip="#$CIINP">
+          <MenuItem MenuType="GroupFrame" DisplayName="NRNFG" ToolTip="#$CIINP NRNFG">
+            <GroupFrame DisplayName="NRNFG">
+              <keyword MenuType="COMBO" DisplayName="NRNFG(1)">
+                <option>0</option>
+                <option isDefault="True">1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NRNFG(2)">
+                <option>0</option>
+                <option isDefault="True">1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NRNFG(3)">
+                <option>0</option>
+                <option isDefault="True">1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NRNFG(4)">
+                <option>0</option>
+                <option isDefault="True">1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NRNFG(5)">
+                <option>0</option>
+                <option isDefault="True">1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NRNFG(6)">
+                <option>0</option>
+                <option isDefault="True">1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NRNFG(7)">
+                <option>0</option>
+                <option isDefault="True">1</option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+          <MenuItem MenuType="GroupFrame" DisplayName="NPFLG" ToolTip="#$CIINP NPFLG">
+            <GroupFrame DisplayName="NPFLG">
+              <keyword MenuType="COMBO" DisplayName="NPFLG(1)">
+                <option isDefault ="True">0</option>
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NPFLG(2)">
+                <option isDefault ="True">0</option>
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NPFLG(3)">
+                <option isDefault ="True">0</option>
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NPFLG(4)">
+                <option isDefault ="True">0</option>
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NPFLG(5)">
+                <option isDefault ="True">0</option>
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NPFLG(6)">
+                <option isDefault ="True">0</option>
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NPFLG(7)">
+                <option isDefault ="True">0</option>
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NPFLG(8)">
+                <option isDefault ="True">0</option>
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NPFLG(9)">
+                <option isDefault ="True">0</option>
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NPFLG(10)">
+                <option isDefault ="True">0</option>
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="IREST">
+                <option></option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+        </Menu>
+        <MenuItem Group="CIDET" MenuType="GroupFrame" DisplayName="  CIDET" ToolTip="#$CIDET">
+          <GroupFrame DisplayName="CIDET">
+            <keyword MenuType="COMBO" DisplayName="GLIST">
+              <option>INPUT</option>
+              <option>EXTRNL</option>
+              <option>SACAS</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NCORE">
+              <option Type="Int"></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NACT">
+              <option Type="Int"></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NELS">
+              <option Type="Int"></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="SZ">
+              <option Type="Double"></option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="GROUP">
+              <option>C1</option>
+              <option>Cs</option>
+              <option>Ci</option>
+              <option>Cn</option>
+              <option>S2n</option>
+              <option>Cnh</option>
+              <option>Cnv</option>
+              <option>Dn</option>
+              <option>Dnh</option>
+              <option>Dnd</option>
+              <option>T</option>
+              <option>Th</option>
+              <option>Td</option>
+              <option>O</option>
+              <option>Oh</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="ISTSYM">
+              <option isDefault="True">1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="IRREPS">
+              <option Type="Int" Count="..."></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NSTATE">
+              <option Type="Int">1</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="PRTTOL">
+              <option Type="Double">0.05</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="ANALYS">
+              <option>.TRUE.</option>
+              <option isDefault="True">.FALSE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="ITERMX">
+              <option Type="Int">100</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="CVGTOL">
+              <option Type="Double"></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NHGSS">
+              <option Type="Int">300</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NSTGSS">
+              <option Type="Int">$CIDET NSTATE</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="MXXPAN">
+              <option Type="Int">$CIDET NSTGSS</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="CLOBBR">
+              <option>.TRUE.</option>
+              <option isDefault="True">.FALSE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="IROOT" ToolTip="&lt;b&gt;Default :&lt;/b&gt; Depends on whether&lt;br/&gt;the run is a CI computation (default = 1)&lt;br/&gt;or an MCSCF computation (default = 0)&lt;br/&gt;">
+              <option Type="Int"></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NFLGDM">
+              <option Type="Int" Count="...">1,{0...</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="PURES">
+              <option isDefault="True">.TRUE.</option>
+              <option>.FALSE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="WSTATE">
+              <option Type="Double" Count="...">1.0,{0.0...</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <MenuItem MenuType="Dummy" DisplayName="  CIGEN" ToolTip="#$CIGEN"/>
+        <MenuItem MenuType="Dummy" DisplayName="  SODET" ToolTip="#$SODET"/>
+        <MenuItem MenuType="Dummy" DisplayName="  CIDRT" ToolTip="#$CIDRT"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="MCSCF:"/>
+        <MenuItem MenuType="Dummy" DisplayName="  DET" ToolTip="#$DET"/>
+        <MenuItem MenuType="Dummy" DisplayName="  GEN" ToolTip="#$GEN"/>
+        <MenuItem MenuType="Dummy" DisplayName="  ORMAS" ToolTip="#$ORMAS"/>
+        <MenuItem MenuType="Dummy" DisplayName="  GCILST" ToolTip="#$GCILST"/>
+        <MenuItem MenuType="Dummy" DisplayName="  DRT" ToolTip="#$DRT"/>
+        <MenuItem MenuType="Dummy" DisplayName="  MCSCF" ToolTip="#$MCSCF"/>
+        <MenuItem MenuType="Dummy" DisplayName="  MRMP" ToolTip="#$MRMP"/>
+        <MenuItem MenuType="Dummy" DisplayName="  MCQDPT" ToolTip="#$MCQDPT"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="GUGA:"/>
+        <MenuItem MenuType="Dummy" DisplayName="  CISORT" ToolTip="#$CISORT"/>
+        <MenuItem MenuType="Dummy" DisplayName="  GUGEM" ToolTip="#$GUGEM"/>
+        <MenuItem MenuType="Dummy" DisplayName="  GUGDIA" ToolTip="#$GUGDIA"/>
+        <MenuItem MenuType="Dummy" DisplayName="  GUGDM" ToolTip="#$GUGDM"/>
+        <MenuItem MenuType="Dummy" DisplayName="  GUGDM2" ToolTip="#$GUGDM2"/>
+        <MenuItem MenuType="Dummy" DisplayName="  LAGRAN" ToolTip="#$LAGRAN"/>
+        <MenuItem MenuType="Dummy" DisplayName="  TRFDM2" ToolTip="#$TRFDM2"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="SO coupling:"/>
+        <MenuItem MenuType="Dummy" DisplayName="  TRANST" ToolTip="#$TRANST"/>
+      </Menu>
+      <Seperator/>
+      <Menu MenuType="Dummy" DisplayName="Interpretation &amp; Properties">
+        <MenuItem MenuType="Dummy" DisplayName="LOCAL" ToolTip="#$LOCAL"/>
+        <MenuItem MenuType="Dummy" DisplayName="TWOEI" ToolTip="#$TWOEI"/>
+        <MenuItem MenuType="Dummy" DisplayName="TRUNCN" ToolTip="#$TRUNCN"/>
+        <Seperator/>
+        <Menu Group="ELMOM" MenuType="Dummy" DisplayName="ELMOM" ToolTip="#$ELMOM">
+          <Menu MenuType="Keyword" DisplayName="IEMOM" ToolTip="#$ELMOM IEMOM">
+            <MenuItem MenuType="Value" Keyword="IEMOM" DisplayName="0" ToolTip="#$ELMOM IEMOM 0"/>
+            <MenuItem MenuType="Value" Keyword="IEMOM" DisplayName="1" isDefault="True" ToolTip="#$ELMOM IEMOM 1"/>
+            <MenuItem MenuType="Value" Keyword="IEMOM" DisplayName="2" ToolTip="#$ELMOM IEMOM 2"/>
+            <MenuItem MenuType="Value" Keyword="IEMOM" DisplayName="3" ToolTip="#$ELMOM IEMOM 3"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="WHERE" ToolTip="#$ELMOM WHERE">
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="COMASS" isDefault="True" ToolTip="#$ELMOM WHERE COMASS"/>
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="NUCLEI" ToolTip="#$ELMOM WHERE NUCLEI"/>
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="POINTS" ToolTip="#$ELMOM WHERE POINTS"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="OUTPUT" ToolTip="#$ELMOM OUTPUT">
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="PUNCH" ToolTip="#$ELMOM OUTPUT PUNCH"/>
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="PAPER" ToolTip="#$ELMOM OUTPUT PAPER"/>
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="BOTH" isDefault="True" ToolTip="#$ELMOM OUTPUT BOTH"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="IEMINT" ToolTip="#$ELMOM IEMINT">
+            <MenuItem MenuType="Value" Keyword="IEMINT" DisplayName="0" isDefault="True" ToolTip="#$ELMOM IEMINT 0"/>
+            <MenuItem MenuType="Value" Keyword="IEMINT" DisplayName="1" ToolTip="#$ELMOM IEMINT 1"/>
+            <MenuItem MenuType="Value" Keyword="IEMINT" DisplayName="2" ToolTip="#$ELMOM IEMINT 2"/>
+            <MenuItem MenuType="Value" Keyword="IEMINT" DisplayName="3" ToolTip="#$ELMOM IEMINT 3"/>
+            <MenuItem MenuType="Value" Keyword="IEMINT" DisplayName="-2" ToolTip="#$ELMOM IEMINT -2"/>
+            <MenuItem MenuType="Value" Keyword="IEMINT" DisplayName="-3" ToolTip="#$ELMOM IEMINT -3"/>
+          </Menu>
+        </Menu>
+        <Menu Group ="ELPOT" MenuType="Dummy" DisplayName="ELPOT" ToolTip="#$ELPOT">
+          <Menu MenuType="Keyword" DisplayName="IEPOT" ToolTip="#$ELPOT IEPOT">
+            <MenuItem MenuType="Value" Keyword="IEPOT" DisplayName="0" isDefault="True" ToolTip="#$ELPOT IEPOT"/>
+            <MenuItem MenuType="Value" Keyword="IEPOT" DisplayName="1" ToolTip="#$ELPOT IEPOT"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="WHERE" ToolTip="#$ELPOT WHERE">
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="COMASS" ToolTip="#$ELPOT WHERE COMASS"/>
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="NUCLEI" isDefault="True" ToolTip="#$ELPOT WHERE NUCLEI"/>
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="POINTS" ToolTip="#$ELPOT WHERE POINTS"/>
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="GRID" ToolTip="#$ELPOT WHERE GRID"/>
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="PDC" ToolTip="#$ELPOT WHERE PDC"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="OUTPUT" ToolTip="#$ELPOT OUTPUT">
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="PUNCH" ToolTip="#$ELPOT OUTPUT PUNCH"/>
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="PAPER" ToolTip="#$ELPOT OUTPUT PAPER"/>
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="BOTH" isDefault="True" ToolTip="#$ELPOT OUTPUT BOTH"/>
+          </Menu>
+        </Menu>
+        <Menu Group="ELDENS" MenuType="Dummy" DisplayName="ELDENS" ToolTip="#$ELDENS">
+          <Menu MenuType="Keyword" DisplayName="IEDEN" ToolTip="#$ELDENS IEDEN">
+            <MenuItem MenuType="Value" Keyword="IEDEN" DisplayName="0" isDefault="True" ToolTip="#$ELDENS IEDEN 0"/>
+            <MenuItem MenuType="Value" Keyword="IEDEN" DisplayName="1" ToolTip="#$ELDENS IEDEN 1"/>
+          </Menu>
+          <MenuItem MenuType="GroupFrame" DisplayName="MORB" ToolTip="#$ELDENS MORB">
+            <GroupFrame DisplayName="MORB">
+              <keyword MenuType="TEXTBOX" DisplayName="MORB">
+                <option>0</option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+          <Menu MenuType="Keyword" DisplayName="WHERE" ToolTip="#$ELDENS WHERE">
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="COMASS" ToolTip="#$ELDENS WHERE COMASS"/>
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="NUCLEI" isDefault="True" ToolTip="#$ELDENS WHERE NUCLEI"/>
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="POINTS" ToolTip="#$ELDENS WHERE POINTS"/>
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="GRID" ToolTip="#$ELDENS WHERE GRID"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="OUTPUT" ToolTip="#$ELDENS OUTPUT">
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="PUNCH" ToolTip="#$ELDENS OUTPUT PUNCH"/>
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="PAPER" ToolTip="#$ELDENS OUTPUT PAPER"/>
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="BOTH" isDefault="True" ToolTip="#$ELDENS OUTPUT BOTH"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="IEDINT" ToolTip="#$ELDENS IEDINT">
+            <MenuItem MenuType="Value" Keyword="IEDINT" DisplayName="0" isDefault="True" ToolTip="#$ELDENS IEDINT 0"/>
+            <MenuItem MenuType="Value" Keyword="IEDINT" DisplayName="1" ToolTip="#$ELDENS IEDINT 1"/>
+          </Menu>
+        </Menu>
+        <Menu Group="ELFLDG" MenuType="Dummy" DisplayName="ELFLDG" ToolTip="#$ELFLDG">
+          <Menu MenuType="Keyword" DisplayName="IEFLD" ToolTip="#$ELFLDG IEFLD">
+            <MenuItem MenuType="Value" Keyword="IEFLD" DisplayName="0" isDefault="True" ToolTip="#$ELFLDG IEFLD 0"/>
+            <MenuItem MenuType="Value" Keyword="IEFLD" DisplayName="1" ToolTip="#$ELFLDG IEFLD 1"/>
+            <MenuItem MenuType="Value" Keyword="IEFLD" DisplayName="2" ToolTip="#$ELFLDG IEFLD 2"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="WHERE" ToolTip="#$ELFLDG WHERE">
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="COMASS" ToolTip="#$ELFLDG WHERE COMASS"/>
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="NUCLEI" isDefault="True" ToolTip="#$ELFLDG WHERE NUCLEI"/>
+            <MenuItem MenuType="Value" Keyword="WHERE" DisplayName="POINTS" ToolTip="#$ELFLDG WHERE POINTS"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="OUTPUT" ToolTip="#$ELFLDG OUTPUT">
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="PUNCH" ToolTip="#$ELFLDG OUTPUT PUNCH"/>
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="PAPER" ToolTip="#$ELFLDG OUTPUT PAPER"/>
+            <MenuItem MenuType="Value" Keyword="OUTPUT" DisplayName="BOTH" isDefault="True" ToolTip="#$ELFLDG OUTPUT BOTH"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="IEDINT" ToolTip="#$ELFLDG IEDINT">
+            <MenuItem MenuType="Value" Keyword="IEDINT" DisplayName="0" isDefault="True" ToolTip="#$ELFLDG IEDINT 0"/>
+            <MenuItem MenuType="Value" Keyword="IEDINT" DisplayName="1" ToolTip="#$ELFLDG IEDINT 1"/>
+            <MenuItem MenuType="Value" Keyword="IEDINT" DisplayName="2" ToolTip="#$ELFLDG IEDINT 2"/>
+            <MenuItem MenuType="Value" Keyword="IEDINT" DisplayName="-2" ToolTip="#$ELFLDG IEDINT -2"/>
+          </Menu>
+        </Menu>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="POINTS" ToolTip="#$POINTS"/>
+        <MenuItem MenuType="Dummy" DisplayName="GRID" ToolTip="#$GRID"/>
+        <MenuItem MenuType="Dummy" DisplayName="PDC" ToolTip="#$PDC"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="MOLGRF" ToolTip="#$MOLGRF"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="STONE" ToolTip="#$STONE"/>
+        <Seperator/>
+        <MenuItem Group="RAMAN" MenuType="GroupFrame" DisplayName="RAMAN" ToolTip="&lt;b&gt;Note :&lt;/b&gt;&lt;br/&gt; This computation must follow a previous run using RUNTYP=HESSIAN&lt;br/&gt;and the $GRAD and $HESS groups from that run must be included as&lt;br/&gt;inputs within this run">
+          <GroupFrame DisplayName="RAMAN">
+            <keyword MenuType="TEXTBOX" DisplayName="EFIELD" ToolTip="&lt;b&gt;Note :&lt;/b&gt;&lt;br/&gt; This computation must follow a previous run using RUNTYP=HESSIAN&lt;br/&gt;and the $GRAD and $HESS groups from that run must be included as&lt;br/&gt;inputs within this run">
+              <option>0.002</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <MenuItem MenuType="Dummy" DisplayName="ALPDR"/>
+        <Menu Group="NMR" MenuType="Dummy" DisplayName="NMR" ToolTip="#$NMR">
+          <MenuItem MenuType="Both" ActionName="ANGINT=.FALSE." DisplayName="ANGINT" ToolTip="#$NMR ANGINT"/>
+          <MenuItem MenuType="Both" ActionName="INMEM=.TRUE." DisplayName="INMEM" ToolTip="#$NMR INMEM"/>
+          <MenuItem MenuType="Both" ActionName="PDIA=.TRUE." DisplayName="PDIA" ToolTip="#$NMR PDIA"/>
+          <MenuItem MenuType="Both" ActionName="PPARA=.TRUE." DisplayName="PPARA" ToolTip="#$NMR PPARA"/>
+          <MenuItem MenuType="Both" ActionName="PEVEC=.TRUE." DisplayName="PEVEC" ToolTip="#$NMR PEVEC"/>
+          <MenuItem MenuType="Both" ActionName="PITER=.TRUE." DisplayName="PITER" ToolTip="#$NMR PITER"/>
+          <MenuItem MenuType="Both" ActionName="PRMAT=.TRUE." DisplayName="PRMAT" ToolTip="#$NMR PRMAT"/>
+          <MenuItem MenuType="Both" ActionName="POEINT=.TRUE." DisplayName="POEINT" ToolTip="#$NMR POEINT"/>
+          <MenuItem MenuType="Both" ActionName="PTEINT=.TRUE." DisplayName="PTEINT" ToolTip="#$NMR PTEINT"/>
+          <MenuItem MenuType="Both" ActionName="TEDBG=.TRUE." DisplayName="TEDBG" ToolTip="#$NMR TEDBG"/>
+        </Menu>
+        <MenuItem Group="FFCALC" MenuType="GroupFrame" DisplayName="FFCALC" ToolTip="#$FFCALC">
+          <GroupFrame DisplayName="FFCALC">
+            <keyword MenuType="COMBO" DisplayName="OFFDIA">
+              <option>.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="ESTEP">
+              <option>0.001</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="ONEFLD">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="SYM" ToolTip="&lt;b&gt;Note :&lt;/b&gt;&lt;br/&gt;See the Help menu for detailed information on the breaking&lt;br/&gt;of molecular symmetry by an applied electric field">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="EFIELD" ToolTip="array of the applied field’s (x, y, z) coordinates) &lt;br/&gt;&lt;b&gt;Note :&lt;/b&gt; Finite field calculations require large basis sets as well as very&lt;br/&gt;accurate wavefunctions, which often can result in problems with&lt;br/&gt;convergence. To improve the likelihood of getting convergence,&lt;br/&gt;include certain keywords in your input file that can increase both&lt;br/&gt;integral accuracy and wavefunction convergence, such as&lt;br/&gt;&lt;br/&gt;&lt;b&gt;$CONTRL  ICUT=20  ITOL=30  $END&lt;br/&gt;$SCF  CONV=1.0D-7  FDIFF=.FALSE.  $END&lt;/b&gt;">
+              <option Type="Double" Count="3"></option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="MOROKM" ToolTip="#$MOROKM"/>
+        <Seperator/>
+        <Menu Group="TDHF" MenuType="Dummy" DisplayName="TDHF" ToolTip="This group permits the analytic calculation of various static and/or frequency dependent polarizabilities, with an emphasis on important NLO properties such as second and third harmonic generation.  The method is programmed only for closed shell wavefunctions, at the semi-empirical or ab initio level.  Ab initio calculations may be direct SCF, or parallel, if desired.&lt;br/&gt;&lt;br/&gt; &lt;b&gt;Note :&lt;/b&gt; You must include NOSYM=1 in the $CONTRL group within your&lt;br/&gt;input file since the Fock matrices computed using time-dependent&lt;br/&gt;HF are not symmetric.">
+          <MenuItem MenuType="GroupFrame" DisplayName="TDHF" ToolTip="&lt;b&gt;Note :&lt;/b&gt; You must include NOSYM=1 in the $CONTRL group within your&lt;br/&gt;input file since the Fock matrices computed using time-dependent&lt;br/&gt;HF are not symmetric.">
+            <GroupFrame DisplayName="TDHF">
+              <keyword MenuType="TEXTBOX" DisplayName ="NFREQ">
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName ="FREQ" ToolTip="&lt;b&gt;Note :&lt;/b&gt;The energy values entered for this keyword must be in atomic&lt;br/&gt;units (Hartrees). See the Help menu for information on converting&lt;br/&gt;wavenumbers and wavelengths to Hartrees.">
+                <option Type="Double" Count="$TDHF NFREQ">0...</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName ="MAXITA">
+                <option>100</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName ="MAXITU">
+                <option>100</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName ="ATOL">
+                <option Type="String">1.0D-5</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName ="BTOL">
+                <option Type="String">1.0D-5</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName ="RETDHF">
+                <option isDefault="True">.TRUE.</option>
+                <option>.FALSE.</option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+          <Menu MenuType="Dummy" DisplayName="NLO Properties">
+            <Menu MenuType="Keyword" DisplayName="INIB">
+              <MenuItem MenuType="Value" Keyword="INIB" DisplayName="0" isDefault="True"/>
+              <MenuItem MenuType="Value" Keyword="INIB" DisplayName="1"/>
+              <MenuItem MenuType="Value" Keyword="INIB" DisplayName="2"/>
+            </Menu>
+            <MenuItem MenuType="Both" ActionName="BSHG=.FALSE." DisplayName="BSHG"/>
+            <MenuItem MenuType="Both" ActionName="BEOPE=.FALSE." DisplayName="BEOPE"/>
+            <MenuItem MenuType="Both" ActionName="BOR=.FALSE." DisplayName="BOR"/>
+            <Menu MenuType="Keyword" DisplayName="INIG">
+              <MenuItem MenuType="Value" Keyword="INIG" DisplayName="0" isDefault="True"/>
+              <MenuItem MenuType="Value" Keyword="INIG" DisplayName="1"/>
+              <MenuItem MenuType="Value" Keyword="INIG" DisplayName="2"/>
+            </Menu>
+            <MenuItem MenuType="Both" ActionName="GTHG=.FALSE." DisplayName="GTHG"/>
+            <MenuItem MenuType="Both" ActionName="GEFISH=.FALSE." DisplayName="GEFISH"/>
+            <MenuItem MenuType="Both" ActionName="GIDRI=.FALSE." DisplayName="GIDRI"/>
+            <MenuItem MenuType="Both" ActionName="GOKE=.FALSE." DisplayName="GOKE"/>
+          </Menu>
+        </Menu>
+        <Menu Group="TDHFX" MenuType="Dummy" DisplayName="TDHFX" ToolTip="This group permits the analytical determination of static and/or frequency dependent polarizabilities and hyperpolarizabilities (alpha, beta, and gamma), as well as their first- and second-order geometrical derivatives (of alpha and beta).  This permits the prediction of dynamic (nonresonant) Raman and hyper-Raman spectra, yielding both intensities and depolarizations.  The method is only available for closed shell systems (RHF).&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Note :&lt;/b&gt; You must include NOSYM=1 and ISPHER=0 in the $CONTRL&lt;br/&gt;group within your input file since the Fock matrices computed&lt;br/&gt;using time-dependent HF are not symmetric and this computation&lt;br/&gt;cannot use spherical harmonics. In addition it is suggested that&lt;br/&gt;you set CONV=1.0D-06 in the $SCF input group">
+          <Menu MenuType="Dummy" DisplayName="Set 1" ToolTip="&lt;b&gt;Note :&lt;/b&gt; You must include NOSYM=1 and ISPHER=0 in the $CONTRL&lt;br/&gt;group within your input file since the Fock matrices computed&lt;br/&gt;using time-dependent HF are not symmetric and this computation&lt;br/&gt;cannot use spherical harmonics. In addition it is suggested that&lt;br/&gt;you set CONV=1.0D-06 in the $SCF input group">
+            <MenuItem MenuType="Both" ActionName="ALLDIRS" DisplayName="ALLDIRS"/>
+            <MenuItem MenuType="Dummy" DisplayName="DIR"/>
+            <MenuItem MenuType="Both" ActionName="USE_C" DisplayName="USE_C"/>
+            <MenuItem MenuType="Both" ActionName="USE_Q" DisplayName="USE_Q"/>
+          </Menu>
+          <Menu MenuType="Dummy" DisplayName="Set 2">
+            <MenuItem MenuType="Both" ActionName="FREQ" DisplayName="FREQ"/>
+            <MenuItem MenuType="Both" ActionName="FREQ2" DisplayName="FREQ2"/>
+          </Menu>
+          <MenuItem MenuType="GroupFrame" DisplayName="Set 3">
+            <GroupFrame DisplayName="Set 3 Keywords">
+              <keyword MenuType="COMBO" DisplayName="DIIS">
+                <option isDefault="True">Disable</option>
+                <option>Enable</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NOACCEL">
+                <option isDefault="True">Disable</option>
+                <option>Enable</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="ITERMAX">
+                <option>100</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="CONV">
+                <option>1E-05</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="MU">
+                <option isDefault="True">Disable</option>
+                <option>Enable</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="ALPHA" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="BETA" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="BETA_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="GAMMA" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="GAMMA_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="POCKELS" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="POCKELS_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="OR" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="OR_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="SHG" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="SHG_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="KERR" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="KERR_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="ESHG" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="ESHG_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="THG" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="THG_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="DFWM" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="DFWM_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="DMDX_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="DADX" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="DADX_NI">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="DBDX" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="DBDX_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="D2MDX2_NI">
+                <option Type="String"> </option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="D2ADX2_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="D2BDX2_NI" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="RAMAN" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="HRAMAN" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="FREE" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="FREE" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="FREE" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Laser energies must be given in Hartrees">
+                <option></option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+        </Menu>
+      </Menu>
+      <Menu MenuType="Dummy" DisplayName="Integral &amp; Integral Modification">
+        <MenuItem MenuType="Dummy" DisplayName="ECP" ToolTip="#$ECP"/>
+        <MenuItem MenuType="Dummy" DisplayName="MCP" ToolTip="#$MCP"/>
+        <Seperator/>
+        <MenuItem Group="RELWFN" MenuType="GroupFrame" DisplayName="RELWFN" ToolTip="#$RELWFN">
+          <GroupFrame DisplayName="RELWFN">
+            <keyword MenuType="COMBO" DisplayName="NORDER">
+              <option>1</option>
+              <option isDefault="True">2</option>
+              <option>3</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MODEQR" ToolTip="&lt;b&gt;Default:&lt;/b&gt; MODEQR=3 if ISPHER=1 in $CONTRL input group else MODEQR=1&lt;/br&gt;">
+              <option>0</option>
+              <option isDefault="True">1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>5</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="NESOC" ToolTip="&lt;b&gt;Default:&lt;b/&gt; default= 1 if RELWFN = NESC else default = 2 if RELWFN = DK or RESC&lt;br/&gt;">
+              <option>0</option>
+              <option isDefault="True">1</option>
+              <option>2</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NRATOM">
+              <option>0</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="CHARGE">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="CLIGHT">
+              <option>137.0359895</option>
+            </keyword>
+            <keyword MenuType ="TEXTBOX" DisplayName="QMTTOL">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="QRTOL" ToolTip="&lt;b&gt;Default :&lt;/b&gt;&lt;br/&gt;default for RELWFN = RESC is min(1.0D-8, QMTTOL) &lt;br/&gt;default for RELWFN = DK is 1.0E-2">
+              <option>1.0D-8</option>
+            </keyword>
+            <keyword MenuType ="COMBO" DisplayName="NVIB">
+              <option isDefault="True">2</option>
+              <option>1</option>
+              <option>-1</option>
+              <option>-2</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="INTGRL" ToolTip="#$INTGRL"/>
+        <MenuItem MenuType="Dummy" DisplayName="TRANS" ToolTip="#$TRANS"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="FMM" ToolTip="#$FMM"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="EFIELD" ToolTip="#$EFIELD"/>
+      </Menu>
+      <Seperator/>
+      <Menu MenuType="Dummy" DisplayName="Potential Energy Surface">
+        <MenuItem Group="STATPT" MenuType="GroupFrame" DisplayName="STATPT" ToolTip="This group controls the search for stationary points.&lt;br/&gt;Note that NZVAR in $CONTRL determines if the geometry&lt;br/&gt;search is conducted in Cartesian or internal coordinates.&lt;br/&gt;&lt;b&gt;Note :&lt;/b&gt; The value specified for the keyword NZVAR in the $CONTRL input&lt;br/&gt;group determines if the search for stationary points is conducted in&lt;br/&gt;Cartesian or internal coordinates&lt;br/&gt;">
+          <GroupFrame DisplayName="STATPT">
+            <keyword MenuType="COMBO" DisplayName="METHOD" ToolTip="&lt;b&gt;Note :&lt;/b&gt; if METHOD=CONOPT then starting geometry for this optimization&lt;br/&gt;algorithm, which can be use for locating&lt;br/&gt;transitions states, must be a minimum">
+              <option>NR</option>
+              <option>RFO</option>
+              <option isDefault="True">QA</option>
+              <option>SCHLEGEL</option>
+              <option>CONOPT</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="OPTTOL">
+              <option Type="Double">0.0001</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NSTEP">
+              <option>20</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="DXMAX">
+              <option Type="Double">0.1</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="TRUPD">
+              <option isDefault="True">.TRUE.</option>
+              <option>.FALSE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="TRMAX">
+              <option Type="Double">0.5</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="TRMIN">
+              <option Type="Double">0.5</option>
+            </keyword>
+            <keyword MenuType ="TEXTBOX" DisplayName="IFOLOW">
+              <option>1</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="STPT">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="STSTEP">
+              <option Type="Double">0.01</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="IFREEZ(1)">
+              <option Type="Double" Count="..."></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="IFCART">
+              <option Type="Double" Count="..."></option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="HESS" ToolTip="&lt;b&gt;Default :&lt;/b&gt; =GUESS  if RUNTYP = OPTIMIZE &lt;br/&gt; =READ  if RUNTYP = SADPOINT">
+              <option isDefault="True">GUESS</option>
+              <option>READ</option>
+              <option>RDAB</option>
+              <option>RDALL</option>
+              <option>CALC</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="IHREP">
+              <option>0</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="HSSEND">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="NPRT">
+              <option>1</option>
+              <option isDefault="True">0</option>
+              <option>-1</option>
+              <option>-2</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="NPUN">
+              <option>3</option>
+              <option>2</option>
+              <option>1</option>
+              <option isDefault="True">0</option>
+              <option>-1</option>
+              <option>-2</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="PURIFY">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="PROJCT" ToolTip="&lt;b&gt;Note :&lt;/b&gt;  Set PROJCT=.FALSE. if POSITION=FIXED&lt;br/&gt;is used during EFP computation">
+              <option isDefault="True">.TRUE.</option>
+              <option>.FALSE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="ITBMAT">
+              <option>5</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="UPHESS" ToolTip="&lt;b&gt;Default :&lt;/b&gt; =BFGS for RUNTYP=OPTIMIZE using RFO or QA&lt;br/&gt; =POWELL for RUNTYP=SADPOINT or for RUNTYP = OPTIMIZE using NR or CONOPT">
+              <option>SKIP</option>
+              <option isDefault="True">BFGS</option>
+              <option>POWELL</option>
+              <option>MSP</option>
+              <option>SCHLEGEL</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MOVIE">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NNEG">
+              <option>0</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="RMIN">
+              <option Type="Double">0.0015</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="RMAX">
+              <option Type="Double">0.1</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="RLIM">
+              <option Type="Double">0.07</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <MenuItem Group="TRUDGE" MenuType="GroupFrame" DisplayName="TRUDGE" ToolTip="#$TRUDGE">
+          <GroupFrame DisplayName="TRUDGE">
+            <keyword MenuType="COMBO" DisplayName="OPTMIZ">
+              <option>BASIS</option>
+              <option isDefault="True">GEOMETRY</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NPAR">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="IEX">
+              <option Count="..."></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="P" ToolTip="&lt;b&gt;Note :&lt;/b&gt; If this keyword is selected, the molecular geometry&lt;br/&gt;must be given in Angstroms and degrees">
+              <option Type="Double" Count="..."></option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <MenuItem Group="TRURST" MenuType="GroupFrame" DisplayName="TRURST" ToolTip="#$TRURST">
+          <GroupFrame DisplayName="TRURST">
+            <keyword MenuType="COMBO" DisplayName="KSTART">
+              <option isDefault="True">-1</option>
+              <option>0</option>
+            </keyword>
+            <keyword MenuType ="TEXTBOX" DisplayName="FNOISE">
+              <option>0.0005</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="TOLFE">
+              <option>0.001</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="TOLR" ToolTip="&lt;b&gt;Note :&lt;/b&gt; For geometry optimization the values that give results&lt;br/&gt;closest to those obtained with gradient methods are:  &lt;br/&gt;TOLF=0.0001, TOLR=0.001, FNOISE=0.00001">
+              <option>0.05</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <Seperator/>
+        <MenuItem Group="CPHF" MenuType="GroupFrame" DisplayName="CPHF" ToolTip="#$CPHF">
+          <GroupFrame DisplayName="CPHF">
+            <keyword MenuType="COMBO" DisplayName="POLAR">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="CPHF" ToolTip="&lt;b&gt;Default :&lt;/b&gt; =MO SCFTYP = ROHF, GVB, or MCSCF&lt;br/&gt; =AO SCFTYP = RHF">
+              <option isDefault="True">MO</option>
+              <option>AO</option>
+              <option>AODDI</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NWORD">
+              <option>0</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <Seperator/>
+        <MenuItem Group="MASS" MenuType="GroupFrame" DisplayName="MASS" ToolTip="#$MASS">
+          <GroupFrame DisplayName="MASS">
+            <keyword MenuType="TEXTBOX" DisplayName="AMASS(3)" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Atom number to which this keyword applies also must be identified&lt;br/&gt;&lt;br/&gt;E.g. $MASS  AMASS(3)=2.0140  $END&lt;br/&gt;indicates that third atom (atom 3) in the molecule is a D">
+              <option Type="Double" Count="..."></option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <Seperator/>
+        <Menu Group="FORCE" MenuType="Dummy" DisplayName="FORCE" ToolTip="#$FORCE">
+          <Menu MenuType="Keyword" DisplayName="METHOD" ToolTip="#$FORCE METHOD">
+            <MenuItem MenuType="Value" Keyword="METHOD" DisplayName="ANALYTIC" ToolTip="#$FORCE METHOD ANALYTIC"/>
+            <MenuItem MenuType="Value" Keyword="METHOD" DisplayName="SEMINUM" ToolTip="#$FORCE METHOD SEMINUM"/>
+            <MenuItem MenuType="Value" Keyword="METHOD" DisplayName="FULLNUM" ToolTip="#$FORCE METHOD FULLNUM"/>
+          </Menu>
+          <MenuItem MenuType="Both" ActionName="RDHESS=.TRUE." DisplayName="RDHESS" ToolTip="#$FORCE RDHESS"/>
+          <MenuItem MenuType="Both" ActionName="PURIFY=.TRUE." DisplayName="PURIFY" ToolTip="#$FORCE PURIFY"/>
+          <MenuItem MenuType="Both" ActionName="PRTIFC=.TRUE." DisplayName="PRTIFC" ToolTip="#$FORCE PRTIFC"/>
+          <MenuItem MenuType="GroupFrame" DisplayName="Control of numeric differentiation">
+            <GroupFrame DisplayName="Control of numeric differentiation">
+              <keyword MenuType="COMBO" DisplayName="NVIB">
+                <option isDefault="True">1</option>
+                <option>2</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="VIBSIZ">
+                <option>0.01</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NPRT">
+                <option isDefault="True">0</option>
+                <option>1</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="NPUN">
+                <option isDefault="True">0</option>
+                <option>1</option>
+                <option>2</option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+          <MenuItem MenuType="GroupFrame" DisplayName="Control of normal coordinate analysis">
+            <GroupFrame DisplayName="Control of normal coordinate analysis">
+              <keyword MenuType="COMBO" DisplayName="VIBANL">
+                <option isDefault="True">.FALSE.</option>
+                <option>.TRUE.</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="SCLFAC">
+                <option>1.0</option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="TEMP" ToolTip="&lt;b&gt;Note :&lt;/b&gt; For a temperature of absolute zero, use TEMP=0.001">
+                <option Count="10" Type="Double"></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="FREQ" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Enter imaginary frequencies as negative values">
+                <option Count="..." Type="Double"></option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="PRTSCN">
+                <option isDefault="True">.FALSE.</option>
+                <option>.TRUE.</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="DECOMP">
+                <option isDefault="True">.FALSE.</option>
+                <option>.TRUE.</option>
+              </keyword>
+              <keyword MenuType="COMBO" DisplayName="PROJCT">
+                <option isDefault="True">.FALSE.</option>
+                <option>.TRUE.</option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+        </Menu>
+        <MenuItem MenuType="Dummy" DisplayName="HESS" ToolTip="#$HESS"/>
+        <MenuItem MenuType="Dummy" DisplayName="GRAD" ToolTip="#$GRAD"/>
+        <MenuItem MenuType="Dummy" DisplayName="DIPDR" ToolTip="#$DIPDR"/>
+        <MenuItem MenuType="Dummy" DisplayName="VIB" ToolTip="#$VIB"/>
+        <MenuItem MenuType="Dummy" DisplayName="VIB2" ToolTip="#$VIB2"/>
+        <Seperator/>
+        <MenuItem Group="VSCF" MenuType="GroupFrame" DisplayName="VSCF" ToolTip="#$VSCF">
+          <GroupFrame DisplayName="VSCF">
+            <keyword MenuType="COMBO" DisplayName="PETYP">
+              <option>DIRECT</option>
+              <option>QFF</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="NCOUP">
+              <option>1</option>
+              <option isDefault="True">2</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="NGRID">
+              <option>16</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="STPSZ">
+              <option>0.5</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="VDPT">
+              <option isDefault="True">.TRUE.</option>
+              <option>.FALSE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="VCI">
+              <option>.TRUE.</option>
+              <option isDefault="True">.FALSE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="IEXC">
+              <option isDefault="True">1</option>
+              <option>2</option>
+              <option>3</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="ICAS1">
+              <option>1</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="ICAS2">
+              <option></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="SFACT">
+              <option>1.0D-05</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="VCFCT">
+              <option>1.0</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="DMDR">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="COMBO" DisplayName="MPDDIP">
+              <option isDefault="True">.TRUE.</option>
+              <option>.FALSE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="IMODE" ToolTip="&lt;b&gt;Note :&lt;/b&gt; If this keyword is selected, set NCOUP = 1 in this input group">
+              <option Count="..."></option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="PROJCT" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Set this keyword equal to .TRUE. if IFREEZ is specified in $STATPT input group">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+            <keyword MenuType="TEXTBOX" DisplayName="READV" ToolTip="&lt;b&gt;Note :&lt;/b&gt; Set this keyword equal to .TRUE. if $VIBSCF input group is included in input file">
+              <option isDefault="True">.FALSE.</option>
+              <option>.TRUE.</option>
+            </keyword>
+          </GroupFrame>
+        </MenuItem>
+        <MenuItem Group="VIBSCF" MenuType="Textbox" DisplayName="VIBSCF" ToolTip="This is restart data, as written to file IRCDATA in a &lt;br/&gt;partially completed previous run.&lt;b&gt;Note :&lt;/b&gt; Copy data from the IRCDATA file written out in a partially completed previous run">
+          <TextBox/>
+        </MenuItem>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="IRC" ToolTip="#$IRC"/>
+        <MenuItem MenuType="Dummy" DisplayName="DRC" ToolTip="#$DRC"/>
+        <MenuItem MenuType="Dummy" DisplayName="MEX" ToolTip="#$MEX"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="MD" ToolTip="#$MD"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="GLOBOP" ToolTip="#$GLOBOP"/>
+        <MenuItem MenuType="Dummy" DisplayName="GRADEX" ToolTip="#$GRADEX"/>
+        <Menu Group="SURF" MenuType="Dummy" DisplayName="SURF" ToolTip="#$SURF">
+          <Menu MenuType="Keyword" DisplayName="RUNTP1" ToolTip="#$SURF RUNTP1">
+            <MenuItem MenuType="Dummy" DisplayName="Gradient :"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="HESSIAN" ToolTip="#$SURF RUNTP1 HESSIAN"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="OPTIMIZE" ToolTip="#$SURF RUNTP1 OPTIMIZE"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="SADPOINT" ToolTip="#$SURF RUNTP1 SADPOINT"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="MEX" ToolTip="#$SURF RUNTP1 MEX"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="IRC" ToolTip="#$SURF RUNTP1 IRC"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="VSCF" ToolTip="#$SURF RUNTP1 VSCF"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="DRC" ToolTip="#$SURF RUNTP1 DRC"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="MD" ToolTip="#$SURF RUNTP1 MD"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="GLOBOP" ToolTip="#$SURF RUNTP1 GLOBOP"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="OPTFMO" ToolTip="#$SURF RUNTP1 OPTFMO"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="GRADEXTR" ToolTip="#$SURF RUNTP1 GRADEXTR"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="PROP" ToolTip="#$SURF RUNTP1 PROP"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="RAMAN" ToolTip="#$SURF RUNTP1 RAMAN"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="NMR" ToolTip="#$SURF RUNTP1 NMR"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="MOROKUMA" ToolTip="#$SURF RUNTP1 MOROKUMA"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="TDHF" ToolTip="#$SURF RUNTP1 TDHF"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="TDHFX" ToolTip="#$SURF RUNTP1 TDHFX"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="MAKEFP" ToolTip="#$SURF RUNTP1 MAKEFP"/>
+            <Seperator/>
+            <MenuItem MenuType="Dummy" DisplayName="Non-Gradient :"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="ENERGY" ToolTip="#$SURF RUNTP1 ENERGY"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="TRUDGE" ToolTip="#$SURF RUNTP1 TRUDGE"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="SURFACE" ToolTip="#$SURF RUNTP1 SURFACE"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="FFIELD" ToolTip="#$SURF RUNTP1 FFIELD"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP1" DisplayName="TRANSITN" ToolTip="#$SURF RUNTP1 TRANSITN"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="RUNTP2" ToolTip="#$SURF RUNTP2">
+            <MenuItem MenuType="Dummy" DisplayName="Gradient :"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="HESSIAN" ToolTip="#$SURF RUNTP2 HESSIAN"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="OPTIMIZE" ToolTip="#$SURF RUNTP2 OPTIMIZE"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="SADPOINT" ToolTip="#$SURF RUNTP2 SADPOINT"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="MEX" ToolTip="#$SURF RUNTP2 MEX"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="IRC" ToolTip="#$SURF RUNTP2 IRC"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="VSCF" ToolTip="#$SURF RUNTP2 VSCF"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="DRC" ToolTip="#$SURF RUNTP2 DRC"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="MD" ToolTip="#$SURF RUNTP2 MD"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="GLOBOP" ToolTip="#$SURF RUNTP2 GLOBOP"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="OPTFMO" ToolTip="#$SURF RUNTP2 OPTFMO"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="GRADEXTR" ToolTip="#$SURF RUNTP2 GRADEXTR"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="PROP" ToolTip="#$SURF RUNTP2 PROP"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="RAMAN" ToolTip="#$SURF RUNTP2 RAMAN"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="NMR" ToolTip="#$SURF RUNTP2 NMR"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="MOROKUMA" ToolTip="#$SURF RUNTP2 MOROKUMA"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="TDHF" ToolTip="#$SURF RUNTP2 TDHF"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="TDHFX" ToolTip="#$SURF RUNTP2 TDHFX"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="MAKEFP" ToolTip="#$SURF RUNTP2 MAKEFP"/>
+            <Seperator/>
+            <MenuItem MenuType="Dummy" DisplayName="Non-Gradient :"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="ENERGY" ToolTip="#$SURF RUNTP2 ENERGY"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="TRUDGE" ToolTip="#$SURF RUNTP2 TRUDGE"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="SURFACE" ToolTip="#$SURF RUNTP2 SURFACE"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="FFIELD" ToolTip="#$SURF RUNTP2 FFIELD"/>
+            <MenuItem MenuType="Value" Keyword="RUNTP2" DisplayName="TRANSITN" ToolTip="#$SURF RUNTP2 TRANSITN"/>
+          </Menu>
+          <Seperator/>
+          <Menu MenuType="Keyword" DisplayName="SCFTP1" ToolTip="#$SURF SCFTP1">
+            <MenuItem MenuType="Value" Keyword="SCFTP1" DisplayName="RHF" ToolTip="#$SURF SCFTP1 RHF"/>
+            <MenuItem MenuType="Value" Keyword="SCFTP1" DisplayName="UHF" ToolTip="#$SURF SCFTP1 UHF"/>
+            <MenuItem MenuType="Value" Keyword="SCFTP1" DisplayName="ROHF" ToolTip="#$SURF SCFTP1 ROHF"/>
+            <MenuItem MenuType="Value" Keyword="SCFTP1" DisplayName="GVB" ToolTip="#$SURF SCFTP1 GVB"/>
+            <MenuItem MenuType="Value" Keyword="SCFTP1" DisplayName="MCSCF" ToolTip="#$SURF SCFTP1 MCSCF"/>
+            <MenuItem MenuType="Value" Keyword="SCFTP1" DisplayName="NONE" ToolTip="#$SURF SCFTP1 NONE"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="SCFTP2" ToolTip="#$SURF SCFTP2">
+            <MenuItem MenuType="Value" Keyword="SCFTP2" DisplayName="RHF" ToolTip="#$SURF SCFTP2 RHF"/>
+            <MenuItem MenuType="Value" Keyword="SCFTP2" DisplayName="UHF" ToolTip="#$SURF SCFTP2 UHF"/>
+            <MenuItem MenuType="Value" Keyword="SCFTP2" DisplayName="ROHF" ToolTip="#$SURF SCFTP2 ROHF"/>
+            <MenuItem MenuType="Value" Keyword="SCFTP2" DisplayName="GVB" ToolTip="#$SURF SCFTP2 GVB"/>
+            <MenuItem MenuType="Value" Keyword="SCFTP2" DisplayName="MCSCF" ToolTip="#$SURF SCFTP2 MCSCF"/>
+            <MenuItem MenuType="Value" Keyword="SCFTP2" DisplayName="NONE" ToolTip="#$SURF SCFTP2 NONE"/>
+          </Menu>
+          <Seperator/>
+          <Menu MenuType="Keyword" DisplayName="MPLEVL1" ToolTip="#$SURF MPLEVL1">
+            <MenuItem MenuType="Value" Keyword="MPLEVL1" DisplayName="0" ToolTip="#$SURF MPLEVL1 0"/>
+            <MenuItem MenuType="Value" Keyword="MPLEVL1" DisplayName="2" ToolTip="#$SURF MPLEVL1 2"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="MPLEVL2" ToolTip="#$SURF MPLEVL2">
+            <MenuItem MenuType="Value" Keyword="MPLEVL2" DisplayName="0" ToolTip="#$SURF MPLEVL1 0"/>
+            <MenuItem MenuType="Value" Keyword="MPLEVL2" DisplayName="2" ToolTip="#$SURF MPLEVL1 2"/>
+          </Menu>
+          <Seperator/>
+          <Menu MenuType="Keyword" DisplayName="CITYP1" ToolTip="#$SURF CITYP1">
+            <MenuItem MenuType="Value" Keyword="CITYP1" DisplayName="NONE" ToolTip="#$SURF CITYP1 NONE"/>
+            <MenuItem MenuType="Value" Keyword="CITYP1" DisplayName="CIS" ToolTip="#$SURF CITYP1 CIS"/>
+            <MenuItem MenuType="Value" Keyword="CITYP1" DisplayName="ALDET" ToolTip="#$SURF CITYP1 ALDET"/>
+            <MenuItem MenuType="Value" Keyword="CITYP1" DisplayName="ORMAS" ToolTip="#$SURF CITYP1 ORMAS"/>
+            <MenuItem MenuType="Value" Keyword="CITYP1" DisplayName="FOSCI" ToolTip="#$SURF CITYP1 FOSCI"/>
+            <MenuItem MenuType="Value" Keyword="CITYP1" DisplayName="GENCI" ToolTip="#$SURF CITYP1 GENCI"/>
+            <MenuItem MenuType="Value" Keyword="CITYP1" DisplayName="GUGA" ToolTip="#$SURF CITYP1 GUGA"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="CITYP2" ToolTip="#$SURF CITYP1">
+            <MenuItem MenuType="Value" Keyword="CITYP2" DisplayName="NONE" ToolTip="#$SURF CITYP2 NONE"/>
+            <MenuItem MenuType="Value" Keyword="CITYP2" DisplayName="CIS" ToolTip="#$SURF CITYP2 CIS"/>
+            <MenuItem MenuType="Value" Keyword="CITYP2" DisplayName="ALDET" ToolTip="#$SURF CITYP2 ALDET"/>
+            <MenuItem MenuType="Value" Keyword="CITYP2" DisplayName="ORMAS" ToolTip="#$SURF CITYP2 ORMAS"/>
+            <MenuItem MenuType="Value" Keyword="CITYP2" DisplayName="FOSCI" ToolTip="#$SURF CITYP2 FOSCI"/>
+            <MenuItem MenuType="Value" Keyword="CITYP2" DisplayName="GENCI" ToolTip="#$SURF CITYP2 GENCI"/>
+            <MenuItem MenuType="Value" Keyword="CITYP2" DisplayName="GUGA" ToolTip="#$SURF CITYP2 GUGA"/>
+          </Menu>
+          <Seperator/>
+          <Menu MenuType="Keyword" DisplayName="CCTYP1" ToolTip="#$SURF CCTYP1">
+            <MenuItem MenuType="Value" Keyword="CCTYP1" DisplayName="LCCD" ToolTip="#$SURF CCTYP1 LCCD"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP1" DisplayName="CCD" ToolTip="#$SURF CCTYP1 CCD"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP1" DisplayName="CCSD" ToolTip="#$SURF CCTYP1 CCSD"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP1" DisplayName="CCSD(T)" ToolTip="#$SURF CCTYP1 CCSD(T)"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP1" DisplayName="R-CC" ToolTip="#$SURF CCTYP1 R-CC"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP1" DisplayName="CR-CC" ToolTip="#$SURF CCTYP1 CR-CC"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP1" DisplayName="CCSD(TQ)" ToolTip="#$SURF CCTYP1 CCSD(TQ)"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP1" DisplayName="CR-CC(Q)" ToolTip="#$SURF CCTYP1 CR-CC(Q)"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP1" DisplayName="EOM-CCSD" ToolTip="#$SURF CCTYP1 EOM-CCSD"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP1" DisplayName="CR-EOM" ToolTip="#$SURF CCTYP1 CR-EOM"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="CCTYP2" ToolTip="#$SURF CCTYP1">
+            <MenuItem MenuType="Value" Keyword="CCTYP2" DisplayName="LCCD" ToolTip="#$SURF CCTYP2 LCCD"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP2" DisplayName="CCD" ToolTip="#$SURF CCTYP2 CCD"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP2" DisplayName="CCSD" ToolTip="#$SURF CCTYP2 CCSD"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP2" DisplayName="CCSD(T)" ToolTip="#$SURF CCTYP2 CCSD(T)"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP2" DisplayName="R-CC" ToolTip="#$SURF CCTYP2 R-CC"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP2" DisplayName="CR-CC" ToolTip="#$SURF CCTYP2 CR-CC"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP2" DisplayName="CCSD(TQ)" ToolTip="#$SURF CCTYP2 CCSD(TQ)"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP2" DisplayName="CR-CC(Q)" ToolTip="#$SURF CCTYP2 CR-CC(Q)"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP2" DisplayName="EOM-CCSD" ToolTip="#$SURF CCTYP2 EOM-CCSD"/>
+            <MenuItem MenuType="Value" Keyword="CCTYP2" DisplayName="CR-EOM" ToolTip="#$SURF CCTYP2 CR-EOM"/>
+          </Menu>
+          <Seperator/>
+          <Menu MenuType="Keyword" DisplayName="DFTYP1" ToolTip="#$SURF DFTYP1">
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="NONE" ToolTip="#$SURF DFTYP1 NONE"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="B3LYP" ToolTip="#$SURF DFTYP1 B3LYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="BECKE" ToolTip="#$SURF DFTYP1 BECKE"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="BHHLYP" ToolTip="#$SURF DFTYP1 BHHLYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="BLYP" ToolTip="#$SURF DFTYP1 BLYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="BPWLOC" ToolTip="#$SURF DFTYP1 BPWLOC"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="BOP" ToolTip="#$SURF DFTYP1 BOP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="BVWN" ToolTip="#$SURF DFTYP1 BVWN"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="CAMA" ToolTip="#$SURF DFTYP1 CAMA"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="CAMB" ToolTip="#$SURF DFTYP1 CAMB"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="DEPRISTO" ToolTip="#$SURF DFTYP1 DEPRISTO"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="GILL" ToolTip="#$SURF DFTYP1 GILL"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="GLYP" ToolTip="#$SURF DFTYP1 GLYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="GOP" ToolTip="#$SURF DFTYP1 GOP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="GVWN" ToolTip="#$SURF DFTYP1 GVWN"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="HALF" ToolTip="#$SURF DFTYP1 HALF"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="LYP" ToolTip="#$SURF DFTYP1 LYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="OP" ToolTip="#$SURF DFTYP1 OP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="PBE" ToolTip="#$SURF DFTYP1 PBE"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="PBELYP" ToolTip="#$SURF DFTYP1 PBELYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="PBEOP" ToolTip="#$SURF DFTYP1 PBEOP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="PBEVWN" ToolTip="#$SURF DFTYP1 PBEVWN"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="PWLOC" ToolTip="#$SURF DFTYP1 PWLOC"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="SLATER" ToolTip="#$SURF DFTYP1 SLATER"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="SLYP" ToolTip="#$SURF DFTYP1 SLYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="SOP" ToolTip="#$SURF DFTYP1 SOP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="SPWLOC" ToolTip="#$SURF DFTYP1 SPWLOC"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="SVWN" ToolTip="#$SURF DFTYP1 SVWN"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="VWN" ToolTip="#$SURF DFTYP1 VWN"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="WIGEXP" ToolTip="#$SURF DFTYP1 WIGEXP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="WIGNER" ToolTip="#$SURF DFTYP1 WIGNER"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="WS" ToolTip="#$SURF DFTYP1 WS"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="XALPHA" ToolTip="#$SURF DFTYP1 XALPHA"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="XPWLOC" ToolTip="#$SURF DFTYP1 XPWLOC"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP1" DisplayName="XVWN" ToolTip="#$SURF DFTYP1 XVWN"/>
+          </Menu>
+          <Menu MenuType="Keyword" DisplayName="DFTYP2" ToolTip="#$SURF DFTYP2">
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="NONE" ToolTip="#$SURF DFTYP2 NONE"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="B3LYP" ToolTip="#$SURF DFTYP2 B3LYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="BECKE" ToolTip="#$SURF DFTYP2 BECKE"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="BHHLYP" ToolTip="#$SURF DFTYP2 BHHLYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="BLYP" ToolTip="#$SURF DFTYP2 BLYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="BPWLOC" ToolTip="#$SURF DFTYP2 BPWLOC"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="BOP" ToolTip="#$SURF DFTYP2 BOP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="BVWN" ToolTip="#$SURF DFTYP2 BVWN"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="CAMA" ToolTip="#$SURF DFTYP2 CAMA"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="CAMB" ToolTip="#$SURF DFTYP2 CAMB"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="DEPRISTO" ToolTip="#$SURF DFTYP2 DEPRISTO"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="GILL" ToolTip="#$SURF DFTYP2 GILL"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="GLYP" ToolTip="#$SURF DFTYP2 GLYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="GOP" ToolTip="#$SURF DFTYP2 GOP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="GVWN" ToolTip="#$SURF DFTYP2 GVWN"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="HALF" ToolTip="#$SURF DFTYP2 HALF"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="LYP" ToolTip="#$SURF DFTYP2 LYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="OP" ToolTip="#$SURF DFTYP2 OP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="PBE" ToolTip="#$SURF DFTYP2 PBE"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="PBELYP" ToolTip="#$SURF DFTYP2 PBELYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="PBEOP" ToolTip="#$SURF DFTYP2 PBEOP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="PBEVWN" ToolTip="#$SURF DFTYP2 PBEVWN"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="PWLOC" ToolTip="#$SURF DFTYP2 PWLOC"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="SLATER" ToolTip="#$SURF DFTYP2 SLATER"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="SLYP" ToolTip="#$SURF DFTYP2 SLYP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="SOP" ToolTip="#$SURF DFTYP2 SOP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="SPWLOC" ToolTip="#$SURF DFTYP2 SPWLOC"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="SVWN" ToolTip="#$SURF DFTYP2 SVWN"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="VWN" ToolTip="#$SURF DFTYP2 VWN"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="WIGEXP" ToolTip="#$SURF DFTYP2 WIGEXP"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="WIGNER" ToolTip="#$SURF DFTYP2 WIGNER"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="WS" ToolTip="#$SURF DFTYP2 WS"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="XALPHA" ToolTip="#$SURF DFTYP2 XALPHA"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="XPWLOC" ToolTip="#$SURF DFTYP2 XPWLOC"/>
+            <MenuItem MenuType="Value" Keyword="DFTYP2" DisplayName="XVWN" ToolTip="#$SURF DFTYP2 XVWN"/>
+          </Menu>
+          <Seperator/>
+          <MenuItem MenuType="GroupFrame" DisplayName="IVEC" ToolTip="#$IVEC">
+            <GroupFrame DisplayName="IVEC">
+              <keyword MenuType="TEXTBOX" DisplayName="IVEC1">
+                <option Count="6" Type="Double"></option>
+              </keyword>
+              <keyword MenuType="TEXTBOX" DisplayName="IVEC2">
+                <option Count="6" Type="Double"></option>
+              </keyword>
+            </GroupFrame>
+          </MenuItem>
+        </Menu>
+      </Menu>
+      <Seperator/>
+      <Menu MenuType="Dummy" DisplayName="Solvation Models">
+        <MenuItem MenuType="Dummy" DisplayName="EFRAG" ToolTip="#$EFRAG"/>
+        <MenuItem MenuType="Dummy" DisplayName="FRAGNAME" ToolTip="#$FRAGNAME"/>
+        <MenuItem MenuType="Dummy" DisplayName="FRGRPL" ToolTip="#$FRGRPL"/>
+        <MenuItem MenuType="Dummy" DisplayName="PRTEFP" ToolTip="#$PRTEFP"/>
+        <MenuItem MenuType="Dummy" DisplayName="DAMP" ToolTip="#$DAMP"/>
+        <MenuItem MenuType="Dummy" DisplayName="DAMPGS" ToolTip="#$DAMPGS"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="PCM" ToolTip="#$PCM"/>
+        <MenuItem MenuType="Dummy" DisplayName="PCMGRD" ToolTip="#$PCMGRD"/>
+        <MenuItem MenuType="Dummy" DisplayName="PCMCAV" ToolTip="#$PCMCAV"/>
+        <MenuItem MenuType="Dummy" DisplayName="TESCAV" ToolTip="#$TESCAV"/>
+        <MenuItem MenuType="Dummy" DisplayName="NEWCAV" ToolTip="#$NEWCAV"/>
+        <MenuItem MenuType="Dummy" DisplayName="PCMITR" ToolTip="#$PCMITR"/>
+        <MenuItem MenuType="Dummy" DisplayName="DISBS" ToolTip="#$DISBS"/>
+        <MenuItem MenuType="Dummy" DisplayName="DISREP" ToolTip="#$DISREP"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="SVP" ToolTip="#$SVP"/>
+        <MenuItem MenuType="Dummy" DisplayName="SVPIRF" ToolTip="#$SVPIRF"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="COSGMS" ToolTip="#$COSGMS"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="SCRF" ToolTip="#$SCRF"/>
+      </Menu>
+      <Seperator/>
+      <Menu MenuType="Dummy" DisplayName="Fragment MO">
+        <MenuItem MenuType="Dummy" DisplayName="FMO" ToolTip="#$FMO"/>
+        <MenuItem MenuType="Dummy" DisplayName="FMOXYZ" ToolTip="#$FMOXYZ"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="FMOBND" ToolTip="#$FMOBND"/>
+        <MenuItem MenuType="Dummy" DisplayName="FMOLMO" ToolTip="#$FMOLMO"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="FMOPRP" ToolTip="#$FMOPRP"/>
+        <MenuItem MenuType="Dummy" DisplayName="OPTFMO" ToolTip="#$OPTFMO"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="OPTRST" ToolTip="#$OPTRST"/>
+        <MenuItem MenuType="Dummy" DisplayName="FMOENM" ToolTip="#$FMOENM"/>
+        <MenuItem MenuType="Dummy" DisplayName="FMOEND" ToolTip="#$FMOEND"/>
+        <Seperator/>
+        <MenuItem MenuType="Dummy" DisplayName="GDDI" ToolTip="#$GDDI"/>
+      </Menu>
+    </Menu>
+  </Group>
+  <Menu MenuType="Custom" DisplayName="Help" ToolTip="Click to view help file"/>
+  <Link id="1">
+    <MenuItem MenuType="Both" ActionName="MPLEVL=2" DisplayName="MP2" ToolTip="#$CONTRL MPLEVL 2"/>
+    <Menu MenuType="Keyword" DisplayName="CITYP" ToolTip="#$CONTRL CITYP">
+      <MenuItem MenuType="Value" Keyword="CITYP" DisplayName="NONE" ToolTip="#$CONTRL CITYP NONE"/>
+      <MenuItem MenuType="Value" Keyword="CITYP" DisplayName="CIS" ToolTip="#$CONTRL CITYP CIS"/>
+      <MenuItem MenuType="Value" Keyword="CITYP" DisplayName="ALDET" ToolTip="#$CONTRL CITYP ALDET"/>
+      <MenuItem MenuType="Value" Keyword="CITYP" DisplayName="ORMAS" ToolTip="#$CONTRL CITYP ORMAS"/>
+      <MenuItem MenuType="Value" Keyword="CITYP" DisplayName="FOSCI" ToolTip="#$CONTRL CITYP FOSCI"/>
+      <MenuItem MenuType="Value" Keyword="CITYP" DisplayName="GENCI" ToolTip="#$CONTRL CITYP GENCI"/>
+      <MenuItem MenuType="Value" Keyword="CITYP" DisplayName="GUGA" ToolTip="#$CONTRL CITYP GUGA"/>
+    </Menu>
+    <Menu MenuType="Keyword" DisplayName="CCTYP" ToolTip="#$CONTRL CCTYP">
+      <MenuItem MenuType="Value" Keyword="CCTYP" DisplayName="LCCD" ToolTip="#$CONTRL CCTYP LCCD"/>
+      <MenuItem MenuType="Value" Keyword="CCTYP" DisplayName="CCD" ToolTip="#$CONTRL CCTYP CCD"/>
+      <MenuItem MenuType="Value" Keyword="CCTYP" DisplayName="CCSD" ToolTip="#$CONTRL CCTYP CCSD"/>
+      <MenuItem MenuType="Value" Keyword="CCTYP" DisplayName="CCSD(T)" ToolTip="#$CONTRL CCTYP CCSD(T)"/>
+      <MenuItem MenuType="Value" Keyword="CCTYP" DisplayName="R-CC" ToolTip="#$CONTRL CCTYP R-CC"/>
+      <MenuItem MenuType="Value" Keyword="CCTYP" DisplayName="CR-CC" ToolTip="#$CONTRL CCTYP CR-CC"/>
+      <MenuItem MenuType="Value" Keyword="CCTYP" DisplayName="CCSD(TQ)" ToolTip="#$CONTRL CCTYP CCSD(TQ)"/>
+      <MenuItem MenuType="Value" Keyword="CCTYP" DisplayName="CR-CC(Q)" ToolTip="#$CONTRL CCTYP CR-CC(Q)"/>
+      <MenuItem MenuType="Value" Keyword="CCTYP" DisplayName="EOM-CCSD" ToolTip="#$CONTRL CCTYP EOM-CCSD"/>
+      <MenuItem MenuType="Value" Keyword="CCTYP" DisplayName="CR-EOM" ToolTip="#$CONTRL CCTYP CR-EOM"/>
+    </Menu>
+    <Menu Group="DFT" MenuType="Keyword" DisplayName="DFTTYP" ToolTip="#$CONTRL DFTTYP">
+      <Menu MenuType="Both" ActionName="METHOD=GRID" DisplayName="GRID" ToolTip="#$DFT METHOD GRID">
+        <Group Name="CONTRL">
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="BECKE" ToolTip="#$CONTRL DFTTYP BECKE"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="BHHLYP" ToolTip="#$CONTRL DFTTYP BHHLYP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="BLYP" ToolTip="#$CONTRL DFTTYP BLYP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="B3LYP" ToolTip="#$CONTRL DFTTYP B3LYP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="BOP" ToolTip="#$CONTRL DFTTYP BOP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="BVWN" ToolTip="#$CONTRL DFTTYP BVWN"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="GILL" ToolTip="#$CONTRL DFTTYP GILL"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="GLYP" ToolTip="#$CONTRL DFTTYP GLYP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="GOP" ToolTip="#$CONTRL DFTTYP GOP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="GVWN" ToolTip="#$CONTRL DFTTYP GVWN"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="LYP" ToolTip="#$CONTRL DFTTYP LYP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="OP" ToolTip="#$CONTRL DFTTYP OP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="PBE" ToolTip="#$CONTRL DFTTYP PBE"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="PBELYP" ToolTip="#$CONTRL DFTTYP PBELYP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="PBEOP" ToolTip="#$CONTRL DFTTYP PBEOP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="PBEVWN" ToolTip="#$CONTRL DFTTYP PBEVWN"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="SLATER" ToolTip="#$CONTRL DFTTYP SLATER"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="SLYP" ToolTip="#$CONTRL DFTTYP SLYP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="SOP" ToolTip="#$CONTRL DFTTYP SOP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="SVWN" ToolTip="#$CONTRL DFTTYP SVWN"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="VWN" ToolTip="#$CONTRL DFTTYP VWN"/>
+        </Group>
+      </Menu>
+      <Menu MenuType="Both" ActionName="METHOD=GRIDFREE" DisplayName="GRIDFREE" ToolTip="#$DFT METHOD GRIDFREE">
+        <Group Name="CONTRL">
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="NONE" ToolTip="#$CONTRL DFTTYP NONE"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="BECKE" ToolTip="#$CONTRL DFTTYP BECKE"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="BLYP" ToolTip="#$CONTRL DFTTYP BLYP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="B3LYP" ToolTip="#$CONTRL DFTTYP B3LYP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="BPWLOC" ToolTip="#$CONTRL DFTTYP BPWLOC"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="BVWN" ToolTip="#$CONTRL DFTTYP BVWN"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="CAMA" ToolTip="#$CONTRL DFTTYP CAMA"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="CAMB" ToolTip="#$CONTRL DFTTYP CAMB"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="DEPRISTO" ToolTip="#$CONTRL DFTTYP DEPRISTO"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="HALF" ToolTip="#$CONTRL DFTTYP HALF"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="LYP" ToolTip="#$CONTRL DFTTYP LYP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="PWLOC" ToolTip="#$CONTRL DFTTYP PWLOC"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="SLATER" ToolTip="#$CONTRL DFTTYP SLATER"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="SPWLOC" ToolTip="#$CONTRL DFTTYP SPWLOC"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="SVWN" ToolTip="#$CONTRL DFTTYP SVWN"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="VWN" ToolTip="#$CONTRL DFTTYP VWN"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="WIGEXP" ToolTip="#$CONTRL DFTTYP WIGEXP"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="WIGNER" ToolTip="#$CONTRL DFTTYP WIGNER"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="WS" ToolTip="#$CONTRL DFTTYP WS"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="XALPHA" ToolTip="#$CONTRL DFTTYP XALPHA"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="XPWLOC" ToolTip="#$CONTRL DFTTYP XPWLOC"/>
+          <MenuItem MenuType="Value" Keyword="DFTTYP" DisplayName="XVWN" ToolTip="#$CONTRL DFTTYP XVWN"/>
+        </Group>
+      </Menu>
+    </Menu>
+  </Link>
+</gamessInput>

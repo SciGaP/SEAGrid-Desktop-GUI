@@ -1,0 +1,25 @@
+IsMetal
+IsCyclic I
+AtomicNumberEq I
+NumBondsGr I
+NumSingleBondsGr I
+NumDoubleBondsGr I
+NumTripleBondsGr I
+Not P
+OneAdjST P
+TwoAdjST P
+ThreeAdjST P
+FourAdjST P
+OneDBST P
+TwoDBST P
+ThreeDBST P
+FourDBST P
+OneTBST P
+TwoTBST P
+ThreeTBST P
+FourTBST P
+BondDisGr F
+AvgAngleGr F
+AngleSumGr F
+AskTransitionMedalCoordinationNumber I
+AskCarboniumIonType

@@ -1,0 +1,27 @@
+    public String GaussianOutput(String molInfo)
+    {
+	String templateTop =  "# SP, RHF/STO-3G punch=archive trakio" +
+                " scf=conventional\n" + " \n" +
+            "Gaussian Test Job 00\n" +
+            "Water with archiving\n" + " \n" +
+            "0 1\n";
+        //ArrayList molInfsplit = (ArrayList) Arrays.asList(molInfo.split("\n"));
+        String text = templateTop;
+	StringTokenizer molTok = new StringTokenizer(molInfo, "\n");
+        //int n = molInfsplit.size();
+        //int i;
+        // ignore first line of molInfo
+	String line = molTok.nextToken();
+	int i = 0;
+	while (molTok.hasMoreTokens())
+	{
+	    line = molTok.nextToken();
+	    if ((line.length() > 0) && (i > 0))
+	    {
+		text = text + line + "\n";
+		System.err.println(line);
+	    }
+	    i++;
+	}
+	return text;
+    }

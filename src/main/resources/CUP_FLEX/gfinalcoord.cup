@@ -1,0 +1,113 @@
+import java_cup.runtime.*;
+import javax.swing.*;
+import java.util.*;
+import java.io.*; 
+
+
+
+/*
+OUTPUT FORMAT:____________________________________________________________
+          --------------------------
+                 RHF SCF CALCULATION
+          --------------------------
+ 
+     NUCLEAR ENERGY =         6.1221376700
+     MAXIT =   30     NPUNCH=    2
+     EXTRAP=T  DAMP=F  SHIFT=F  RSTRCT=F  DIIS=F  DEM=F  SOSCF=F
+     DENSITY CONV=  1.00E-05
+     MEMORY REQUIRED FOR RHF STEP=     30441 WORDS.
+ 
+ ITER EX DEM    TOTAL ENERGY       E CHANGE  DENSITY CHANGE    DIIS ERROR
+   1  0  0      -37.172577283   -37.172577283   0.380764107   0.000000000
+   2  1  0      -37.227975620    -0.055398337   0.131481807   0.000000000
+   3  2  0      -37.231732248    -0.003756628   0.046548652   0.000000000
+   4  3  0      -37.232193210    -0.000460963   0.016847695   0.000000000
+
+TO MONITOR:____________________________________________________________
+ iteration, energy
+
+MANUALLY ADD TO CUP-GENERATED CLASS IN SCFaParser.java:________________
+
+
+//add to CUP$SCFaParser$actions
+public ParseSCF2 parseSCF;
+
+//add to the constructor of CUP$SCFaParser$actions
+ parseSCF = new ParseSCF2();
+
+*/
+
+action code {: 
+  //__________________________________
+  public static boolean DEBUG = true;
+  private static JTable table;               
+  private static final String tableLabel = "SCF Intermediate Results:";
+// private static String cycle = "0";
+ 
+  
+  public static JTable getTable() {
+    return table;
+  }
+
+  public static String getTableLabel() {
+    return tableLabel;
+  }
+
+:}
+
+
+
+
+terminal       INPUT1, INPUT2,    FOUNDITER, SCFDONE;
+terminal Float     INPUT3, INPUT4, INPUT5, INPUT6;
+non terminal  startpt, scfintro, scfpat, scfcycle, inp3, inp4, inp5, inp6;
+
+
+
+
+/* ___________
+   The grammer */
+
+startpt ::= scfintro
+           scfpat 
+            SCFDONE
+	
+             ;
+
+
+
+
+scfintro ::=
+   FOUNDITER 
+   INPUT1
+;
+
+scfpat ::= scfpat scfcycle
+   |
+   scfcycle
+;
+
+scfcycle ::=
+INPUT2
+inp3 inp4 inp5 inp6
+;
+
+
+
+
+inp3 ::= 
+INPUT3:e 
+ ;
+
+inp4 ::=
+INPUT4:e4
+ ;
+
+inp5 ::=
+INPUT5:e5
+ ;
+
+inp6 ::=
+INPUT6:e6
+ ;
+

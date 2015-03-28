@@ -1,0 +1,60 @@
+co -q -f newNanocad.java,v
+co -q -f /work/ncadpvs/RCS/group.java,v
+co -q -f /work/ncadpvs/RCS/MolTemplate.java,v
+co -q -f /work/ncadpvs/RCS/Parser.java,v
+co -q -f /work/ncadpvs/RCS/textwin.java,v
+co -q -f /work/ncadpvs/RCS/AtomDataFile.java,v
+co -q -f /work/ncadpvs/RCS/AtomTypeTest.java,v
+co -q -f /work/ncadpvs/RCS/atom.java,v
+co -q -f /work/ncadpvs/RCS/dl_atom.java,v
+co -q -f /work/ncadpvs/RCS/bond.java,v
+co -q -f /work/ncadpvs/RCS/dl_bond.java,v
+co -q -f /work/ncadpvs/RCS/view.java,v
+co -q -f /work/ncadpvs/RCS/dlforce.java,v
+co -q -f /work/ncadpvs/RCS/dlentry.java,v
+co -q -f /work/ncadpvs/RCS/energyMinimizeAlgorythm.java,v
+co -q -f /work/ncadpvs/RCS/GeneralAtom.java,v
+co -q -f /work/ncadpvs/RCS/dipole.java,v
+co -q -f /work/ncadpvs/RCS/drawPanel.java,v
+co -q -f /work/ncadpvs/RCS/NcadMenu.java,v
+co -q -f /work/ncadpvs/RCS/NcadMenuBar.java,v
+co -q -f /work/ncadpvs/RCS/PDBParser.java,v
+co -q -f /work/ncadpvs/RCS/hydrogen.java,v
+co -q -f /work/ncadpvs/RCS/oxygen.java,v
+co -q -f /work/ncadpvs/RCS/nitrogen.java,v
+co -q -f /work/ncadpvs/RCS/carbon.java,v
+co -q -f /work/ncadpvs/util/RCS/AtomTypeFile.java,v
+mv AtomTypeFile.java util/AtomTypeFile.java
+co -q -f /work/ncadpvs/util/RCS/atomProperty.java,v
+mv atomProperty.java util/atomProperty.java
+co -q -f /work/ncadpvs/util/RCS/YesNoDialog.java,v
+mv YesNoDialog.java util/YesNoDialog.java
+co -q -f /work/ncadpvs/minimize/mm3/RCS/aterm.java,v
+mv aterm.java minimize/mm3/aterm.java
+co -q -f /work/ncadpvs/minimize/mm3/RCS/estaticterm.java,v
+mv estaticterm.java minimize/mm3/estaticterm.java
+co -q -f /work/ncadpvs/minimize/mm3/RCS/hbondterm.java,v
+mv hbondterm.java minimize/mm3/hbondterm.java
+co -q -f /work/ncadpvs/minimize/mm3/RCS/lterm.java,v
+mv lterm.java minimize/mm3/lterm.java
+co -q -f /work/ncadpvs/minimize/mm3/RCS/mm3MinimizeAlgorythm.java,v
+mv mm3MinimizeAlgorythm.java minimize/mm3/mm3MinimizeAlgorythm.java
+co -q -f /work/ncadpvs/minimize/mm3/RCS/opbterm.java,v
+mv opbterm.java minimize/mm3/opbterm.java
+co -q -f /work/ncadpvs/minimize/mm3/RCS/strbendterm.java,v
+mv strbendterm.java minimize/mm3/strbendterm.java
+co -q -f /work/ncadpvs/minimize/mm3/RCS/term.java,v
+mv term.java minimize/mm3/term.java
+co -q -f /work/ncadpvs/minimize/mm3/RCS/tterm.java,v
+mv tterm.java minimize/mm3/tterm.java
+co -q -f /work/ncadpvs/minimize/mm3/RCS/vdwterm.java,v
+mv vdwterm.java minimize/mm3/vdwterm.java
+co -q -f /work/ncadpvs/minimize/mm3/RCS/angangterm.java,v
+mv angangterm.java minimize/mm3/angangterm.java
+chmod 775 /work/ncadpvs/*.java
+chgrp chemviz /work/ncadpvs/*.java
+chmod 775 /work/ncadpvs/util/*.java
+chgrp chemviz /work/ncadpvs/util/*.java
+chmod 775 /work/ncadpvs/minimize/mm3/*.java
+chgrp chemviz /work/ncadpvs/minimize/mm3/*.java
+echo Directory Updated                          
