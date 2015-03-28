@@ -426,7 +426,7 @@
                     <artifactId>jogl</artifactId>
                     <version>1.0</version>
                     <scope>system</scope>
-                    <systemPath>${ext-libs}${file.separator}jogl${file.separator}jogl_linux${file.separator}jogl-linux-1-1.jar</systemPath>
+                    <systemPath>${ext-libs}${file.separator}jogl${file.separator}jogl_linux_083111${file.separator}jogl.jar</systemPath>
                 </dependency>
             </dependencies>
         </profile>
