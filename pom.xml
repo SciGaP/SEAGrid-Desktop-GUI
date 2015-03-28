@@ -7,10 +7,17 @@
     <groupId>GridChem-Client</groupId>
     <artifactId>GridChem-Client-Maven</artifactId>
     <version>1.0.0</version>
+    <properties>
+        <os-name>${os.version}</os-name>
+        <os-arch>${os.arch}</os-arch>
+        <ext-libs>${project.basedir}${file.separator}lib</ext-libs>
+    </properties>
 
 
     <build>
+
         <plugins>
+
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
@@ -267,7 +274,7 @@
             <artifactId>JMolEditor</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/client/JMolEditor.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}client${file.separator}JMolEditor.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -275,7 +282,7 @@
             <artifactId>jnlp</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/client/jnlp.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}client${file.separator}jnlp.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -283,7 +290,7 @@
             <artifactId>plugin-local</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/client/plugin.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}client${file.separator}plugin.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -291,7 +298,7 @@
             <artifactId>progressdialog</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/client/progressdialog.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}client${file.separator}progressdialog.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -299,7 +306,7 @@
             <artifactId>rsslib4j-0.2</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/client/rsslib4j-0.2.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}client${file.separator}rsslib4j-0.2.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -307,7 +314,7 @@
             <artifactId>gms-junit</artifactId>
             <version>3.8.1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/common/gms-junit-3.8.1.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}common${file.separator}gms-junit-3.8.1.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -315,7 +322,7 @@
             <artifactId>help-4_2-ehelp-integration</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/help/help-4_2-ehelp-integration.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}help${file.separator}help-4_2-ehelp-integration.jar</systemPath>
         </dependency>
 
 
@@ -324,7 +331,7 @@
             <artifactId>help4-indexer</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/help/help4-indexer.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}help${file.separator}help4-indexer.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -332,7 +339,7 @@
             <artifactId>help4-nls</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/help/help4-nls.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}help${file.separator}help4-nls.jar</systemPath>
         </dependency>
 
 
@@ -341,7 +348,7 @@
             <artifactId>help4-viewer</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/help/help4-viewer.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}help${file.separator}help4-viewer.jar</systemPath>
         </dependency>
 
 
@@ -350,7 +357,7 @@
             <artifactId>help4-wizard</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/help/help4-wizard.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}help${file.separator}help4-wizard.jar</systemPath>
         </dependency>
 
 
@@ -359,7 +366,7 @@
             <artifactId>help4</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/help/help4.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}help${file.separator}help4.jar</systemPath>
         </dependency>
 
 
@@ -368,7 +375,7 @@
             <artifactId>ohj-jewt</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/help/ohj-jewt.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}help${file.separator}ohj-jewt.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -376,7 +383,7 @@
             <artifactId>ohw</artifactId>
             <version>2.0.11</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/help/ohw-2.0.11.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}help${file.separator}ohw-2.0.11.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -384,15 +391,7 @@
             <artifactId>oracle_ice</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/help/oracle_ice.jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>jogl</groupId>
-            <artifactId>jogl</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/jogl_mac_083011/jogl.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}help${file.separator}oracle_ice.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -400,7 +399,7 @@
             <artifactId>GMS-client</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/service/GMS-client.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}service${file.separator}GMS-client.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -408,10 +407,65 @@
             <artifactId>gms-service-bean</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/service/gms-service-bean.jar</systemPath>
+            <systemPath>${ext-libs}${file.separator}service${file.separator}gms-service-bean.jar</systemPath>
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>jogl</groupId>
+                    <artifactId>jogl</artifactId>
+                    <version>1.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ext-libs}${file.separator}jogl${file.separator}jogl_linux${file.separator}jogl-linux-1-1.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>mac-profile</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>jogl</groupId>
+                    <artifactId>jogl</artifactId>
+                    <version>1.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ext-libs}${file.separator}jogl${file.separator}jogl_mac_083011${file.separator}jogl.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>win</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>jogl</groupId>
+                    <artifactId>jogl</artifactId>
+                    <version>1.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ext-libs}${file.separator}jogl${file.separator}jogl_win${file.separator}jogl.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+
+    </profiles>
 
 
     <repositories>
