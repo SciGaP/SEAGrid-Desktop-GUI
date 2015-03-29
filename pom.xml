@@ -17,13 +17,12 @@
     <build>
 
         <plugins>
-
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -53,7 +52,9 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
+
     </build>
 
     <dependencies>
@@ -273,141 +274,102 @@
             <groupId>JMolEditor</groupId>
             <artifactId>JMolEditor</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}client${file.separator}JMolEditor.jar</systemPath>
         </dependency>
 
         <dependency>
             <groupId>jnlp</groupId>
             <artifactId>jnlp</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}client${file.separator}jnlp.jar</systemPath>
         </dependency>
 
         <dependency>
-            <groupId>plugin-local</groupId>
-            <artifactId>plugin-local</artifactId>
+            <groupId>plugin</groupId>
+            <artifactId>plugin</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}client${file.separator}plugin.jar</systemPath>
         </dependency>
 
         <dependency>
             <groupId>progressdialog</groupId>
             <artifactId>progressdialog</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}client${file.separator}progressdialog.jar</systemPath>
         </dependency>
 
         <dependency>
             <groupId>rsslib4j-0.2</groupId>
             <artifactId>rsslib4j-0.2</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}client${file.separator}rsslib4j-0.2.jar</systemPath>
         </dependency>
 
         <dependency>
             <groupId>gms-junit</groupId>
             <artifactId>gms-junit</artifactId>
-            <version>3.8.1</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}common${file.separator}gms-junit-3.8.1.jar</systemPath>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
             <groupId>help-4_2-ehelp-integration</groupId>
             <artifactId>help-4_2-ehelp-integration</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}help${file.separator}help-4_2-ehelp-integration.jar</systemPath>
         </dependency>
-
 
         <dependency>
             <groupId>help4-indexer</groupId>
             <artifactId>help4-indexer</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}help${file.separator}help4-indexer.jar</systemPath>
         </dependency>
 
         <dependency>
             <groupId>help4-nls</groupId>
             <artifactId>help4-nls</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}help${file.separator}help4-nls.jar</systemPath>
         </dependency>
-
 
         <dependency>
             <groupId>help4-viewer</groupId>
             <artifactId>help4-viewer</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}help${file.separator}help4-viewer.jar</systemPath>
         </dependency>
-
 
         <dependency>
             <groupId>help4-wizard</groupId>
             <artifactId>help4-wizard</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}help${file.separator}help4-wizard.jar</systemPath>
         </dependency>
-
 
         <dependency>
             <groupId>help4</groupId>
             <artifactId>help4</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}help${file.separator}help4.jar</systemPath>
         </dependency>
-
 
         <dependency>
             <groupId>ohj-jewt</groupId>
             <artifactId>ohj-jewt</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}help${file.separator}ohj-jewt.jar</systemPath>
         </dependency>
 
         <dependency>
             <groupId>ohw</groupId>
             <artifactId>ohw</artifactId>
-            <version>2.0.11</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}help${file.separator}ohw-2.0.11.jar</systemPath>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
             <groupId>oracle_ice</groupId>
             <artifactId>oracle_ice</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}help${file.separator}oracle_ice.jar</systemPath>
         </dependency>
 
         <dependency>
             <groupId>GMS-client</groupId>
             <artifactId>GMS-client</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}service${file.separator}GMS-client.jar</systemPath>
         </dependency>
 
         <dependency>
             <groupId>gms-service-bean</groupId>
             <artifactId>gms-service-bean</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext-libs}${file.separator}service${file.separator}gms-service-bean.jar</systemPath>
         </dependency>
 
     </dependencies>
@@ -423,10 +385,8 @@
             <dependencies>
                 <dependency>
                     <groupId>jogl</groupId>
-                    <artifactId>jogl</artifactId>
+                    <artifactId>jogl_linux_083111</artifactId>
                     <version>1.0</version>
-                    <scope>system</scope>
-                    <systemPath>${ext-libs}${file.separator}jogl${file.separator}jogl_linux${file.separator}jogl-linux-1-1.jar</systemPath>
                 </dependency>
             </dependencies>
         </profile>
@@ -440,10 +400,8 @@
             <dependencies>
                 <dependency>
                     <groupId>jogl</groupId>
-                    <artifactId>jogl</artifactId>
+                    <artifactId>jogl_mac_083011</artifactId>
                     <version>1.0</version>
-                    <scope>system</scope>
-                    <systemPath>${ext-libs}${file.separator}jogl${file.separator}jogl_mac_083011${file.separator}jogl.jar</systemPath>
                 </dependency>
             </dependencies>
         </profile>
@@ -457,14 +415,63 @@
             <dependencies>
                 <dependency>
                     <groupId>jogl</groupId>
-                    <artifactId>jogl</artifactId>
+                    <artifactId>jogl_win</artifactId>
                     <version>1.0</version>
-                    <scope>system</scope>
-                    <systemPath>${ext-libs}${file.separator}jogl${file.separator}jogl_win${file.separator}jogl.jar</systemPath>
                 </dependency>
             </dependencies>
         </profile>
+		<profile>
+			<id>jnlp</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>webstart-maven-plugin</artifactId>
+						<version>1.0-beta-3</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jnlp</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+                            <unsignAlreadySignedJars>true</unsignAlreadySignedJars>
+							<codebase>file://${project.basedir}/target/jnlp/</codebase> <!-- url of the place where the codebase will be hosted -->
+							<jnlp>
+								<mainClass>org.gridchem.client.GridChem</mainClass>
+							</jnlp>
+							<!--pack200>true</pack200-->
+							<sign>
+            					<keystore>fillme</keystore>
+            					<keypass>fillme</keypass>  <!-- we need to override passwords easily from the command line. ${keypass} -->
+            					<storepass>fillme</storepass> <!-- ${storepass} -->
+            					<!--storetype>fillme</storetype-->
+            					<alias>fillme</alias>
 
+            					<!--validity>fillme</validity-->
+
+            					<!-- only required for generating the keystore -->
+            					<dnameCn>fillme</dnameCn>
+            					<dnameOu>fillme</dnameOu>
+            					<dnameO>fillme</dnameO>
+            					<dnameL>fillme</dnameL>
+            					<dnameSt>fillme</dnameSt>
+            					<dnameC>fillme</dnameC>
+           						 <verify>true</verify> <!-- verify that the signing operation succeeded -->
+            					<!-- KEYSTORE MANAGEMENT -->
+            					<keystoreConfig>
+              					<delete>true</delete> <!-- delete the keystore -->
+              					<gen>true</gen>       <!-- optional shortcut to generate the store. -->
+            					</keystoreConfig>
+          					</sign>
+							<verbose>true</verbose>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
     </profiles>
 
 
@@ -473,6 +480,10 @@
             <id>mbari-maven-repository</id>
             <name>MBARI Maven Repository</name>
             <url>https://mbari-maven-repository.googlecode.com/svn/repository/</url>
+        </repository>
+        <repository>
+            <id>local-repo</id>
+            <url>file://${basedir}/local-repo</url>
         </repository>
     </repositories>
 </project>
