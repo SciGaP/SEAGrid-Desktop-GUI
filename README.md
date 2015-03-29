@@ -13,5 +13,5 @@ mvn clean install
 
 mvn clean install -Pjnlp
 
-* Files are reated in target/jnlp folder
+* Files are created in target/jnlp folder
 * To change configurations of jnlp build, refer to the profile "jnlp" in pom.xml
