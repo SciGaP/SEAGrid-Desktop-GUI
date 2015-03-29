@@ -420,58 +420,58 @@
                 </dependency>
             </dependencies>
         </profile>
-		<profile>
-			<id>jnlp</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>webstart-maven-plugin</artifactId>
-						<version>1.0-beta-3</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>jnlp</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
+        <profile>
+            <id>jnlp</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>webstart-maven-plugin</artifactId>
+                        <version>1.0-beta-3</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jnlp</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
                             <unsignAlreadySignedJars>true</unsignAlreadySignedJars>
-							<codebase>file://${project.basedir}/target/jnlp/</codebase> <!-- url of the place where the codebase will be hosted -->
-							<jnlp>
-								<mainClass>org.gridchem.client.GridChem</mainClass>
-							</jnlp>
-							<!--pack200>true</pack200-->
-							<sign>
-            					<keystore>fillme</keystore>
-            					<keypass>fillme</keypass>  <!-- we need to override passwords easily from the command line. ${keypass} -->
-            					<storepass>fillme</storepass> <!-- ${storepass} -->
-            					<!--storetype>fillme</storetype-->
-            					<alias>fillme</alias>
+                            <codebase>file://${project.basedir}/target/jnlp/</codebase> <!-- url of the place where the codebase will be hosted -->
+                            <jnlp>
+                                <mainClass>org.gridchem.client.GridChem</mainClass>
+                            </jnlp>
+                            <!--pack200>true</pack200-->
+                            <sign>
+                                <keystore>fillme</keystore>
+                                <keypass>fillme</keypass>  <!-- we need to override passwords easily from the command line. ${keypass} -->
+                                <storepass>fillme</storepass> <!-- ${storepass} -->
+                                <!--storetype>fillme</storetype-->
+                                <alias>fillme</alias>
 
-            					<!--validity>fillme</validity-->
+                                <!--validity>fillme</validity-->
 
-            					<!-- only required for generating the keystore -->
-            					<dnameCn>fillme</dnameCn>
-            					<dnameOu>fillme</dnameOu>
-            					<dnameO>fillme</dnameO>
-            					<dnameL>fillme</dnameL>
-            					<dnameSt>fillme</dnameSt>
-            					<dnameC>fillme</dnameC>
-           						 <verify>true</verify> <!-- verify that the signing operation succeeded -->
-            					<!-- KEYSTORE MANAGEMENT -->
-            					<keystoreConfig>
-              					<delete>true</delete> <!-- delete the keystore -->
-              					<gen>true</gen>       <!-- optional shortcut to generate the store. -->
-            					</keystoreConfig>
-          					</sign>
-							<verbose>true</verbose>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+                                <!-- only required for generating the keystore -->
+                                <dnameCn>fillme</dnameCn>
+                                <dnameOu>fillme</dnameOu>
+                                <dnameO>fillme</dnameO>
+                                <dnameL>fillme</dnameL>
+                                <dnameSt>fillme</dnameSt>
+                                <dnameC>fillme</dnameC>
+                                <verify>true</verify> <!-- verify that the signing operation succeeded -->
+                                <!-- KEYSTORE MANAGEMENT -->
+                                <keystoreConfig>
+                                    <delete>true</delete> <!-- delete the keystore -->
+                                    <gen>true</gen>       <!-- optional shortcut to generate the store. -->
+                                </keystoreConfig>
+                            </sign>
+                            <verbose>true</verbose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
 
