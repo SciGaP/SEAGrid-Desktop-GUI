@@ -20,7 +20,7 @@ mvn clean install -Pjnlp
 
 <h5>Tested systems</h5>
 
-Mac OS X 10.10.2
-Java version 1.7.0_21
+* Mac OS X 10.10.2
+* Java version 1.7.0_21
 
 
