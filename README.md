@@ -9,7 +9,7 @@ mvn clean install
 
 ./run.sh
 
-<h5>To build Java Webstart (JNLP) pack
+<h5>To build Java Webstart (JNLP) pack</h5>
 
 mvn clean install -Pjnlp
 
