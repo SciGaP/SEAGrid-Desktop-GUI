@@ -29,6 +29,8 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.swing.JOptionPane;
 
+import org.apache.airavata.auth.OAuthClient;
+import org.apache.airavata.gridchem.AiravataClient;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -161,7 +163,10 @@ public class GMS3 {
     	params.setArgs3(type.name());
     	
     	try {
-			sessionKey = getClient().getSessionService().createSession(params).get_return();
+			//sessionKey=getAiravataClient().getOAuthProvider("https://localhost:9443/oauth2endpoints/token","TR8HAsRYIC4gtEe8ofbOihoyDVsa","o5xIvyjguJIYRHV3IPAPvcvIc5Aa").
+			//		authenticate(uname,passwd).
+			//		getAccess_token();
+			sessionKey = getClient().getSessionService().createSession(params).get_return(); //to be removed
 		} catch (java.lang.Exception e) {
 			throw new SessionException(e.getMessage());
 		} 
