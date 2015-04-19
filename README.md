@@ -25,6 +25,9 @@ mvn clean install -Pjnlp
 
 <h3>Configuring WSO2 Identity Server</h3>
 
+Note: If you are running WSO2 IS with its self signed certificate, you have to add that certificate to jre before running the application. Guide to this can be found from http://magicmonster.com/kb/prg/java/ssl/pkix_path_building_failed.html
+
+
 * Download WSO2 IS 5.0.0 and Service Pack http://wso2.com/products/identity-server/
 * Extract wso2is-5.0.0.zip zip and WSO2-IS-5.0.0-SP01.zip
 * Install service pack according to given instructions and start WS02 IS
