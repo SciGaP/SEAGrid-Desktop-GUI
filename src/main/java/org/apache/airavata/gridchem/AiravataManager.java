@@ -1,8 +1,15 @@
 package org.apache.airavata.gridchem;
 
 import org.apache.airavata.AiravataConfig;
+import org.apache.airavata.model.appcatalog.appinterface.DataType;
+import org.apache.airavata.model.appcatalog.appinterface.InputDataObjectType;
+import org.apache.airavata.model.appcatalog.appinterface.OutputDataObjectType;
 import org.apache.airavata.model.error.AiravataClientConnectException;
+import org.apache.airavata.model.util.ExperimentModelUtil;
 import org.apache.airavata.model.workspace.Project;
+import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
+import org.apache.airavata.model.workspace.experiment.Experiment;
+import org.apache.airavata.model.workspace.experiment.UserConfigurationData;
 import org.apache.axis2.AxisFault;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -25,10 +32,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URLConnection;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by dimuthuupeksha on 4/17/15.
@@ -417,10 +421,53 @@ public class AiravataManager {
 
     }
 
+    public static void createExperiment() throws Exception{
+        String appId = "Echo_995bdc27-55b0-42f2-adc1-e5ee8d615916";
+
+        List<InputDataObjectType> exInputs = new ArrayList<InputDataObjectType>();
+        InputDataObjectType input = new InputDataObjectType();
+        input.setName("Input_to_Echo");
+        input.setType(DataType.STRING);
+        input.setValue("Echoed_Output=Hello World");
+        exInputs.add(input);
+
+        List<OutputDataObjectType> exOut = new ArrayList<OutputDataObjectType>();
+        OutputDataObjectType output = new OutputDataObjectType();
+        output.setName("Echoed_Output");
+        output.setType(DataType.STRING);
+        output.setValue("");
+        exOut.add(output);
+
+        Experiment simpleExperiment = ExperimentModelUtil.createSimpleExperiment("default", "admin", "echoExperiment", "Echo Exp", appId, exInputs);
+        simpleExperiment.setExperimentOutputs(exOut);
+
+        Map<String,String> computeResources = getClient().getAvailableAppInterfaceComputeResources(appId);
+        String id = computeResources.keySet().iterator().next();
+        String resourceName = computeResources.get(id);
+        //System.out.println();
+        System.out.println(id);
+        System.out.println(resourceName);
+        ComputationalResourceScheduling scheduling = ExperimentModelUtil.createComputationResourceScheduling(id, 1, 1, 1, "normal", 30, 0, 1, "sds128");
+        UserConfigurationData userConfigurationData = new UserConfigurationData();
+        userConfigurationData.setAiravataAutoSchedule(false);
+        userConfigurationData.setOverrideManualScheduledParams(false);
+        userConfigurationData.setComputationalResourceScheduling(scheduling);
+        simpleExperiment.setUserConfigurationData(userConfigurationData);
+
+        String exp = getClient().createExperiment(simpleExperiment);
+        getClient().launchExperiment(exp,"sample");
+    }
+
     public static void main(String [] args) {
-        login("admin", "admin");
-        System.out.println(getProfile().getFirstName());
-        List<Project> projects = getProjects();
-        System.out.println(projects.size());
+        try {
+            createExperiment();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        //login("admin", "admin");
+        //System.out.println(getProfile().getFirstName());
+        //List<Project> projects = getProjects();
+        //System.out.println(projects.size());
+
     }
 }
