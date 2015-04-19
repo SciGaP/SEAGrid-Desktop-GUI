@@ -78,6 +78,7 @@ import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.airavata.model.workspace.Project;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.Invariants;
 import org.gridchem.client.common.Preferences;
@@ -111,14 +112,14 @@ implements ActionListener, KeyListener,ListSelectionListener {
     private Status status;
     private StatusListener listener;
     
-    private static List<ProjectBean> projects;
+    private static List<Project> projects;
     
-    private static ProjectBean project; 
+    private static Project project;
     
     private LoginDialog parent;
     
     public ProjectSelectionDialog(StatusListener listener, 
-            List<ProjectBean> projects, LoginDialog parent) {
+            List<Project> projects, LoginDialog parent) {
         
         this(projects, parent);
         
@@ -128,7 +129,7 @@ implements ActionListener, KeyListener,ListSelectionListener {
         
     }
     
-    public ProjectSelectionDialog(List<ProjectBean> projects, LoginDialog parent) {
+    public ProjectSelectionDialog(List<Project> projects, LoginDialog parent) {
     	super(parent, true);
     	
     	this.parent = parent;
@@ -215,13 +216,13 @@ implements ActionListener, KeyListener,ListSelectionListener {
         
         // look up the user's default project type in their preferences.
         String preferredProject = Preferences.getString("gridchem_usertype");
-        for(ProjectBean project:projects) {
+        for(Project project:projects) {
             
-            if (preferredProject != null && 
-                    project.getType().equals(preferredProject.toUpperCase())) {
-                
+            //if (preferredProject != null &&  //remove comment
+              //      project.getType().equals(preferredProject.toUpperCase())) {
+            if (preferredProject != null) {
                 communityIndex = i;
-                projectDetailsLabel.setText(project.getType() + " PROJECT");
+                projectDetailsLabel.setText(project.getName() + " PROJECT");
             }
             projectArray[i++] = project.getName();
         }
@@ -238,7 +239,7 @@ implements ActionListener, KeyListener,ListSelectionListener {
         MouseListener mouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1 ) {
-                    projectDetailsLabel.setText(getSelectedProject().getType() + " PROJECT");
+                    projectDetailsLabel.setText(getSelectedProject().getName() + " PROJECT");
                 } else if (e.getClickCount() == 2) {
                     project = getSelectedProject();
                     setVisible(false);
@@ -300,8 +301,8 @@ implements ActionListener, KeyListener,ListSelectionListener {
         cancelButton.addKeyListener(this); 
     }
     
-    private ProjectBean getSelectedProject() {
-        return (ProjectBean)projects.toArray()[projectList.getSelectedIndex()];
+    private Project getSelectedProject() {
+        return (Project)projects.toArray()[projectList.getSelectedIndex()];
     }
 
     public static void main(String[] a){
@@ -413,7 +414,7 @@ implements ActionListener, KeyListener,ListSelectionListener {
      * 
      * @return ProjectBean or null if no project was selected
      */
-    public ProjectBean getProject() {
+    public Project getProject() {
     	return this.project;
     }
     
@@ -452,7 +453,7 @@ implements ActionListener, KeyListener,ListSelectionListener {
 //              setStatus(Status.START);
           } else if (key == KeyEvent.VK_UP || 
                   key == KeyEvent.VK_DOWN) {
-              projectDetailsLabel.setText(getSelectedProject().getType() + " PROJECT");
+              projectDetailsLabel.setText(getSelectedProject().getName()+ " PROJECT");
           } else if (key == KeyEvent.VK_ESCAPE) {
               project = null;
               setVisible(false);
@@ -462,7 +463,7 @@ implements ActionListener, KeyListener,ListSelectionListener {
     
     public void valueChanged(ListSelectionEvent arg0) {
         selectButton.setEnabled(true);
-        projectDetailsLabel.setText(getSelectedProject().getType() + " PROJECT");
+        projectDetailsLabel.setText(getSelectedProject().getName() + " PROJECT");
     }
     
 //    public void setStatus(Status status) {

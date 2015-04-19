@@ -56,6 +56,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
 
+import org.apache.airavata.model.workspace.Project;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.util.GMS3;
 import org.gridchem.service.beans.CollaboratorBean;
@@ -134,7 +135,7 @@ public class UsageChart extends JPanel {
     }
 
     protected static ChartType CURRENT_CHARTTYPE;
-    protected static Hashtable<ProjectBean,List<CollaboratorBean>> projectCollabTable;
+    protected static Hashtable<Project,List<CollaboratorBean>> projectCollabTable;
     protected JPanel navPanel;
     
     private JSpinner chartTypeSpinner;
@@ -150,7 +151,7 @@ public class UsageChart extends JPanel {
     
     private static CollaboratorBean collab = null;
     
-    public UsageChart(Hashtable<ProjectBean,List<CollaboratorBean>> projectTable) {
+    public UsageChart(Hashtable<Project,List<CollaboratorBean>> projectTable) {
         super();
         
         UsageChart.projectCollabTable = projectTable;
@@ -163,7 +164,7 @@ public class UsageChart extends JPanel {
         
     }
     
-    public UsageChart(Hashtable<ProjectBean,List<CollaboratorBean>> projectTable, ChartType type) {
+    public UsageChart(Hashtable<Project,List<CollaboratorBean>> projectTable, ChartType type) {
         super();
         
         this.projectCollabTable = projectTable;
@@ -176,16 +177,16 @@ public class UsageChart extends JPanel {
         
     }
     
-    public UsageChart(ProjectBean project, List<CollaboratorBean> collabs, 
+    public UsageChart(Project project, List<CollaboratorBean> collabs,
             ChartType type) {
         
         super();
         
         CURRENT_CHARTTYPE = type;
         
-        projectCollabTable = new Hashtable<ProjectBean,List<CollaboratorBean>>();
+        projectCollabTable = new Hashtable<Project,List<CollaboratorBean>>();
         
-        HashSet<ProjectBean> projects = new HashSet<ProjectBean>();
+        HashSet<Project> projects = new HashSet<Project>();
         projects.add(project);
         
         projectCollabTable.put(project,collabs);
@@ -224,9 +225,9 @@ public class UsageChart extends JPanel {
         );
         
         if (projectCollabTable.size() == 1) {
-            ProjectBean project = projectCollabTable.keySet().iterator().next();
-            chart.addSubtitle(new TextTitle("Project " + project.getName() + 
-                    " expires on " + project.getEndDate()));
+            Project project = projectCollabTable.keySet().iterator().next();
+            //chart.addSubtitle(new TextTitle("Project " + project.getName() + //remove comment
+              //      " expires on " + project.getEndDate()));
         }
         
         ((PiePlot)chart.getPlot()).setCircular(true);
@@ -268,7 +269,7 @@ public class UsageChart extends JPanel {
         
         // TODO: Add title and footer with expiration date to chart
         String title = "";
-        ProjectBean project = projectCollabTable.keySet().iterator().next();
+        Project project = projectCollabTable.keySet().iterator().next();
 //        
         if (CURRENT_CHARTTYPE.equals(ChartType.JOB)) {
 //          dataset = createJobDataset(project);
@@ -295,8 +296,8 @@ public class UsageChart extends JPanel {
               false                               // URLs?
         );
       
-        chart.addSubtitle(new TextTitle("Project " + project.getName() + 
-                " expires on " + project.getEndDate()));
+        //chart.addSubtitle(new TextTitle("Project " + project.getName() +  //remove comment
+          //      " expires on " + project.getEndDate()));
         
         if (CURRENT_CHARTTYPE.equals(ChartType.JOB)) {
             chart.getPlot().setNoDataMessage("Comprehensive job information is not currently available.");
@@ -384,15 +385,15 @@ public class UsageChart extends JPanel {
      * @return
      */
     private DefaultPieDataset createProjectDataset(
-    		Hashtable<ProjectBean,List<CollaboratorBean>> projectCollabTable,
+    		Hashtable<Project,List<CollaboratorBean>> projectCollabTable,
     		CollaboratorBean collab) {
         
         DefaultPieDataset pds = new DefaultPieDataset();
         
         // add project summary info
         
-        for(ProjectBean project: projectCollabTable.keySet()) {
-        	CollaboratorBean collabBean = projectCollabTable.get(project).get(projectCollabTable.get(project).indexOf(collab));
+        for(Project project: projectCollabTable.keySet()) {
+        	/*CollaboratorBean collabBean = projectCollabTable.get(project).get(projectCollabTable.get(project).indexOf(collab));
         	if (collabBean != null) {
                 pds.setValue(project.getName() + " Used",
                         new Double(collabBean.getTotalUsage().getUsed()));
@@ -403,7 +404,7 @@ public class UsageChart extends JPanel {
                 if (project.equals(GridChem.project)) {
                     defaultProjectIndex = pds.getItemCount() - 1;
                 }
-        	}
+        	}*/
         }
         
         
@@ -419,16 +420,16 @@ public class UsageChart extends JPanel {
      */
     @SuppressWarnings("unused")
 	private DefaultPieDataset createResourceDataset(
-            Hashtable<ProjectBean,List<CollaboratorBean>> projectCollabTable, CollaboratorBean collab) {
+            Hashtable<Project,List<CollaboratorBean>> projectCollabTable, CollaboratorBean collab) {
         
         DefaultPieDataset pds = new DefaultPieDataset();
         
         Hashtable<String,Double> resourceUsageTable = new Hashtable<String,Double>();
         
         // for each project find the collaborator's usage on each resource
-        for(ProjectBean project: projectCollabTable.keySet()) {
+        for(Project project: projectCollabTable.keySet()) {
             
-        	List<CollaboratorBean> collabs = projectCollabTable.get(project);
+        	/*List<CollaboratorBean> collabs = projectCollabTable.get(project);
         	
         	if (projectCollabTable.get(project).contains(collab)) {
     			
@@ -444,7 +445,7 @@ public class UsageChart extends JPanel {
     	    			resourceUsageTable.put(systemName, new Double(projectCollab.getUsageTable().get(systemName).getUsed()));
     	    		}
     			}
-            }
+            }*/
     	}
          
         // now put the tallies in the dataset
@@ -463,20 +464,20 @@ public class UsageChart extends JPanel {
      * @return
      */
     private DefaultPieDataset createUserDataset(
-    		Hashtable<ProjectBean,List<CollaboratorBean>> usageTable, CollaboratorBean collab) {
+    		Hashtable<Project,List<CollaboratorBean>> usageTable, CollaboratorBean collab) {
         
         DefaultPieDataset pds = new DefaultPieDataset();
 
         Hashtable<String,Double> userUsageTable = new Hashtable<String,Double>();
-        
+        /* remove comment
         // for every project 
-        for(ProjectBean project: usageTable.keySet()) {
+        for(Project project: usageTable.keySet()) {
             // if the user is part of this project
         	if (usageTable.get(project).contains(collab)) {
         		userUsageTable.put(project.getName(), usageTable.get(project).get(usageTable.get(project).indexOf(collab)).getTotalUsage().getUsed());
         	}
         }
-        
+        */
         // now put the tallies in the dataset
         for(String userName: userUsageTable.keySet()) {
             pds.setValue(userName, userUsageTable.get(userName).doubleValue());
@@ -510,12 +511,12 @@ public class UsageChart extends JPanel {
      * @return
      */
     private DefaultPieDataset createProjectDataset(
-            Hashtable<ProjectBean, List<CollaboratorBean>> projectUsageTable) {
+            Hashtable<Project, List<CollaboratorBean>> projectUsageTable) {
         
         DefaultPieDataset pds = new DefaultPieDataset();
         // for every project 
-        for(ProjectBean project: projectUsageTable.keySet()) {
-        	pds.setValue("Used", new Double(project.getUsage().getUsed()));
+        for(Project project: projectUsageTable.keySet()) {
+ //       	pds.setValue("Used", new Double(project.getUsage().getUsed()));
 //        	pds.setValue("Available", new Double((project.getUsage().getAllocated() 
 //                - project.getUsage().getUsed())));
         }
@@ -531,13 +532,13 @@ public class UsageChart extends JPanel {
      * @param project
      * @return
      */
-    private DefaultPieDataset createResourceDataset(Hashtable<ProjectBean,List<CollaboratorBean>> projectCollabTable) {
+    private DefaultPieDataset createResourceDataset(Hashtable<Project,List<CollaboratorBean>> projectCollabTable) {
         
         DefaultPieDataset pds = new DefaultPieDataset();
         
         Hashtable<String,Double> resourceUsageTable = new Hashtable<String,Double>();
         
-        for (ProjectBean project: projectCollabTable.keySet()) {
+        /*for (Project project: projectCollabTable.keySet()) { remove comment
         	List<CollaboratorBean> collabs = projectCollabTable.get(project);
         
 	        for(CollaboratorBean collab: collabs) {
@@ -554,7 +555,7 @@ public class UsageChart extends JPanel {
 					}
 				}
 	        }
-        }
+        }*/
 		
          
         // now put the tallies in the dataset
@@ -582,14 +583,14 @@ public class UsageChart extends JPanel {
      * @return
      */
     private DefaultPieDataset createUserDataset(
-    		Hashtable<ProjectBean,List<CollaboratorBean>> projectCollabTable) {
+    		Hashtable<Project,List<CollaboratorBean>> projectCollabTable) {
         
         DefaultPieDataset pds = new DefaultPieDataset();
 
         Hashtable<String,Double> userUsageTable = new Hashtable<String,Double>();
         
-        for (ProjectBean project: projectCollabTable.keySet()) {
-        	List<CollaboratorBean> collabs = projectCollabTable.get(project);
+        for (Project project: projectCollabTable.keySet()) {
+        	/*List<CollaboratorBean> collabs = projectCollabTable.get(project); remove comment
         
 	        for(CollaboratorBean collab: collabs) {
 	        	String key = collab.getFirstName() + " " + collab.getLastName();
@@ -600,7 +601,7 @@ public class UsageChart extends JPanel {
 	        	} else {
 	        		userUsageTable.put(key,new Double(collab.getTotalUsage().getUsed()));
 	        	}
-	        }
+	        }*/
         }
         
         // now put the tallies in the dataset
@@ -618,7 +619,7 @@ public class UsageChart extends JPanel {
         this.projectCollabTable.clear();
     }
     
-    public void setProjects(Hashtable<ProjectBean,List<CollaboratorBean>> projectCollabTable) {
+    public void setProjects(Hashtable<Project,List<CollaboratorBean>> projectCollabTable) {
         
         this.projectCollabTable = projectCollabTable;
         
@@ -626,7 +627,7 @@ public class UsageChart extends JPanel {
         
     }
     
-    public void setProject(ProjectBean project, CollaboratorBean collab) {
+    public void setProject(Project project, CollaboratorBean collab) {
         
         UsageChart.collab = collab;
         
@@ -638,7 +639,7 @@ public class UsageChart extends JPanel {
         
     }
     
-    public void setProject(ProjectBean project, List<CollaboratorBean> collabs) {
+    public void setProject(Project project, List<CollaboratorBean> collabs) {
         
         collab = null;
         
@@ -650,7 +651,7 @@ public class UsageChart extends JPanel {
         
     }
     
-    public void setChartType(ProjectBean project, List<CollaboratorBean> collabs, ChartType type) {
+    public void setChartType(Project project, List<CollaboratorBean> collabs, ChartType type) {
         
         CURRENT_CHARTTYPE = type;
         

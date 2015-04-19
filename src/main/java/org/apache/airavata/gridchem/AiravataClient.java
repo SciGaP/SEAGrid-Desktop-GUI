@@ -1,5 +1,6 @@
 package org.apache.airavata.gridchem;
 
+import org.apache.airavata.AiravataConfig;
 import org.apache.airavata.api.Airavata;
 import org.apache.airavata.auth.OAuthAuthorisationException;
 import org.apache.airavata.auth.OAuthClient;
@@ -28,9 +29,9 @@ public class AiravataClient extends Airavata.Client{
 
     public String login(String userName,String password) throws OAuthAuthorisationException {
 
-        String endPoint = "https://localhost:9443/oauth2/token";
-        String clientId = "Nifi3ZoSxnsmkOcsIwfW9mK0xM4a";
-        String clientSecret = "9yvwzBepE9CuSR7mjMljuEUys7Ea";
+        String endPoint = AiravataConfig.getProperty("identity_server_host")+"/oauth2/token";
+        String clientId = AiravataConfig.getProperty("client_id");
+        String clientSecret = AiravataConfig.getProperty("client_secret");
         OAuthClient oAuthClient= new OAuthClient(endPoint,clientId,clientSecret);
 
         OAuthClient.AuthResponse authResponse=oAuthClient.authenticate(userName, password);
@@ -38,7 +39,7 @@ public class AiravataClient extends Airavata.Client{
     }
 
     public String getProfile(String accessToken) throws OAuthSystemException, OAuthProblemException {
-        OAuthClientRequest request = new OAuthBearerClientRequest("https://localhost:9443/oauth2/userinfo?schema=openid").
+        OAuthClientRequest request = new OAuthBearerClientRequest(AiravataConfig.getProperty("identity_server_host")+"/oauth2/userinfo?schema=openid").
                 buildQueryMessage();
         URLConnectionClient ucc = new URLConnectionClient();
 

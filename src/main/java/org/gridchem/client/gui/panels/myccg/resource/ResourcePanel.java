@@ -181,7 +181,7 @@ implements StatusListener {
         add(centerSplitPane, BorderLayout.CENTER); 
         
         GETHARDWARECommand command = new GETHARDWARECommand(this);
-        command.getArguments().put("project.id", GridChem.project.getId());
+        command.getArguments().put("project.id", GridChem.project.getProjectID());
         statusChanged(new StatusEvent(command,Status.START));
         
 	}

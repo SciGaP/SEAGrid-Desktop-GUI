@@ -354,7 +354,7 @@ public class HPCChartPanel extends JPanel {
                    // before refreshing this screen
                    GETHARDWARECommand command = 
                        new GETHARDWARECommand(statusListener);
-                   command.getArguments().put("project.id", GridChem.project.getId());
+                   command.getArguments().put("project.id", GridChem.project.getProjectID());
                    statusListener.statusChanged(new StatusEvent(command,Status.START));
                }
             }

@@ -76,6 +76,7 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.apache.airavata.model.workspace.Project;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.SwingWorker;
 import org.gridchem.client.Trace;
@@ -126,7 +127,7 @@ implements StatusListener {
     Dimension minimumUpperPanelSize = new Dimension(200,300);
     Dimension preferredPanelSize = new Dimension(700,475);
     
-    protected Hashtable<ProjectBean,List<CollaboratorBean>> projectTable;
+    protected Hashtable<Project,List<CollaboratorBean>> projectTable;
     
     protected JTree m_tree = null;
     protected DefaultTreeModel m_model = null;
@@ -141,7 +142,7 @@ implements StatusListener {
     
     private CancelCommandPrompt progressCancelPrompt;
     
-    public UsagePanel(List<ProjectBean> projects) {
+    public UsagePanel(List<Project> projects) {
         
         setLayout(new GridBagLayout());
         
@@ -182,7 +183,7 @@ implements StatusListener {
         
     }
     
-    protected Component createProjectTreePanel(List<ProjectBean> projectList) {
+    protected Component createProjectTreePanel(List<Project> projectList) {
         
         projectTable = createProjectUsageTableData(projectList);
         
@@ -194,10 +195,10 @@ implements StatusListener {
             
             DefaultMutableTreeNode typeNode = new DefaultMutableTreeNode(projectType);
             
-            for (ProjectBean p: projectTable.keySet()) {
+            for (Project p: projectTable.keySet()) {
                 
             	// if the project type matches the iterative type, add it
-            	if (p.getType().equals(projectType)) {
+            	/*if (p.getType().equals(projectType)) { remove comment
 	                
             		DefaultMutableTreeNode projectNode = new DefaultMutableTreeNode(
 	                        new ProjectNode(p));
@@ -211,7 +212,7 @@ implements StatusListener {
 	                }
 	            
 	                typeNode.add(projectNode);
-            	}
+            	}*/
             }
             
             rootNode.add(typeNode);
@@ -330,9 +331,9 @@ implements StatusListener {
         return buttonBoxPane;
     }
     
-    private Hashtable<ProjectBean,List<CollaboratorBean>> createProjectUsageTableData(List<ProjectBean> projects) {
+    private Hashtable<Project,List<CollaboratorBean>> createProjectUsageTableData(List<Project> projects) {
         
-        Hashtable<ProjectBean,List<CollaboratorBean>> projectTable = new Hashtable<ProjectBean,List<CollaboratorBean>>();
+        Hashtable<Project,List<CollaboratorBean>> projectTable = new Hashtable<Project,List<CollaboratorBean>>();
         System.out.println("There are " + projects.size() + " projects for the user.");
         
         /*for (ProjectBean p: projects) {
@@ -348,7 +349,7 @@ implements StatusListener {
     
     
     public static void main(String[] argv) {
-        ArrayList<ProjectBean> projects = generateData();
+        ArrayList<Project> projects = generateData();
         JFrame frame = new JFrame();
         frame.getContentPane().add(new UsagePanel(projects));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -358,7 +359,7 @@ implements StatusListener {
         
     }
     
-    private static ArrayList<ProjectBean> generateData() {
+    private static ArrayList<Project> generateData() {
         
         UserBean user = new UserBean();
         user.setFirstName("Mike");
@@ -626,7 +627,8 @@ implements StatusListener {
 //        VO vo = new VO();
 //        vo.setUser(user);
         
-        return projects;
+        //return projects; // remove comment
+        return null;
     }
 
     DefaultMutableTreeNode getTreeNode(TreePath path) {
@@ -671,10 +673,10 @@ implements StatusListener {
             
             DefaultMutableTreeNode typeNode = new DefaultMutableTreeNode(projectType);
             
-            for (ProjectBean p: projectTable.keySet()) {
+            for (Project p: projectTable.keySet()) {
                 
             	// if the project type matches the iterative type, add it
-            	if (p.getType().equals(projectType)) {
+            	/*if (p.getType().equals(projectType)) {  // remove comment
 	                
             		DefaultMutableTreeNode projectNode = new DefaultMutableTreeNode(
 	                        new ProjectNode(p));
@@ -688,7 +690,7 @@ implements StatusListener {
 	                }
 	            
 	                typeNode.add(projectNode);
-            	}
+            	}*/
             }
             
             rootNode.add(typeNode);
@@ -704,83 +706,7 @@ implements StatusListener {
         } else {
         	m_tree.setSelectionPath(selectedPath);
         } 
-//        else if (accessType != null  && project == null) {
-//        }
-//            // else set the chart to show summary of all 'accessType' projects
-//            Hashtable<AccessType,HashSet<ProjectBean>> projectSubsetTable = 
-//                new Hashtable<AccessType,HashSet<ProjectBean>>();
-//            
-//            projectSubsetTable.put(projectTable.get(accessType));
-//            
-//            usageChart.setProjects(projectSubsetTable);
-//            
-//        } else if (project != null) {
-//            boolean projectFound = false;
-//            
-//            DefaultMutableTreeNode accessTypeNode = null;
-//            DefaultMutableTreeNode rt = (DefaultMutableTreeNode) m_model.getRoot();
-//            
-//            for(int k=0;k<rt.getChildCount();k++) {
-//                if (((AccessType)((DefaultMutableTreeNode)rt.getChildAt(k)).getUserObject()).equals(accessType)) {
-//                    accessTypeNode = (DefaultMutableTreeNode)rt.getChildAt(k);
-//                }
-//            }
-//            
-//            for(int i=0; i < accessTypeNode.getChildCount(); i++) {
-//                DefaultMutableTreeNode treeNode = 
-//                    (DefaultMutableTreeNode)accessTypeNode.getChildAt(i);
-//                
-//                
-//                ProjectNode projectNode = 
-//                    (ProjectNode)treeNode.getUserObject();
-//                
-//                if (projectNode.getProject().getProjectName().equals(project.getProjectName())) {
-//                    projectFound = true;
-//                    if (collaborator == null) {
-//                        usageChart.setProject(projectNode.getProject());
-//                    } else {
-//                        boolean collabFound = false;
-//                        for (int j=0; j<treeNode.getChildCount(); j++) {
-//                            UserNode userNode = 
-//                                (UserNode)((DefaultMutableTreeNode)treeNode.getChildAt(j)).getUserObject();
-//                            if (userNode.getCollaborator().equals(collaborator)) {
-//                                m_tree.setSelectionPath(new TreePath(
-//                                        ((DefaultMutableTreeNode)treeNode.getChildAt(j)).getPath()));
-//                                collabFound = true;
-//                                System.out.println("Found collaborator: " + collaborator.getFirstName() + 
-//                                        " " + collaborator.getLastName());
-//                                break;
-//                            }
-//                        }
-//                        
-//                        if (!collabFound) {
-//                            usageChart.setProject(projectNode.getProject());
-//                            JOptionPane.showMessageDialog(
-//                                this,
-//                                "User " + collaborator.getFirstName() + 
-//                                " " + collaborator.getLastName() + 
-//                                " is no longer associated with project\n" + 
-//                                project.getName() + "\n" +
-//                                "Please direct any questions to consulting at\n" + 
-//                                "http://www.gridchem.org/consult.",
-//                                "Usage Management Exception", JOptionPane.ERROR_MESSAGE
-//                            );
-//                        }
-//                    }
-//                    break;
-//                }
-//            }
-//            if (!projectFound) {
-//                usageChart.clear();
-//                JOptionPane.showMessageDialog(
-//                    this,
-//                    "Project " + project.getName() + " is no longer available.\n" + 
-//                    "Please direct any questions to consulting at\n" + 
-//                    "http://www.gridchem.org/consult.",
-//                    "Usage Management Exception", JOptionPane.ERROR_MESSAGE
-//                );
-//            }
-//        }
+
     }
     
     /**
@@ -930,7 +856,7 @@ implements StatusListener {
                 if (command.getCommand().equals(JobCommand.GETUSAGE)) {
                     Trace.note("Finished UPDATE, refreshing user's VO");
                     
-                    GridChem.projects = ((GETUSAGECommand)command).getOutput();
+                    //GridChem.projects = ((GETUSAGECommand)command).getOutput();
                     
                     refresh();
                     
@@ -976,8 +902,8 @@ implements StatusListener {
                             // if it's a site, then update the site info and clear the resource 
                             // info panel and display summary charts of all the resources on the site.
                             if (treeNode instanceof ProjectNode ) {
-                            	ProjectBean project = ((ProjectNode)treeNode).getProject();
-                                usageChart.setProject(project,projectTable.get(project));
+                            	//ProjectBean project = ((ProjectNode)treeNode).getProject(); //remove comment
+                                //usageChart.setProject(project,projectTable.get(project));
                             
                                // if it's a resource, then show the site info, resoruce info, and display
                             // all the load charts for that resource.
@@ -985,11 +911,11 @@ implements StatusListener {
                             
                                 // TODO: change the pie chart to display user info
 //                                ProjectBean newProject = new ProjectBean();
-                                ProjectBean oldProject = ((ProjectNode)
+                                /*ProjectBean oldProject = ((ProjectNode) remove comment
                                       ((DefaultMutableTreeNode)getTreeNode(e.getPath())
                                       .getParent()).getUserObject()).getProject();
 
-                                usageChart.setProject(oldProject, ((UserNode)treeNode).getCollaborator());
+                                usageChart.setProject(oldProject, ((UserNode)treeNode).getCollaborator());*/
                             
                             // if they select the project type node, then display for all
                             // projects of that type
@@ -1008,7 +934,7 @@ implements StatusListener {
                                 	tempTable.put(project, projectTable.get(project));
                                 }
                                 
-                                usageChart.setProjects(tempTable);
+                                //usageChart.setProjects(tempTable); remove comment
                                     
                             // otherwise it's the ccg, then show the ccg info, no resource info, and 
                             // all the load charts for the entire vo
@@ -1032,7 +958,7 @@ implements StatusListener {
                                     }
                                 }
                                 
-                                usageChart.setProjects(tempTable);
+                                //usageChart.setProjects(tempTable); remove comment
                                 
                             } else {
                                 

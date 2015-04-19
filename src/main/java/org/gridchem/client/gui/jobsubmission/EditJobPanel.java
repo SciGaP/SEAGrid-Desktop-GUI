@@ -4033,7 +4033,7 @@ WindowListener, ComponentListener {
             
             GridChem.user = GMS3.getProfile();
             
-            GridChem.systems = GMS3.getHardware(GridChem.project.getId());
+            //GridChem.systems = GMS3.getHardware(GridChem.project.getProjectID()); remove comment
             
         } catch (Exception e) {
             // TODO Auto-generated catch block

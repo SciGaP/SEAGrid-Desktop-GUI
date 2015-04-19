@@ -1,5 +1,6 @@
 package org.apache.airavata.gridchem;
 
+import org.apache.airavata.AiravataConfig;
 import org.apache.airavata.model.error.AiravataClientConnectException;
 import org.apache.airavata.model.workspace.Project;
 import org.apache.axis2.AxisFault;
@@ -33,9 +34,6 @@ import java.util.List;
  * Created by dimuthuupeksha on 4/17/15.
  */
 public class AiravataManager {
-
-    private static final String THRIFT_SERVER_HOST = "127.0.0.1";
-    private static final int THRIFT_SERVER_PORT = 8930;
 
     public static String accessToken="";
 
@@ -393,13 +391,16 @@ public class AiravataManager {
     }
 
     public static AiravataClient getClient() throws AiravataClientConnectException {
+        String host = AiravataConfig.getProperty("thrift_host");
+        int port = Integer.parseInt(AiravataConfig.getProperty("thrift_port"));
         try {
-            TTransport transport = new TSocket(THRIFT_SERVER_HOST, THRIFT_SERVER_PORT);
+
+            TTransport transport = new TSocket(host, port);
             transport.open();
             TProtocol protocol = new TBinaryProtocol(transport);
             return new AiravataClient(protocol);
         } catch (TTransportException e) {
-            throw new AiravataClientConnectException("Unable to connect to the server at "+THRIFT_SERVER_HOST+":"+THRIFT_SERVER_PORT);
+            throw new AiravataClientConnectException("Unable to connect to the server at "+host+":"+port);
         }
     }
 

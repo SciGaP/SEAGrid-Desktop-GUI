@@ -18,12 +18,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
+import org.apache.airavata.gridchem.AiravataManager;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.Invariants;
 import org.gridchem.client.LabelTextRows;
 import org.gridchem.client.SwingWorker;
 import org.gridchem.client.common.Settings;
-import org.gridchem.client.util.GMS3;
 import org.gridchem.service.beans.ComputeBean;
 import org.gridchem.service.beans.SoftwareBean;
 import org.gridchem.service.exceptions.LoginException;
@@ -151,12 +151,12 @@ public class AuthenticationForm extends JPanel {
 		}
 
 		try {
-			GMS3.login(usernameTextField.getText(),
-					new String(passwordField.getPassword()), type, authMap);
+			AiravataManager.login(usernameTextField.getText(),
+					new String(passwordField.getPassword()));
 			loginDialog.updateMessage("Login successful...");
 
 			Thread.currentThread().sleep(500);
-			GridChem.projects = GMS3.getProjects();
+			GridChem.projects = AiravataManager.getProjects();
 			// added -nik
 			System.out.println(" The project size is"
 					+ GridChem.projects.toString() + GridChem.projects.size()
@@ -167,11 +167,11 @@ public class AuthenticationForm extends JPanel {
 			if (GridChem.projects.size() == 1) {
 				Thread.currentThread().sleep(500);
 				loginDialog.updateMessage("Setting session project...");
-				GMS3.setCurrentProject(GridChem.projects.get(0));
+				AiravataManager.setCurrentProject(GridChem.projects.get(0));
 				
 				Thread.currentThread().sleep(500);
 				loginDialog.updateMessage("Updating details...");
-				GridChem.project = GMS3.getCurrentProject();
+				GridChem.project = AiravataManager.getCurrentProject();
 				
 				/*System.out.println("#########################");
 				for (ComputeBean cb : GridChem.project.getSystems()) {
@@ -199,17 +199,17 @@ public class AuthenticationForm extends JPanel {
 				} else {
 					Thread.currentThread().sleep(500);
 					loginDialog.updateMessage("Setting session project...");
-					GMS3.setCurrentProject(psd.getProject());
+					AiravataManager.setCurrentProject(psd.getProject());
 
 					Thread.currentThread().sleep(500);
 					loginDialog.updateMessage("Updating details...");
-					GridChem.project = GMS3.getCurrentProject();
+					GridChem.project = AiravataManager.getCurrentProject();
 				}
 			}
 
 			Thread.currentThread().sleep(500);
 			loginDialog.updateMessage("Retrieving user profile...");
-			GridChem.user = GMS3.getProfile();
+			GridChem.user = AiravataManager.getProfile();
 			System.out
 					.println(" The User is" + GridChem.user.toString() + "\n");
 			// loginDialog.updateMessage("Retrieving user resources...");
