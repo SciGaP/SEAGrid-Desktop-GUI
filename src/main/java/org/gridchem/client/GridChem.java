@@ -153,7 +153,7 @@ public class GridChem
     public static void main (String[] args)
     {
         Trace.entry();
-        
+
         try {
         		setCommandLineOptions();
         		parseCommandLine(args);

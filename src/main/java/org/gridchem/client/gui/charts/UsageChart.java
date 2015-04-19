@@ -384,7 +384,7 @@ public class UsageChart extends JPanel {
      * @return
      */
     private DefaultPieDataset createProjectDataset(
-    		Hashtable<ProjectBean,List<CollaboratorBean>> projectCollabTable, 
+    		Hashtable<ProjectBean,List<CollaboratorBean>> projectCollabTable,
     		CollaboratorBean collab) {
         
         DefaultPieDataset pds = new DefaultPieDataset();

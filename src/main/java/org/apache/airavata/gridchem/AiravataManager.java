@@ -1,8 +1,6 @@
 package org.apache.airavata.gridchem;
 
-import org.apache.airavata.api.client.AiravataClientFactory;
 import org.apache.airavata.model.error.AiravataClientConnectException;
-import org.apache.airavata.model.util.ProjectModelUtil;
 import org.apache.airavata.model.workspace.Project;
 import org.apache.axis2.AxisFault;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -10,6 +8,8 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
+import org.gridchem.client.common.Preferences;
+import org.gridchem.client.common.Settings;
 import org.gridchem.client.common.Status;
 import org.gridchem.client.gui.filebrowser.commands.FileCommand;
 import org.gridchem.client.gui.jobsubmission.commands.JobCommand;
@@ -18,6 +18,7 @@ import org.gridchem.service.beans.*;
 import org.gridchem.service.exceptions.*;
 import org.gridchem.service.model.enumeration.AccessType;
 import org.gridchem.service.stub.file.ExceptionException;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -36,19 +37,39 @@ public class AiravataManager {
     private static final String THRIFT_SERVER_HOST = "127.0.0.1";
     private static final int THRIFT_SERVER_PORT = 8930;
 
-    public static boolean login(String uname, String passwd, AccessType type, HashMap<String,String> authMap) {
-        return false;
+    public static String accessToken="";
+
+    public static boolean login(String uname, String passwd) {
+        try {
+            accessToken = getClient().login(uname, passwd);
+        }catch (Exception e){
+            throw new SessionException(e.getMessage());
+        }
+        Settings.gridchemusername = uname;
+        Settings.authenticated = true;
+
+        //Preferences.updatePrefs();
+
+        System.out.println("Successfully authenticated.  Access Token is " + accessToken);
+        return true;
     }
 
     public static void logout() {
 
     }
 
-    public static List<ProjectBean> getProjects() throws ProjectException {
-        return null;
+    public static List<Project> getProjects() throws ProjectException {
+
+        List<Project> airavataProjects;
+        try {
+            airavataProjects = getClient().getAllUserProjects(Settings.gridchemusername);
+        }catch (Exception e) {
+            throw new ProjectException(e.getMessage());
+        }
+        return airavataProjects;
     }
 
-    public static ProjectBean getCurrentProject() throws ProjectException {
+    public static Project getCurrentProject() throws ProjectException {
         return null;
     }
 
@@ -56,13 +77,39 @@ public class AiravataManager {
         return null;
     }
 
-    public static void setCurrentProject(ProjectBean p) throws SessionException {
+    public static void setCurrentProject(Project p) throws SessionException {
 
     }
 
 
     public static UserBean getProfile() throws UserException {
-        return null;
+        String query;
+        try {
+            query = getClient().getProfile(accessToken);
+        }catch(Exception e){
+            throw new UserException(e.getMessage());
+        }
+
+        JSONObject json = new JSONObject(query);
+
+        UserBean userBean = new UserBean();
+
+        if(json.has("preferred_username"))
+            userBean.setUserName(json.getString("preferred_username"));
+
+        if(json.has("name"))
+            userBean.setFirstName(json.getString("name"));
+
+        if(json.has("family_name"))
+            userBean.setLastName(json.getString("family_name"));
+
+        if(json.has("email"))
+            userBean.setEmail(json.getString("email"));
+
+        if(json.has("phone_number"))
+            userBean.setPhone(json.getString("phone_number"));
+
+        return userBean;
     }
 
     /* ************************************************************************************* */
@@ -370,15 +417,9 @@ public class AiravataManager {
     }
 
     public static void main(String [] args) {
-        try {
-            AiravataClient client = getClient();
-            Project project = ProjectModelUtil.createProject("project3", "dimuthu", "test project");
-            String id = client.createProject(project);
-            System.out.println(id);
-            List<Project> projects = client.getAllUserProjects("dimuthu");
-            System.out.println(projects.size());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        login("admin", "admin");
+        System.out.println(getProfile().getFirstName());
+        List<Project> projects = getProjects();
+        System.out.println(projects.size());
     }
 }

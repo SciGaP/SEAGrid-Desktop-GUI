@@ -23,8 +23,8 @@ import javax.net.ssl.X509TrustManager;
 public class OAuthClient {
 
     private String hostName;
-    private String clientId = "TR8HAsRYIC4gtEe8ofbOihoyDVsa";
-    private String clientSecret="o5xIvyjguJIYRHV3IPAPvcvIc5Aa";
+    private String clientId = "Nifi3ZoSxnsmkOcsIwfW9mK0xM4a";
+    private String clientSecret="9yvwzBepE9CuSR7mjMljuEUys7Ea";
 
     public OAuthClient(String hostName){
         this.hostName = hostName;
@@ -44,6 +44,7 @@ public class OAuthClient {
                     setRedirectURI("http://example.com").
                     setUsername(username).
                     setPassword(password).
+                    setScope("openid").
                     buildBodyMessage();
 
 
@@ -57,12 +58,13 @@ public class OAuthClient {
             AuthResponse authResponse = mapper.readValue(resp.getBody(), AuthResponse.class);
 
             System.out.println(authResponse.getAccess_token());
-
             return authResponse;
         }catch (Exception ex){
             throw new OAuthAuthorisationException(ex);
         }
     }
+
+
 
     static {
         //for localhost testing only
@@ -109,6 +111,8 @@ public class OAuthClient {
         private int expires_in;
         private String refresh_token;
         private String access_token;
+        public String id_token;
+        private String scope;
 
         public String getToken_type() {
             return token_type;
@@ -141,11 +145,27 @@ public class OAuthClient {
         public void setAccess_token(String access_token) {
             this.access_token = access_token;
         }
+
+        public String getId_token() {
+            return id_token;
+        }
+
+        public void setId_token(String id_token) {
+            this.id_token = id_token;
+        }
+
+        public String getScope() {
+            return scope;
+        }
+
+        public void setScope(String scope) {
+            this.scope = scope;
+        }
     }
 
 
     public static void main(String args[]){
-        OAuthClient client = new OAuthClient("https://localhost:9443/oauth2endpoints/token");
+        OAuthClient client = new OAuthClient("https://localhost:9443/oauth2/token");
         try {
             client.authenticate("dimuthu", "dimu1234");
         }catch (Exception ex){
