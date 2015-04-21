@@ -6,6 +6,7 @@ import org.apache.airavata.model.appcatalog.appinterface.InputDataObjectType;
 import org.apache.airavata.model.appcatalog.appinterface.OutputDataObjectType;
 import org.apache.airavata.model.error.AiravataClientConnectException;
 import org.apache.airavata.model.util.ExperimentModelUtil;
+import org.apache.airavata.model.util.ProjectModelUtil;
 import org.apache.airavata.model.workspace.Project;
 import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
 import org.apache.airavata.model.workspace.experiment.Experiment;
@@ -460,7 +461,9 @@ public class AiravataManager {
 
     public static void main(String [] args) {
         try {
-            createExperiment();
+            //createExperiment();
+            //Project project = ProjectModelUtil.createProject("default", "dimuthu2", "test project");
+            //getClient().createProject(project);
         }catch(Exception e){
             e.printStackTrace();
         }

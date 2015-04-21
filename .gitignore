@@ -2,3 +2,5 @@ target/*
 .idea/*
 GridChem-Client-Maven.iml
 jobslist.xml
+airavata.log
+velocity.log
