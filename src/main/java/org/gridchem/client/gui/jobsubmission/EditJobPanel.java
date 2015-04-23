@@ -91,6 +91,9 @@ import javax.swing.plaf.basic.BasicArrowButton;
 import nanocad.nanocadFrame2;
 import nanocad.newNanocad;
 
+import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
+import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
+import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
 import org.gridchem.client.FileUtilities;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.InputInfoPanel;
@@ -182,7 +185,7 @@ WindowListener, ComponentListener {
     private JScrollPane apphpcScrollPane;
 
     protected JobBean job; // the job being edited
-    
+
     private nanocadFrame2 nanWin;
     
     private Object timeInputText = "";
@@ -217,44 +220,44 @@ WindowListener, ComponentListener {
         	dsLmpUserIDSet.add("sxc033");
         	dsLmpUserIDSet.add("dspearot");
         }
-        
+
         this.job = new JobBean();
         this.job.setName("default_job");
         this.job.setExperimentName(GridChem.user.getUserName() + "_proj");
-        
-        ComputeBean hw = GridChem.getMachineList().get(0);
-        for (ComputeBean cb : GridChem.getMachineList()) {
-        	System.out.println("*******************************");
-        	System.out.println(cb.getName());
-        	if (cb.getName().equals(Preferences.getString("last_machine"))) {
+
+        ComputeResourceDescription hw = GridChem.getMachineList().get(0);
+        for (ComputeResourceDescription cb : GridChem.getMachineList()) {
+        	System.out.println("*a******************************");
+        	System.out.println(cb.getHostName());
+        	if (cb.getHostName().equals(Preferences.getString("last_machine"))) {
         		System.out.println("Found last used machine");
         		hw = cb;
         	}
         }
-        
-        this.job.setSystemName(hw.getName());
-        //SoftwareBean sw = GridChem.getSoftwareforMachine(hw.getName()).get(0);
-        SoftwareBean sw = GridChem.getSoftwareforMachine(hw.getName()).get(0);
-        for (SoftwareBean cb : GridChem.getSoftwareforMachine(hw.getName())) {
+
+        this.job.setSystemName(hw.getHostName());
+        ApplicationDeploymentDescription sw = GridChem.getSoftwareforMachine(hw.getComputeResourceId()).get(0);
+        ApplicationDeploymentDescription appDeploymeny = GridChem.getSoftwareforMachine(hw.getComputeResourceId()).get(0);
+        for (ApplicationDeploymentDescription cb : GridChem.getSoftwareforMachine(hw.getComputeResourceId())) {
         	System.out.println("*******************************");
-        	System.out.println(cb.getName());
-        	if (cb.getName().equals(Preferences.getString("last_app"))) {
+        	System.out.println(cb.getAppModuleId());
+        	if (cb.getAppModuleId().equals(Preferences.getString("last_app"))) {
         		System.out.println("Found last used application");
         		sw = cb;
         	}
         }
         
-        for (String modName : getModuleList(sw.getName())) {
+        /*for (String modName : getModuleList(sw.getName())) {
         	if (modName.equals(Preferences.getString("last_module"))) {
         		System.out.println("Found last used module");
         		this.job.setModuleName(modName);
         	}
-        }
-        this.application = sw.getName();
-        this.job.setSoftwareName(this.application);
-        this.job.setAllocationName(hw.getAllocations().iterator().next());
-        this.job.setQueueName(hw.getQueues().get(0).getName());
-        this.job.setRequestedCpus(new Long(1));
+        }*/
+        //this.application = sw.getName();
+        //this.job.setSoftwareName(this.application);
+        //this.job.setAllocationName(hw.getAllocations().iterator().next());
+        //this.job.setQueueName(hw.getQueues().get(0).getName());
+        //this.job.setRequestedCpus(new Long(1));
         
         ArrayList<LogicalFileBean> inFiles = new ArrayList<LogicalFileBean>();
         for(File f: FileUtility.getDefaultInputFiles(this.application)) {
@@ -319,7 +322,8 @@ WindowListener, ComponentListener {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         
         jbInit();
-        
+
+
         try {
             isLoading = true;
             // populate fields with given job information
@@ -330,15 +334,15 @@ WindowListener, ComponentListener {
             populateMachineList(job.getSoftwareName());
 
             System.out.println("Loading machine " + job.getSystemName());
-            ComputeBean hpc = GridChem.getMachineByName(job.getSystemName());
+            ComputeResourceDescription hpc = GridChem.getMachineByName(job.getSystemName());
 
             String machineName = "";
             if (hpc != null) {
                 System.out
                         .println("Found machine in user's VO: "
                                 + job.getSystemName() + " = "
-                                + hpc.getHostname());
-                machineName = hpc.getName();
+                                + hpc.getHostName());
+                machineName = hpc.getHostName();
             } else {
                 
                 machineName = (String)hpcListModel.get(hpcList.getSelectedIndex());
@@ -358,7 +362,6 @@ WindowListener, ComponentListener {
             //populateProjects(machineName);
 
             //changeProject(job.getProjectName());
-            
             populateQueues(machineName);
 
             changeQueue(job.getQueueName());
@@ -476,19 +479,20 @@ WindowListener, ComponentListener {
         // create applications combo box + application moddules combo box (JK)
 //        getAppPackageAndModuleListFromDatabase();
         
-        appModuleLabel = new JLabel("Module"); 
+        appModuleLabel = new JLabel("Module");
 
         if (Settings.WEBSERVICE) {
-        	List<SoftwareBean> software = GridChem.getSoftware();
-        	List<String> softwareNames = new ArrayList<String>();
-        	for (SoftwareBean bean: software) {
-        		softwareNames.add(bean.getName());
+        	List<ApplicationDeploymentDescription> software = GridChem.getSoftware();
+        	List<String> applicationNames = new ArrayList<String>();
+        	for (ApplicationDeploymentDescription bean: software) {
+        		applicationNames.add(bean.getAppModuleId());
         	}
-            appCombo = new JComboBox(softwareNames.toArray());
-            appCombo.setSelectedItem(job.getSoftwareName());
+
+            appCombo = new JComboBox(applicationNames.toArray());
+            //appCombo.setSelectedItem(job.getSoftwareName());
             
             
-            if (job.getSoftwareName().equals("Lammps")) {
+            /*if (job.getSoftwareName().equals("Lammps")) {
          		if (dsLmpUserIDSet.contains(GridChem.user.getUserName())) {
          			appModuleCombo = new JComboBox(getModuleList(job.getSoftwareName()));
         		} else {        			
@@ -498,21 +502,21 @@ WindowListener, ComponentListener {
         	} else {
         		appModuleCombo = new JComboBox();
         		changeModuleList(GridChem.getSoftware(job.getSoftwareName()));
-        	}
+        	}*/
             
             //appModuleCombo = new JComboBox(getModuleList(job.getSoftwareName()));
             //appModuleCombo.setSelectedIndex(0);
-            if ((job.getModuleName() != null) && (!job.getModuleName().equals(""))) {
+            /*if ((job.getModuleName() != null) && (!job.getModuleName().equals(""))) {
             	appModuleCombo.setSelectedItem(job.getModuleName());
             } else {
             	appModuleCombo.setSelectedIndex(0);
-            }
+            }*/
         } else {
             String[] appItems = GridChem.getAvailableApplications();
             appCombo = new JComboBox(appItems);
             appModuleCombo = new JComboBox(getModuleList(this.job.getSystemName())); 
         }
-       
+        appModuleCombo = new JComboBox();
         appCombo.setPreferredSize(new Dimension(50, 30));
         appModuleCombo.setPreferredSize(new Dimension(50, 30));
         
@@ -547,17 +551,10 @@ WindowListener, ComponentListener {
 
         psnLabel = new JLabel("Choose a project:");
         
-        /*if (Settings.WEBSERVICE) {
-        	// trying to set projects for default app and system. Sudhakar
-        	projCombo = new JComboBox(getMachineProjects(this.job.getSystemName()));
-        	//projCombo = new JComboBox(GridChem.getMachineProjects(this.job.getSystemName()));
-        } else {
-        	String[] projItems = GridChem.getMachineProjects(this.job.getSystemName());
-        	projCombo = new JComboBox(projItems);
-        }*/
+
     	projCombo = new JComboBox();
         
-        populateProjects(hpcList.getSelectedValue().toString());
+        //populateProjects(hpcList.getSelectedValue().toString());
         if ((this.job.getAllocationName()!=null) && (!this.job.getAllocationName().equals(""))) {
         	projCombo.setSelectedItem(this.job.getAllocationName());
         }
@@ -566,14 +563,8 @@ WindowListener, ComponentListener {
         // create queue drop down box
         qLabel = new JLabel("Choose a queue:");
         qCombo = new JComboBox();
-        /*if (Settings.WEBSERVICE) {
-            //qCombo = new JComboBox(getMachineQueues());
-            //System.out.println("wahahaahahhahahahahahah");
-        } else {
-            String[] qItems = GridChem.getMachineQueues(this.job.getSystemName());
-            qCombo = new JComboBox(qItems);
-        }*/
-        populateQueues(hpcList.getSelectedValue().toString());
+
+        //populateQueues(hpcList.getSelectedValue().toString());
         qCombo.setEditable(true);
         qCombo.setRenderer(new QueueComboBoxRenderer());
 
@@ -625,22 +616,6 @@ WindowListener, ComponentListener {
         timeConstraints.fill = GridBagConstraints.HORIZONTAL;
         timePanel.add(min, timeConstraints);
         
-        /*final JTextComponent jTextComponent = (JTextComponent) projCombo.getEditor().getEditorComponent();
-        jTextComponent.getDocument().addDocumentListener(new DocumentListener() {
-			
-			public void removeUpdate(DocumentEvent e) {
-				job.setAllocationName(projCombo.getEditor().getItem().toString());
-			}
-			
-			public void insertUpdate(DocumentEvent e) {
-				job.setAllocationName(projCombo.getEditor().getItem().toString());
-			}
-			
-			public void changedUpdate(DocumentEvent e) {
-				job.setAllocationName(projCombo.getEditor().getItem().toString());
-			}
-		});*/
-        
         projCombo.addActionListener(new ActionListener() {
         	
         	public void actionPerformed(ActionEvent e){        		 
@@ -649,14 +624,14 @@ WindowListener, ComponentListener {
          	   int selectedMachineIndex = hpcList.getSelectedIndex();
         	   String hpcName = (String) hpcListModel.get(selectedMachineIndex);
         	   job.setHostName(hpcName);
-        	   ComputeBean hpc = GridChem.getMachineByName(hpcName);
+        	   ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
         	   System.out.println("Setting project selection for job for "+hpcName);
         	   if (!hpcName.equals("Grid Scheduler")) {
-        	    	 for (String p : hpc.getAllocations()) {
+        	    	 /*for (String p : hpc.getAllocations()) {
         	             if (p.equals((String) projCombo.getSelectedItem())) {
         	                 selp = p;
         	             }
-        	    	 }
+        	    	 }*/ //remove comment
         	    	 //String currproj = projCombo.getSelectedItem().toString();
         	    	 job.setAllocationName(selp); //currproj);
         	    	 System.out.println("projCombo: The Project for this job is "+selp); //currproj);
@@ -669,9 +644,9 @@ WindowListener, ComponentListener {
         qCombo.addActionListener(new ActionListener() {
         	
             public void actionPerformed(ActionEvent e) {
-                QueueBean q = getSelectedQueue();
+                BatchQueue q = getSelectedQueue();
                  
-                
+                /*
                 if (q != null) {
                     Calendar qWallLimit = q.getMaxWallClockTime();
 
@@ -695,13 +670,13 @@ WindowListener, ComponentListener {
                     // cpu spinner
                     ((SpinnerNumberModel) numProcSpin.getModel())
                             .setMaximum(new Integer(getSelectedQueue()
-                                    .getMaxCpus()));
+                                    .getMaxProcessors()));
 
                     if (!loadingQueues) {
                         validateTimeLimit(q);
                         validateCpuLimit(q);
                     }
-                }
+                }*/// remove comment
             }
         
  
@@ -837,7 +812,8 @@ WindowListener, ComponentListener {
 
         // create processor count spinner box
         minimum = 1;
-        maximum = getSelectedQueue().getMaxCpus();
+        //maximum = getSelectedQueue().getMaxCpus();
+        maximum=10;
         initial = 1;
         numProcEdLabel = new JLabel("Number of Processors:");
         numProcnm = new SpinnerNumberModel(initial, minimum, maximum, step);
@@ -932,9 +908,6 @@ WindowListener, ComponentListener {
         constraint.fill = GridBagConstraints.BOTH;
         constraint.weightx = 1.0;
         constraint.weighty = 1.0;
-//        constraint.gridx = 1;
-//        constraint.gridy = 0;
-//        add(rightPanel,constraint);
         
         // layout with boxlayout
         JPanel layoutPanel = new JPanel();
@@ -947,9 +920,6 @@ WindowListener, ComponentListener {
 //      
         // Add all the action listeners here
         edbumolButton.addActionListener(this);
-        // loadButton.addActionListener(this);
-        // saveButton.addActionListener(this);
-//      defaultButton.addActionListener(this);
         OKButton.addActionListener(this);
         CancelButton.addActionListener(this);
 
@@ -961,48 +931,10 @@ WindowListener, ComponentListener {
 
         // make the tool tips appear until the mouse is removed
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
-        
         pack();
         setVisible(true);
     }
-    
-    
-   private String[] getMachineProjects(String hpcName) {
-		// TODO Auto-generated method stub
-	   	System.out.println("HPC name is: " + hpcName);
-        ArrayList<String> projects = new ArrayList<String>();
-        //for (ComputeBean hpc : GridChem.systems) {
-        System.out.println("GetMachineProjects for the HPC System "+hpcName);
-        ComputeBean hpcBean = GridChem.getMachineByName(hpcName);
-        String[] a = {};
-        System.out.println("computebean stuff "+hpcBean);
-        	// TODO: need to get the remote allocation names available to the user on the remote machine.
-        //hpc.getAllocations().toArray(a);
-        
-       /* try { */
-            for (String allocation : hpcBean.getAllocations()) {
-                //if (projects.indexOf(allocation) == -1) {
-                    projects.add(allocation);
-                //}
-            } 
-        
-        /* }finally  {
-            System.out.println("getMachineProjects 868 nullpointer execption");
-        	projects.add("cqj");
-        
-        } 	
-        */
-        
-      
-       
-        System.out.println("getMachineProjects(hpcName): Found " + projects.size() + " projects "+ projects );
-        
-        
-       
-        return projects.toArray(a);
 
-		//return null;
-	}
 
 	private void layoutRequirementsPane() {
 
@@ -1142,10 +1074,10 @@ WindowListener, ComponentListener {
         ArrayList<String> queues = new ArrayList<String>();
 
         //for (ComputeBean hpc : GridChem.systems) {
-        for (ComputeBean hpc : GridChem.getMachineList()) {	
-            for (QueueBean q : hpc.getQueues()) {
-                if (queues.indexOf(q) == -1) {
-                    queues.add(q.getName());
+        for (ComputeResourceDescription hpc : GridChem.getMachineList()) {
+            for (BatchQueue q : hpc.getBatchQueues()) {
+                if (queues.indexOf(q.getQueueName()) == -1) {
+                    queues.add(q.getQueueName());
                 }
             }
         }
@@ -1172,73 +1104,6 @@ WindowListener, ComponentListener {
         return GridChem.getSoftware(appName).getModules().toArray(a);
     }
 
-//    // Make a list for app package name appearing in appCombo box from 
-//    //  all available applications registered in GMS_WS database
-//    private void getAppPackageAndModuleListFromDatabase(){
-//        
-//        ArrayList<String> appPackageNames = GridChem.getSoftwareNames();
-//        
-//        for(String str : appNames){
-//            String ap_name = null;
-//            if(str.contains("_")){
-//                ap_name = str.split("_")[0];
-//            }else{
-//                ap_name = str;
-//            }
-//
-//            if (!appPackageNames.contains(ap_name)) {
-//                appPackageNames.add(ap_name);
-//            }
-//            
-//            if(!APP_NAME_HASHSET.contains(str)){
-//                APP_NAME_HASHSET.add(str);
-//            }
-//        }
-//        
-//        System.out.println("\n(INFO) Found " + appNames.size() + " applications" + " in "
-//                + appPackageNames.size() + " app Packages.");   
-//        
-//        System.out.println("\n(DEBUG)  " + appNames.toArray());
-//        
-//        for(String apnStr : appPackageNames){
-//            HashSet<String> set = new HashSet<String>();
-//            
-//            for(String anStr : appNames){
-//                String mname = null;
-//                String aname = null;
-//                if(anStr.contains("_")){
-//                    mname = anStr.split("_")[1].toLowerCase();
-//                    aname = anStr.split("_")[0];
-//                }else{
-//                    mname = anStr.toLowerCase();
-//                    aname = anStr;
-//                }
-//                if(apnStr.equalsIgnoreCase(aname)){
-//                    set.add(mname);
-//                }
-//            }
-//            
-//            APP_MODULE_HASHTABLE.put(apnStr, new HashSet<String> (set) ) ;
-//        }
-//        
-//    }
-    
-    
-//    private String[] getAppPackageList(){
-//
-//        ArrayList<String> appPackageNames = new ArrayList<String>();
-//        
-//        for(Enumeration e = APP_MODULE_HASHTABLE.keys(); e.hasMoreElements(); ){
-//            appPackageNames.add((String) e.nextElement());
-//        }
-//        
-//        String[] a = {};
-//        
-//        return appPackageNames.toArray(a);
-//    }
-        
-        
-    
     
     private String[] getMachineProjects() {
         ArrayList<String> projects = new ArrayList<String>();
@@ -1261,12 +1126,12 @@ WindowListener, ComponentListener {
     // Amr
     // Now change the machines according to which ones have the application.
     public void populateMachineList(String application) {
-    	
+
 //        ArrayList appMachineList = new ArrayList();
         if (Settings.WEBSERVICE) {
             hpcListModel.removeAllElements();
-            for (ComputeBean hpc: GridChem.getSoftwareMachineList(application)) {
-                hpcListModel.addElement(hpc.getName());
+            for (ComputeResourceDescription hpc: GridChem.getSoftwareMachineList(application)) { //remove comment
+                hpcListModel.addElement(hpc.getHostName());
             }
             //hpcListModel.addElement(SCHEDULER);
             System.out.println("EJP:1142:Webservice: MachineList for "+application+" is"+hpcListModel.toString());
@@ -1311,11 +1176,11 @@ WindowListener, ComponentListener {
 
             } else {
             	if (GridChem.accessType.equals(AccessType.COMMUNITY)) {
-            		ComputeBean bean = GridChem.getMachineByName(machine);
-            		for (String allocation: bean.getAllocations()) {
+            		ComputeResourceDescription bean = GridChem.getMachineByName(machine);
+            		/*for (String allocation: bean.getAllocations()) {
             			projCombo.addItem(allocation);
             			System.out.println("WEBSERVICE:System Specified project "+allocation+" added to list projCombo");
-            		}
+            		}*/ // remove comment
             		System.out.println("EditJobPanel:WEBSERVICE projects");
             		return;
             	}
@@ -1350,11 +1215,13 @@ WindowListener, ComponentListener {
             if (machine.equals(SCHEDULER)) {
                 qCombo.addItem(UNSPECIFIED);
             } else {
-            	ComputeBean bean = GridChem.getMachineByName(machine);
-            	for (QueueBean queue: bean.getQueues()) {            
-                    qCombo.addItem(queue.getName());
-                    if (queue.isDefaultQueue()) {
+            	ComputeResourceDescription bean = GridChem.getMachineByName(machine);
+                if(bean.isSetBatchQueues()) {
+                    for (BatchQueue queue : bean.getBatchQueues()) {
+                        qCombo.addItem(queue.getQueueName());
+                    /*if (queue.isDefaultQueue()) {
                     	qCombo.setSelectedItem(queue.getName());
+                    }*/ //remove comment
                     }
                 }
             }
@@ -1368,26 +1235,6 @@ WindowListener, ComponentListener {
     }
 
     // end Amr
-
-//    private void doSelectMach(String[] mach) {
-//        int N = mach.length;
-//        int[] indices = new int[N];
-//        int j;
-//
-//        // System.out.println("N =" + N + "\n");
-//        // System.out.println(mach[0]+"\n");
-//        // System.out.println(apphpcModel.getElementAt(0).toString()+"\n");
-//
-//        for (int i = 0; i < N; i++) {
-//            j = 0;
-//            while (j < (hpcListModel.getSize() - 1)
-//                    && !mach[i].equals(hpcListModel.getElementAt(j).toString())) {
-//                j++;
-//            }
-//            indices[i] = j;
-//        }
-////        return indices;
-//    }
 
     private ArrayList parsePref(String prefName) {
         Trace.entry();
@@ -2307,7 +2154,7 @@ WindowListener, ComponentListener {
     	String selectedProj = "";
     	  int selectedMachineIndex = hpcList.getSelectedIndex();
         String hpcName = (String) hpcListModel.get(selectedMachineIndex);
-    	ComputeBean hpc = GridChem.getMachineByName(hpcName);
+    	ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
     
     	    System.out.println("EJP:2111: hpc allocations for HPC system "+hpcName+"\n");
     	    
@@ -2317,13 +2164,13 @@ WindowListener, ComponentListener {
     	    	hpcName="Ember";
     	    }
     	    else if (hpcName.equals(this.job.getSystemName())) {
-    	      System.out.println(" are "+hpc.getAllocations()+"\n");
+    	      /*System.out.println(" are "+hpc.getAllocations()+"\n");
     	    
     	      for (String p : hpc.getAllocations()) {
                if (p.equals((String) projCombo.getSelectedItem())) {
                    selectedProj = p;
                }
-    	      }
+    	      }*/ //remove comment
     	    }
     	//
     	    // Forcing project
@@ -2333,9 +2180,9 @@ WindowListener, ComponentListener {
     }
     
     
-    private QueueBean getSelectedQueue() {
+    private BatchQueue getSelectedQueue() {
 
-        QueueBean selectedQueue = null;
+        BatchQueue selectedQueue = null;
 
         int selectedMachineIndex = hpcList.getSelectedIndex();
 
@@ -2343,23 +2190,23 @@ WindowListener, ComponentListener {
 
         if (hpcName.equals(SCHEDULER)) {
 
-        	selectedQueue = new QueueBean();
-        	selectedQueue.setName(UNSPECIFIED);
-        	selectedQueue.setDefaultQueue(true);
+        	selectedQueue = new BatchQueue();
+        	selectedQueue.setQueueName(UNSPECIFIED);
+        	//selectedQueue.setDefaultQueue(true);
             Calendar cal = Calendar.getInstance();
             cal.clear();
             cal.add(Calendar.DAY_OF_YEAR, 30);
-            selectedQueue.setMaxCpuTime(cal);
-            selectedQueue.setMaxWallClockTime(cal);
-            selectedQueue.setMaxCpus(1024);
+            //selectedQueue.setMaxRunTime(cal);
+            //selectedQueue.setMaxWallClockTime(cal);
+            selectedQueue.setMaxProcessors(1024);
             selectedQueue.setMaxNodes(2048);
 
         } else {
 
-            ComputeBean hpc = GridChem.getMachineByName(hpcName);
+            ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
 
-            for (QueueBean q : hpc.getQueues()) {
-                if (q.getName().equals((String) qCombo.getSelectedItem())) {
+            for (BatchQueue q : hpc.getBatchQueues()) {
+                if (q.getQueueName().equals((String) qCombo.getSelectedItem())) {
                     selectedQueue = q;
                 }
             }
@@ -2914,23 +2761,23 @@ WindowListener, ComponentListener {
 
             } else {
 
-                ComputeBean hpc = GridChem.getMachineByName(hpcName);
+                ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
 
                 toolTipHTML += "<html><body bgcolor=\"#666666\"><table bgcolor=\"#666666\">";
                 toolTipHTML += "<tr><th colspan=\"2\"  bgcolor=\"#9999FF\">Machine Summary</th></tr>";
                 toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Name:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
-                        + hpc.getName() + "</FONT></td></tr>";
+                        + hpc.getHostName() + "</FONT></td></tr>";
                 toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Location:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
-                        + hpc.getSite().getAcronym() + "</FONT></td></tr>";
+                        + hpc.getHostName()+ "</FONT></td></tr>";
                 toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Description:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
-                        + hpc.getSite().getDescription() + "</FONT></td></tr>";
+                        + hpc.getHostName() + "</FONT></td></tr>";
                 toolTipHTML += "<tr><th colspan=\"2\"  bgcolor=\"#9999FF\"><b>Current Loads</th></tr>";
                 // toolTipHTML += "<tr><td><FONT
                 // COLOR=\"#FFFFFF\"><b>Queue:</b></FONT></td><td><FONT
                 // COLOR=\"#FFFFFF\">" + hpc.getLoad().getQueueName() +
                 // "</FONT></td></tr>";
 
-                if (hpc.getName().equals("Condor")) {
+                /*if (hpc.getHostName().equals("Condor")) {
                     toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Running CPU:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
                             + hpc.getLoad().getJobsRunning()
                             + "</FONT></td></tr>";
@@ -2954,7 +2801,7 @@ WindowListener, ComponentListener {
                             + hpc.getLoad().getJobsOther()
                             + "O"
                             + "</FONT></td></tr>";
-                }
+                }*/ //remoce comment
 
                 toolTipHTML += "</table></body></html>";
 
@@ -2984,15 +2831,15 @@ WindowListener, ComponentListener {
         public Component getListCellRendererComponent(JList list, Object value,
                 int index, boolean isSelected, boolean cellHasFocus) {
 
-            ComputeBean hpc = null;
+            ComputeResourceDescription hpc = null;
 
-            QueueBean selectedQueue = null;
+            BatchQueue selectedQueue = null;
 
             if (((String) value).equals(UNSPECIFIED)) {
 
-            	selectedQueue = new QueueBean();
-            	selectedQueue.setName(UNSPECIFIED);
-            	selectedQueue.setDefaultQueue(true);
+            	selectedQueue = new BatchQueue();
+            	selectedQueue.setQueueName(UNSPECIFIED);
+            	//selectedQueue.setDefaultQueue(true);
 
 
             } else {
@@ -3002,13 +2849,13 @@ WindowListener, ComponentListener {
 
                 hpc = GridChem.getMachineByName(hpcName);
                 if (hpc == null) {
-                	selectedQueue = new QueueBean();
-                	selectedQueue.setName(UNSPECIFIED);
-                	selectedQueue.setDefaultQueue(true);
+                	selectedQueue = new BatchQueue();
+                	selectedQueue.setQueueName(UNSPECIFIED);
+                	//selectedQueue.setDefaultQueue(true);
                 } else {
-	                for (QueueBean q : hpc.getQueues()) {
+	                for (BatchQueue q : hpc.getBatchQueues()) {
 	
-	                    if (q.getName().equals((String) value)) {
+	                    if (q.getQueueName().equals((String) value)) {
 	
 	                        selectedQueue = q;
 	
@@ -3019,7 +2866,7 @@ WindowListener, ComponentListener {
             }
 
             // display the default queue in bold
-            if (selectedQueue.isDefaultQueue()) {
+            /*if (selectedQueue.isDefaultQueue()) {
 
                 Font font = new Font(getFont().getName(), Font.BOLD, getFont()
                         .getSize());
@@ -3038,11 +2885,11 @@ WindowListener, ComponentListener {
             setText(selectedQueue.getName());
 
             setToolTipText(createTTTHTML(selectedQueue, hpc));
-
+            *///remove comment
             return this;
         }
 
-        private String createTTTHTML(QueueBean q, ComputeBean hpc) {
+        private String createTTTHTML(QueueBean q, ComputeResourceDescription hpc) {
 
             String toolTipHTML = "";
             if (q.getName().equals(UNSPECIFIED)) {
@@ -3098,7 +2945,7 @@ WindowListener, ComponentListener {
 
             toolTipHTML += "<tr><th colspan=\"2\"  bgcolor=\"#9999FF\"><b>This is "
                     + ((q.isDefaultQueue()) ? "" : "not")
-                    + " the default queue for " + hpc.getName() + "</th></tr>";
+                    + " the default queue for " + hpc.getHostName() + "</th></tr>";
 
             toolTipHTML += "</table></body></html>";
 
@@ -3152,9 +2999,9 @@ WindowListener, ComponentListener {
                         }
                     }
 
-                    QueueBean q = getSelectedQueue();
+                    BatchQueue q = getSelectedQueue();
 
-                    if (q != null) {
+                    /*if (q != null) { //remove comment
                         Calendar qWallLimit = q.getMaxWallClockTime();
                         System.out.println("Queue " + q.getName() + " is "
                                 + ((q.isDefaultQueue()) ? "" : "not")
@@ -3215,19 +3062,8 @@ WindowListener, ComponentListener {
 
                             return false;
                         }
-                        /*
-                         * else { String message = ""; if
-                         * (getIntegerHours(qWallLimit) == 0 && ) { message =
-                         * "Maximum wall time for this queue is\nless than 1
-                         * hour."; JOptionPane.showMessageDialog(null, message,
-                         * "Queue Wall Time Error", JOptionPane.OK_OPTION);
-                         * ftf.selectAll(); // set the flag so the job will not
-                         * be submitted validTime = false;
-                         * 
-                         * return false; }
-                         *  }
-                         */
-                    }
+
+                    }*/
                 }
             } catch (Exception ex) {
                 System.out.println("value was bad in spinner");
@@ -3269,9 +3105,9 @@ WindowListener, ComponentListener {
                         }
                     }
 
-                    QueueBean q = getSelectedQueue();
+                    BatchQueue q = getSelectedQueue();
 
-                    if (q != null) {
+                    /*if (q != null) { //remove comment
                         Calendar qWallLimit = q.getMaxWallClockTime();
                         System.out.println("Queue " + q.getName() + " is "
                                 + ((q.isDefaultQueue()) ? "" : "not")
@@ -3363,7 +3199,7 @@ WindowListener, ComponentListener {
 
                             return false;
                         }
-                    }
+                    }*/
                 }
             } catch (Exception ex) {
                 System.out.println("value was bad in spinner");
@@ -3402,9 +3238,9 @@ WindowListener, ComponentListener {
                         }
                     }
 
-                    QueueBean q = getSelectedQueue();
+                    BatchQueue q = getSelectedQueue();
 
-                    if (q != null) {
+                    /*if (q != null) { //remove comment
                         // make sure it's a valid value in the range 0-59
                         if (newProcCount.intValue() <= q.getMaxCpus()
                                 && newProcCount.intValue() > 0) {
@@ -3460,7 +3296,7 @@ WindowListener, ComponentListener {
                         validTime = false;
 
                         return false;
-                    }
+                    }*/
 
                 }
             } catch (Exception ex) {

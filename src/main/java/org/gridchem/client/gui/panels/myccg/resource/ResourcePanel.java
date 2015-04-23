@@ -380,7 +380,7 @@ implements StatusListener {
         
         // rebuild the site table and add the new model to the table. everything else
         // will refresh on the next click.
-        siteTable = createSiteTableData(GridChem.getMachineList());
+        //siteTable = createSiteTableData(GridChem.getMachineList()); //remove this
         
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(
                 "CCG");

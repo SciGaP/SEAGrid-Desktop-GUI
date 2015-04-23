@@ -62,7 +62,7 @@ public class FileUtility {
         System.out.println("Retrieving " + application +  " input files.");
         
         // Get a handle on the software template dir
-        File f = new File(Env.getApplicationSoftwareTemplateDir() 
+        /*File f = new File(Env.getApplicationSoftwareTemplateDir()
                  + File.separator + application.toLowerCase() );
         
         System.out.println("Looking in " + f.getAbsolutePath());
@@ -74,7 +74,7 @@ public class FileUtility {
                     files.add(inFile);
                 }
             } 
-        }
+        }*/
         
         return files;
     }

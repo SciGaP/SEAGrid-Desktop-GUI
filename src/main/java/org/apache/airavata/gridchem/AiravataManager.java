@@ -1,9 +1,11 @@
 package org.apache.airavata.gridchem;
 
 import org.apache.airavata.AiravataConfig;
+import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
 import org.apache.airavata.model.appcatalog.appinterface.DataType;
 import org.apache.airavata.model.appcatalog.appinterface.InputDataObjectType;
 import org.apache.airavata.model.appcatalog.appinterface.OutputDataObjectType;
+import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
 import org.apache.airavata.model.error.AiravataClientConnectException;
 import org.apache.airavata.model.util.ExperimentModelUtil;
 import org.apache.airavata.model.util.ProjectModelUtil;
@@ -12,6 +14,7 @@ import org.apache.airavata.model.workspace.experiment.ComputationalResourceSched
 import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.apache.airavata.model.workspace.experiment.UserConfigurationData;
 import org.apache.axis2.AxisFault;
+import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
@@ -370,8 +373,8 @@ public class AiravataManager {
         return null;
     }
 
-    public static List<SoftwareBean> getSoftware() throws SoftwareException {
-        return null;
+    public static List<ApplicationDeploymentDescription> getAplicationDeployments() throws AiravataClientConnectException, TException {
+        return getClient().getAllApplicationDeployments();
     }
 
     public static List<SoftwareBean> getSoftware(JobCommand command) throws SoftwareException {
@@ -422,6 +425,62 @@ public class AiravataManager {
 
     }
 
+    public static ArrayList<ComputeResourceDescription> getComputationalResources() throws AiravataClientConnectException, TException {
+        Map <String,String> compResources = getClient().getAllComputeResourceNames();
+
+        Iterator<String> it = compResources.keySet().iterator();
+
+        ArrayList<ComputeResourceDescription> compList = new ArrayList<ComputeResourceDescription>();
+        while (it.hasNext()){
+            compList.add(getClient().getComputeResource(it.next()));
+        }
+
+        return compList;
+    }
+
+    public static  List<ApplicationDeploymentDescription> getAppDepDescriptionforMachine(String computeHostId) throws AiravataClientConnectException, TException {
+        List<ApplicationDeploymentDescription> appDeployments = getClient().getAllApplicationDeployments();
+        List<ApplicationDeploymentDescription> returnApps = new ArrayList<ApplicationDeploymentDescription>();
+        for (ApplicationDeploymentDescription ad : appDeployments){
+            if(ad.getComputeHostId().equals(computeHostId)){
+                returnApps.add(ad);
+            }
+        }
+        return returnApps;
+    }
+
+    public static List<ComputeResourceDescription> getCompResourcesForAppModule(String appModuleName) throws AiravataClientConnectException, TException {
+        List<ComputeResourceDescription> computeResources = new ArrayList<>();
+        List<ApplicationDeploymentDescription> appDeployments =  getClient().getAllApplicationDeployments();
+        Set<String> comResourceids= new HashSet<>();
+        for(ApplicationDeploymentDescription app:appDeployments){
+            if(getClient().getApplicationModule(app.getAppModuleId()).getAppModuleName().equals(appModuleName)){
+                comResourceids.add(app.getComputeHostId());
+            }
+        }
+
+        Iterator<String> it = comResourceids.iterator();
+        while(it.hasNext()){
+            computeResources.add(getClient().getComputeResource(it.next()));
+        }
+
+        return computeResources;
+    }
+
+    public static ComputeResourceDescription getComputeResourceDescriptionFromName(String hostName) throws AiravataClientConnectException, TException {
+
+        Map<String,String> compMap= getClient().getAllComputeResourceNames();
+        Iterator<String> it = compMap.keySet().iterator();
+        while(it.hasNext()){
+            String id =it.next();
+            ComputeResourceDescription desc = getClient().getComputeResource(id);
+            if(desc.getHostName().equals(hostName)){
+                return desc;
+            }
+        }
+        return null;
+
+    }
     public static void createExperiment() throws Exception{
         String appId = "Echo_995bdc27-55b0-42f2-adc1-e5ee8d615916";
 
@@ -464,6 +523,12 @@ public class AiravataManager {
             //createExperiment();
             //Project project = ProjectModelUtil.createProject("default", "dimuthu2", "test project");
             //getClient().createProject(project);
+
+            List<ApplicationDeploymentDescription> appDeployments =  getClient().getAllApplicationDeployments();
+            for(ApplicationDeploymentDescription app:appDeployments){
+                System.out.println(app.getAppDeploymentDescription());
+
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
