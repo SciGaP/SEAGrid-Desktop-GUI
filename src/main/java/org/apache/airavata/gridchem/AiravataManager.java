@@ -2,9 +2,11 @@ package org.apache.airavata.gridchem;
 
 import org.apache.airavata.AiravataConfig;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
+import org.apache.airavata.model.appcatalog.appdeployment.ApplicationModule;
 import org.apache.airavata.model.appcatalog.appinterface.DataType;
 import org.apache.airavata.model.appcatalog.appinterface.InputDataObjectType;
 import org.apache.airavata.model.appcatalog.appinterface.OutputDataObjectType;
+import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
 import org.apache.airavata.model.error.AiravataClientConnectException;
 import org.apache.airavata.model.util.ExperimentModelUtil;
@@ -44,6 +46,7 @@ import java.util.*;
 public class AiravataManager {
 
     public static String accessToken="";
+    private static Project currentProject;
 
     public static boolean login(String uname, String passwd) {
         try {
@@ -76,7 +79,7 @@ public class AiravataManager {
     }
 
     public static Project getCurrentProject() throws ProjectException {
-        return null;
+        return currentProject;
     }
 
     public static List<ProjectBean> getProjects(JobCommand command) throws ProjectException {
@@ -84,7 +87,7 @@ public class AiravataManager {
     }
 
     public static void setCurrentProject(Project p) throws SessionException {
-
+        currentProject =p;
     }
 
 
@@ -467,6 +470,13 @@ public class AiravataManager {
         return computeResources;
     }
 
+    public static List<ComputeResourceDescription> getCompResourcesForAppId(String appId) throws AiravataClientConnectException, TException {
+        List<ComputeResourceDescription> computeResources = new ArrayList<>();
+        ApplicationDeploymentDescription app =  getClient().getApplicationDeployment(appId);
+        computeResources.add(getClient().getComputeResource(app.getComputeHostId()));
+        return computeResources;
+    }
+
     public static ComputeResourceDescription getComputeResourceDescriptionFromName(String hostName) throws AiravataClientConnectException, TException {
 
         Map<String,String> compMap= getClient().getAllComputeResourceNames();
@@ -481,6 +491,21 @@ public class AiravataManager {
         return null;
 
     }
+
+    public static ComputeResourceDescription getComputeResourceDescriptionFromId(String id) throws AiravataClientConnectException, TException {
+        ComputeResourceDescription desc = getClient().getComputeResource(id);
+        return desc;
+
+    }
+
+    public static ApplicationModule getApplicationModule(String id) throws AiravataClientConnectException, TException {
+        return getClient().getApplicationModule(id);
+    }
+
+    public static ApplicationDeploymentDescription getApplicationDeploymentDescription(String id) throws AiravataClientConnectException, TException {
+        return getClient().getApplicationDeployment(id);
+    }
+
     public static void createExperiment() throws Exception{
         String appId = "Echo_995bdc27-55b0-42f2-adc1-e5ee8d615916";
 
@@ -524,11 +549,13 @@ public class AiravataManager {
             //Project project = ProjectModelUtil.createProject("default", "dimuthu2", "test project");
             //getClient().createProject(project);
 
-            List<ApplicationDeploymentDescription> appDeployments =  getClient().getAllApplicationDeployments();
-            for(ApplicationDeploymentDescription app:appDeployments){
-                System.out.println(app.getAppDeploymentDescription());
+            //List<ApplicationDeploymentDescription> appDeployments =  getClient().getAllApplicationDeployments();
+            //for(ApplicationDeploymentDescription app:appDeployments){
+              //  System.out.println(app.getAppDeploymentDescription());
 
-            }
+            //}
+            getClient().getApplicationDeployment("Echo_dcd59b1a-b291-4750-8d89-87531e0739e6");
+
         }catch(Exception e){
             e.printStackTrace();
         }

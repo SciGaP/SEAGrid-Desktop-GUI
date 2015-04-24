@@ -94,6 +94,9 @@ import nanocad.newNanocad;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
 import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
+import org.apache.airavata.model.util.ExperimentModelUtil;
+import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
+import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.FileUtilities;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.InputInfoPanel;
@@ -123,30 +126,30 @@ import org.gridchem.service.model.enumeration.AccessType;
 
 /**
  * Reimplementation of editingStuff panel into a JDialog so it can be
- * called independently of the SubmitJobsWindow. 
- * 
- * @author Rion Dooley < dooley [at] tacc [dot] utexas [dot] edu >
+ * called independently of the SubmitJobsWindow.
  *
+ * @author Rion Dooley < dooley [at] tacc [dot] utexas [dot] edu >
  */
 public class EditJobPanel extends JDialog implements ActionListener,
-WindowListener, ComponentListener {
+        WindowListener, ComponentListener {
 
     public static final String SCHEDULER = "Grid Scheduler";
     public static final String UNSPECIFIED = "Unspecified";
-    public static final Hashtable<String, HashSet> APP_MODULE_HASHTABLE= new Hashtable<String, HashSet>();
+    public static final String DEFAULT_QUEUE = "normal";
+    public static final Hashtable<String, HashSet> APP_MODULE_HASHTABLE = new Hashtable<String, HashSet>();
     public static final HashSet<String> APP_NAME_HASHSET = new HashSet<String>();
-    
+
     private JPanel rightPanel = new JPanel();
     private JPanel leftPanelForchoicesBox = new JPanel();
     private JPanel reqPane = new JPanel();
     private JPanel timePanel = new JPanel();
     private JPanel buttonBox = new JPanel();
-    
+
     private InputFilePanel inputFilePanel;
-    
+
     private BasicArrowButton upButton;
     private BasicArrowButton downButton;
-    
+
     private JTextField jobNameText;
     private JTextField projNameText;
 
@@ -159,7 +162,7 @@ WindowListener, ComponentListener {
     private JLabel timeLable;
     private JLabel appModuleLabel;
     private JLabel memSizeLabel;
-    
+
     private JComboBox projCombo;
     private JComboBox qCombo;
     private JComboBox appCombo;
@@ -175,80 +178,87 @@ WindowListener, ComponentListener {
     private JButton edbumolButton;
     private JButton OKButton;
     private JButton CancelButton;
-    
+
     private JTextField memSizeTextField;
-    
+
     private JList hpcList;
-    
+
     private DefaultListModel hpcListModel;
 
     private JScrollPane apphpcScrollPane;
 
-    protected JobBean job; // the job being edited
+    //protected JobBean job; // the job being edited
+    protected Experiment experiment;
+    protected ComputationalResourceScheduling scheduling;
 
     private nanocadFrame2 nanWin;
-    
+
     private Object timeInputText = "";
-    
+
     private String application = Invariants.APP_NAME_GAUSSIAN; // default app is Gaussian
-    
+
     private boolean validTime = true;
     private boolean loadingQueues = false;
-    
+
     private boolean isLoading = false;
-    
+
     private boolean isUpdating = false;
-    
+
     private boolean isSubmittingScript = false;
-    
+
     private static Set<String> dsLmpUserIDSet = new HashSet<String>();
-    
+
     private Preferences preferences = Preferences.getInstance();
-    
+
+
     /**
      * Create a new job.
-     * 
+     *
      * @throws HeadlessException
      */
     public EditJobPanel() throws HeadlessException {
         super();
-        
-        if (dsLmpUserIDSet.isEmpty()) { 
-        	dsLmpUserIDSet.add("x_baya");
-        	dsLmpUserIDSet.add("spamidig");
-        	dsLmpUserIDSet.add("mvanmoer");
-        	dsLmpUserIDSet.add("sxc033");
-        	dsLmpUserIDSet.add("dspearot");
+
+        if (dsLmpUserIDSet.isEmpty()) {
+            dsLmpUserIDSet.add("x_baya");
+            dsLmpUserIDSet.add("spamidig");
+            dsLmpUserIDSet.add("mvanmoer");
+            dsLmpUserIDSet.add("sxc033");
+            dsLmpUserIDSet.add("dspearot");
         }
 
-        this.job = new JobBean();
-        this.job.setName("default_job");
-        this.job.setExperimentName(GridChem.user.getUserName() + "_proj");
+        String expName = GridChem.user.getUserName() + "_proj";
+        GridChem.project.getProjectID();
+        GridChem.user.getUserName();
+        this.experiment = ExperimentModelUtil.createSimpleExperiment(GridChem.project.getProjectID(), GridChem.user.getUserName(), expName, expName, null, null);
+        this.scheduling = ExperimentModelUtil.createComputationResourceScheduling(null, 1, 1, 1, "normal", 30, 0, 1, "sds128");
+
 
         ComputeResourceDescription hw = GridChem.getMachineList().get(0);
         for (ComputeResourceDescription cb : GridChem.getMachineList()) {
-        	System.out.println("*a******************************");
-        	System.out.println(cb.getHostName());
-        	if (cb.getHostName().equals(Preferences.getString("last_machine"))) {
-        		System.out.println("Found last used machine");
-        		hw = cb;
-        	}
+            System.out.println("*a******************************");
+            System.out.println(cb.getHostName());
+            if (cb.getHostName().equals(Preferences.getString("last_machine"))) {
+                System.out.println("Found last used machine");
+                hw = cb;
+            }
         }
 
-        this.job.setSystemName(hw.getHostName());
+        this.scheduling.setResourceHostId(hw.getComputeResourceId());
         ApplicationDeploymentDescription sw = GridChem.getSoftwareforMachine(hw.getComputeResourceId()).get(0);
-        ApplicationDeploymentDescription appDeploymeny = GridChem.getSoftwareforMachine(hw.getComputeResourceId()).get(0);
         for (ApplicationDeploymentDescription cb : GridChem.getSoftwareforMachine(hw.getComputeResourceId())) {
-        	System.out.println("*******************************");
-        	System.out.println(cb.getAppModuleId());
-        	if (cb.getAppModuleId().equals(Preferences.getString("last_app"))) {
-        		System.out.println("Found last used application");
-        		sw = cb;
-        	}
+            System.out.println("*******************************");
+            System.out.println(cb.getAppModuleId());
+            if (cb.getAppModuleId().equals(Preferences.getString("last_app"))) {
+                System.out.println("Found last used application");
+                sw = cb;
+            }
         }
-        
+
+        experiment.setApplicationId(sw.getAppDeploymentId());
+
         /*for (String modName : getModuleList(sw.getName())) {
-        	if (modName.equals(Preferences.getString("last_module"))) {
+            if (modName.equals(Preferences.getString("last_module"))) {
         		System.out.println("Found last used module");
         		this.job.setModuleName(modName);
         	}
@@ -258,97 +268,97 @@ WindowListener, ComponentListener {
         //this.job.setAllocationName(hw.getAllocations().iterator().next());
         //this.job.setQueueName(hw.getQueues().get(0).getName());
         //this.job.setRequestedCpus(new Long(1));
-        
+
         ArrayList<LogicalFileBean> inFiles = new ArrayList<LogicalFileBean>();
-        for(File f: FileUtility.getDefaultInputFiles(this.application)) {
+        for (File f : FileUtility.getDefaultInputFiles(this.application)) {
             LogicalFileBean lf = new LogicalFileBean();
             lf.setJobId(-1);
             lf.setLocalPath(f.getAbsolutePath());
             inFiles.add(lf);
         }
-        this.job.setInputFiles(inFiles);
+        //this.job.setInputFiles(inFiles); // remove comment
         Calendar cal = Calendar.getInstance();
         cal.clear();
-        cal.add(Calendar.MINUTE,30);
-        
-        this.job.setRequestedCpuTime(cal);
-        
+        cal.add(Calendar.MINUTE, 30);
+
+        //this.job.setRequestedCpuTime(cal); //remove coomet
+
         init();
-        
+
     }
 
     public EditJobPanel(String input, String appName) {
-    	this();
-    	
+        this();
+
         appCombo.setSelectedItem(appName);
         changeModuleList(GridChem.getSoftware((String) (appName)));
         populateMachineList(appName);
-        
+
         this.inputFilePanel.addTextInput(input);
     }
-    
+
     public EditJobPanel(ArrayList<File> files) {
         this();
-        
+
         this.inputFilePanel.addMultipleFileInput(files);
     }
-    
+
     /**
      * Edit an existing job.
-     * 
+     *
      * @param owner
      * @throws HeadlessException
      */
     public EditJobPanel(Frame owner, JobBean job) throws HeadlessException {
         super(owner);
-        
-        this.job = job;
-        
+
+        //this.job = job;
+
         this.isUpdating = true;
-        
+
         init();
-        
+
     }
-    
+
     public EditJobPanel(Frame owner, JobBean job, ArrayList<File> files) throws HeadlessException {
-        this(owner,job);
-     
+        this(owner, job);
+
         this.inputFilePanel.clearFileInput();
-        
+
         this.inputFilePanel.addMultipleFileInput(files);
     }
-    
+
     private void init() {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        
+
         jbInit();
 
 
         try {
             isLoading = true;
             // populate fields with given job information
-            changeJobNameField(job.getName());
-            changeResearchProjectNameField(job.getExperimentName());
+            changeJobNameField(experiment.getName());
+            changeResearchProjectNameField(experiment.getProjectID());
 //            changeAppPackage(job.getSystemName());
 //            changeModule(job.getApplication());
-            populateMachineList(job.getSoftwareName());
+            populateMachineList((experiment.getApplicationId()));
 
-            System.out.println("Loading machine " + job.getSystemName());
-            ComputeResourceDescription hpc = GridChem.getMachineByName(job.getSystemName());
+            System.out.println("Loading machine " + scheduling.getResourceHostId());
+            ComputeResourceDescription hpc = GridChem.getMachineByName(scheduling.getResourceHostId());
 
             String machineName = "";
             if (hpc != null) {
                 System.out
                         .println("Found machine in user's VO: "
-                                + job.getSystemName() + " = "
+                                + scheduling.getResourceHostId() + " = "
                                 + hpc.getHostName());
-                machineName = hpc.getHostName();
+                machineName = hpc.getComputeResourceId();
             } else {
-                
-                machineName = (String)hpcListModel.get(hpcList.getSelectedIndex());
-                
+
+                machineName = (String) hpcListModel.get(hpcList.getSelectedIndex());
+
                 System.out.println("Did not find machine in user's VO: "
-                        + job.getSystemName());
+                        + scheduling.getResourceHostId());
 
                 JOptionPane.showMessageDialog(null,
                         "The machine associated with this job\n"
@@ -364,30 +374,28 @@ WindowListener, ComponentListener {
             //changeProject(job.getProjectName());
             populateQueues(machineName);
 
-            changeQueue(job.getQueueName());
+            changeQueue(scheduling.getQueueName());
 
-            changeNumProc(((job.getRequestedCpus() == null)?0:job.getRequestedCpus().intValue()));
+            changeNumProc(scheduling.getTotalCPUCount());
 
 //            updateInputInfoPanel(job,FileUtility.getDefaultInputFiles(job.getApplication()));
 
             System.out.println("Updated editing stuff with values for job "
-                    + job.getName());
-            
-            
-            
+                    + experiment.getName());
+
+
             isLoading = false;
-            
-            this.inputFilePanel.addMultipleLogicalFileInput(job.getInputFiles());
-            
+            //this.inputFilePanel.addMultipleLogicalFileInput(job.getInputFiles()); //remove comment
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     private void jbInit() {
-        
+
 //        verifyInputsForMultipleInputApp();
-        
+
         // Border
         Border eBorder1 = BorderFactory.createEmptyBorder(10, 10, 10, 10);
         Border eBorder2 = BorderFactory.createEmptyBorder(5, 10, 5, 10);
@@ -396,18 +404,18 @@ WindowListener, ComponentListener {
         // left panel for choicesBoxs
         // --->namePane
         jobNameText = new JTextField(20);
-        jobNameText.setText(this.job.getName());
+        jobNameText.setText(this.experiment.getName());
         projNameText = new JTextField(20);
-        projNameText.setText(this.job.getExperimentName());
+        projNameText.setText(this.experiment.getName());
         JLabel jobNameLabel = new JLabel("Job name: ");
         jobNameLabel.setLabelFor(jobNameText);
         JLabel projNameLabel = new JLabel("Research project name: ");
         projNameLabel.setLabelFor(projNameText);
         JPanel namePane = new JPanel();
-        
+
         TitledBorder namePaneTitled = BorderFactory.createTitledBorder(
                 leBorder, "Project/Job name", TitledBorder.LEFT,
-                TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD,14));
+                TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD, 14));
 
         namePane.setBorder(BorderFactory.createCompoundBorder(namePaneTitled,
                 eBorder2));
@@ -416,8 +424,8 @@ WindowListener, ComponentListener {
         namePane.add(projNameText);
         namePane.add(jobNameLabel);
         namePane.add(jobNameText);
-        
-        
+
+
         // ---> AppPane
         Container apphpcBox = Box.createVerticalBox();
         hpcListModel = new DefaultListModel();
@@ -425,14 +433,16 @@ WindowListener, ComponentListener {
         //this.job.setSoftwareName(Invariants.APP_NAME_GAUSSIAN);
         //populateMachineList(Invariants.APP_NAME_GAUSSIAN);
         //this.job.setSystemName("Cobalt");
-        System.out.println("312:init editingstuff=" + this.job.getSystemName());
-        if (this.job.getSoftwareName() == null) {
+        System.out.println("312:init editingstuff=" + this.scheduling.getResourceHostId());
+        if (this.experiment.getApplicationId() == null) {
             System.out.println("get app is blank");
             populateMachineList(Invariants.APP_NAME_GAUSSIAN);
         } else {
             //populateMachineList(this.job.getSystemName());
-            populateMachineList(this.job.getSoftwareName());
-            changeMachine(this.job.getSystemName());
+            String appId = experiment.getApplicationId();
+            System.out.println("Experiment App module id is : " + appId);
+            populateMachineList(appId);
+            changeMachine(this.scheduling.getResourceHostId());
             // reqPane.remove(numProcEdLabel);
         }
         machListSelectionListener ms = new machListSelectionListener();
@@ -445,12 +455,12 @@ WindowListener, ComponentListener {
         apphpcBox.setPreferredSize(new Dimension(250, 150));
         apphpcBox.add(apphpcScrollPane);
         // apphpcBoard.setSelectedIndex(0);
-        
-        int selectedIndices = ((DefaultListModel)hpcList.getModel()).indexOf(this.job.getSystemName());
+
+        int selectedIndices = ((DefaultListModel) hpcList.getModel()).indexOf(this.scheduling.getResourceHostId());
         hpcList.setSelectedIndex(selectedIndices);
 //        hpcList.setSelectedIndices(new int[]{selectedIndices});
         hpcList.ensureIndexIsVisible(selectedIndices);
-    
+
         makeButtons();
         JPanel arrowButtonPane = new JPanel();
         GridBagLayout gridbag = new GridBagLayout();
@@ -478,22 +488,22 @@ WindowListener, ComponentListener {
 
         // create applications combo box + application moddules combo box (JK)
 //        getAppPackageAndModuleListFromDatabase();
-        
+
         appModuleLabel = new JLabel("Module");
 
         if (Settings.WEBSERVICE) {
-        	List<ApplicationDeploymentDescription> software = GridChem.getSoftware();
-        	List<String> applicationNames = new ArrayList<String>();
-        	for (ApplicationDeploymentDescription bean: software) {
-        		applicationNames.add(bean.getAppModuleId());
-        	}
+            List<ApplicationDeploymentDescription> software = GridChem.getSoftware();
+            List<String> applicationNames = new ArrayList<String>();
+            for (ApplicationDeploymentDescription bean : software) {
+                applicationNames.add(bean.getAppDeploymentId());
+            }
 
             appCombo = new JComboBox(applicationNames.toArray());
             //appCombo.setSelectedItem(job.getSoftwareName());
             
             
             /*if (job.getSoftwareName().equals("Lammps")) {
-         		if (dsLmpUserIDSet.contains(GridChem.user.getUserName())) {
+                 if (dsLmpUserIDSet.contains(GridChem.user.getUserName())) {
          			appModuleCombo = new JComboBox(getModuleList(job.getSoftwareName()));
         		} else {        			
         			appModuleCombo = new JComboBox(new String[] {"lmp"});
@@ -503,25 +513,25 @@ WindowListener, ComponentListener {
         		appModuleCombo = new JComboBox();
         		changeModuleList(GridChem.getSoftware(job.getSoftwareName()));
         	}*/
-            
+
             //appModuleCombo = new JComboBox(getModuleList(job.getSoftwareName()));
             //appModuleCombo.setSelectedIndex(0);
             /*if ((job.getModuleName() != null) && (!job.getModuleName().equals(""))) {
-            	appModuleCombo.setSelectedItem(job.getModuleName());
+                appModuleCombo.setSelectedItem(job.getModuleName());
             } else {
             	appModuleCombo.setSelectedIndex(0);
             }*/
         } else {
             String[] appItems = GridChem.getAvailableApplications();
             appCombo = new JComboBox(appItems);
-            appModuleCombo = new JComboBox(getModuleList(this.job.getSystemName())); 
+            appModuleCombo = new JComboBox(getModuleList(this.scheduling.getResourceHostId()));
         }
         appModuleCombo = new JComboBox();
         appCombo.setPreferredSize(new Dimension(50, 30));
         appModuleCombo.setPreferredSize(new Dimension(50, 30));
-        
-        System.out.println("374:name of HPC System: " + this.job.getSystemName());
-   
+
+        System.out.println("374:name of HPC System: " + this.scheduling.getResourceHostId());
+
         appCombo.addItemListener(new appComboListener());
         appModuleCombo.addItemListener(new appModuleComboListener());
 
@@ -537,7 +547,7 @@ WindowListener, ComponentListener {
         appPane.add(Box.createRigidArea(new Dimension(30, 0)));
         appPane.add(appModuleLabel); // JK
         appPane.add(appModuleCombo); // JK
-        
+
         // Add another title for systems
         JPanel HPCsysPane = new JPanel();
         TitledBorder appPaneTitled1 = BorderFactory.createTitledBorder(
@@ -550,14 +560,14 @@ WindowListener, ComponentListener {
 //        HPCsysPane.add(apphpcBoxPane);
 
         psnLabel = new JLabel("Choose a project:");
-        
 
-    	projCombo = new JComboBox();
-        
+
+        projCombo = new JComboBox();
+
         //populateProjects(hpcList.getSelectedValue().toString());
-        if ((this.job.getAllocationName()!=null) && (!this.job.getAllocationName().equals(""))) {
+        /*if ((this.job.getAllocationName()!=null) && (!this.job.getAllocationName().equals(""))) {
         	projCombo.setSelectedItem(this.job.getAllocationName());
-        }
+        }*/ // remove comment
         projCombo.setEditable(true);
 
         // create queue drop down box
@@ -566,25 +576,26 @@ WindowListener, ComponentListener {
 
         //populateQueues(hpcList.getSelectedValue().toString());
         qCombo.setEditable(true);
-        qCombo.setRenderer(new QueueComboBoxRenderer());
+        //qCombo.setRenderer(new QueueComboBoxRenderer());
 
         // create time wall clock time spinner boxes
         timeLable = new JLabel("Est. walltime (hr:min):");
 
-        int maximum = 2048, maxmint = 59, minimum = 0, initial = 0, step = 1; 
+        int maximum = 2048, maxmint = 59, minimum = 0, initial = 0, step = 1;
 
-        if (this.job != null) {
-        	Calendar timewallCal = this.job.getRequestedCpuTime();
-        	Calendar baseCal = Calendar.getInstance();
+        if (this.scheduling != null) {
+            Calendar timewallCal = Calendar.getInstance();
+            //this.scheduling.getRequestedCpuTime();
+            Calendar baseCal = Calendar.getInstance();
             baseCal.clear();
-            int diffInMinutes = (int)(timewallCal.getTimeInMillis() - baseCal.getTimeInMillis())/1000/60;
+            int diffInMinutes = (int) (timewallCal.getTimeInMillis() - baseCal.getTimeInMillis()) / 1000 / 60;
             int tHours = diffInMinutes / 60;
             int tMins = diffInMinutes % 60;
-            hrnm = new SpinnerNumberModel(tHours, 0, 60, 1);
-            minnm = new SpinnerNumberModel(tMins, 0, 59, 1);
+            hrnm = new SpinnerNumberModel(10, 0, 60, 1);
+            minnm = new SpinnerNumberModel(10, 0, 59, 1);
         } else {
-        	hrnm = new SpinnerNumberModel(0, 0, 60, 1);
-        	initial = 30;
+            hrnm = new SpinnerNumberModel(0, 0, 60, 1);
+            initial = 30;
             minnm = new SpinnerNumberModel(30, 0, 59, 1);
         }
         // hrnm.addChangeListener(tscl);
@@ -615,34 +626,34 @@ WindowListener, ComponentListener {
         timeConstraints.gridx = 2;
         timeConstraints.fill = GridBagConstraints.HORIZONTAL;
         timePanel.add(min, timeConstraints);
-        
+
         projCombo.addActionListener(new ActionListener() {
-        	
-        	public void actionPerformed(ActionEvent e){        		 
-        	  // changeProjectid 
-        	   String selp = getSelectedProj();
-         	   int selectedMachineIndex = hpcList.getSelectedIndex();
-        	   String hpcName = (String) hpcListModel.get(selectedMachineIndex);
-        	   job.setHostName(hpcName);
-        	   ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
-        	   System.out.println("Setting project selection for job for "+hpcName);
-        	   if (!hpcName.equals("Grid Scheduler")) {
+
+            public void actionPerformed(ActionEvent e) {
+                // changeProjectid
+                String selp = getSelectedProj();
+                int selectedMachineIndex = hpcList.getSelectedIndex();
+                String hpcName = (String) hpcListModel.get(selectedMachineIndex);
+                scheduling.setResourceHostId(hpcName);
+                ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
+                System.out.println("Setting project selection for job for " + hpcName);
+                if (!hpcName.equals("Grid Scheduler")) {
         	    	 /*for (String p : hpc.getAllocations()) {
         	             if (p.equals((String) projCombo.getSelectedItem())) {
         	                 selp = p;
         	             }
         	    	 }*/ //remove comment
-        	    	 //String currproj = projCombo.getSelectedItem().toString();
-        	    	 job.setAllocationName(selp); //currproj);
-        	    	 System.out.println("projCombo: The Project for this job is "+selp); //currproj);
-        	   }
-        	}
+                    //String currproj = projCombo.getSelectedItem().toString();
+                    //job.setAllocationName(selp); //currproj); //remove comment
+                    System.out.println("projCombo: The Project for this job is " + selp); //currproj);
+                }
+            }
         });
-        System.out.println("ProjComboaction: The Project for this job is "+job.getAllocationName());
-        
-        
+        //System.out.println("ProjComboaction: The Project for this job is "+job.getAllocationName());
+
+
         qCombo.addActionListener(new ActionListener() {
-        	
+
             public void actionPerformed(ActionEvent e) {
                 BatchQueue q = getSelectedQueue();
                  
@@ -678,10 +689,8 @@ WindowListener, ComponentListener {
                     }
                 }*/// remove comment
             }
-        
- 
-            
-            
+
+
             protected void validateCpuLimit(QueueBean q) {
 
                 if (q != null) {
@@ -699,8 +708,8 @@ WindowListener, ComponentListener {
                                                 + getSelectedQueue()
                                                 + " queue of "
                                                 + hpcList
-                                                        .getSelectedValue()
-                                                        .toString()
+                                                .getSelectedValue()
+                                                .toString()
                                                 + ". The requested\nCPU field will be reset to "
                                                 + "the maximum CPU\ncount of the "
                                                 + getSelectedQueue()
@@ -765,7 +774,7 @@ WindowListener, ComponentListener {
                                         + resolveTimeLimit(qWallLimit)
                                         + " hours\non "
                                         + hpcList.getSelectedValue()
-                                                .toString() + "'s "
+                                        .toString() + "'s "
                                         + getSelectedQueue()
                                         + " queue. Time will be reset"
                                         + "\nto the maximum time limit of the "
@@ -789,7 +798,7 @@ WindowListener, ComponentListener {
                                 + "\nqueue."
                                 + " which is "
                                 + new String(getIntegerHours(qWallLimit) + ":"
-                                        + qWallLimit.get(Calendar.MINUTE)));
+                                + qWallLimit.get(Calendar.MINUTE)));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -813,7 +822,7 @@ WindowListener, ComponentListener {
         // create processor count spinner box
         minimum = 1;
         //maximum = getSelectedQueue().getMaxCpus();
-        maximum=10;
+        maximum = 10;
         initial = 1;
         numProcEdLabel = new JLabel("Number of Processors:");
         numProcnm = new SpinnerNumberModel(initial, minimum, maximum, step);
@@ -830,47 +839,47 @@ WindowListener, ComponentListener {
         //changeNumProc(this.job.getRequestedCpus().intValue());
 
         leftPanelForchoicesBox = new JPanel();
-        
-        namePane.setMaximumSize(new Dimension(350,200));
-        appPane.setMaximumSize(new Dimension(350,200));
+
+        namePane.setMaximumSize(new Dimension(350, 200));
+        appPane.setMaximumSize(new Dimension(350, 200));
         apphpcBoxPane.setMaximumSize(new Dimension(350, 255));
         leftPanelForchoicesBox.setPreferredSize(new Dimension(350, 700));
 //        HPCsysPane.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         leftPanelForchoicesBox.setLayout(new BoxLayout(leftPanelForchoicesBox, BoxLayout.Y_AXIS));
 //        leftPanelForchoicesBox.setBorder(eBorder1);
         leftPanelForchoicesBox.add(namePane);
         leftPanelForchoicesBox.add(appPane);
         leftPanelForchoicesBox.add(apphpcBoxPane);
         leftPanelForchoicesBox.add(reqPane);
-        leftPanelForchoicesBox.add(new Box.Filler(new Dimension(0,0), new Dimension(0,1), new Dimension(0,Short.MAX_VALUE)));
-        
+        leftPanelForchoicesBox.add(new Box.Filler(new Dimension(0, 0), new Dimension(0, 1), new Dimension(0, Short.MAX_VALUE)));
+
         // right panel for inputInfoPanel and buttonBox
         rightPanel = new JPanel();
-        rightPanel.setLayout(new BoxLayout(rightPanel,BoxLayout.Y_AXIS));
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 //        rightPanel.setBorder(eBorder1);
-        
+
 //        GridBagConstraints rightPanelConstraints = new GridBagConstraints();
-        
+
         // inputFilePanel
-        System.out.println("\n(DEBUG) # of inputs: " + this.job.getInputFiles().size());
+        /*System.out.println("\n(DEBUG) # of inputs: " + this.job.getInputFiles().size());
         for(LogicalFileBean lFile: this.job.getInputFiles()) {
             System.out.println("\n(DEBUG) inputFile :"+ lFile.getLocalPath());
             System.out.println("\n(DEBUG) inputLength :\n"+ new File(lFile.getLocalPath()).length());
-        }
-        
+        }*/ //remove comment
+
         inputFilePanel = new InputFilePanel(this);
-        
+
         // We do not add defaut input files to inputFilePanel if isUpdating is true (editing a job) 
         if (this.isUpdating == false) {
-        	inputFilePanel.addMultipleFileInput(FileUtility.getDefaultInputFiles(this.job.getSoftwareName()));
+            //	inputFilePanel.addMultipleFileInput(FileUtility.getDefaultInputFiles(this.job.getSoftwareName())); remove comment
         }
-        
-        inputFilePanel.setMinimumSize(new Dimension(250,700));
+
+        inputFilePanel.setMinimumSize(new Dimension(250, 700));
         TitledBorder inputInfoTitled = BorderFactory.createTitledBorder(
                 leBorder, "Input File Information", TitledBorder.LEFT,
-                TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD,14));
-        inputFilePanel.setBorder(BorderFactory.createCompoundBorder(inputInfoTitled, 
+                TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD, 14));
+        inputFilePanel.setBorder(BorderFactory.createCompoundBorder(inputInfoTitled,
                 BorderFactory.createEmptyBorder(5, 0, 0, 0)));
 
         // buttonBox
@@ -886,15 +895,15 @@ WindowListener, ComponentListener {
         Dimension maxSize = new Dimension(Short.MAX_VALUE, 0);
         buttonBox = new JPanel();
 //        buttonBox.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 10));
-        buttonBox.setLayout(new BoxLayout(buttonBox,BoxLayout.X_AXIS));
+        buttonBox.setLayout(new BoxLayout(buttonBox, BoxLayout.X_AXIS));
         buttonBox.add(new Box.Filler(minSize, prefSize, maxSize));
         buttonBox.add(edbumolButton);
         buttonBox.add(OKButton);
         buttonBox.add(CancelButton);
-        
+
         rightPanel.add(inputFilePanel);
         rightPanel.add(buttonBox);
-        
+
         // layout with gridbag --- too much space surrounding req pane when readjust
         setLayout(new GridBagLayout());
 //        
@@ -908,15 +917,15 @@ WindowListener, ComponentListener {
         constraint.fill = GridBagConstraints.BOTH;
         constraint.weightx = 1.0;
         constraint.weighty = 1.0;
-        
+
         // layout with boxlayout
         JPanel layoutPanel = new JPanel();
-        layoutPanel.setLayout(new BoxLayout(layoutPanel,BoxLayout.X_AXIS));
+        layoutPanel.setLayout(new BoxLayout(layoutPanel, BoxLayout.X_AXIS));
         layoutPanel.add(leftPanelForchoicesBox);
         layoutPanel.add(rightPanel);
-        layoutPanel.setMinimumSize(new Dimension(750,500));
-        layoutPanel.setPreferredSize(new Dimension(750,500));
-        this.add(layoutPanel,constraint);
+        layoutPanel.setMinimumSize(new Dimension(750, 500));
+        layoutPanel.setPreferredSize(new Dimension(750, 500));
+        this.add(layoutPanel, constraint);
 //      
         // Add all the action listeners here
         edbumolButton.addActionListener(this);
@@ -936,7 +945,7 @@ WindowListener, ComponentListener {
     }
 
 
-	private void layoutRequirementsPane() {
+    private void layoutRequirementsPane() {
 
         Border eBorder2 = BorderFactory.createEmptyBorder(5, 10, 5, 10);
         Border leBorder = BorderFactory
@@ -957,15 +966,15 @@ WindowListener, ComponentListener {
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
         gbcons.gridx = 0;
         rpgbl.setConstraints(psnLabel, gbcons);
-        if (Settings.userType.equals(AccessType.EXTERNAL)){
-        reqPane.add(psnLabel);
+        if (Settings.userType.equals(AccessType.EXTERNAL)) {
+            reqPane.add(psnLabel);
         }
         gbcons.gridwidth = GridBagConstraints.REMAINDER;
         gbcons.gridx = 1;
         rpgbl.setConstraints(projCombo, gbcons);
         // If the user authenticated is a GridChem Community User then do not add projCombo
-        if (Settings.userType.equals(AccessType.EXTERNAL)){
-        reqPane.add(projCombo);
+        if (Settings.userType.equals(AccessType.EXTERNAL)) {
+            reqPane.add(projCombo);
         }
         gbcons.weightx = 1.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
@@ -992,7 +1001,7 @@ WindowListener, ComponentListener {
             numProcEdLabel
                     .setText("Use %NprocShared(SMP)/%NProcLinda(Clusters) in the G09 input");
             numProcSpin.setValue(4);// This is a dummy value and will be reset
-                                    // in getnumProc method Sudhakar
+            // in getnumProc method Sudhakar
             memSizeLabel.setText("Use %mem in the G09 input");
             memSizeTextField.setText("1000");
             gbcons.weightx = 1.0;
@@ -1014,7 +1023,7 @@ WindowListener, ComponentListener {
             rpgbl.setConstraints(numProcSpin, gbcons);
             reqPane.add(numProcSpin);
         }
-        
+
         gbcons.weightx = 0.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
         gbcons.gridx = 0;
@@ -1039,7 +1048,7 @@ WindowListener, ComponentListener {
             numProcEdLabel
                     .setText("Use %NprocShared(SMP)/%NProcLinda(Clusters) in the G09 input");
             numProcSpin.setValue(4);// This is a dummy value and will be reset
-                                    // in getnumProc method Sudhakar
+            // in getnumProc method Sudhakar
             memSizeLabel.setText("Use %mem in the G09 input");
             memSizeTextField.setText("1000");
             gbcons.gridwidth = GridBagConstraints.REMAINDER;
@@ -1087,8 +1096,8 @@ WindowListener, ComponentListener {
         return queues.toArray(a);
     }
 
-    private String[] getModuleList(String appName){
-        
+    private String[] getModuleList(String appName) {
+
 //        HashSet<String> moduleNames = new HashSet<String>();
         String[] a = {};
 //        
@@ -1099,18 +1108,18 @@ WindowListener, ComponentListener {
 //        System.out.println("\n (DEBUG) module list "+ moduleNames);
 //        
 //        return moduleNames.toArray(a);
-        
-        
+
+
         return GridChem.getSoftware(appName).getModules().toArray(a);
     }
 
-    
+
     private String[] getMachineProjects() {
         ArrayList<String> projects = new ArrayList<String>();
         for (ComputeBean hpc : GridChem.systems) {
-        //for (ComputeBean hpc : GridChem.getSoftwareMachineList(application)){
-        
-        	// TODO: need to get the remote allocation names available to the user on the remote machine. 
+            //for (ComputeBean hpc : GridChem.getSoftwareMachineList(application)){
+
+            // TODO: need to get the remote allocation names available to the user on the remote machine.
             for (String allocation : hpc.getAllocations()) {
                 if (projects.indexOf(allocation) == -1) {
                     projects.add(allocation);
@@ -1126,15 +1135,15 @@ WindowListener, ComponentListener {
     // Amr
     // Now change the machines according to which ones have the application.
     public void populateMachineList(String application) {
-
+        System.out.println("Applic "+application);
 //        ArrayList appMachineList = new ArrayList();
         if (Settings.WEBSERVICE) {
             hpcListModel.removeAllElements();
-            for (ComputeResourceDescription hpc: GridChem.getSoftwareMachineList(application)) { //remove comment
-                hpcListModel.addElement(hpc.getHostName());
+            for (ComputeResourceDescription hpc : GridChem.getSoftwareMachineList(application)) { //remove comment
+                hpcListModel.addElement(hpc.getComputeResourceId());
             }
             //hpcListModel.addElement(SCHEDULER);
-            System.out.println("EJP:1142:Webservice: MachineList for "+application+" is"+hpcListModel.toString());
+            System.out.println("EJP:1142:Webservice: MachineList for " + application + " is" + hpcListModel.toString());
         } else {
 //            ArrayList machines = (ArrayList) GridChem.resourceHash
 //                    .get("machines");
@@ -1162,10 +1171,9 @@ WindowListener, ComponentListener {
     /**
      * Populate project dropdown box with the projects corresponding to the
      * machine currently visible in the machine dropdown box
-     * 
-     * @param machine
-     *            Name of machine whose project info will be used to populate
-     *            the project dropdown box.
+     *
+     * @param machine Name of machine whose project info will be used to populate
+     *                the project dropdown box.
      */
     public void populateProjects(String machine) {
         projCombo.removeAllItems();
@@ -1175,20 +1183,19 @@ WindowListener, ComponentListener {
                 projCombo.addItem(UNSPECIFIED);
 
             } else {
-            	if (GridChem.accessType.equals(AccessType.COMMUNITY)) {
-            		ComputeResourceDescription bean = GridChem.getMachineByName(machine);
+                if (GridChem.accessType.equals(AccessType.COMMUNITY)) {
+                    ComputeResourceDescription bean = GridChem.getMachineByName(machine);
             		/*for (String allocation: bean.getAllocations()) {
             			projCombo.addItem(allocation);
             			System.out.println("WEBSERVICE:System Specified project "+allocation+" added to list projCombo");
             		}*/ // remove comment
-            		System.out.println("EditJobPanel:WEBSERVICE projects");
-            		return;
-            	}
-            	else {
-            		projCombo.addItem("default");
-            		projCombo.setSelectedItem("default");
-            		return;
-            	}
+                    System.out.println("EditJobPanel:WEBSERVICE projects");
+                    return;
+                } else {
+                    projCombo.addItem("default");
+                    projCombo.setSelectedItem("default");
+                    return;
+                }
             }
         } else {
             ArrayList items = GridChem.getMachineProjectsList(machine);
@@ -1203,28 +1210,23 @@ WindowListener, ComponentListener {
     /**
      * Populate project dropdown box with the projects corresponding to the
      * machine currently visible in the machine dropdown box
-     * 
-     * @param machine
-     *            Name of machine whose queue info will be used to populate the
-     *            queue dropdown box.
+     *
+     * @param machine Name of machine whose queue info will be used to populate the
+     *                queue dropdown box.
      */
     private void populateQueues(String machine) {
         qCombo.removeAllItems();
 
         if (Settings.WEBSERVICE) {
-            if (machine.equals(SCHEDULER)) {
-                qCombo.addItem(UNSPECIFIED);
-            } else {
-            	ComputeResourceDescription bean = GridChem.getMachineByName(machine);
-                if(bean.isSetBatchQueues()) {
-                    for (BatchQueue queue : bean.getBatchQueues()) {
-                        qCombo.addItem(queue.getQueueName());
-                    /*if (queue.isDefaultQueue()) {
-                    	qCombo.setSelectedItem(queue.getName());
-                    }*/ //remove comment
-                    }
+
+            ComputeResourceDescription bean = GridChem.getMachineByName(machine);
+            qCombo.addItem(DEFAULT_QUEUE);
+            if (bean.isSetBatchQueues()) {
+                for (BatchQueue queue : bean.getBatchQueues()) {
+                    qCombo.addItem(queue.getQueueName());
                 }
             }
+
         } else {
             ArrayList items = GridChem.getMachineQueuesList(machine);
 
@@ -1261,7 +1263,8 @@ WindowListener, ComponentListener {
 
     }
 
-    /***************************************************************************
+    /**
+     * ************************************************************************
      * The actionPerformed method in this private inner class is called when the
      * user presses the up/down button.
      */
@@ -1315,9 +1318,9 @@ WindowListener, ComponentListener {
             doMakeDefaultJob();
 
         } else if (e.getActionCommand() == "Submit") {
-        	preferences.put("last_module", getModuleName());
-        	preferences.put("last_app", getAppPackageName());
-        	preferences.put("last_machine", getSubmitMachine());
+            preferences.put("last_module", getModuleName());
+            preferences.put("last_app", getAppPackageName());
+            preferences.put("last_machine", getSubmitMachine());
             boolean ok = false;
             try {
                 ok = verifyInput();
@@ -1327,19 +1330,19 @@ WindowListener, ComponentListener {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        
-            if(ok){
+
+            if (ok) {
                 if (validTime) {
 
-                	if (isSubmittingScript == false) {
-                		if (isUpdating == false) {
-                			doAddJobToQueue();
-                		} else {
-                			doUpdateJobInQueue();
-                		}
-                	} else {
-                		doAddJobsToQueue();
-                	}
+                    if (isSubmittingScript == false) {
+                        if (isUpdating == false) {
+                            doAddJobToQueue();
+                        } else {
+                            doUpdateJobInQueue();
+                        }
+                    } else {
+                        doAddJobsToQueue();
+                    }
 
                     doCancel();
                 }
@@ -1349,16 +1352,16 @@ WindowListener, ComponentListener {
 
             doCancel();
 //            System.out.println("Size:" + leftPanelForchoicesBox.getWidth() + ", " + leftPanelForchoicesBox.getHeight());
-        }  else if (e.getSource() == this.inputFilePanel.scriptInput) {
-        	
-        	if (this.inputFilePanel.scriptInput.isSelected()) {
-        		disableReqPane();
-        		isSubmittingScript = true;
-        	} else {
-        		enableReqPane();
-        		isSubmittingScript = false;
-        	}
-        	
+        } else if (e.getSource() == this.inputFilePanel.scriptInput) {
+
+            if (this.inputFilePanel.scriptInput.isSelected()) {
+                disableReqPane();
+                isSubmittingScript = true;
+            } else {
+                enableReqPane();
+                isSubmittingScript = false;
+            }
+
         } else {
 
             JOptionPane.showMessageDialog(null, "huh?", " should not happen",
@@ -1367,25 +1370,25 @@ WindowListener, ComponentListener {
         }
 
     }
-    
+
     private void enableReqPane() {
-    	
-    	this.projCombo.setEnabled(true);
-    	this.qCombo.setEnabled(true);
-    	this.hr.setEnabled(true);
-    	this.min.setEnabled(true);
-    	this.numProcSpin.setEnabled(true);
-    	this.memSizeTextField.setEnabled(true);
+
+        this.projCombo.setEnabled(true);
+        this.qCombo.setEnabled(true);
+        this.hr.setEnabled(true);
+        this.min.setEnabled(true);
+        this.numProcSpin.setEnabled(true);
+        this.memSizeTextField.setEnabled(true);
     }
-    
+
     private void disableReqPane() {
-    
-    	this.projCombo.setEnabled(false);
-    	this.qCombo.setEnabled(false);
-    	this.hr.setEnabled(false);
-    	this.min.setEnabled(false);
-    	this.numProcSpin.setEnabled(false);
-    	this.memSizeTextField.setEnabled(false);
+
+        this.projCombo.setEnabled(false);
+        this.qCombo.setEnabled(false);
+        this.hr.setEnabled(false);
+        this.min.setEnabled(false);
+        this.numProcSpin.setEnabled(false);
+        this.memSizeTextField.setEnabled(false);
     }
 
     /**
@@ -1395,11 +1398,10 @@ WindowListener, ComponentListener {
      * StringBuffer was added by S. Brozell. It is not clear whether we have
      * balanced the tradeoffs optimally. For example, a FileInputStream with our
      * own buffering may be better.
-     * 
+     * <p>
      * More work related to exception handling and preferences is needed.
-     * 
-     * @param file
-     *            read from this File.
+     *
+     * @param file read from this File.
      * @return a String with the file contents.
      */
     // temporarily commenting method below as it was adding square characters at
@@ -1491,7 +1493,7 @@ WindowListener, ComponentListener {
 //    }
 
     public void doMakeDefaultJob() {
-        
+
         String app = appName(getAppPackageName(), getModuleName());
 
         createAndShowSampleJob(app);
@@ -1500,19 +1502,20 @@ WindowListener, ComponentListener {
 
     public void doAddJobToQueue() {
         
-        this.job.setName(getJobName().replaceAll("\\s", ""));
+        /*this.job.setName(getJobName().replaceAll("\\s", ""));
         this.job.setExperimentName(getResProj());
         this.job.setAllocationName(getProject());
         this.job.setSystemName(
                 (getSubmitMachine().equals(SCHEDULER))?null:getSubmitMachine());
         
         this.job.setSoftwareName(getAppPackageName());
-        
+        *///remove comment
         /* ************************************************ */
-        this.job.setModuleName(getModuleName());
-        this.job.setUsedMemory(Long.parseLong(memSizeTextField.getText()));
+        /*this.job.setModuleName(getModuleName());
+        this.job.setUsedMemory(Long.parseLong(memSizeTextField.getText()));*/ //remove comment
         /* ************************************************ */
-        
+
+        /*
         this.job.setProjectName(GridChem.project.getName());
         this.job.setUserId(GridChem.user.getId());
         this.job.setQueueName(getQueueName());
@@ -1558,25 +1561,25 @@ WindowListener, ComponentListener {
             JOptionPane.showMessageDialog(null, e.getMessage(),
                     "Queue Wall Time Error", JOptionPane.OK_OPTION);
             e.printStackTrace();
-        }
+        }*/ //remove comment
 
     }
-    
+
     public void doAddJobsToQueue() {
-    	List<File> inputs = getInputFiles();
-    	
-    	if (inputs.size() == 0) {
-    		return;
-    	}
-    	
-    	JobScriptParser parser = new JobScriptParser(this, inputs.get(0).getAbsolutePath());
-    	parser.parse();
-    	
-    	List<JobBean> jobList = parser.getJobList();
-    	
-    	for (JobBean localJob : jobList) {
-    		try {
-                
+        List<File> inputs = getInputFiles();
+
+        if (inputs.size() == 0) {
+            return;
+        }
+
+        JobScriptParser parser = new JobScriptParser(this, inputs.get(0).getAbsolutePath());
+        parser.parse();
+
+        List<JobBean> jobList = parser.getJobList();
+
+        for (JobBean localJob : jobList) {
+            try {
+
                 System.out.println(localJob.toString());
 
                 SubmitJobsWindow.addJob(localJob);
@@ -1585,20 +1588,20 @@ WindowListener, ComponentListener {
                 e.printStackTrace();
             }
 
-    	}
+        }
     }
 
     public void doCancel() {
-        
+
         SubmitJobsWindow.getInstance();
-        
+
         this.dispose();
         // EditJobPanel.frame.setVisible(false);
         // editSSHJobPanel.frame.setVisible(false);
     }
 
     public void doUpdateJobInQueue() {
-        this.job.setId(null);
+        /*this.job.setId(null);
         this.job.setName(getJobName());
         this.job.setExperimentName(getResProj());
         this.job.setSystemName(
@@ -1653,7 +1656,7 @@ WindowListener, ComponentListener {
         // SubmitJobsWindow.si.delButton.setEnabled(true);
         // SubmitJobsWindow.si.newJButton.setEnabled(true);
         // SubmitJobsWindow.si.submButton.setEnabled(true);
-        // SubmitJobsWindow.si.suballButton.setEnabled(true);
+        // SubmitJobsWindow.si.suballButton.setEnabled(true);*/ //remove comment
     }
 
     public void doCallNanocad() {
@@ -1661,8 +1664,8 @@ WindowListener, ComponentListener {
         String setsfile = ".settings";
         boolean append = false;
         File sets = new File(Settings.defaultDirStr + Settings.fileSeparator
-        // File sets = new File(Env.getApplicationDataDir() +
-        // Settings.fileSeparator
+                // File sets = new File(Env.getApplicationDataDir() +
+                // Settings.fileSeparator
                 + setsfile);
         try {
             FileWriter fw = new FileWriter(sets, append);
@@ -1712,10 +1715,10 @@ WindowListener, ComponentListener {
         File f = new File(Env.getApplicationDataDir() + Settings.fileSeparator
                 + "tmp.txt");
         if (f.exists()) {
-           
+
             this.changeAppPackage(newNanocad.exportedApplication);
             this.changeModule(newNanocad.exportedApplication);
-            
+
             this.populateMachineList(newNanocad.exportedApplication);
             this.populateProjects((String) hpcListModel.getElementAt(0));
             numProcMethod();
@@ -1724,7 +1727,7 @@ WindowListener, ComponentListener {
             newInputs.add(f);
             changeInputFiles(newInputs);
 
-           
+
         }
 
         nanWin.dispose();
@@ -1764,7 +1767,7 @@ WindowListener, ComponentListener {
         if (f.exists()) {
             this.changeAppPackage(newNanocad.exportedApplication);
             this.changeModule(newNanocad.exportedApplication);
-            
+
             this.populateMachineList(newNanocad.exportedApplication);
             this.populateProjects((String) hpcListModel.getElementAt(0));
 
@@ -1783,9 +1786,9 @@ WindowListener, ComponentListener {
         }
 
         JOptionPane.showMessageDialog(null, "WARNING: The input "
-                + "appearing here is taken from a template.\n"
-                + "The molecule information is correct, but "
-                + "make sure to edit\nthe other parts of the " + "text.",
+                        + "appearing here is taken from a template.\n"
+                        + "The molecule information is correct, but "
+                        + "make sure to edit\nthe other parts of the " + "text.",
                 "GridChem: Job Editor", JOptionPane.WARNING_MESSAGE);
     }
 
@@ -1809,12 +1812,12 @@ WindowListener, ComponentListener {
 
     private String getProject() {
         //return (String) this.projCombo.getSelectedItem();
-    	return (String) this.projCombo.getEditor().getItem();
+        return (String) this.projCombo.getEditor().getItem();
     }
 
     private String getSubmitMachine() {
 
-         return (String) this.hpcList.getSelectedValue();
+        return (String) this.hpcList.getSelectedValue();
 //        int[] indices = hpcList.getSelectedIndex()
 //        int N = indices.length;
 //        String[] apphpc = new String[N];
@@ -1854,12 +1857,12 @@ WindowListener, ComponentListener {
 //        time = time + temp;
 //        return time;
 //    }
-    
+
     private Calendar getCalendarTime() {
         Calendar cal = Calendar.getInstance();
         cal.clear();
-        cal.add(Calendar.MINUTE, ((Integer)hrnm.getValue()).intValue());
-        cal.add(Calendar.HOUR, ((Integer)hrnm.getValue()).intValue());
+        cal.add(Calendar.MINUTE, ((Integer) hrnm.getValue()).intValue());
+        cal.add(Calendar.HOUR, ((Integer) hrnm.getValue()).intValue());
         return cal;
     }
 
@@ -1924,44 +1927,46 @@ WindowListener, ComponentListener {
         return np;
     }
 
-    
-    /** Get input files from embedded input file panel.
+
+    /**
+     * Get input files from embedded input file panel.
+     *
      * @return
      */
     private ArrayList<File> getInputFiles() {
         // return this.inputText.getText();
         return this.inputFilePanel.getInputFiles();
     }
-    
+
     private String getInputText(File f) {
         String inText = "";
-        
+
         try {
             FileInputStream fis = new FileInputStream(f);
-        
+
             byte[] bin = new byte[512];
             int size = 0;
-            
-            while((size = fis.read(bin)) > -1) {
+
+            while ((size = fis.read(bin)) > -1) {
                 inText += bin.toString();
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         return inText;
-        
+
     }
-    
-    protected String getModuleName(){
+
+    protected String getModuleName() {
 
         String name = (String) this.appModuleCombo.getSelectedItem();
-        System.out.println("Getting module name "+name);
-        
+        System.out.println("Getting module name " + name);
+
         return name;
     }
-    
-    
+
+
     // methods to change the fields
 
     private void changeJobNameField(String newname) {
@@ -1976,7 +1981,7 @@ WindowListener, ComponentListener {
 
     private void changeProject(String p) {
         projCombo.setSelectedItem(p);
-        System.out.println("Getting account name "+p);
+        System.out.println("Getting account name " + p);
     }
 
     private void changeMachine(String m) {
@@ -1994,54 +1999,55 @@ WindowListener, ComponentListener {
         hpcList.setSelectedIndex(index);
     }
 
-    private void changeProjectPSN(String p){
-    	projCombo.setSelectedItem(p);
+    private void changeProjectPSN(String p) {
+        projCombo.setSelectedItem(p);
     }
+
     private void changeQueue(String q) {
         qCombo.setSelectedItem(q);
     }
 
 
     private void changeModuleList(SoftwareBean software) {
-        
+
         appModuleCombo.removeAllItems();
-        
+
 //        HashSet<String> set = new HashSet<String>(APP_MODULE_HASHTABLE.get((Object) appPackageName));
-    
+
         if (software.getModules().isEmpty()) {
-        	appModuleCombo.addItem(software.getAcronym().toLowerCase());
+            appModuleCombo.addItem(software.getAcronym().toLowerCase());
         } else {
-        	
-        	if (software.getName().equals("Lammps")) {
-         		if (dsLmpUserIDSet.contains(GridChem.user.getUserName())) {
-        			for(String module: software.getModules()){
-            			appModuleCombo.addItem(module);
-            		}
-        		} else {        			
-        			appModuleCombo.addItem("lmp");
-        		}
-        	} else {
-        		for(String module: software.getModules()){
-        			appModuleCombo.addItem(module);
-        		}
-        	}
+
+            if (software.getName().equals("Lammps")) {
+                if (dsLmpUserIDSet.contains(GridChem.user.getUserName())) {
+                    for (String module : software.getModules()) {
+                        appModuleCombo.addItem(module);
+                    }
+                } else {
+                    appModuleCombo.addItem("lmp");
+                }
+            } else {
+                for (String module : software.getModules()) {
+                    appModuleCombo.addItem(module);
+                }
+            }
         }
-        
+
         appModuleCombo.setSelectedIndex(0);
-    
+
     }
 
     public void changeAppPackage(String system) {
         // not sure how this should change since a change in system does not trigger a 
-    	// change in software, but rather a change in software triggers a change in
-    	// systems.  My guess is that there is a relationship between the module and
-    	// the compute resource, which would mean that there is a joint relationship
-    	// between module, software, and resource.  If so, then we need to refresh
-    	// the entire module combo box list ever time a resource is changed, and we
-    	// need to change the database schema to reflect this association.
-    	
-    	// as it stands now, I'm disregarding this call since all it will do is 
-    	// selecte the same app and module every time.
+        // change in software, but rather a change in software triggers a change in
+        // systems.  My guess is that there is a relationship between the module and
+        // the compute resource, which would mean that there is a joint relationship
+        // between module, software, and resource.  If so, then we need to refresh
+        // the entire module combo box list ever time a resource is changed, and we
+        // need to change the database schema to reflect this association.
+
+        // as it stands now, I'm disregarding this call since all it will do is
+        // selecte the same app and module every time.
 //    	SoftwareBean software = GridChem.getSoftware(appName);
 //        
 //        System.out.println("changing application name :" + software.getName());
@@ -2051,20 +2057,20 @@ WindowListener, ComponentListener {
         // numProcMethod();
     }
 
-//   only for compatibility
+    //   only for compatibility
     public void changeApp(String appName) {
         changeAppPackage(appName);
     }
-    
+
     private void changeModule(String softwareName) {
 
         String moduleName = GridChem.getSoftware(softwareName).getModules().get(0);
-        System.out.println("changing module "+ moduleName);
+        System.out.println("changing module " + moduleName);
 
         appModuleCombo.setSelectedItem(moduleName);
     }
-    
-    
+
+
     private void changeNumProc(int n) {
         // numProcSpin.setSelectedItem(n);
         numProcnm.setValue(new Integer(n));
@@ -2073,38 +2079,37 @@ WindowListener, ComponentListener {
     public void changeInputFiles(ArrayList<File> newFiles) {
 
 //        this.job.setInputFiles(newFiles);
-        updateInputInfoPanel(this.job,newFiles);
+        updateInputInfoPanel(this.experiment, newFiles);
 
     }
 
-    public void updateInputInfoPanel(JobBean job,ArrayList<File> files) {
-    	
+    public void updateInputInfoPanel(Experiment exp, ArrayList<File> files) {
+
         if (!this.inputFilePanel.isEmpty()) {
             int keepFiles = JOptionPane.showConfirmDialog(this, "Remove the existing input files?", "", JOptionPane.YES_NO_OPTION);
             if (keepFiles == JOptionPane.OK_OPTION) {
-    //            this.rightPanel.remove(inputFilePanel);
-    //    
-    //            Border leBorder = BorderFactory
-    //                    .createEtchedBorder(EtchedBorder.LOWERED);
-    //            TitledBorder inputInfoTitled = BorderFactory.createTitledBorder(
-    //                    leBorder, "Input File Information", TitledBorder.LEFT,
-    //                    TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD,14));
-    //    
-    //            inputFilePanel = new InputFilePanel(this);
+                //            this.rightPanel.remove(inputFilePanel);
+                //
+                //            Border leBorder = BorderFactory
+                //                    .createEtchedBorder(EtchedBorder.LOWERED);
+                //            TitledBorder inputInfoTitled = BorderFactory.createTitledBorder(
+                //                    leBorder, "Input File Information", TitledBorder.LEFT,
+                //                    TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD,14));
+                //
+                //            inputFilePanel = new InputFilePanel(this);
                 inputFilePanel.clearFileInput();
                 inputFilePanel.addMultipleFileInput(files);
-                
-                System.out.println("(DEBUG)\nnow updateInputInfoPanel : # of inputs = "+ inputFilePanel.getInputFiles().size());
-                
-    //            inputFilePanel.setBorder(BorderFactory.createCompoundBorder(
-    //                    inputInfoTitled, BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+                System.out.println("(DEBUG)\nnow updateInputInfoPanel : # of inputs = " + inputFilePanel.getInputFiles().size());
+
+                //            inputFilePanel.setBorder(BorderFactory.createCompoundBorder(
+                //                    inputInfoTitled, BorderFactory.createEmptyBorder(5, 5, 5, 5)));
             }
+        } else {
+            inputFilePanel.addMultipleFileInput(files);
+            System.out.println("(DEBUG)\nnow updateInputInfoPanel : # of inputs = " + inputFilePanel.getInputFiles().size());
         }
-        else {
-        	inputFilePanel.addMultipleFileInput(files);
-            System.out.println("(DEBUG)\nnow updateInputInfoPanel : # of inputs = "+ inputFilePanel.getInputFiles().size());
-        }  
-    	
+
 
 //        GridBagConstraints rightPanelConstraints = new GridBagConstraints();
 //
@@ -2126,7 +2131,7 @@ WindowListener, ComponentListener {
 
     /**
      * Get rid of all the web characters.
-     * 
+     *
      * @param string
      * @return
      */
@@ -2138,8 +2143,6 @@ WindowListener, ComponentListener {
     /**
      * Create a string representation of the Calendar object in hh:mm format and
      * where the hours field ranges from 0 - 32k
-     * 
-     * 
      */
     private String resolveTimeLimit(Calendar cal) {
 
@@ -2149,21 +2152,20 @@ WindowListener, ComponentListener {
 
         return (days + hours) + ":" + ((minutes == 0) ? "00" : minutes);
     }
-    
+
     private String getSelectedProj() {
-    	String selectedProj = "";
-    	  int selectedMachineIndex = hpcList.getSelectedIndex();
+        String selectedProj = "";
+        int selectedMachineIndex = hpcList.getSelectedIndex();
         String hpcName = (String) hpcListModel.get(selectedMachineIndex);
-    	ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
-    
-    	    System.out.println("EJP:2111: hpc allocations for HPC system "+hpcName+"\n");
-    	    
-    	    if (hpcName.equals("Grid Scheduler")){
-    	    	// skip getting allocation name apriori
-    	    	// temporarily switch it to Cobalt
-    	    	hpcName="Ember";
-    	    }
-    	    else if (hpcName.equals(this.job.getSystemName())) {
+        ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
+
+        System.out.println("EJP:2111: hpc allocations for HPC system " + hpcName + "\n");
+
+        if (hpcName.equals("Grid Scheduler")) {
+            // skip getting allocation name apriori
+            // temporarily switch it to Cobalt
+            hpcName = "Ember";
+        } else if (hpcName.equals(this.scheduling.getResourceHostId())) {
     	      /*System.out.println(" are "+hpc.getAllocations()+"\n");
     	    
     	      for (String p : hpc.getAllocations()) {
@@ -2171,15 +2173,15 @@ WindowListener, ComponentListener {
                    selectedProj = p;
                }
     	      }*/ //remove comment
-    	    }
-    	//
-    	    // Forcing project
-    	      selectedProj="dck";
-    	System.out.println(" getSelectedProj: selectedProj is "+selectedProj);
-    	return selectedProj;
+        }
+        //
+        // Forcing project
+        selectedProj = "dck";
+        System.out.println(" getSelectedProj: selectedProj is " + selectedProj);
+        return selectedProj;
     }
-    
-    
+
+
     private BatchQueue getSelectedQueue() {
 
         BatchQueue selectedQueue = null;
@@ -2188,29 +2190,17 @@ WindowListener, ComponentListener {
 
         String hpcName = (String) hpcListModel.get(selectedMachineIndex);
 
-        if (hpcName.equals(SCHEDULER)) {
 
-        	selectedQueue = new BatchQueue();
-        	selectedQueue.setQueueName(UNSPECIFIED);
-        	//selectedQueue.setDefaultQueue(true);
-            Calendar cal = Calendar.getInstance();
-            cal.clear();
-            cal.add(Calendar.DAY_OF_YEAR, 30);
-            //selectedQueue.setMaxRunTime(cal);
-            //selectedQueue.setMaxWallClockTime(cal);
-            selectedQueue.setMaxProcessors(1024);
-            selectedQueue.setMaxNodes(2048);
+        ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
 
-        } else {
-
-            ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
-
+        if (hpc.isSetBatchQueues()) {
             for (BatchQueue q : hpc.getBatchQueues()) {
                 if (q.getQueueName().equals((String) qCombo.getSelectedItem())) {
                     selectedQueue = q;
                 }
             }
         }
+
 
         return selectedQueue;
     }
@@ -2239,23 +2229,16 @@ WindowListener, ComponentListener {
                 return;
             }
             isLoading = true;
-            changeModuleList(GridChem.getSoftware((String) (e.getItem())));
+            //changeModuleList(GridChem.getSoftware((String) (e.getItem()))); //remove comment
             populateMachineList((String) (e.getItem()));
-            System.out.println("(Debug) choosen app package name:"+e.getItem());
-            
-            String app = appName((String)e.getItem(), getModuleName());
+            System.out.println("(Debug) choosen app name:" + e.getItem());
             isLoading = false;
-            
-            //createAndShowSampleJob(app);
             hpcList.setSelectedIndex(0);
-            
-//            printDefaultInputFile(app);
-    
         }
-        
+
         private void printDefaultInputFile(String app) {
             String newInput = "";
-            
+
             if (app.equalsIgnoreCase(Invariants.APP_NAME_GAUSSIAN)) {
                 System.out.println("Trying Gaussian Run");
                 newInput = "%chk=water.chk\n"
@@ -2265,9 +2248,9 @@ WindowListener, ComponentListener {
                         + " \n" + "Gaussian Test Job 00\n"
                         + "Water with archiving\n" + " \n" + "0 1\n" + "O\n"
                         + "H 1 0.96\n" + "H 1 0.96 2 109.471221\n\n";
-                
-                FileUtility.printDefaultInput(app,"gaussian_sample0.inp",newInput);
-                                
+
+                FileUtility.printDefaultInput(app, "gaussian_sample0.inp", newInput);
+
             } else if (app.equalsIgnoreCase(Invariants.APP_NAME_GAMESS)) {
 
                 System.out.println("Trying GAMESS Run");
@@ -2280,9 +2263,9 @@ WindowListener, ComponentListener {
                         + "Methylene...1-A-1 state...RHF/STO-2G\n" + "Cnv  2\n"
                         + " \n" + "C\n" + "H  1 rCH\n" + "H  1 rCH  2 aHCH\n"
                         + " \n" + "rCH=1.09\n" + "aHCH=110.0 \n" + " $END\n\n";
-                
-                FileUtility.printDefaultInput(app,"gamess_sample0.inp",newInput);
-                                
+
+                FileUtility.printDefaultInput(app, "gamess_sample0.inp", newInput);
+
             } else if (app.equalsIgnoreCase("gamess-xml")) {
                 System.out.println("Trying Gamess-XML Run");
                 newInput = "start h2o_scf \n\n" + "geometry units au\n"
@@ -2296,9 +2279,9 @@ WindowListener, ComponentListener {
                         + " system h2o_scf\n" + " equil 0 data 10 step 0.0005\n"
                         + " print step 1 stat 10\n" + " record scoor 1 prop 1\n"
                         + " test 10\n" + "end\n\n" + "task scf dynamics\n\n";
-                
-                FileUtility.printDefaultInput(app,"gamess-XML_sample0.inp",newInput);
-                
+
+                FileUtility.printDefaultInput(app, "gamess-XML_sample0.inp", newInput);
+
             } else if (app.equalsIgnoreCase(Invariants.APP_NAME_QMCPACK)) {
                 System.out.println("Trying QMC Run");
                 newInput = "<?xml version=\"1.0\"?>\n"
@@ -2344,9 +2327,9 @@ WindowListener, ComponentListener {
                         + " <parameter name=\"steps\">200</parameter> \n"
                         + " <parameter name=\"timestep\">1.0e-3</parameter> \n"
                         + " </qmc> \n" + " \n" + "                      \n\n";
-                
-                FileUtility.printDefaultInput(app,"qmcpack_sample0.inp",newInput);
-                
+
+                FileUtility.printDefaultInput(app, "qmcpack_sample0.inp", newInput);
+
             } else if (app.equalsIgnoreCase(Invariants.APP_NAME_NWCHEM)) {
 
                 System.out.println("Trying NWChem Run");
@@ -2361,9 +2344,9 @@ WindowListener, ComponentListener {
                         + " system h2o_scf\n" + " equil 0 data 10 step 0.0005\n"
                         + " print step 1 stat 10\n" + " record scoor 1 prop 1\n"
                         + " test 10\n" + "end\n\n" + "task scf dynamics\n\n";
-                
-                FileUtility.printDefaultInput(app,"nwchem_sample0.inp",newInput);
-                
+
+                FileUtility.printDefaultInput(app, "nwchem_sample0.inp", newInput);
+
             } else if (app.equalsIgnoreCase(Invariants.APP_NAME_MOLPRO)) {
                 System.out.println("Trying Molpro Run");
                 newInput = "***, Allene geometry optimization\n"
@@ -2419,143 +2402,143 @@ WindowListener, ComponentListener {
                         + "title,Results for job allene_opt.test\n"
                         + "title,ERRORS DETECTED. Max error: de=$demax\n"
                         + "endif\n\n";
-                
-                FileUtility.printDefaultInput(app,"molpro_sample0.inp",newInput);
-                
+
+                FileUtility.printDefaultInput(app, "molpro_sample0.inp", newInput);
+
             } else if (app.equalsIgnoreCase(Invariants.APP_NAME_AMBER_SANDER)) {
 
                 System.out.println("Trying Amber Run");
-                  
+
                 newInput = "(Use 1 processor!) Very simple bond minimization with a water molecule\n"
-                + " &cntrl\n"
-                + "  imin = 1, maxcyc=200,\n"
-                + "  ntb=0, cut = 30.0,"
-                + "  ntpr = 5,\n"
-                + "/ \n";
-                
-                FileUtility.printDefaultInput(app,"amber_sample0.inp",newInput);
-                
-                newInput =      "TP3\n"
-                + "     3\n"
-                + "   0.0000000   0.0000000   0.0000000\n"
-                + "   0.9572000   0.0000000   0.0000000\n"
-                + "  -0.2399880   0.9266270   0.0000000\n";
-                FileUtility.printDefaultInput(app,"amber_sample0.inpcrd",newInput);
-                
-                newInput =  "%VERSION  VERSION_STAMP = V0001.000  DATE = 08/25/06  10:38:44\n"
-                + "%FLAG TITLE\n"
-                + "%FORMAT(20a4)\n"
-                + "TP3\n"
-                + "%FLAG POINTERS\n"
-                + "%FORMAT(10I8)\n"
-                + "       3       2       3       0       0       0       0       0       0       0\n"
-                + "       4       1       0       0       0       2       0       0       2       1\n"
-                + "       0       0       0       0       0       0       0       0       3       0\n"
-                + "       0\n"
-                + "%FLAG ATOM_NAME\n"
-                + "%FORMAT(20a4)\n"
-                + "O   H1  H2\n"
-                + "%FLAG CHARGE\n"
-                + "%FORMAT(5E16.8)\n"
-                + " -1.51973982E+01  7.59869910E+00  7.59869910E+00\n"
-                + "%FLAG MASS\n"
-                + "%FORMAT(5E16.8)\n"
-                + "  1.60000000E+01  1.00800000E+00  1.00800000E+00\n"
-                + "%FLAG ATOM_TYPE_INDEX\n"
-                + "%FORMAT(10I8)\n"
-                + "       1       2       2\n"
-                + "%FLAG NUMBER_EXCLUDED_ATOMS\n"
-                + "%FORMAT(10I8)\n"
-                + "       2       1       1\n"
-                + "%FLAG NONBONDED_PARM_INDEX\n"
-                + "%FORMAT(10I8)\n"
-                + "       1      -1      -1       3\n"
-                + "%FLAG RESIDUE_LABEL\n"
-                + "%FORMAT(20a4)\n"
-                + "WAT\n"
-                + "%FLAG RESIDUE_POINTER\n"
-                + "%FORMAT(10I8)\n"
-                + "       1\n"
-                + "%FLAG BOND_FORCE_CONSTANT\n"
-                + "%FORMAT(5E16.8)\n"
-                + "  5.53000000E+02  5.53000000E+02\n"
-                + "%FLAG BOND_EQUIL_VALUE\n"
-                + "%FORMAT(5E16.8)\n"
-                + "  1.51360000E+00  9.57200000E-01\n"
-                + "%FLAG ANGLE_FORCE_CONSTANT\n"
-                + "%FORMAT(5E16.8)\n"
-                + "\n"
-                + "%FLAG ANGLE_EQUIL_VALUE\n"
-                + "%FORMAT(5E16.8)\n"
-                + "\n"
-                + "%FLAG DIHEDRAL_FORCE_CONSTANT\n"
-                + "%FORMAT(5E16.8)\n"
-                + "\n"
-                + "%FLAG DIHEDRAL_PERIODICITY\n"
-                + "%FORMAT(5E16.8)\n"
-                + "\n"
-                + "%FLAG DIHEDRAL_PHASE\n"
-                + "%FORMAT(5E16.8)\n"
-                + "\n"
-                + "%FLAG SOLTY\n"
-                + "%FORMAT(5E16.8)\n"
-                + "  0.00000000E+00  0.00000000E+00\n"
-                + "%FLAG LENNARD_JONES_ACOEF\n"
-                + "%FORMAT(5E16.8)\n"
-                + "  5.81935564E+05  0.00000000E+00  0.00000000E+00\n"
-                + "%FLAG LENNARD_JONES_BCOEF\n"
-                + "%FORMAT(5E16.8)\n"
-                + "  5.94825035E+02  0.00000000E+00  0.00000000E+00\n"
-                + "%FLAG BONDS_INC_HYDROGEN\n"
-                + "%FORMAT(10I8)\n"
-                + "       3       6       1       0       3       2       0       6       2\n"
-                + "%FLAG BONDS_WITHOUT_HYDROGEN\n" + "%FORMAT(10I8)\n"
-                + "\n" + "%FLAG ANGLES_INC_HYDROGEN\n" + "%FORMAT(10I8)\n"
-                + "\n" + "%FLAG ANGLES_WITHOUT_HYDROGEN\n"
-                + "%FORMAT(10I8)\n" + "\n"
-                + "%FLAG DIHEDRALS_INC_HYDROGEN\n" + "%FORMAT(10I8)\n"
-                + "\n" + "%FLAG DIHEDRALS_WITHOUT_HYDROGEN\n"
-                + "%FORMAT(10I8)\n" + "\n" + "%FLAG EXCLUDED_ATOMS_LIST\n"
-                + "%FORMAT(10I8)\n" + "       2       3       3       0\n"
-                + "%FLAG HBOND_ACOEF\n" + "%FORMAT(5E16.8)\n"
-                + "  0.00000000E+00\n" + "%FLAG HBOND_BCOEF\n"
-                + "%FORMAT(5E16.8)\n" + "  0.00000000E+00\n"
-                + "%FLAG HBCUT\n" + "%FORMAT(5E16.8)\n"
-                + "  0.00000000E+00\n" + "%FLAG AMBER_ATOM_TYPE\n"
-                + "%FORMAT(20a4)\n" + "OW  HW  HW\n"
-                + "%FLAG TREE_CHAIN_CLASSIFICATION\n" + "%FORMAT(20a4)\n"
-                + "BLA BLA BLA\n" + "%FLAG JOIN_ARRAY\n"
-                + "%FORMAT(10I8)\n" + "       0       0       0\n"
-                + "%FLAG IROTAT\n" + "%FORMAT(10I8)\n"
-                + "       0       0       0\n" + "%FLAG RADIUS_SET\n"
-                + "%FORMAT(1a80)\n" + "modified Bondi radii (mbondi)\n"
-                + "%FLAG RADII\n" + "%FORMAT(5E16.8)\n"
-                + "  1.50000000E+00  8.00000000E-01  1.20000000E+00\n"
-                + "%FLAG SCREEN\n" + "%FORMAT(5E16.8)\n"
-                + "  8.50000000E-01  8.50000000E-01  8.50000000E-01\n";
-                
-                FileUtility.printDefaultInput(app,"amber_sample0.top",newInput);          
-                
-            }else if (app.equalsIgnoreCase(Invariants.APP_NAME_DMOL3)) {
+                        + " &cntrl\n"
+                        + "  imin = 1, maxcyc=200,\n"
+                        + "  ntb=0, cut = 30.0,"
+                        + "  ntpr = 5,\n"
+                        + "/ \n";
+
+                FileUtility.printDefaultInput(app, "amber_sample0.inp", newInput);
+
+                newInput = "TP3\n"
+                        + "     3\n"
+                        + "   0.0000000   0.0000000   0.0000000\n"
+                        + "   0.9572000   0.0000000   0.0000000\n"
+                        + "  -0.2399880   0.9266270   0.0000000\n";
+                FileUtility.printDefaultInput(app, "amber_sample0.inpcrd", newInput);
+
+                newInput = "%VERSION  VERSION_STAMP = V0001.000  DATE = 08/25/06  10:38:44\n"
+                        + "%FLAG TITLE\n"
+                        + "%FORMAT(20a4)\n"
+                        + "TP3\n"
+                        + "%FLAG POINTERS\n"
+                        + "%FORMAT(10I8)\n"
+                        + "       3       2       3       0       0       0       0       0       0       0\n"
+                        + "       4       1       0       0       0       2       0       0       2       1\n"
+                        + "       0       0       0       0       0       0       0       0       3       0\n"
+                        + "       0\n"
+                        + "%FLAG ATOM_NAME\n"
+                        + "%FORMAT(20a4)\n"
+                        + "O   H1  H2\n"
+                        + "%FLAG CHARGE\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + " -1.51973982E+01  7.59869910E+00  7.59869910E+00\n"
+                        + "%FLAG MASS\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + "  1.60000000E+01  1.00800000E+00  1.00800000E+00\n"
+                        + "%FLAG ATOM_TYPE_INDEX\n"
+                        + "%FORMAT(10I8)\n"
+                        + "       1       2       2\n"
+                        + "%FLAG NUMBER_EXCLUDED_ATOMS\n"
+                        + "%FORMAT(10I8)\n"
+                        + "       2       1       1\n"
+                        + "%FLAG NONBONDED_PARM_INDEX\n"
+                        + "%FORMAT(10I8)\n"
+                        + "       1      -1      -1       3\n"
+                        + "%FLAG RESIDUE_LABEL\n"
+                        + "%FORMAT(20a4)\n"
+                        + "WAT\n"
+                        + "%FLAG RESIDUE_POINTER\n"
+                        + "%FORMAT(10I8)\n"
+                        + "       1\n"
+                        + "%FLAG BOND_FORCE_CONSTANT\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + "  5.53000000E+02  5.53000000E+02\n"
+                        + "%FLAG BOND_EQUIL_VALUE\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + "  1.51360000E+00  9.57200000E-01\n"
+                        + "%FLAG ANGLE_FORCE_CONSTANT\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + "\n"
+                        + "%FLAG ANGLE_EQUIL_VALUE\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + "\n"
+                        + "%FLAG DIHEDRAL_FORCE_CONSTANT\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + "\n"
+                        + "%FLAG DIHEDRAL_PERIODICITY\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + "\n"
+                        + "%FLAG DIHEDRAL_PHASE\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + "\n"
+                        + "%FLAG SOLTY\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + "  0.00000000E+00  0.00000000E+00\n"
+                        + "%FLAG LENNARD_JONES_ACOEF\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + "  5.81935564E+05  0.00000000E+00  0.00000000E+00\n"
+                        + "%FLAG LENNARD_JONES_BCOEF\n"
+                        + "%FORMAT(5E16.8)\n"
+                        + "  5.94825035E+02  0.00000000E+00  0.00000000E+00\n"
+                        + "%FLAG BONDS_INC_HYDROGEN\n"
+                        + "%FORMAT(10I8)\n"
+                        + "       3       6       1       0       3       2       0       6       2\n"
+                        + "%FLAG BONDS_WITHOUT_HYDROGEN\n" + "%FORMAT(10I8)\n"
+                        + "\n" + "%FLAG ANGLES_INC_HYDROGEN\n" + "%FORMAT(10I8)\n"
+                        + "\n" + "%FLAG ANGLES_WITHOUT_HYDROGEN\n"
+                        + "%FORMAT(10I8)\n" + "\n"
+                        + "%FLAG DIHEDRALS_INC_HYDROGEN\n" + "%FORMAT(10I8)\n"
+                        + "\n" + "%FLAG DIHEDRALS_WITHOUT_HYDROGEN\n"
+                        + "%FORMAT(10I8)\n" + "\n" + "%FLAG EXCLUDED_ATOMS_LIST\n"
+                        + "%FORMAT(10I8)\n" + "       2       3       3       0\n"
+                        + "%FLAG HBOND_ACOEF\n" + "%FORMAT(5E16.8)\n"
+                        + "  0.00000000E+00\n" + "%FLAG HBOND_BCOEF\n"
+                        + "%FORMAT(5E16.8)\n" + "  0.00000000E+00\n"
+                        + "%FLAG HBCUT\n" + "%FORMAT(5E16.8)\n"
+                        + "  0.00000000E+00\n" + "%FLAG AMBER_ATOM_TYPE\n"
+                        + "%FORMAT(20a4)\n" + "OW  HW  HW\n"
+                        + "%FLAG TREE_CHAIN_CLASSIFICATION\n" + "%FORMAT(20a4)\n"
+                        + "BLA BLA BLA\n" + "%FLAG JOIN_ARRAY\n"
+                        + "%FORMAT(10I8)\n" + "       0       0       0\n"
+                        + "%FLAG IROTAT\n" + "%FORMAT(10I8)\n"
+                        + "       0       0       0\n" + "%FLAG RADIUS_SET\n"
+                        + "%FORMAT(1a80)\n" + "modified Bondi radii (mbondi)\n"
+                        + "%FLAG RADII\n" + "%FORMAT(5E16.8)\n"
+                        + "  1.50000000E+00  8.00000000E-01  1.20000000E+00\n"
+                        + "%FLAG SCREEN\n" + "%FORMAT(5E16.8)\n"
+                        + "  8.50000000E-01  8.50000000E-01  8.50000000E-01\n";
+
+                FileUtility.printDefaultInput(app, "amber_sample0.top", newInput);
+
+            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_DMOL3)) {
 
                 System.out.println("Now DMOL3 Run");
-                  
+
                 newInput = "Put or load your input text here";
-                FileUtility.printDefaultInput(app,"dmol3.car",newInput);
-                
-                newInput =  "Put or load your input text here"  ;
-                FileUtility.printDefaultInput(app,"dmol3.input",newInput);
-                    
-            }else if (app.equalsIgnoreCase(Invariants.APP_NAME_CASTEP)) {
+                FileUtility.printDefaultInput(app, "dmol3.car", newInput);
+
+                newInput = "Put or load your input text here";
+                FileUtility.printDefaultInput(app, "dmol3.input", newInput);
+
+            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_CASTEP)) {
 
                 System.out.println("Now CASTEP Run");
-                  
+
                 newInput = "Put or load your input text here";
-                FileUtility.printDefaultInput(app,"castep.cell",newInput);
-                
-                newInput =  "Put or load your input text here"  ;
-                FileUtility.printDefaultInput(app,"castep.param",newInput);
-                
+                FileUtility.printDefaultInput(app, "castep.cell", newInput);
+
+                newInput = "Put or load your input text here";
+                FileUtility.printDefaultInput(app, "castep.param", newInput);
+
             } else if (app.equalsIgnoreCase(Invariants.APP_NAME_ADF)) {
 
                 System.out.println("Trying ADF Run");
@@ -2567,79 +2550,80 @@ WindowListener, ComponentListener {
                         + "\n" + "Geometry\n" + "  Optim Deloc\n" + "End\n" + "\n"
                         + "End Input\n";
 
-                FileUtility.printDefaultInput(app,"adf_sample0.inp",newInput);
-                
+                FileUtility.printDefaultInput(app, "adf_sample0.inp", newInput);
+
             } else if (app.equalsIgnoreCase(Invariants.APP_NAME_WIEN2K)) {
 
                 System.out.println("Trying Wien2k Run");
                 newInput = "Not yet";
-                FileUtility.printDefaultInput(app,"wien2k_sample0.inp",newInput);
-                
-            }else if (app.equalsIgnoreCase(Invariants.APP_NAME_ACES3)) {
+                FileUtility.printDefaultInput(app, "wien2k_sample0.inp", newInput);
+
+            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_ACES3)) {
 
                 System.out.println("Trying ACES3 Run");
                 newInput = "O2 \n"
-                    + "O \n"
-                    + "O 1 B1 \n"
-                    + "\n B1 = 1.68420053 \n"
-                    + "\n *ACES2(CALC=CCSD,BASIS=CC-PVTZ,MEMORY=10000000,REF=RHF,SPHERICAL=ON, \n"
-                    + "DIRECT=ON,INTEGRALS=GAMESS, MULT=1, CC_CONV=8, SYMMETRY=OFF) \n"
-                    + "\n\n"
-                    + "*SIP \n"
-                    + "MAXMEM= 2000 \n"
-                    + "COMPANY = 1 1 3 0 \n"
-                    + "IOCOMPANY = 2 1 1 0 \n"
-                    + "SIAL_PROGRAM = scf_rhf_isymm_diis10.sio  \n"
-                    + "SIAL_PROGRAM = lccd_rhf.sio \n" ;
+                        + "O \n"
+                        + "O 1 B1 \n"
+                        + "\n B1 = 1.68420053 \n"
+                        + "\n *ACES2(CALC=CCSD,BASIS=CC-PVTZ,MEMORY=10000000,REF=RHF,SPHERICAL=ON, \n"
+                        + "DIRECT=ON,INTEGRALS=GAMESS, MULT=1, CC_CONV=8, SYMMETRY=OFF) \n"
+                        + "\n\n"
+                        + "*SIP \n"
+                        + "MAXMEM= 2000 \n"
+                        + "COMPANY = 1 1 3 0 \n"
+                        + "IOCOMPANY = 2 1 1 0 \n"
+                        + "SIAL_PROGRAM = scf_rhf_isymm_diis10.sio  \n"
+                        + "SIAL_PROGRAM = lccd_rhf.sio \n";
 
-                FileUtility.printDefaultInput(app,"aces3_ZMAT",newInput);;
-                
-            }else if (app.equalsIgnoreCase(Invariants.APP_NAME_ADF_QUILD)) {
+                FileUtility.printDefaultInput(app, "aces3_ZMAT", newInput);
+                ;
+
+            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_ADF_QUILD)) {
 
                 System.out.println("Trying ADF_Quild Run");
                 newInput = "title Geometry optimization \n"
-                    + "EPRINT \n"
-                    + "  SFO  NOEIG  NOOVL \n"
-                    + "END\n"
-                    + "XC \n"
-                    + " GGA BLYP \n"
-                    + "END\n"
-                    + "ATOMS\n"
-                    + "O   0.000000   0.000000    0.000000\n"
-                    + "C   0.000000   0.000000    0.000000\n"
-                    + "END\n"
-                    + "BASIS\n"
-                    + "  type DZ\n" 
-                    + "  core NONE\n" 
-                    + "END\n"
-                    + "GEOMETRY\n"
-                    + "END\n"
-                    + "SCF\n"
-                    + " converge  1.0e-5  1.03-5\n"
-                    + " diis ok=0.01\n"
-                    + "END\n"
-                    + "QUILD\n"
-                    + "  cvg_grid 1.0e-4\n"
-                    + "  numgrid 1\n"
-                    + "  SMETAGGA B3LYP(VWN5)\n"
-                    + "END\n"
-                    + "METAGGA\n"
-                    + "HFEXCHANGE\n"
-                    + "INTEGRATION 5.0  5.0\n"
-                    + "endinput\n";
+                        + "EPRINT \n"
+                        + "  SFO  NOEIG  NOOVL \n"
+                        + "END\n"
+                        + "XC \n"
+                        + " GGA BLYP \n"
+                        + "END\n"
+                        + "ATOMS\n"
+                        + "O   0.000000   0.000000    0.000000\n"
+                        + "C   0.000000   0.000000    0.000000\n"
+                        + "END\n"
+                        + "BASIS\n"
+                        + "  type DZ\n"
+                        + "  core NONE\n"
+                        + "END\n"
+                        + "GEOMETRY\n"
+                        + "END\n"
+                        + "SCF\n"
+                        + " converge  1.0e-5  1.03-5\n"
+                        + " diis ok=0.01\n"
+                        + "END\n"
+                        + "QUILD\n"
+                        + "  cvg_grid 1.0e-4\n"
+                        + "  numgrid 1\n"
+                        + "  SMETAGGA B3LYP(VWN5)\n"
+                        + "END\n"
+                        + "METAGGA\n"
+                        + "HFEXCHANGE\n"
+                        + "INTEGRATION 5.0  5.0\n"
+                        + "endinput\n";
 
-                FileUtility.printDefaultInput(app,"quild_sample0.inp",newInput);
-                
+                FileUtility.printDefaultInput(app, "quild_sample0.inp", newInput);
+
             } else {
-                
-                System.out.println("Trying"+app+" Run");
+
+                System.out.println("Trying" + app + " Run");
                 newInput = "You can load your input here by clicking addfile button";
-                FileUtility.printDefaultInput(app,"default.inp",newInput);
-                
+                FileUtility.printDefaultInput(app, "default.inp", newInput);
+
             }
         }
     }
-    
+
     private class appModuleComboListener implements ItemListener {
 
         public void itemStateChanged(ItemEvent e) {
@@ -2647,17 +2631,15 @@ WindowListener, ComponentListener {
                 return;
             }
 
-            System.out.println("(Debug) choosen module name:"+e.getItem());
-            
-            String app = appName(getAppPackageName(), (String)e.getItem());
+            System.out.println("(Debug) choosen module name:" + e.getItem());
+
+            String app = appName(getAppPackageName(), (String) e.getItem());
 
             createAndShowSampleJob(app);
-    
+
         }
     }
-    
-    
-    
+
 
     // called when the different machine is selected
     private class machListSelectionListener implements ListSelectionListener {
@@ -2666,59 +2648,10 @@ WindowListener, ComponentListener {
                 if (hpcList.getSelectedValue() == null) {
                     return;
                 } else {
-                    if (GridChem.isCCG_MW1Active()) { // do it the CCG way
-                        populateProjects(hpcList.getSelectedValue()
-                                .toString());
-                        populateQueues(hpcList.getSelectedValue()
-                                .toString());
-                    } else { // do it the Swarna way!
-                        if (hpcList.getSelectedValue().toString().equals(
-                                "cu.ncsa.uiuc.edu")) {
-                            changeProject("kts");
-                            changeQueue("batch");
-                        } else if (hpcList.getSelectedValue().toString()
-                        		.equals("co.ncsa.uiuc.edu")) {
-                            changeProject("dck");
-                            changeQueue("standard");
-                        } else if (hpcList.getSelectedValue().toString()
-                                .equals("ccg-login.ncsa.uiuc.edu")) {
-                            changeProject("mjk");
-                            changeQueue("gridchem");
-                        } else if (hpcList.getSelectedValue().toString()
-                                .equals("longhorn.tacc.utexas.edu")) {
-                            changeProject("A-gridchem");
-                            changeQueue("normal");
-                        } else if (hpcList.getSelectedValue().toString()
-                                .equals("mike4.cct.lsu.edu")) {
-                            changeProject("gaussian");
-                            changeQueue("workq");
-                        }
-                        // else if
-                        // (apphpcBoard.getSelectedValue().toString().equals("agt-login.ccs.uky.edu"))
-                        // {
-                        // // is this misspelling of gaussian correct? srb;aug
-                        // 05
-                        // changeProject("guassian");
-                        // changeQueue("debug");
-                        // }
-                        else if (hpcList.getSelectedValue().toString()
-                                .equals("sdx.uky.edu")) {
-                            changeProject("mjk");
-                            changeQueue("gaussian");
-                        } else if (hpcList.getSelectedValue().toString()
-                                .equals("ccg-login.epn.osc.edu")) {
-                            changeProject("gaussian");
-                            changeQueue("agt_pbs");
-                        } else if (hpcList.getSelectedValue().toString()
-                                .equals("tg-login1.osc.edu")) {
-                            changeProject("gaussian");
-                            changeQueue("parallel");
-                        } else if (hpcList.getSelectedValue().toString()
-                                .equals("co.ncsa.uiuc.edu")) {
-                            changeProject("dck");
-                            changeQueue("standard");
-                        }
-                    }
+
+                    populateProjects(hpcList.getSelectedValue().toString());
+                    populateQueues(hpcList.getSelectedValue().toString());
+
                 }
             }
         }
@@ -2729,14 +2662,13 @@ WindowListener, ComponentListener {
      * the HPC machine list. This will allow us to dynamically generate tool
      * tips based on current resource load as the user goes about their normal
      * work.
-     * 
+     *
      * @author Rion Dooley < dooley [at] tacc [dot] utexas [dot] edu >
-     * 
      */
     private class HPCCellRenderer extends DefaultListCellRenderer {
 
         public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean isSelected, boolean cellHasFocus) {
+                                                      int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected,
                     cellHasFocus);
             setToolTipText(createTTTHTML((String) value));
@@ -2768,7 +2700,7 @@ WindowListener, ComponentListener {
                 toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Name:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
                         + hpc.getHostName() + "</FONT></td></tr>";
                 toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Location:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
-                        + hpc.getHostName()+ "</FONT></td></tr>";
+                        + hpc.getHostName() + "</FONT></td></tr>";
                 toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Description:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
                         + hpc.getHostName() + "</FONT></td></tr>";
                 toolTipHTML += "<tr><th colspan=\"2\"  bgcolor=\"#9999FF\"><b>Current Loads</th></tr>";
@@ -2815,9 +2747,8 @@ WindowListener, ComponentListener {
      * cell contains a Jlabel with a class to provide custom tool tips for the
      * HPC machine list. This will allow us to dynamically generate tool tips
      * based on current resource load as the user goes about their normal work.
-     * 
+     *
      * @author Rion Dooley < dooley [at] tacc [dot] utexas [dot] edu >
-     * 
      */
     private class QueueComboBoxRenderer extends JLabel implements
             ListCellRenderer {
@@ -2829,7 +2760,7 @@ WindowListener, ComponentListener {
         }
 
         public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean isSelected, boolean cellHasFocus) {
+                                                      int index, boolean isSelected, boolean cellHasFocus) {
 
             ComputeResourceDescription hpc = null;
 
@@ -2837,9 +2768,9 @@ WindowListener, ComponentListener {
 
             if (((String) value).equals(UNSPECIFIED)) {
 
-            	selectedQueue = new BatchQueue();
-            	selectedQueue.setQueueName(UNSPECIFIED);
-            	//selectedQueue.setDefaultQueue(true);
+                selectedQueue = new BatchQueue();
+                selectedQueue.setQueueName(UNSPECIFIED);
+                //selectedQueue.setDefaultQueue(true);
 
 
             } else {
@@ -2849,18 +2780,20 @@ WindowListener, ComponentListener {
 
                 hpc = GridChem.getMachineByName(hpcName);
                 if (hpc == null) {
-                	selectedQueue = new BatchQueue();
-                	selectedQueue.setQueueName(UNSPECIFIED);
-                	//selectedQueue.setDefaultQueue(true);
+                    selectedQueue = new BatchQueue();
+                    selectedQueue.setQueueName(UNSPECIFIED);
+                    //selectedQueue.setDefaultQueue(true);
                 } else {
-	                for (BatchQueue q : hpc.getBatchQueues()) {
-	
-	                    if (q.getQueueName().equals((String) value)) {
-	
-	                        selectedQueue = q;
-	
-	                    }
-	                }
+                    if (hpc.isSetBatchQueues()) {
+                        for (BatchQueue q : hpc.getBatchQueues()) {
+
+                            if (q.getQueueName().equals((String) value)) {
+
+                                selectedQueue = q;
+
+                            }
+                        }
+                    }
                 }
 
             }
@@ -3310,7 +3243,7 @@ WindowListener, ComponentListener {
             return true;
         }
     }
-    
+
 //    // the following two functions are used for mapping between app name registered in GMS_WS and 
 //    // a pair of name (an appPakcage name and a module name) appearing in GUI Job Editor panel. 
 //    // This part is still a kind of tricky, but it can hide any complicated details on mapping.
@@ -3338,39 +3271,39 @@ WindowListener, ComponentListener {
 //        
 //    }
 
-    public String appName(String appPackageName, String moduleName){
-        
+    public String appName(String appPackageName, String moduleName) {
+
         String appName = null;
-        
-        if(appPackageName.equalsIgnoreCase(moduleName)){
+
+        if (appPackageName.equalsIgnoreCase(moduleName)) {
             appName = appPackageName;
-        }else{
-            appName = appPackageName + "_" + moduleName ;
+        } else {
+            appName = appPackageName + "_" + moduleName;
         }
-        
-        for(String str: APP_NAME_HASHSET){
-            if(str.equalsIgnoreCase(appName)){
+
+        for (String str : APP_NAME_HASHSET) {
+            if (str.equalsIgnoreCase(appName)) {
                 appName = str;
             }
         }
-        
-        System.out.println("\n(DEBUG) appName :"+appName + " from appPacakge : "+ appPackageName + " moduleName " + moduleName);
-        
-        return appName ;
-    }   
-    
-    
-    public void createAndShowSampleJob(String app){
-        
-        updateInputInfoPanel(this.job,FileUtility.getDefaultInputFiles(app));
+
+        System.out.println("\n(DEBUG) appName :" + appName + " from appPacakge : " + appPackageName + " moduleName " + moduleName);
+
+        return appName;
+    }
+
+
+    public void createAndShowSampleJob(String app) {
+
+        updateInputInfoPanel(this.experiment, FileUtility.getDefaultInputFiles(app));
         layoutRequirementsPane();
     }
 
-    public JobBean createSampleJob(String app){
-        
-        
+    public JobBean createSampleJob(String app) {
+
+
 //        newJob.setApplication(app);
-        
+
 //        ComputeBean hw = GridChem.hardware.get(0);
 //        newJob.setSubmitMachine(hw.getName());
 //        SoftwareBean sw = hw.getSoftware().iterator().next();
@@ -3385,433 +3318,432 @@ WindowListener, ComponentListener {
 //        
 //        newJob.setRequestedCpuTime(cal);
         return new JobBean();
-        
+
     }
-    
+
     // TODO: find better way to validate file names
     public boolean verifyInput() throws IOException {
-    // some application specific validification process before sending a job
+        // some application specific validification process before sending a job
         boolean ok = true;
         String appName = appName(getAppPackageName(), getModuleName());
-        
-        if(appName.equalsIgnoreCase(Invariants.APP_NAME_ACES3)) {
+
+        if (appName.equalsIgnoreCase(Invariants.APP_NAME_ACES3)) {
             int reqCpu = 0;
-            
-            try { 
+
+            try {
                 BufferedReader br = new BufferedReader(new FileReader(getInputFiles().get(0)));
                 String line = "";
                 String fileText = "";
-                while ((line = br.readLine()) != null){
-                    if((line.toUpperCase()).startsWith("COMPANY")){
+                while ((line = br.readLine()) != null) {
+                    if ((line.toUpperCase()).startsWith("COMPANY")) {
                         String[] token = (line.split("="))[1].trim().split(" ");
                         reqCpu = reqCpu + Integer.parseInt(token[2]);
-                    
-                        System.out.println("(Debug) "+"token0 :"+token[0] +" token1 : " + token[1] + " token2 :" + token[2] + " token3 :" + token[3]);
-                        System.out.println("\n(Info) # of cpu from COMPANY : " + Integer.parseInt(token[2]) );
+
+                        System.out.println("(Debug) " + "token0 :" + token[0] + " token1 : " + token[1] + " token2 :" + token[2] + " token3 :" + token[3]);
+                        System.out.println("\n(Info) # of cpu from COMPANY : " + Integer.parseInt(token[2]));
                     }
-                    if((line.toUpperCase()).startsWith("IOCOMPANY")){
+                    if ((line.toUpperCase()).startsWith("IOCOMPANY")) {
                         String[] token = (line.split("="))[1].trim().split(" ");
                         reqCpu = reqCpu + Integer.parseInt(token[2]);
-                    
-                        System.out.println("\n(Info) # of cpu from ICOMPANY : " + Integer.parseInt(token[2]) );
-                    }           
+
+                        System.out.println("\n(Info) # of cpu from ICOMPANY : " + Integer.parseInt(token[2]));
+                    }
                 }
             } catch (IOException e) {
                 ok = false;
             }
-            
-            if (reqCpu != getNumProc()){
-                
-                JOptionPane.showMessageDialog(null, "Requested number of cpu inconsistent with input file. \n  Your input and Requirements ask different # of cpus", 
-                        "Change the number of CPUs",JOptionPane.INFORMATION_MESSAGE);
-        
-                ok = false;
-            }
-            
-        } else if(appName.equalsIgnoreCase(Invariants.APP_NAME_DMOL3)){
-            
-            String jobName = getJobName();
-            
-            boolean validCar = false;
-            boolean validInput = false;
-            
-            if (getInputFiles().size() > 2) {
-                JOptionPane.showMessageDialog(null, "Number of input files exceeds the max allowed.", 
-                        "Input file violation",JOptionPane.WARNING_MESSAGE);
+
+            if (reqCpu != getNumProc()) {
+
+                JOptionPane.showMessageDialog(null, "Requested number of cpu inconsistent with input file. \n  Your input and Requirements ask different # of cpus",
+                        "Change the number of CPUs", JOptionPane.INFORMATION_MESSAGE);
 
                 ok = false;
-                
+            }
+
+        } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_DMOL3)) {
+
+            String jobName = getJobName();
+
+            boolean validCar = false;
+            boolean validInput = false;
+
+            if (getInputFiles().size() > 2) {
+                JOptionPane.showMessageDialog(null, "Number of input files exceeds the max allowed.",
+                        "Input file violation", JOptionPane.WARNING_MESSAGE);
+
+                ok = false;
+
             } else {
                 File carFile = null;
                 File inputFile = null;
-            
+
                 // there should only be 2 files: a car and an input
-                for (File file: getInputFiles()) {
+                for (File file : getInputFiles()) {
                     if (file.getName().endsWith(".car"))
                         carFile = file;
                     else if (file.getName().endsWith(".input"))
                         inputFile = file;
                 }
-                
+
                 // both files should be present
-                if (carFile == null ) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .car", 
-                            "Car file name violation",JOptionPane.INFORMATION_MESSAGE);
-            
+                if (carFile == null) {
+                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .car",
+                            "Car file name violation", JOptionPane.INFORMATION_MESSAGE);
+
                     ok = false;
                 }
                 //fixed bug -nik
                 if (inputFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .input", 
-                            "Input file name violation",JOptionPane.INFORMATION_MESSAGE);
-            
+                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .input",
+                            "Input file name violation", JOptionPane.INFORMATION_MESSAGE);
+
                     ok = false;
                 }
-                
+
                 int inputFileBase = inputFile.getName().lastIndexOf('.');
                 int carFileBase = carFile.getName().lastIndexOf('.');
-                if (!carFile.getName().substring(0,carFileBase).equals(inputFile.getName().substring(0,inputFileBase)) ){
-                    
-                    JOptionPane.showMessageDialog(null, "Input files should have the same basename", 
-                            "Base name violation",JOptionPane.INFORMATION_MESSAGE);
-    
+                if (!carFile.getName().substring(0, carFileBase).equals(inputFile.getName().substring(0, inputFileBase))) {
+
+                    JOptionPane.showMessageDialog(null, "Input files should have the same basename",
+                            "Base name violation", JOptionPane.INFORMATION_MESSAGE);
+
                     ok = false;
-                    
+
                 }
-                
-                if (ok == true){
-                    if (jobName != inputFile.getName().substring(0,inputFileBase) ){
-                        String newJobName = inputFile.getName().substring(0,inputFileBase);
-                     
-                        JOptionPane.showMessageDialog(null, "job name "+ jobName + " will be changed to the basename of input files :" + newJobName, 
-                            "Job name change",JOptionPane.OK_OPTION);
-    
+
+                if (ok == true) {
+                    if (jobName != inputFile.getName().substring(0, inputFileBase)) {
+                        String newJobName = inputFile.getName().substring(0, inputFileBase);
+
+                        JOptionPane.showMessageDialog(null, "job name " + jobName + " will be changed to the basename of input files :" + newJobName,
+                                "Job name change", JOptionPane.OK_OPTION);
+
                         changeJobNameField(newJobName);
-                    
+
                     }
                 }
             }
-        } else if(appName.equalsIgnoreCase(Invariants.APP_NAME_NAMD)){
-            
+        } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_NAMD)) {
+
             String jobName = getJobName();
-            
+
             if (getInputFiles().size() > 4) {
-                JOptionPane.showMessageDialog(null, "Number of input files exceeds the max allowed.", 
-                        "Input file violation",JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Number of input files exceeds the max allowed.",
+                        "Input file violation", JOptionPane.WARNING_MESSAGE);
 
                 ok = false;
-                
+
             } else {
                 File namdFile = null;
                 File paramsFile = null;
                 File pdbFile = null;
                 File psfFile = null;
-            
+
                 // there should only be 4 files: 
-                for (File file: getInputFiles()) {
+                for (File file : getInputFiles()) {
                     if (file.getName().endsWith(".namd"))
-                    	namdFile = file;
+                        namdFile = file;
                     else if (file.getName().endsWith(".params"))
-                    	paramsFile = file;
+                        paramsFile = file;
                     else if (file.getName().endsWith(".pdb"))
-                    	pdbFile = file;
+                        pdbFile = file;
                     else if (file.getName().endsWith(".psf"))
-                    	psfFile = file;
+                        psfFile = file;
                 }
-               
-                if (namdFile == null ) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .namd", 
-                            "Car file name violation",JOptionPane.INFORMATION_MESSAGE);
-            
+
+                if (namdFile == null) {
+                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .namd",
+                            "Car file name violation", JOptionPane.INFORMATION_MESSAGE);
+
                     ok = false;
                 }
-                
+
                 if (paramsFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .params", 
-                            "Input file name violation",JOptionPane.INFORMATION_MESSAGE);
-            
+                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .params",
+                            "Input file name violation", JOptionPane.INFORMATION_MESSAGE);
+
                     ok = false;
                 }
-             
-                if (pdbFile == null ) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .pdb", 
-                            "Car file name violation",JOptionPane.INFORMATION_MESSAGE);
-            
+
+                if (pdbFile == null) {
+                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .pdb",
+                            "Car file name violation", JOptionPane.INFORMATION_MESSAGE);
+
                     ok = false;
                 }
-                
+
                 if (psfFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .psf", 
-                            "Input file name violation",JOptionPane.INFORMATION_MESSAGE);
-            
+                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .psf",
+                            "Input file name violation", JOptionPane.INFORMATION_MESSAGE);
+
                     ok = false;
                 }
-                
+
                 int namdFileBase = namdFile.getName().lastIndexOf('.');
                 int paramsFileBase = paramsFile.getName().lastIndexOf('.');
-                if (!namdFile.getName().substring(0,namdFileBase).equals(paramsFile.getName().substring(0,paramsFileBase)) ){
-                    
-                    JOptionPane.showMessageDialog(null, "Input files should have the same basename", 
-                            "Base name violation",JOptionPane.INFORMATION_MESSAGE);
-    
+                if (!namdFile.getName().substring(0, namdFileBase).equals(paramsFile.getName().substring(0, paramsFileBase))) {
+
+                    JOptionPane.showMessageDialog(null, "Input files should have the same basename",
+                            "Base name violation", JOptionPane.INFORMATION_MESSAGE);
+
                     ok = false;
-                    
+
                 }
-                
-                if (ok == true){
-                    if (jobName != namdFile.getName().substring(0,namdFileBase) ){
-                        String newJobName = paramsFile.getName().substring(0,namdFileBase);
-                     
-                        JOptionPane.showMessageDialog(null, "job name "+ jobName + " will be changed to the basename of input files :  " + newJobName, 
-                            "Job name change",JOptionPane.OK_OPTION);
-    
+
+                if (ok == true) {
+                    if (jobName != namdFile.getName().substring(0, namdFileBase)) {
+                        String newJobName = paramsFile.getName().substring(0, namdFileBase);
+
+                        JOptionPane.showMessageDialog(null, "job name " + jobName + " will be changed to the basename of input files :  " + newJobName,
+                                "Job name change", JOptionPane.OK_OPTION);
+
                         changeJobNameField(newJobName);
-                    
+
                     }
                 }
             }
         } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_FLUENT)) {
-        	String jobName = getJobName();
-        	
-        	File inFile = null;
-        	
-        	for (File file: getInputFiles()) {
-        		if (file.getName().endsWith(".in")) {
-        			inFile = file;
-        		}
-        	}
-        	
-        	if (inFile == null ) {
-                JOptionPane.showMessageDialog(null, "Please specify a file ending in .in", 
-                        "Input file name violation",JOptionPane.INFORMATION_MESSAGE);
-        
+            String jobName = getJobName();
+
+            File inFile = null;
+
+            for (File file : getInputFiles()) {
+                if (file.getName().endsWith(".in")) {
+                    inFile = file;
+                }
+            }
+
+            if (inFile == null) {
+                JOptionPane.showMessageDialog(null, "Please specify a file ending in .in",
+                        "Input file name violation", JOptionPane.INFORMATION_MESSAGE);
+
                 ok = false;
             }
-        	
-        	int inFileBase = inFile.getName().lastIndexOf('.');
-        	if (ok == true){
-                if (jobName != inFile.getName().substring(0, inFileBase) ){
+
+            int inFileBase = inFile.getName().lastIndexOf('.');
+            if (ok == true) {
+                if (jobName != inFile.getName().substring(0, inFileBase)) {
                     String newJobName = inFile.getName().substring(0, inFileBase);
-                 
-                    JOptionPane.showMessageDialog(null, "job name "+ jobName + " will be changed to the basename of input files :  " + newJobName, 
-                        "Job name change",JOptionPane.OK_OPTION);
+
+                    JOptionPane.showMessageDialog(null, "job name " + jobName + " will be changed to the basename of input files :  " + newJobName,
+                            "Job name change", JOptionPane.OK_OPTION);
 
                     changeJobNameField(newJobName);
-                
+
                 }
             }
         } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_ABAQUS)) {
-        	
-        	
-        }
-        else if(appName.equalsIgnoreCase(Invariants.APP_NAME_CASTEP)){
-            
+
+
+        } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_CASTEP)) {
+
             String jobName = new String(getJobName());
-            
+
             if (getInputFiles().size() > 2) {
-                JOptionPane.showMessageDialog(null, "Number of input files exceeds the max allowed.", 
-                        "Input file violation",JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Number of input files exceeds the max allowed.",
+                        "Input file violation", JOptionPane.WARNING_MESSAGE);
 
                 ok = false;
-                
+
             } else {
                 File cellFile = null;
                 File paramFile = null;
-            
+
                 // there should only be 2 files: a car and an input
-                for (File file: getInputFiles()) {
+                for (File file : getInputFiles()) {
                     if (file.getName().endsWith(".cell"))
                         cellFile = file;
                     else if (file.getName().endsWith(".param"))
                         paramFile = file;
                 }
-                
+
                 // both files should be present
-                if (cellFile == null ) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .cell", 
-                            "Cell file name violation",JOptionPane.INFORMATION_MESSAGE);
-            
+                if (cellFile == null) {
+                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .cell",
+                            "Cell file name violation", JOptionPane.INFORMATION_MESSAGE);
+
                     ok = false;
                 }
                 //fixed bug -nik
                 if (paramFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .param", 
-                            "Parameter file name violation",JOptionPane.INFORMATION_MESSAGE);
-            
+                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .param",
+                            "Parameter file name violation", JOptionPane.INFORMATION_MESSAGE);
+
                     ok = false;
                 }
-                
+
                 int inputFileBase = paramFile.getName().lastIndexOf('.');
                 int carFileBase = cellFile.getName().lastIndexOf('.');
-                if (!cellFile.getName().substring(0,carFileBase).equals(paramFile.getName().substring(0,inputFileBase)) ){
-                    
-                    JOptionPane.showMessageDialog(null, "Input files should have the same basename", 
-                            "Base name violation",JOptionPane.INFORMATION_MESSAGE);
-    
+                if (!cellFile.getName().substring(0, carFileBase).equals(paramFile.getName().substring(0, inputFileBase))) {
+
+                    JOptionPane.showMessageDialog(null, "Input files should have the same basename",
+                            "Base name violation", JOptionPane.INFORMATION_MESSAGE);
+
                     ok = false;
-                    
+
                 }
-                
-                if (ok == true){
-                    if (jobName != paramFile.getName().substring(0,inputFileBase) ){
-                        String newJobName = paramFile.getName().substring(0,inputFileBase);
-                     
-                        JOptionPane.showMessageDialog(null, "job name "+ jobName + " will be changed to the basename of input files :" + newJobName, 
-                            "Job name change",JOptionPane.OK_OPTION);
-    
+
+                if (ok == true) {
+                    if (jobName != paramFile.getName().substring(0, inputFileBase)) {
+                        String newJobName = paramFile.getName().substring(0, inputFileBase);
+
+                        JOptionPane.showMessageDialog(null, "job name " + jobName + " will be changed to the basename of input files :" + newJobName,
+                                "Job name change", JOptionPane.OK_OPTION);
+
                         changeJobNameField(newJobName);
-                    
+
                     }
                 }
             }
-            
-        } else if(appName.equalsIgnoreCase(Invariants.APP_NAME_AMBER_SANDER)){
-            
-            if((getNumProc() == 1)&&(getSubmitMachine().equalsIgnoreCase("Mercury"))){
-            
-                JOptionPane.showMessageDialog(null, "A single processor job for amber is not supported with Mercury\nUse cobalt at NCSA", 
-                    "Mercury Amber single processor violation",JOptionPane.INFORMATION_MESSAGE);
+
+        } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_AMBER_SANDER)) {
+
+            if ((getNumProc() == 1) && (getSubmitMachine().equalsIgnoreCase("Mercury"))) {
+
+                JOptionPane.showMessageDialog(null, "A single processor job for amber is not supported with Mercury\nUse cobalt at NCSA",
+                        "Mercury Amber single processor violation", JOptionPane.INFORMATION_MESSAGE);
 
                 ok = false;
             }
-            if((getNumProc() == 1)&&(getSubmitMachine().equalsIgnoreCase("Tungsten"))){
-                
-                JOptionPane.showMessageDialog(null, "A single processor job for amber is not supported with Tungsten\nUse cobalt at NCSA", 
-                    "Tungsten Amber single processor violation",JOptionPane.INFORMATION_MESSAGE);
+            if ((getNumProc() == 1) && (getSubmitMachine().equalsIgnoreCase("Tungsten"))) {
+
+                JOptionPane.showMessageDialog(null, "A single processor job for amber is not supported with Tungsten\nUse cobalt at NCSA",
+                        "Tungsten Amber single processor violation", JOptionPane.INFORMATION_MESSAGE);
 
                 ok = false;
-            }           
-            
+            }
+
         } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_CHARMM_MPI)) {
-        	String jobName = getJobName();
-        	File inputFile = null;
-        	
-        	// Looking for main input file
-            for (File file: getInputFiles()) {
+            String jobName = getJobName();
+            File inputFile = null;
+
+            // Looking for main input file
+            for (File file : getInputFiles()) {
                 if (file.getName().endsWith(".inp")) {
                     inputFile = file;
                     break;
                 }
             }
-            
-            if (null == inputFile) {
-            	ok = false;
-            	JOptionPane.showMessageDialog(null,"Main input file not found. It should have .inp as extension", 
-						"Error",JOptionPane.ERROR_MESSAGE);
-            } else {
-            	try {
-            		
-            		List<String> dataFiles = CharmmInputFileParser.parse(inputFile);
-            		for (String dataFile : dataFiles) {
-            			boolean containsFlag = false;
-            			for (File file : getInputFiles()) {
-            				if (file.getName().contains(dataFile)) {
-            					containsFlag = true;
-            					break;
-            				}
-            			}
-            			
-            			if (false == containsFlag) {
-            				ok = false;
-        					JOptionPane.showMessageDialog(null,"Data file missing, please upload file " + dataFile, 
-            						"Error",JOptionPane.ERROR_MESSAGE);
-        					break;
-        				}
-            		}
-            	} catch (CharmmInputFileParsingException e) {
-            		JOptionPane.showMessageDialog(null, e.getMessage(), 
-                            "Error",JOptionPane.ERROR_MESSAGE);
-            		ok = false;
-            	}
-            }          
-        	
-        	if (ok == true){
-        		int inputFileBase = inputFile.getName().lastIndexOf('.');
-        		inputFileBase = (inputFileBase > 14) ? 14 : inputFileBase; // limite the job name under 15 characters.
-                if (jobName != inputFile.getName().substring(0,inputFileBase) ){
-                    String newJobName = inputFile.getName().substring(0,inputFileBase);
-                 
-                    JOptionPane.showMessageDialog(null, "job name "+ jobName + " will be changed to the basename of input files :" + newJobName, 
-                        "Job name change",JOptionPane.OK_OPTION);
 
-                    changeJobNameField(newJobName);
-                
+            if (null == inputFile) {
+                ok = false;
+                JOptionPane.showMessageDialog(null, "Main input file not found. It should have .inp as extension",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                try {
+
+                    List<String> dataFiles = CharmmInputFileParser.parse(inputFile);
+                    for (String dataFile : dataFiles) {
+                        boolean containsFlag = false;
+                        for (File file : getInputFiles()) {
+                            if (file.getName().contains(dataFile)) {
+                                containsFlag = true;
+                                break;
+                            }
+                        }
+
+                        if (false == containsFlag) {
+                            ok = false;
+                            JOptionPane.showMessageDialog(null, "Data file missing, please upload file " + dataFile,
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                            break;
+                        }
+                    }
+                } catch (CharmmInputFileParsingException e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    ok = false;
                 }
             }
-        	
-        } else if (appName.contains(Invariants.APP_NAME_DDSCAT)) {
-        	
-        	if (getInputFiles().size() > 6) {
-        		throw new IOException("Error specifying input files: No more than six input files are allowed for " + appName + " jobs.");
+
+            if (ok == true) {
+                int inputFileBase = inputFile.getName().lastIndexOf('.');
+                inputFileBase = (inputFileBase > 14) ? 14 : inputFileBase; // limite the job name under 15 characters.
+                if (jobName != inputFile.getName().substring(0, inputFileBase)) {
+                    String newJobName = inputFile.getName().substring(0, inputFileBase);
+
+                    JOptionPane.showMessageDialog(null, "job name " + jobName + " will be changed to the basename of input files :" + newJobName,
+                            "Job name change", JOptionPane.OK_OPTION);
+
+                    changeJobNameField(newJobName);
+
+                }
             }
-        	
+
+        } else if (appName.contains(Invariants.APP_NAME_DDSCAT)) {
+
+            if (getInputFiles().size() > 6) {
+                throw new IOException("Error specifying input files: No more than six input files are allowed for " + appName + " jobs.");
+            }
+
         } else {
-        	
+
             if (getInputFiles().isEmpty() && inputFilePanel.retrieveTextInput().isEmpty()) {
-            	ok = false;
+                ok = false;
                 throw new IOException("Please specify an input file.");
             } else if (getInputFiles().size() > 6) {
                 ok = false;
                 throw new IOException("Error specifying input files: No more than three input files are allowed for " + appName + " jobs.");
-            } 
-            
+            }
+
             File f;
             if (!getInputFiles().isEmpty()) {
-            	f = getInputFiles().get(0);
+                f = getInputFiles().get(0);
             } else {
-            	f = new File(Env.getApplicationDataDir() + Settings.fileSeparator
+                f = new File(Env.getApplicationDataDir() + Settings.fileSeparator
                         + "temp.txt");
-            	FileUtilities.writeStringToFile(f, inputFilePanel.retrieveTextInput());
+                FileUtilities.writeStringToFile(f, inputFilePanel.retrieveTextInput());
             }
-            
+
             //this.inputFilePanel.addFileInput(f);
-            
+
             LogicalFileBean lf = new LogicalFileBean();
             lf.setJobId(-1);
             lf.setLocalPath(f.getAbsolutePath());
-            
-            this.job.addInputFile(lf);
+
+            //this.job.addInputFile(lf); remove comment
             //this.job.getInputFiles().clear();
             //this.job.getInputFiles().add(lf);
-            
+
             System.out.println("Verifying file " + f.getAbsolutePath() + " for application " + appName);
-            
-            if(appName.equalsIgnoreCase(Invariants.APP_NAME_NWCHEM)) {
-                
-                if (!f.getName().substring(f.getName().lastIndexOf(".")+1).equals("nw")) {
+
+            if (appName.equalsIgnoreCase(Invariants.APP_NAME_NWCHEM)) {
+
+                if (!f.getName().substring(f.getName().lastIndexOf(".") + 1).equals("nw")) {
                     ok = false;
                     throw new IOException("Error specifying input files: " + appName + " input files must end in \".nw\".");
                 }
 
-            } else if(appName.equalsIgnoreCase(Invariants.APP_NAME_QMCPACK)) {
-                if (!f.getName().substring(f.getName().lastIndexOf(".")+1).equals("xml")) {
+            } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_QMCPACK)) {
+                if (!f.getName().substring(f.getName().lastIndexOf(".") + 1).equals("xml")) {
                     ok = false;
                     throw new IOException("Error specifying input files: " + appName + " input files must end in \".xml\".");
-                }                
+                }
             }
-            
+
         }
-        
+
         return ok;
-        
+
     }
-    
+
     public static void main(String[] args) {
         String username;
         String password;
         AccessType projectType;
         String myproxyUsername = "";
         String myproxyPassword = "";
-        
+
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
         //      Establish session with the GMS_WS
         GridChem gc = new GridChem();
-        
+
         Properties props = new Properties();
-        
+
         Settings.WEBSERVICE = true;
-        
+
         // Read in user information from the configuration file
         try {
             props.load(new FileInputStream("etc/test.properties"));
@@ -3822,55 +3754,55 @@ WindowListener, ComponentListener {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         username = props.getProperty("gridchem.username");
-        
+
         password = props.getProperty("gridchem.password");
-        
+
         // Authenticate with the GMS_WS
         if (Settings.DEBUG)
             System.out.println("Logging " + username + " into the CCG.");
         try {
-            GMS3.login(username,password, AccessType.COMMUNITY, new HashMap<String,String>());
+            GMS3.login(username, password, AccessType.COMMUNITY, new HashMap<String, String>());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         Settings.authenticated = true;
         Settings.authenticatedGridChem = true;
         Settings.gridchemusername = username;
-        
-        System.out.println("project type: " + (String)props.getProperty("access.type"));
-        
+
+        System.out.println("project type: " + (String) props.getProperty("access.type"));
+
         // Load the user's resources into the session.
         ProjectBean project = null;
-        if(((String)props.getProperty("access.type"))
+        if (((String) props.getProperty("access.type"))
                 .toUpperCase().equals(AccessType.COMMUNITY.toString())) {
             projectType = AccessType.COMMUNITY;
             System.out.println("selected a community project");
         } else {
-            System.out.println("project type is " + (String)props.getProperty("access.type"));
+            System.out.println("project type is " + (String) props.getProperty("access.type"));
             projectType = AccessType.EXTERNAL;
             myproxyUsername = props.getProperty("myproxy.username");
             myproxyPassword = props.getProperty("myproxy.password");
         }
-        
+
         try {
-            for(ProjectBean p: GMS3.getProjects()) {
-                if(p.getType().equals(projectType)) {
+            for (ProjectBean p : GMS3.getProjects()) {
+                if (p.getType().equals(projectType)) {
                     project = p;
                 }
             }
-            
+
             GMS3.setCurrentProject(project);
-            
+
             if (Settings.DEBUG)
                 System.out.println("Successfully loaded user's VO");
-            
+
             GridChem.user = GMS3.getProfile();
-            
+
             //GridChem.systems = GMS3.getHardware(GridChem.project.getProjectID()); remove comment
-            
+
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -3883,7 +3815,7 @@ WindowListener, ComponentListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                
+
             }
         });
     }
@@ -3929,7 +3861,7 @@ WindowListener, ComponentListener {
 //
 //        return inp;
 //    }
-    
+
 //    private void  PutInputFile(String fName){
 //        
 //        try{
@@ -4066,10 +3998,7 @@ WindowListener, ComponentListener {
 //
 //    }
 
-    
-    
-    
-    
+
 //    private void verifyInputsForMultipleInputApp(){
 //// called in init()     
 //        

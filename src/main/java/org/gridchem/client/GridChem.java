@@ -59,6 +59,7 @@ import javax.swing.UIManager;
 
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
+import org.apache.airavata.model.appcatalog.appdeployment.ApplicationModule;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
 import org.apache.airavata.model.error.AiravataClientConnectException;
 import org.apache.airavata.model.workspace.Project;
@@ -603,10 +604,10 @@ public class GridChem
         return hpc;
     }
     
-    public static List<ComputeResourceDescription> getSoftwareMachineList(String applicationModuleId) {
+    public static List<ComputeResourceDescription> getSoftwareMachineList(String applicationId) {
         try {
-			return AiravataManager.getCompResourcesForAppModule(applicationModuleId);
-		}catch(Exception ex){
+			return AiravataManager.getCompResourcesForAppId(applicationId);
+		} catch(Exception ex){
 			ex.printStackTrace();
 			return null;
 		}
@@ -681,8 +682,8 @@ public class GridChem
         
         return hpc;*/
 		try{
-			return AiravataManager.getComputeResourceDescriptionFromName(name);
-		}catch (Exception ex){
+			return AiravataManager.getComputeResourceDescriptionFromId(name);
+		} catch (Exception ex){
 			ex.printStackTrace();
 			return null;
 		}
@@ -792,6 +793,17 @@ public class GridChem
             System.out.println(helpFooter);
         }
     }
+
+	public static ApplicationModule getAppModuleFromId(String appID){
+		try{
+			ApplicationDeploymentDescription appDesc = AiravataManager.getApplicationDeploymentDescription(appID);
+			ApplicationModule appModule = AiravataManager.getApplicationModule(appDesc.getAppModuleId());
+			return appModule;
+		}catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 }
 
