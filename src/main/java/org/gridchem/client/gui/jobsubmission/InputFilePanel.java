@@ -156,7 +156,7 @@ public class InputFilePanel extends JPanel implements ActionListener, StatusList
                 progressDialog.displayTimeLeft = false;
             
                 GETINPUTCommand command = new GETINPUTCommand(this);
-                command.getArguments().put("job", parent.experiment);
+                //command.getArguments().put("job", parent.experiment); remove comment
                 command.getArguments().put("progressDialog", progressDialog);
                 
                 statusChanged(new StatusEvent(this,Status.START));
@@ -436,7 +436,7 @@ public class InputFilePanel extends JPanel implements ActionListener, StatusList
             int loadDefaultInputFiles = JOptionPane.showConfirmDialog(this, e.getMessage(), "File Tranfer Error", JOptionPane.YES_NO_OPTION);
             
             if (loadDefaultInputFiles == JOptionPane.YES_OPTION) {
-                addMultipleFileInput(FileUtility.getDefaultInputFiles(parent.experiment.getApplicationId()));
+                //addMultipleFileInput(FileUtility.getDefaultInputFiles(parent.experiment.getApplicationId())); remove comment
             }
             
             stopWaiting();

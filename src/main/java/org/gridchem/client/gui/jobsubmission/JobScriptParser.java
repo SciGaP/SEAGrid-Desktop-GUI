@@ -60,7 +60,7 @@ public class JobScriptParser {
 					
 					JobBean jobBean = new JobBean();
 					jobBean.setName(eJob.getElementsByTagName("name").item(0).getTextContent());
-					jobBean.setExperimentName(editJobPanel.getResProj());
+					jobBean.setExperimentName(editJobPanel.getResExp());
 					jobBean.setAllocationName(allocation);
 					jobBean.setSystemName(machine);
 					jobBean.setSoftwareName(editJobPanel.getAppPackageName());

@@ -41,17 +41,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -84,17 +74,19 @@ import javax.swing.JSpinner.NumberEditor;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 import nanocad.nanocadFrame2;
 import nanocad.newNanocad;
 
+import org.apache.airavata.ExpetimentConst;
+import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
 import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
 import org.apache.airavata.model.util.ExperimentModelUtil;
+import org.apache.airavata.model.workspace.Project;
 import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
 import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.FileUtilities;
@@ -150,8 +142,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private BasicArrowButton upButton;
     private BasicArrowButton downButton;
 
-    private JTextField jobNameText;
-    private JTextField projNameText;
+    private JTextField expNameText;
 
     private GridBagLayout rpgbl = new GridBagLayout();
     private GridBagConstraints gbcons = new GridBagConstraints();
@@ -162,6 +153,9 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private JLabel timeLable;
     private JLabel appModuleLabel;
     private JLabel memSizeLabel;
+    private JLabel numThreadLabel;
+    private JLabel numNodesLabel;
+
 
     private JComboBox projCombo;
     private JComboBox qCombo;
@@ -171,6 +165,9 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private JSpinner hr; // Seconds removed
     private JSpinner min;
     private JSpinner numProcSpin = new JSpinner();
+    private JSpinner numThreadSpin = new JSpinner();
+    private JSpinner numNodeSpin = new JSpinner();
+
 
     private SpinnerNumberModel hrnm, minnm;
     private SpinnerNumberModel numProcnm;
@@ -188,8 +185,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private JScrollPane apphpcScrollPane;
 
     //protected JobBean job; // the job being edited
-    protected Experiment experiment;
-    protected ComputationalResourceScheduling scheduling;
 
     private nanocadFrame2 nanWin;
 
@@ -210,6 +205,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     private Preferences preferences = Preferences.getInstance();
 
+    private Map<String,Object> experimentParmas = new HashMap<>();
+
 
     /**
      * Create a new job.
@@ -227,11 +224,22 @@ public class EditJobPanel extends JDialog implements ActionListener,
             dsLmpUserIDSet.add("dspearot");
         }
 
-        String expName = GridChem.user.getUserName() + "_proj";
-        GridChem.project.getProjectID();
-        GridChem.user.getUserName();
-        this.experiment = ExperimentModelUtil.createSimpleExperiment(GridChem.project.getProjectID(), GridChem.user.getUserName(), expName, expName, null, null);
-        this.scheduling = ExperimentModelUtil.createComputationResourceScheduling(null, 1, 1, 1, "normal", 30, 0, 1, "sds128");
+        String expName = GridChem.user.getUserName() + "_experiment";
+        experimentParmas.put(ExpetimentConst.EXP_NAME, expName);
+        experimentParmas.put(ExpetimentConst.PROJECT_ID,GridChem.project.getProjectID());
+        experimentParmas.put(ExpetimentConst.USER_ID,GridChem.user.getUserName());
+        ExperimentModelUtil.createComputationResourceScheduling(null, 1, 1, 1, "normal", 30, 0, 1, "sds128");
+
+        experimentParmas.put(ExpetimentConst.CPU_COUNT, 1);
+        experimentParmas.put(ExpetimentConst.NODE_COUNT,1);
+        experimentParmas.put(ExpetimentConst.THREADS,1);
+        experimentParmas.put(ExpetimentConst.QUEUE,"normal");
+        experimentParmas.put(ExpetimentConst.WALL_TIME,30);
+        experimentParmas.put(ExpetimentConst.START_TIME,0);
+        experimentParmas.put(ExpetimentConst.MEMORY,1);
+        experimentParmas.put(ExpetimentConst.PROJECT_ACCOUNT,"sds128");
+
+
 
 
         ComputeResourceDescription hw = GridChem.getMachineList().get(0);
@@ -244,7 +252,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
             }
         }
 
-        this.scheduling.setResourceHostId(hw.getComputeResourceId());
+        experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID,hw.getComputeResourceId());
+
         ApplicationDeploymentDescription sw = GridChem.getSoftwareforMachine(hw.getComputeResourceId()).get(0);
         for (ApplicationDeploymentDescription cb : GridChem.getSoftwareforMachine(hw.getComputeResourceId())) {
             System.out.println("*******************************");
@@ -255,8 +264,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             }
         }
 
-        experiment.setApplicationId(sw.getAppDeploymentId());
-
+        experimentParmas.put(ExpetimentConst.APP_ID,sw.getAppDeploymentId());
         /*for (String modName : getModuleList(sw.getName())) {
             if (modName.equals(Preferences.getString("last_module"))) {
         		System.out.println("Found last used module");
@@ -337,20 +345,19 @@ public class EditJobPanel extends JDialog implements ActionListener,
         try {
             isLoading = true;
             // populate fields with given job information
-            changeJobNameField(experiment.getName());
-            changeResearchProjectNameField(experiment.getProjectID());
+            changeExperimentNameField((String)experimentParmas.get(ExpetimentConst.EXP_NAME));
 //            changeAppPackage(job.getSystemName());
 //            changeModule(job.getApplication());
-            populateMachineList((experiment.getApplicationId()));
+            populateMachineList((String)experimentParmas.get(ExpetimentConst.APP_ID));
 
-            System.out.println("Loading machine " + scheduling.getResourceHostId());
-            ComputeResourceDescription hpc = GridChem.getMachineByName(scheduling.getResourceHostId());
+            System.out.println("Loading machine " + (String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
+            ComputeResourceDescription hpc = GridChem.getMachineByName((String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
 
             String machineName = "";
             if (hpc != null) {
                 System.out
                         .println("Found machine in user's VO: "
-                                + scheduling.getResourceHostId() + " = "
+                                + (String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID) + " = "
                                 + hpc.getHostName());
                 machineName = hpc.getComputeResourceId();
             } else {
@@ -358,7 +365,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
                 machineName = (String) hpcListModel.get(hpcList.getSelectedIndex());
 
                 System.out.println("Did not find machine in user's VO: "
-                        + scheduling.getResourceHostId());
+                        +(String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
 
                 JOptionPane.showMessageDialog(null,
                         "The machine associated with this job\n"
@@ -369,19 +376,17 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
             changeMachine(machineName);
 
-            //populateProjects(machineName);
-
             //changeProject(job.getProjectName());
             populateQueues(machineName);
 
-            changeQueue(scheduling.getQueueName());
+            changeQueue((String)experimentParmas.get(ExpetimentConst.QUEUE));
 
-            changeNumProc(scheduling.getTotalCPUCount());
+            changeNumProc((int)experimentParmas.get(ExpetimentConst.CPU_COUNT));
 
 //            updateInputInfoPanel(job,FileUtility.getDefaultInputFiles(job.getApplication()));
 
             System.out.println("Updated editing stuff with values for job "
-                    + experiment.getName());
+                    + (String)experimentParmas.get(ExpetimentConst.EXP_NAME));
 
 
             isLoading = false;
@@ -403,14 +408,10 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         // left panel for choicesBoxs
         // --->namePane
-        jobNameText = new JTextField(20);
-        jobNameText.setText(this.experiment.getName());
-        projNameText = new JTextField(20);
-        projNameText.setText(this.experiment.getName());
-        JLabel jobNameLabel = new JLabel("Job name: ");
-        jobNameLabel.setLabelFor(jobNameText);
-        JLabel projNameLabel = new JLabel("Research project name: ");
-        projNameLabel.setLabelFor(projNameText);
+        expNameText = new JTextField(20);
+        expNameText.setText((String)experimentParmas.get(ExpetimentConst.EXP_NAME));
+        JLabel projNameLabel = new JLabel("Experiment name: ");
+        projNameLabel.setLabelFor(expNameText);
         JPanel namePane = new JPanel();
 
         TitledBorder namePaneTitled = BorderFactory.createTitledBorder(
@@ -421,9 +422,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
                 eBorder2));
         namePane.setLayout(new GridLayout(2, 2));
         namePane.add(projNameLabel);
-        namePane.add(projNameText);
-        namePane.add(jobNameLabel);
-        namePane.add(jobNameText);
+        namePane.add(expNameText);
 
 
         // ---> AppPane
@@ -433,19 +432,19 @@ public class EditJobPanel extends JDialog implements ActionListener,
         //this.job.setSoftwareName(Invariants.APP_NAME_GAUSSIAN);
         //populateMachineList(Invariants.APP_NAME_GAUSSIAN);
         //this.job.setSystemName("Cobalt");
-        System.out.println("312:init editingstuff=" + this.scheduling.getResourceHostId());
-        if (this.experiment.getApplicationId() == null) {
+        //System.out.println("312:init editingstuff=" + this.scheduling.getResourceHostId());
+        if (experimentParmas.get(ExpetimentConst.APP_ID) == null) {
             System.out.println("get app is blank");
             populateMachineList(Invariants.APP_NAME_GAUSSIAN);
         } else {
             //populateMachineList(this.job.getSystemName());
-            String appId = experiment.getApplicationId();
+            String appId = (String)experimentParmas.get(ExpetimentConst.APP_ID);
             System.out.println("Experiment App module id is : " + appId);
             populateMachineList(appId);
-            changeMachine(this.scheduling.getResourceHostId());
+            changeMachine((String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
             // reqPane.remove(numProcEdLabel);
         }
-        machListSelectionListener ms = new machListSelectionListener();
+
         // apphpcBoard.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         hpcList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         hpcList.setCellRenderer(new HPCCellRenderer());
@@ -456,7 +455,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         apphpcBox.add(apphpcScrollPane);
         // apphpcBoard.setSelectedIndex(0);
 
-        int selectedIndices = ((DefaultListModel) hpcList.getModel()).indexOf(this.scheduling.getResourceHostId());
+        int selectedIndices = ((DefaultListModel) hpcList.getModel()).indexOf((String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
         hpcList.setSelectedIndex(selectedIndices);
 //        hpcList.setSelectedIndices(new int[]{selectedIndices});
         hpcList.ensureIndexIsVisible(selectedIndices);
@@ -524,16 +523,15 @@ public class EditJobPanel extends JDialog implements ActionListener,
         } else {
             String[] appItems = GridChem.getAvailableApplications();
             appCombo = new JComboBox(appItems);
-            appModuleCombo = new JComboBox(getModuleList(this.scheduling.getResourceHostId()));
+            appModuleCombo = new JComboBox(getModuleList((String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID)));
         }
         appModuleCombo = new JComboBox();
         appCombo.setPreferredSize(new Dimension(50, 30));
         appModuleCombo.setPreferredSize(new Dimension(50, 30));
 
-        System.out.println("374:name of HPC System: " + this.scheduling.getResourceHostId());
+        System.out.println("374:name of HPC System: " + (String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
 
-        appCombo.addItemListener(new appComboListener());
-        appModuleCombo.addItemListener(new appModuleComboListener());
+
 
         JPanel appPane = new JPanel();
         TitledBorder appPaneTitled = BorderFactory.createTitledBorder(leBorder,
@@ -564,10 +562,15 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         projCombo = new JComboBox();
 
-        //populateProjects(hpcList.getSelectedValue().toString());
-        /*if ((this.job.getAllocationName()!=null) && (!this.job.getAllocationName().equals(""))) {
-        	projCombo.setSelectedItem(this.job.getAllocationName());
-        }*/ // remove comment
+        populateProjects();
+        if(experimentParmas.get("PROJECT_ID")!=null){
+            String projId = (String)experimentParmas.get(ExpetimentConst.PROJECT_ID);
+            Project expProject = AiravataManager.getProject(projId);
+            if(expProject!=null){
+                projCombo.setSelectedItem(expProject.getName());
+            }
+        }
+
         projCombo.setEditable(true);
 
         // create queue drop down box
@@ -583,7 +586,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         int maximum = 2048, maxmint = 59, minimum = 0, initial = 0, step = 1;
 
-        if (this.scheduling != null) {
+        if (true) {
             Calendar timewallCal = Calendar.getInstance();
             //this.scheduling.getRequestedCpuTime();
             Calendar baseCal = Calendar.getInstance();
@@ -627,198 +630,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         timeConstraints.fill = GridBagConstraints.HORIZONTAL;
         timePanel.add(min, timeConstraints);
 
-        projCombo.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                // changeProjectid
-                String selp = getSelectedProj();
-                int selectedMachineIndex = hpcList.getSelectedIndex();
-                String hpcName = (String) hpcListModel.get(selectedMachineIndex);
-                scheduling.setResourceHostId(hpcName);
-                ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
-                System.out.println("Setting project selection for job for " + hpcName);
-                if (!hpcName.equals("Grid Scheduler")) {
-        	    	 /*for (String p : hpc.getAllocations()) {
-        	             if (p.equals((String) projCombo.getSelectedItem())) {
-        	                 selp = p;
-        	             }
-        	    	 }*/ //remove comment
-                    //String currproj = projCombo.getSelectedItem().toString();
-                    //job.setAllocationName(selp); //currproj); //remove comment
-                    System.out.println("projCombo: The Project for this job is " + selp); //currproj);
-                }
-            }
-        });
-        //System.out.println("ProjComboaction: The Project for this job is "+job.getAllocationName());
-
-
-        qCombo.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                BatchQueue q = getSelectedQueue();
-                 
-                /*
-                if (q != null) {
-                    Calendar qWallLimit = q.getMaxWallClockTime();
-
-                    // hour spinner
-                    ((SpinnerNumberModel) ((JSpinner) timePanel.getComponent(0))
-                            .getModel()).setMaximum(new Integer(
-                            getIntegerHours(qWallLimit)));
-
-                    // minute spinner
-                    if (qWallLimit.get(Calendar.MINUTE) > 0) {
-                        ((SpinnerNumberModel) ((JSpinner) timePanel
-                                .getComponent(2)).getModel())
-                                .setMaximum(new Integer(qWallLimit
-                                        .get(Calendar.MINUTE)));
-                    } else {
-                        ((SpinnerNumberModel) ((JSpinner) timePanel
-                                .getComponent(2)).getModel())
-                                .setMaximum(new Integer(59));
-                    }
-
-                    // cpu spinner
-                    ((SpinnerNumberModel) numProcSpin.getModel())
-                            .setMaximum(new Integer(getSelectedQueue()
-                                    .getMaxProcessors()));
-
-                    if (!loadingQueues) {
-                        validateTimeLimit(q);
-                        validateCpuLimit(q);
-                    }
-                }*/// remove comment
-            }
-
-
-            protected void validateCpuLimit(QueueBean q) {
-
-                if (q != null) {
-                    // make sure it's a valid value in the range
-                    // 1-q.getMaxCpus()
-                    if (numProcnm.getNumber().intValue() > q.getMaxCpus()) {
-                        JOptionPane
-                                .showMessageDialog(
-                                        null,
-                                        "The requested number of CPU's, "
-                                                + numProcnm.getNumber()
-                                                + ", exceeds "
-                                                + "\nthe maximum number of processors allowed"
-                                                + "\non the "
-                                                + getSelectedQueue()
-                                                + " queue of "
-                                                + hpcList
-                                                .getSelectedValue()
-                                                .toString()
-                                                + ". The requested\nCPU field will be reset to "
-                                                + "the maximum CPU\ncount of the "
-                                                + getSelectedQueue()
-                                                + " queue.",
-                                        "Requested CPU Error",
-                                        JOptionPane.OK_OPTION);
-
-                        System.out.println("The requested number of CPU's, "
-                                + numProcnm.getNumber() + ", exceeds "
-                                + "\nthe maximum number of processors allowed"
-                                + "\non the " + getSelectedQueue()
-                                + " queue of "
-                                + hpcList.getSelectedValue().toString()
-                                + ". The requested\nCPU field will be reset to"
-                                + "the maximum\nCPU count of the "
-                                + getSelectedQueue() + " queue.");
-
-                        // reset the value
-                        numProcnm.setValue(new Integer(q.getMaxCpus()));
-
-                        // select the text
-                        ((NumberEditor) numProcSpin.getEditor()).getTextField()
-                                .selectAll();
-
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null,
-                            "Please enter a value in the range [1:"
-                                    + q.getMaxCpus() + "].",
-                            "Queue Wall Time Error", JOptionPane.OK_OPTION);
-
-                    // reset the value
-                    numProcnm.setValue(new Integer(q.getMaxCpus()));
-
-                    // select the text
-                    ((NumberEditor) numProcSpin.getEditor()).getTextField()
-                            .selectAll();
-                }
-            }
-
-            protected void validateTimeLimit(QueueBean q) {
-
-                Calendar qWallLimit = q.getMaxWallClockTime();
-
-                // save the current values
-                double hours = hrnm.getNumber().doubleValue()
-                        + minnm.getNumber().doubleValue() / 60;
-
-                // reset the previous value to that value or the limit for the
-                // current qdto.
-
-                if (hours > getDoubleHours(qWallLimit)) {
-
-                    try {
-                        JOptionPane.showMessageDialog(null,
-                                "Current wall time value of "
-                                        + hrnm.getNumber().intValue()
-                                        + ":"
-                                        + minnm.getNumber().intValue()
-                                        + " hours exceeds "
-                                        + "\nthe maximum queue wall time of "
-                                        + resolveTimeLimit(qWallLimit)
-                                        + " hours\non "
-                                        + hpcList.getSelectedValue()
-                                        .toString() + "'s "
-                                        + getSelectedQueue()
-                                        + " queue. Time will be reset"
-                                        + "\nto the maximum time limit of the "
-                                        + getSelectedQueue() + "\nqueue.",
-                                "Queue Wall Time Error", JOptionPane.OK_OPTION);
-
-                        System.out.println("Current wall time value of "
-                                + hrnm.getNumber().intValue()
-                                + ":"
-                                + minnm.getNumber().intValue()
-                                + " hours exceeds "
-                                + "\nthe maximum queue wall time of "
-                                + resolveTimeLimit(qWallLimit)
-                                + " hours\non "
-                                + hpcList.getSelectedValue().toString()
-                                + "'s "
-                                + getSelectedQueue()
-                                + " queue. Time will be reset"
-                                + "\nto the maximum time limit of the "
-                                + getSelectedQueue()
-                                + "\nqueue."
-                                + " which is "
-                                + new String(getIntegerHours(qWallLimit) + ":"
-                                + qWallLimit.get(Calendar.MINUTE)));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    // reset the hour time to the max hour value for the queue
-                    hrnm.setValue(new Integer(getIntegerHours(qWallLimit)));
-
-                    // select the text
-                    ((NumberEditor) hr.getEditor()).getTextField().selectAll();
-
-                    // if the minute time is over, reset that as well to the max
-                    // minute value
-                    if (minnm.getNumber().intValue() > qWallLimit
-                            .get(Calendar.MINUTE)) {
-                        minnm.setValue(new Integer(0));
-                    }
-                }
-            }
-        });
-
         // create processor count spinner box
         minimum = 1;
         //maximum = getSelectedQueue().getMaxCpus();
@@ -828,6 +639,10 @@ public class EditJobPanel extends JDialog implements ActionListener,
         numProcnm = new SpinnerNumberModel(initial, minimum, maximum, step);
         numProcSpin.setModel(numProcnm);
         numProcSpin.setInputVerifier(new NumProcFieldVerifier());
+
+        numNodeSpin.setModel(new SpinnerNumberModel(1, 1, 1000, 1));
+
+        numThreadSpin.setModel(new SpinnerNumberModel(1,1,1000,1));
 
         // Create Memory Configuration
         memSizeLabel = new JLabel("Preferred Memory (Mbytes):");
@@ -923,16 +738,9 @@ public class EditJobPanel extends JDialog implements ActionListener,
         layoutPanel.setLayout(new BoxLayout(layoutPanel, BoxLayout.X_AXIS));
         layoutPanel.add(leftPanelForchoicesBox);
         layoutPanel.add(rightPanel);
-        layoutPanel.setMinimumSize(new Dimension(750, 500));
-        layoutPanel.setPreferredSize(new Dimension(750, 500));
+        layoutPanel.setMinimumSize(new Dimension(750, 550));
+        layoutPanel.setPreferredSize(new Dimension(750, 550));
         this.add(layoutPanel, constraint);
-//      
-        // Add all the action listeners here
-        edbumolButton.addActionListener(this);
-        OKButton.addActionListener(this);
-        CancelButton.addActionListener(this);
-
-        hpcList.addListSelectionListener(ms);
 
         // make the mouseover tool tips to appear immediately
         ToolTipManager.sharedInstance().setInitialDelay(0);
@@ -940,10 +748,124 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         // make the tool tips appear until the mouse is removed
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+
+        setListeners(); // set all action listenrs
+
         pack();
         setVisible(true);
+
     }
 
+    private void setListeners(){
+        machListSelectionListener ms = new machListSelectionListener();
+        edbumolButton.addActionListener(this);
+        OKButton.addActionListener(this);
+        CancelButton.addActionListener(this);
+        hpcList.addListSelectionListener(ms);
+        appCombo.addItemListener(new appComboListener());
+        appModuleCombo.addItemListener(new appModuleComboListener());
+
+        projCombo.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                String project = projCombo.getSelectedItem().toString();
+                System.out.println("Changing project to : " + project);
+                experimentParmas.put(ExpetimentConst.PROJECT_ID, project);
+            }
+        });
+
+        qCombo.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+              //  String queue = qCombo.getSelectedItem().toString();
+               // System.out.println("Changing queue to : "+queue);
+               // experimentParmas.put(ExpetimentConst.QUEUE,queue);
+            }
+
+        });
+
+        expNameText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                experimentParmas.put(ExpetimentConst.EXP_NAME, expNameText.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                experimentParmas.put(ExpetimentConst.EXP_NAME, expNameText.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                experimentParmas.put(ExpetimentConst.EXP_NAME, expNameText.getText());
+            }
+        });
+
+        numThreadSpin.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                String threads = numThreadSpin.getValue().toString();
+                experimentParmas.put(ExpetimentConst.THREADS, Integer.parseInt(threads));
+            }
+        });
+
+        numNodeSpin.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                String nodes = numNodeSpin.getValue().toString();
+                experimentParmas.put(ExpetimentConst.NODE_COUNT, Integer.parseInt(nodes));
+            }
+        });
+
+        numProcSpin.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                String cpus = numProcSpin.getValue().toString();
+                experimentParmas.put(ExpetimentConst.CPU_COUNT, Integer.parseInt(cpus));
+            }
+        });
+
+        hr.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int time = ((int)min.getValue())+((int)hr.getValue())*60;
+                experimentParmas.put(ExpetimentConst.WALL_TIME,time);
+            }
+
+        });
+
+
+        min.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int time = ((int)min.getValue())+((int)hr.getValue())*60;
+                experimentParmas.put(ExpetimentConst.WALL_TIME,time);
+            }
+
+        });
+
+        memSizeTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
+            public void update(){
+                experimentParmas.put(ExpetimentConst.MEMORY, Integer.parseInt(memSizeTextField.getText()));
+            }
+        });
+
+    }
 
     private void layoutRequirementsPane() {
 
@@ -1024,6 +946,32 @@ public class EditJobPanel extends JDialog implements ActionListener,
             reqPane.add(numProcSpin);
         }
 
+        numNodesLabel = new JLabel("Number of Nodes");
+        gbcons.weightx = 0.0;
+        gbcons.gridwidth = GridBagConstraints.RELATIVE;
+        gbcons.gridx =0;
+        rpgbl.setConstraints(numNodesLabel,gbcons);
+        reqPane.add(numNodesLabel);
+
+        gbcons.weightx = 0.0;
+        gbcons.gridwidth = GridBagConstraints.RELATIVE;
+        gbcons.gridx = 1;
+        rpgbl.setConstraints(numNodeSpin,gbcons);
+        reqPane.add(numNodeSpin);
+
+        numThreadLabel = new JLabel("Number of Threads");
+        gbcons.weightx = 0.0;
+        gbcons.gridwidth = GridBagConstraints.RELATIVE;
+        gbcons.gridx =0;
+        rpgbl.setConstraints(numThreadLabel,gbcons);
+        reqPane.add(numThreadLabel);
+
+        gbcons.weightx = 0.0;
+        gbcons.gridwidth = GridBagConstraints.RELATIVE;
+        gbcons.gridx = 1;
+        rpgbl.setConstraints(numThreadSpin,gbcons);
+        reqPane.add(numThreadSpin);
+
         gbcons.weightx = 0.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
         gbcons.gridx = 0;
@@ -1034,7 +982,9 @@ public class EditJobPanel extends JDialog implements ActionListener,
         rpgbl.setConstraints(memSizeTextField, gbcons);
         reqPane.add(memSizeTextField);
 
-        reqPane.setMaximumSize(new Dimension(350, 250));
+        reqPane.setPreferredSize(new Dimension(350, 450));
+
+        reqPane.setMaximumSize(new Dimension(350, 450));
         reqPane.repaint();
     }
 
@@ -1135,7 +1085,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
     // Amr
     // Now change the machines according to which ones have the application.
     public void populateMachineList(String application) {
-        System.out.println("Applic "+application);
+        System.out.println("Applic " + application);
 //        ArrayList appMachineList = new ArrayList();
         if (Settings.WEBSERVICE) {
             hpcListModel.removeAllElements();
@@ -1168,42 +1118,12 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     }
 
-    /**
-     * Populate project dropdown box with the projects corresponding to the
-     * machine currently visible in the machine dropdown box
-     *
-     * @param machine Name of machine whose project info will be used to populate
-     *                the project dropdown box.
-     */
-    public void populateProjects(String machine) {
+    public void populateProjects() {
         projCombo.removeAllItems();
-        if (Settings.WEBSERVICE) {
-            if (machine.equals(SCHEDULER)) {
 
-                projCombo.addItem(UNSPECIFIED);
-
-            } else {
-                if (GridChem.accessType.equals(AccessType.COMMUNITY)) {
-                    ComputeResourceDescription bean = GridChem.getMachineByName(machine);
-            		/*for (String allocation: bean.getAllocations()) {
-            			projCombo.addItem(allocation);
-            			System.out.println("WEBSERVICE:System Specified project "+allocation+" added to list projCombo");
-            		}*/ // remove comment
-                    System.out.println("EditJobPanel:WEBSERVICE projects");
-                    return;
-                } else {
-                    projCombo.addItem("default");
-                    projCombo.setSelectedItem("default");
-                    return;
-                }
-            }
-        } else {
-            ArrayList items = GridChem.getMachineProjectsList(machine);
-            int i;
-            for (i = 0; i < items.size(); i++) {
-                projCombo.addItem((String) items.get(i));
-                System.out.println("EditJobPanel:nonWEBSERVICE projects added");
-            }
+        List<Project> projectList=AiravataManager.getProjects();
+        for (Project p:projectList){
+            projCombo.addItem(p.getName());
         }
     }
 
@@ -1318,35 +1238,26 @@ public class EditJobPanel extends JDialog implements ActionListener,
             doMakeDefaultJob();
 
         } else if (e.getActionCommand() == "Submit") {
-            preferences.put("last_module", getModuleName());
-            preferences.put("last_app", getAppPackageName());
-            preferences.put("last_machine", getSubmitMachine());
-            boolean ok = false;
-            try {
-                ok = verifyInput();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-                JOptionPane.showMessageDialog(this, e1.getMessage(), "Input File Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            //preferences.put("last_module", getModuleName());
+            //preferences.put("last_app", getAppPackageName());
+            //preferences.put("last_machine", getSubmitMachine());
+            experimentParmas.put(ExpetimentConst.EXP_NAME,expNameText.getText());
+            experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID,hpcList.getSelectedValue().toString());
+            experimentParmas.put(ExpetimentConst.APP_ID,(String)appCombo.getSelectedItem());
 
-            if (ok) {
-                if (validTime) {
-
-                    if (isSubmittingScript == false) {
-                        if (isUpdating == false) {
-                            doAddJobToQueue();
-                        } else {
-                            doUpdateJobInQueue();
-                        }
-                    } else {
-                        doAddJobsToQueue();
-                    }
-
-                    doCancel();
-                }
-            }
+            System.out.println(experimentParmas.get(ExpetimentConst.EXP_NAME));
+            System.out.println(experimentParmas.get(ExpetimentConst.APP_ID));
+            System.out.println(experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
+            System.out.println(experimentParmas.get(ExpetimentConst.PROJECT_ID));
+            System.out.println(experimentParmas.get(ExpetimentConst.QUEUE));
+            System.out.println(experimentParmas.get(ExpetimentConst.CPU_COUNT));
+            System.out.println(experimentParmas.get(ExpetimentConst.USER_ID));
+            System.out.println(experimentParmas.get(ExpetimentConst.NODE_COUNT));
+            System.out.println(experimentParmas.get(ExpetimentConst.THREADS));
+            System.out.println(experimentParmas.get(ExpetimentConst.WALL_TIME));
+            System.out.println(experimentParmas.get(ExpetimentConst.START_TIME));
+            System.out.println(experimentParmas.get(ExpetimentConst.MEMORY));
+            System.out.println(experimentParmas.get(ExpetimentConst.PROJECT_ACCOUNT));
 
         } else if (e.getActionCommand() == "Cancel") {
 
@@ -1391,43 +1302,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         this.memSizeTextField.setEnabled(false);
     }
 
-    /**
-     * Read a textual file into a string. This routine has a history of
-     * performing poorly on large files: FileInputStream was replaced with
-     * BufferedReader by K. Kotwani; Line based reading was removed and a
-     * StringBuffer was added by S. Brozell. It is not clear whether we have
-     * balanced the tradeoffs optimally. For example, a FileInputStream with our
-     * own buffering may be better.
-     * <p>
-     * More work related to exception handling and preferences is needed.
-     *
-     * @param file read from this File.
-     * @return a String with the file contents.
-     */
-    // temporarily commenting method below as it was adding square characters at
-    // the end of text area for blank lines at the end of file (K Kotwani)
-    // Need to look for a fix for this problem
-    /*
-     * static final int BUFFER_SIZE = 65536; // assert( BUFFER_SIZE >= 0 )
-     * static final char[] buffer = new char[BUFFER_SIZE]; public String
-     * readTextArea(File file) throws IOException { StringBuffer text = new
-     * StringBuffer(BUFFER_SIZE); BufferedReader br = null; try { // this output
-     * should be controlled by a verbosity preference
-     * System.out.println("Opening file " + file.getName() ); br = new
-     * BufferedReader(new FileReader(file)); int numRead = 0; synchronized
-     * (buffer) { while ((numRead = br.read(buffer)) > -1) { // -1 is EOF
-     * text.append(buffer); // this output should be controlled by a verbosity
-     * preference System.out.println("Read " + numRead + " characters." ); } } }
-     * catch(Throwable e) { JOptionPane.showMessageDialog( null, "There was a
-     * problem reading the file...", "NewJob", JOptionPane.ERROR_MESSAGE );
-     * System.err.println("LowLevelIO:readTextArea: error opening file");
-     * System.err.println(e.toString()); e.printStackTrace(); } finally { //
-     * this output should be controlled by a verbosity preference
-     * System.out.println("Closing file " + file.getName() ); if (br != null) {
-     * br.close(); } } String filetext = text.toString();
-     * System.out.println("filetext: "+filetext); return text.toString(); }
-     */
-    // implemented this old method where it reads line by line
     public String readTextArea(File f) throws IOException {
         String line = "";
         FileInputStream fin = null;
@@ -1720,7 +1594,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             this.changeModule(newNanocad.exportedApplication);
 
             this.populateMachineList(newNanocad.exportedApplication);
-            this.populateProjects((String) hpcListModel.getElementAt(0));
+            this.populateProjects();
             numProcMethod();
 
             ArrayList<File> newInputs = new ArrayList<File>();
@@ -1769,7 +1643,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             this.changeModule(newNanocad.exportedApplication);
 
             this.populateMachineList(newNanocad.exportedApplication);
-            this.populateProjects((String) hpcListModel.getElementAt(0));
+            this.populateProjects();
 
             System.out.println("****Application name: " + application);
             application = newNanocad.exportedApplication;
@@ -1802,12 +1676,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
     }
 
     // methods to access the fields
-    protected String getResProj() {
-        return this.projNameText.getText();
-    }
-
-    private String getJobName() {
-        return this.jobNameText.getText();
+    protected String getResExp() {
+        return this.expNameText.getText();
     }
 
     private String getProject() {
@@ -1969,14 +1839,9 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     // methods to change the fields
 
-    private void changeJobNameField(String newname) {
-        jobNameText.selectAll();
-        jobNameText.replaceSelection(newname);
-    }
-
-    private void changeResearchProjectNameField(String newname) {
-        projNameText.selectAll();
-        projNameText.replaceSelection(newname);
+    private void changeExperimentNameField(String newname) {
+        expNameText.selectAll();
+        expNameText.replaceSelection(newname);
     }
 
     private void changeProject(String p) {
@@ -2079,7 +1944,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
     public void changeInputFiles(ArrayList<File> newFiles) {
 
 //        this.job.setInputFiles(newFiles);
-        updateInputInfoPanel(this.experiment, newFiles);
+        //updateInputInfoPanel(this.experiment, newFiles); //rmove comment
 
     }
 
@@ -2153,57 +2018,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         return (days + hours) + ":" + ((minutes == 0) ? "00" : minutes);
     }
 
-    private String getSelectedProj() {
-        String selectedProj = "";
-        int selectedMachineIndex = hpcList.getSelectedIndex();
-        String hpcName = (String) hpcListModel.get(selectedMachineIndex);
-        ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
-
-        System.out.println("EJP:2111: hpc allocations for HPC system " + hpcName + "\n");
-
-        if (hpcName.equals("Grid Scheduler")) {
-            // skip getting allocation name apriori
-            // temporarily switch it to Cobalt
-            hpcName = "Ember";
-        } else if (hpcName.equals(this.scheduling.getResourceHostId())) {
-    	      /*System.out.println(" are "+hpc.getAllocations()+"\n");
-    	    
-    	      for (String p : hpc.getAllocations()) {
-               if (p.equals((String) projCombo.getSelectedItem())) {
-                   selectedProj = p;
-               }
-    	      }*/ //remove comment
-        }
-        //
-        // Forcing project
-        selectedProj = "dck";
-        System.out.println(" getSelectedProj: selectedProj is " + selectedProj);
-        return selectedProj;
-    }
-
-
-    private BatchQueue getSelectedQueue() {
-
-        BatchQueue selectedQueue = null;
-
-        int selectedMachineIndex = hpcList.getSelectedIndex();
-
-        String hpcName = (String) hpcListModel.get(selectedMachineIndex);
-
-
-        ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
-
-        if (hpc.isSetBatchQueues()) {
-            for (BatchQueue q : hpc.getBatchQueues()) {
-                if (q.getQueueName().equals((String) qCombo.getSelectedItem())) {
-                    selectedQueue = q;
-                }
-            }
-        }
-
-
-        return selectedQueue;
-    }
 
     private int getIntegerHours(Calendar cal) {
 
@@ -2649,7 +2463,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
                     return;
                 } else {
 
-                    populateProjects(hpcList.getSelectedValue().toString());
                     populateQueues(hpcList.getSelectedValue().toString());
 
                 }
@@ -2909,105 +2722,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
     class HourFieldVerifier extends InputVerifier {
 
         public boolean verify(JComponent input) {
-            System.out.println("trapped text verification");
-            Integer newTimeUnit = null;
 
-            try {
-                if (input instanceof JFormattedTextField) {
-                    JFormattedTextField ftf = (JFormattedTextField) input;
-
-                    AbstractFormatter formatter = ftf.getFormatter();
-                    if (formatter != null) {
-                        String text = ftf.getText();
-                        try {
-                            newTimeUnit = new Integer(text);
-                            System.out.println("value was caught");
-                        } catch (Exception pe) {
-                            JOptionPane
-                                    .showMessageDialog(null,
-                                            "Please enter a valid value in the time field.");
-
-                            System.out.println("Time of " + text
-                                    + " is not valid.");
-                        }
-                    }
-
-                    BatchQueue q = getSelectedQueue();
-
-                    /*if (q != null) { //remove comment
-                        Calendar qWallLimit = q.getMaxWallClockTime();
-                        System.out.println("Queue " + q.getName() + " is "
-                                + ((q.isDefaultQueue()) ? "" : "not")
-                                + " default.");
-
-                        if (newTimeUnit.intValue() > getIntegerHours(qWallLimit)
-                                && newTimeUnit.intValue() > 1) {
-                            // if the value was reset
-
-                            JOptionPane
-                                    .showMessageDialog(
-                                            null,
-                                            "Current wall time value of "
-                                                    + newTimeUnit.intValue()
-                                                    + ":"
-                                                    + minnm.getNumber()
-                                                            .intValue()
-                                                    + " hours exceeds "
-                                                    + "\nthe maximum queue wall time of "
-                                                    + resolveTimeLimit(qWallLimit)
-                                                    + " hours\non "
-                                                    + hpcList
-                                                            .getSelectedValue()
-                                                            .toString()
-                                                    + "'s "
-                                                    + getSelectedQueue()
-                                                    + " queue. Time will be reset"
-                                                    + "\nto the maximum time limit of the "
-                                                    + getSelectedQueue()
-                                                    + "\nqueue.",
-                                            "Queue Wall Time Error",
-                                            JOptionPane.OK_OPTION);
-
-                            System.out.println("Current wall time value of "
-                                    + newTimeUnit.intValue() + ":"
-                                    + minnm.getNumber().intValue()
-                                    + " hours exceeds "
-                                    + "\nthe maximum queue wall time of "
-                                    + resolveTimeLimit(qWallLimit)
-                                    + " hours\non "
-                                    + hpcList.getSelectedValue().toString()
-                                    + "'s " + getSelectedQueue()
-                                    + " queue. Time will be reset"
-                                    + "\nto the maximum time limit of the "
-                                    + getSelectedQueue() + "\nqueue.");
-
-                            // ftf.setText(((Integer)hrnm.getMaximum()).toString());
-                            ftf
-                                    .setText(new Integer(
-                                            getIntegerHours(qWallLimit))
-                                            .toString());
-                            minnm.setValue(qWallLimit.get(Calendar.MINUTE));
-                            // minnm.setValue(minnm.getMaximum());
-                            ftf.selectAll();
-
-                            // set the flag so the job will not be submitted
-                            validTime = false;
-
-                            return false;
-                        }
-
-                    }*/
-                }
-            } catch (Exception ex) {
-                System.out.println("value was bad in spinner");
-                ((JFormattedTextField) input).selectAll();
-                // set the flag so the job will not be submitted
-                validTime = false;
-
-                return false;
-            }
-
-            validTime = true;
 
             return true;
         }
@@ -3016,132 +2731,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
     class MinuteFieldVerifier extends InputVerifier {
 
         public boolean verify(JComponent input) {
-            Integer newTimeUnit = null;
 
-            try {
-                if (input instanceof JFormattedTextField) {
-                    JFormattedTextField ftf = (JFormattedTextField) input;
-
-                    AbstractFormatter formatter = ftf.getFormatter();
-                    if (formatter != null) {
-                        String text = ftf.getText();
-                        try {
-                            newTimeUnit = new Integer(text);
-                            System.out.println("value was caught");
-                        } catch (Exception pe) {
-                            JOptionPane
-                                    .showMessageDialog(null,
-                                            "Please enter a valid value in the minute wall time field.");
-                            validTime = false;
-                            System.out.println("Time of " + text
-                                    + " is not valid.");
-                        }
-                    }
-
-                    BatchQueue q = getSelectedQueue();
-
-                    /*if (q != null) { //remove comment
-                        Calendar qWallLimit = q.getMaxWallClockTime();
-                        System.out.println("Queue " + q.getName() + " is "
-                                + ((q.isDefaultQueue()) ? "" : "not")
-                                + " default.");
-
-                        Calendar requestedTime = Calendar.getInstance();
-                        requestedTime.clear();
-                        requestedTime.add(Calendar.HOUR_OF_DAY, ((Integer) hrnm
-                                .getValue()).intValue());
-                        requestedTime.add(Calendar.MINUTE, newTimeUnit
-                                .intValue());
-
-                        // make sure it's a valid value in the range 0-59
-                        if (newTimeUnit.intValue() > 0
-                                && (newTimeUnit.intValue() < 60 || ((Integer) minnm
-                                        .getMaximum()).intValue() < 60)) {
-                            // if it's valid, make sure the overall time request
-                            // is valid. this checks
-                            // that if the time limit on the queue is 4:30 that
-                            // they can enter 3:59, but
-                            // 4:59 is caught.
-                            if (requestedTime.getTimeInMillis() > qWallLimit
-                                    .getTimeInMillis()) {
-
-                                JOptionPane
-                                        .showMessageDialog(
-                                                null,
-                                                "Current wall time value of "
-                                                        + hrnm.getNumber()
-                                                                .intValue()
-                                                        + ":"
-                                                        + newTimeUnit
-                                                                .intValue()
-                                                        + " hours exceeds "
-                                                        + "\nthe maximum queue wall time of "
-                                                        + resolveTimeLimit(qWallLimit)
-                                                        + " hours\non "
-                                                        + hpcList
-                                                                .getSelectedValue()
-                                                                .toString()
-                                                        + "'s "
-                                                        + getSelectedQueue()
-                                                        + " queue. Time will be reset"
-                                                        + "\nto the maximum time limit of the "
-                                                        + getSelectedQueue()
-                                                        + "\nqueue.",
-                                                "Queue Wall Time Error",
-                                                JOptionPane.OK_OPTION);
-
-                                System.out
-                                        .println("Current wall time value of "
-                                                + hrnm.getNumber().intValue()
-                                                + ":"
-                                                + newTimeUnit.intValue()
-                                                + " hours exceeds "
-                                                + "\nthe maximum queue wall time of "
-                                                + resolveTimeLimit(qWallLimit)
-                                                + " hours\non "
-                                                + hpcList
-                                                        .getSelectedValue()
-                                                        .toString()
-                                                + "'s "
-                                                + getSelectedQueue()
-                                                + " queue. Time will be reset"
-                                                + "\nto the maximum time limit of the "
-                                                + getSelectedQueue()
-                                                + "\nqueue.");
-
-                                // ftf.setText(((Integer)minnm.getMaximum()).toString());
-                                ftf.setText(new Integer(qWallLimit
-                                        .get(Calendar.MINUTE)).toString());
-                                ftf.selectAll();
-
-                                // set the flag so the job will not be submitted
-                                validTime = false;
-
-                                return false;
-                            }
-                        } else {
-                            JOptionPane
-                                    .showMessageDialog(
-                                            null,
-                                            "Please enter a value in the range [0:59].",
-                                            "Queue Wall Time Error",
-                                            JOptionPane.OK_OPTION);
-                            ftf.selectAll();
-                            // set the flag so the job will not be submitted
-                            validTime = false;
-
-                            return false;
-                        }
-                    }*/
-                }
-            } catch (Exception ex) {
-                System.out.println("value was bad in spinner");
-                ((JFormattedTextField) input).selectAll();
-                // set the flag so the job will not be submitted
-                validTime = false;
-                return false;
-            }
-            validTime = true;
             return true;
         }
     }
@@ -3149,127 +2739,11 @@ public class EditJobPanel extends JDialog implements ActionListener,
     class NumProcFieldVerifier extends InputVerifier {
 
         public boolean verify(JComponent input) {
-            Integer newProcCount = null;
 
-            try {
-                if (input instanceof JFormattedTextField) {
-                    JFormattedTextField ftf = (JFormattedTextField) input;
-
-                    AbstractFormatter formatter = ftf.getFormatter();
-                    if (formatter != null) {
-                        String text = ftf.getText();
-                        try {
-                            newProcCount = new Integer(text);
-                            System.out.println("processor value was caught");
-                        } catch (Exception pe) {
-                            JOptionPane
-                                    .showMessageDialog(null,
-                                            "Please enter a valid value in the minute wall time field.");
-                            validTime = false;
-                            System.out.println("Time of " + text
-                                    + " is not valid.");
-                        }
-                    }
-
-                    BatchQueue q = getSelectedQueue();
-
-                    /*if (q != null) { //remove comment
-                        // make sure it's a valid value in the range 0-59
-                        if (newProcCount.intValue() <= q.getMaxCpus()
-                                && newProcCount.intValue() > 0) {
-                            JOptionPane
-                                    .showMessageDialog(
-                                            null,
-                                            "The requested number of CPU's, "
-                                                    + newProcCount
-                                                    + ", exceeds "
-                                                    + "\nthe maximum number of processors allowed on the "
-                                                    + getSelectedQueue()
-                                                    + "\nqueue of "
-                                                    + hpcList
-                                                            .getSelectedValue()
-                                                            .toString()
-                                                    + ". The requested CPU field "
-                                                    + "\nwill be reset to the maximum CPU count of the\n"
-                                                    + getSelectedQueue()
-                                                    + "\nqueue.",
-                                            "Requested CPU Error",
-                                            JOptionPane.OK_OPTION);
-
-                            System.out
-                                    .println("The requested number of CPU's, "
-                                            + newProcCount
-                                            + ", exceeds\nthe maximum number of processors allowed on the "
-                                            + getSelectedQueue()
-                                            + "\nqueue of "
-                                            + hpcList.getSelectedValue()
-                                                    .toString()
-                                            + ". The requested CPU field "
-                                            + "\nwill be reset to the maximum CPU count of the\n"
-                                            + getSelectedQueue() + "\nqueue.");
-
-                            // ftf.setText(((Integer)minnm.getMaximum()).toString());
-                            ftf.setText(new Integer(q.getMaxCpus()).toString());
-                            ftf.selectAll();
-
-                            // set the flag so the job will not be submitted
-                            validTime = false;
-
-                            return false;
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(null,
-                                "Please enter a value in the range [1:"
-                                        + q.getMaxCpus() + "].",
-                                "Queue Wall Time Error", JOptionPane.OK_OPTION);
-
-                        ftf.selectAll();
-
-                        // set the flag so the job will not be submitted
-                        validTime = false;
-
-                        return false;
-                    }*/
-
-                }
-            } catch (Exception ex) {
-                System.out.println("value was bad in spinner");
-                ((JFormattedTextField) input).selectAll();
-                // set the flag so the job will not be submitted
-                validTime = false;
-                return false;
-            }
-            validTime = true;
             return true;
         }
     }
 
-//    // the following two functions are used for mapping between app name registered in GMS_WS and 
-//    // a pair of name (an appPakcage name and a module name) appearing in GUI Job Editor panel. 
-//    // This part is still a kind of tricky, but it can hide any complicated details on mapping.
-//    private String[] appPackageAndModuleName(String appName){
-//        
-//        String[] names = {null, null};
-//        
-//        for(Enumeration keys = APP_MODULE_HASHTABLE.keys(); keys.hasMoreElements(); ){
-//
-//            Object appPackage_name = keys.nextElement();
-//            HashSet<String> set = new HashSet<String>(APP_MODULE_HASHTABLE.get(appPackage_name));
-//                
-//            for(Object ob : set){
-//                String str = (String)ob;
-//                
-//                if(appName.toUpperCase().contains(str.toUpperCase())){
-//                    names[1] = str;
-//                    names[0] = (String) appPackage_name;
-//                }
-//            }
-//        }
-//        System.out.println("\n(DEBUG) appName : " + appName +" Then, appPackageName :"+names[0] + "  module name  :" + names[1] + "\n");
-//        
-//        return names ;
-//        
-//    }
 
     public String appName(String appPackageName, String moduleName) {
 
@@ -3295,28 +2769,12 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     public void createAndShowSampleJob(String app) {
 
-        updateInputInfoPanel(this.experiment, FileUtility.getDefaultInputFiles(app));
+        //updateInputInfoPanel(this.experiment, FileUtility.getDefaultInputFiles(app)); //remove comment
         layoutRequirementsPane();
     }
 
     public JobBean createSampleJob(String app) {
 
-
-//        newJob.setApplication(app);
-
-//        ComputeBean hw = GridChem.hardware.get(0);
-//        newJob.setSubmitMachine(hw.getName());
-//        SoftwareBean sw = hw.getSoftware().iterator().next();
-//        newJob.setApplication(app);
-//        newJob.setProjectName(hw.getResourceProjects().iterator().next());
-//        newJob.setQueue(hw.getQueueNames().iterator().next().getName());
-//        newJob.setRequestedCpus(new Long(1));
-//        
-//        Calendar cal = Calendar.getInstance();
-//        cal.clear();
-//        cal.add(Calendar.MINUTE,30);
-//        
-//        newJob.setRequestedCpuTime(cal);
         return new JobBean();
 
     }
@@ -3324,408 +2782,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
     // TODO: find better way to validate file names
     public boolean verifyInput() throws IOException {
         // some application specific validification process before sending a job
-        boolean ok = true;
-        String appName = appName(getAppPackageName(), getModuleName());
-
-        if (appName.equalsIgnoreCase(Invariants.APP_NAME_ACES3)) {
-            int reqCpu = 0;
-
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(getInputFiles().get(0)));
-                String line = "";
-                String fileText = "";
-                while ((line = br.readLine()) != null) {
-                    if ((line.toUpperCase()).startsWith("COMPANY")) {
-                        String[] token = (line.split("="))[1].trim().split(" ");
-                        reqCpu = reqCpu + Integer.parseInt(token[2]);
-
-                        System.out.println("(Debug) " + "token0 :" + token[0] + " token1 : " + token[1] + " token2 :" + token[2] + " token3 :" + token[3]);
-                        System.out.println("\n(Info) # of cpu from COMPANY : " + Integer.parseInt(token[2]));
-                    }
-                    if ((line.toUpperCase()).startsWith("IOCOMPANY")) {
-                        String[] token = (line.split("="))[1].trim().split(" ");
-                        reqCpu = reqCpu + Integer.parseInt(token[2]);
-
-                        System.out.println("\n(Info) # of cpu from ICOMPANY : " + Integer.parseInt(token[2]));
-                    }
-                }
-            } catch (IOException e) {
-                ok = false;
-            }
-
-            if (reqCpu != getNumProc()) {
-
-                JOptionPane.showMessageDialog(null, "Requested number of cpu inconsistent with input file. \n  Your input and Requirements ask different # of cpus",
-                        "Change the number of CPUs", JOptionPane.INFORMATION_MESSAGE);
-
-                ok = false;
-            }
-
-        } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_DMOL3)) {
-
-            String jobName = getJobName();
-
-            boolean validCar = false;
-            boolean validInput = false;
-
-            if (getInputFiles().size() > 2) {
-                JOptionPane.showMessageDialog(null, "Number of input files exceeds the max allowed.",
-                        "Input file violation", JOptionPane.WARNING_MESSAGE);
-
-                ok = false;
-
-            } else {
-                File carFile = null;
-                File inputFile = null;
-
-                // there should only be 2 files: a car and an input
-                for (File file : getInputFiles()) {
-                    if (file.getName().endsWith(".car"))
-                        carFile = file;
-                    else if (file.getName().endsWith(".input"))
-                        inputFile = file;
-                }
-
-                // both files should be present
-                if (carFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .car",
-                            "Car file name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                    ok = false;
-                }
-                //fixed bug -nik
-                if (inputFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .input",
-                            "Input file name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                    ok = false;
-                }
-
-                int inputFileBase = inputFile.getName().lastIndexOf('.');
-                int carFileBase = carFile.getName().lastIndexOf('.');
-                if (!carFile.getName().substring(0, carFileBase).equals(inputFile.getName().substring(0, inputFileBase))) {
-
-                    JOptionPane.showMessageDialog(null, "Input files should have the same basename",
-                            "Base name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                    ok = false;
-
-                }
-
-                if (ok == true) {
-                    if (jobName != inputFile.getName().substring(0, inputFileBase)) {
-                        String newJobName = inputFile.getName().substring(0, inputFileBase);
-
-                        JOptionPane.showMessageDialog(null, "job name " + jobName + " will be changed to the basename of input files :" + newJobName,
-                                "Job name change", JOptionPane.OK_OPTION);
-
-                        changeJobNameField(newJobName);
-
-                    }
-                }
-            }
-        } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_NAMD)) {
-
-            String jobName = getJobName();
-
-            if (getInputFiles().size() > 4) {
-                JOptionPane.showMessageDialog(null, "Number of input files exceeds the max allowed.",
-                        "Input file violation", JOptionPane.WARNING_MESSAGE);
-
-                ok = false;
-
-            } else {
-                File namdFile = null;
-                File paramsFile = null;
-                File pdbFile = null;
-                File psfFile = null;
-
-                // there should only be 4 files: 
-                for (File file : getInputFiles()) {
-                    if (file.getName().endsWith(".namd"))
-                        namdFile = file;
-                    else if (file.getName().endsWith(".params"))
-                        paramsFile = file;
-                    else if (file.getName().endsWith(".pdb"))
-                        pdbFile = file;
-                    else if (file.getName().endsWith(".psf"))
-                        psfFile = file;
-                }
-
-                if (namdFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .namd",
-                            "Car file name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                    ok = false;
-                }
-
-                if (paramsFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .params",
-                            "Input file name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                    ok = false;
-                }
-
-                if (pdbFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .pdb",
-                            "Car file name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                    ok = false;
-                }
-
-                if (psfFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .psf",
-                            "Input file name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                    ok = false;
-                }
-
-                int namdFileBase = namdFile.getName().lastIndexOf('.');
-                int paramsFileBase = paramsFile.getName().lastIndexOf('.');
-                if (!namdFile.getName().substring(0, namdFileBase).equals(paramsFile.getName().substring(0, paramsFileBase))) {
-
-                    JOptionPane.showMessageDialog(null, "Input files should have the same basename",
-                            "Base name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                    ok = false;
-
-                }
-
-                if (ok == true) {
-                    if (jobName != namdFile.getName().substring(0, namdFileBase)) {
-                        String newJobName = paramsFile.getName().substring(0, namdFileBase);
-
-                        JOptionPane.showMessageDialog(null, "job name " + jobName + " will be changed to the basename of input files :  " + newJobName,
-                                "Job name change", JOptionPane.OK_OPTION);
-
-                        changeJobNameField(newJobName);
-
-                    }
-                }
-            }
-        } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_FLUENT)) {
-            String jobName = getJobName();
-
-            File inFile = null;
-
-            for (File file : getInputFiles()) {
-                if (file.getName().endsWith(".in")) {
-                    inFile = file;
-                }
-            }
-
-            if (inFile == null) {
-                JOptionPane.showMessageDialog(null, "Please specify a file ending in .in",
-                        "Input file name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                ok = false;
-            }
-
-            int inFileBase = inFile.getName().lastIndexOf('.');
-            if (ok == true) {
-                if (jobName != inFile.getName().substring(0, inFileBase)) {
-                    String newJobName = inFile.getName().substring(0, inFileBase);
-
-                    JOptionPane.showMessageDialog(null, "job name " + jobName + " will be changed to the basename of input files :  " + newJobName,
-                            "Job name change", JOptionPane.OK_OPTION);
-
-                    changeJobNameField(newJobName);
-
-                }
-            }
-        } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_ABAQUS)) {
-
-
-        } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_CASTEP)) {
-
-            String jobName = new String(getJobName());
-
-            if (getInputFiles().size() > 2) {
-                JOptionPane.showMessageDialog(null, "Number of input files exceeds the max allowed.",
-                        "Input file violation", JOptionPane.WARNING_MESSAGE);
-
-                ok = false;
-
-            } else {
-                File cellFile = null;
-                File paramFile = null;
-
-                // there should only be 2 files: a car and an input
-                for (File file : getInputFiles()) {
-                    if (file.getName().endsWith(".cell"))
-                        cellFile = file;
-                    else if (file.getName().endsWith(".param"))
-                        paramFile = file;
-                }
-
-                // both files should be present
-                if (cellFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .cell",
-                            "Cell file name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                    ok = false;
-                }
-                //fixed bug -nik
-                if (paramFile == null) {
-                    JOptionPane.showMessageDialog(null, "Please specify a file ending in .param",
-                            "Parameter file name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                    ok = false;
-                }
-
-                int inputFileBase = paramFile.getName().lastIndexOf('.');
-                int carFileBase = cellFile.getName().lastIndexOf('.');
-                if (!cellFile.getName().substring(0, carFileBase).equals(paramFile.getName().substring(0, inputFileBase))) {
-
-                    JOptionPane.showMessageDialog(null, "Input files should have the same basename",
-                            "Base name violation", JOptionPane.INFORMATION_MESSAGE);
-
-                    ok = false;
-
-                }
-
-                if (ok == true) {
-                    if (jobName != paramFile.getName().substring(0, inputFileBase)) {
-                        String newJobName = paramFile.getName().substring(0, inputFileBase);
-
-                        JOptionPane.showMessageDialog(null, "job name " + jobName + " will be changed to the basename of input files :" + newJobName,
-                                "Job name change", JOptionPane.OK_OPTION);
-
-                        changeJobNameField(newJobName);
-
-                    }
-                }
-            }
-
-        } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_AMBER_SANDER)) {
-
-            if ((getNumProc() == 1) && (getSubmitMachine().equalsIgnoreCase("Mercury"))) {
-
-                JOptionPane.showMessageDialog(null, "A single processor job for amber is not supported with Mercury\nUse cobalt at NCSA",
-                        "Mercury Amber single processor violation", JOptionPane.INFORMATION_MESSAGE);
-
-                ok = false;
-            }
-            if ((getNumProc() == 1) && (getSubmitMachine().equalsIgnoreCase("Tungsten"))) {
-
-                JOptionPane.showMessageDialog(null, "A single processor job for amber is not supported with Tungsten\nUse cobalt at NCSA",
-                        "Tungsten Amber single processor violation", JOptionPane.INFORMATION_MESSAGE);
-
-                ok = false;
-            }
-
-        } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_CHARMM_MPI)) {
-            String jobName = getJobName();
-            File inputFile = null;
-
-            // Looking for main input file
-            for (File file : getInputFiles()) {
-                if (file.getName().endsWith(".inp")) {
-                    inputFile = file;
-                    break;
-                }
-            }
-
-            if (null == inputFile) {
-                ok = false;
-                JOptionPane.showMessageDialog(null, "Main input file not found. It should have .inp as extension",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                try {
-
-                    List<String> dataFiles = CharmmInputFileParser.parse(inputFile);
-                    for (String dataFile : dataFiles) {
-                        boolean containsFlag = false;
-                        for (File file : getInputFiles()) {
-                            if (file.getName().contains(dataFile)) {
-                                containsFlag = true;
-                                break;
-                            }
-                        }
-
-                        if (false == containsFlag) {
-                            ok = false;
-                            JOptionPane.showMessageDialog(null, "Data file missing, please upload file " + dataFile,
-                                    "Error", JOptionPane.ERROR_MESSAGE);
-                            break;
-                        }
-                    }
-                } catch (CharmmInputFileParsingException e) {
-                    JOptionPane.showMessageDialog(null, e.getMessage(),
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                    ok = false;
-                }
-            }
-
-            if (ok == true) {
-                int inputFileBase = inputFile.getName().lastIndexOf('.');
-                inputFileBase = (inputFileBase > 14) ? 14 : inputFileBase; // limite the job name under 15 characters.
-                if (jobName != inputFile.getName().substring(0, inputFileBase)) {
-                    String newJobName = inputFile.getName().substring(0, inputFileBase);
-
-                    JOptionPane.showMessageDialog(null, "job name " + jobName + " will be changed to the basename of input files :" + newJobName,
-                            "Job name change", JOptionPane.OK_OPTION);
-
-                    changeJobNameField(newJobName);
-
-                }
-            }
-
-        } else if (appName.contains(Invariants.APP_NAME_DDSCAT)) {
-
-            if (getInputFiles().size() > 6) {
-                throw new IOException("Error specifying input files: No more than six input files are allowed for " + appName + " jobs.");
-            }
-
-        } else {
-
-            if (getInputFiles().isEmpty() && inputFilePanel.retrieveTextInput().isEmpty()) {
-                ok = false;
-                throw new IOException("Please specify an input file.");
-            } else if (getInputFiles().size() > 6) {
-                ok = false;
-                throw new IOException("Error specifying input files: No more than three input files are allowed for " + appName + " jobs.");
-            }
-
-            File f;
-            if (!getInputFiles().isEmpty()) {
-                f = getInputFiles().get(0);
-            } else {
-                f = new File(Env.getApplicationDataDir() + Settings.fileSeparator
-                        + "temp.txt");
-                FileUtilities.writeStringToFile(f, inputFilePanel.retrieveTextInput());
-            }
-
-            //this.inputFilePanel.addFileInput(f);
-
-            LogicalFileBean lf = new LogicalFileBean();
-            lf.setJobId(-1);
-            lf.setLocalPath(f.getAbsolutePath());
-
-            //this.job.addInputFile(lf); remove comment
-            //this.job.getInputFiles().clear();
-            //this.job.getInputFiles().add(lf);
-
-            System.out.println("Verifying file " + f.getAbsolutePath() + " for application " + appName);
-
-            if (appName.equalsIgnoreCase(Invariants.APP_NAME_NWCHEM)) {
-
-                if (!f.getName().substring(f.getName().lastIndexOf(".") + 1).equals("nw")) {
-                    ok = false;
-                    throw new IOException("Error specifying input files: " + appName + " input files must end in \".nw\".");
-                }
-
-            } else if (appName.equalsIgnoreCase(Invariants.APP_NAME_QMCPACK)) {
-                if (!f.getName().substring(f.getName().lastIndexOf(".") + 1).equals("xml")) {
-                    ok = false;
-                    throw new IOException("Error specifying input files: " + appName + " input files must end in \".xml\".");
-                }
-            }
-
-        }
-
-        return ok;
-
+        return true;
     }
 
     public static void main(String[] args) {

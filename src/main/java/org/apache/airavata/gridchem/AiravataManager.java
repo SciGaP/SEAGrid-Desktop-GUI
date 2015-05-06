@@ -78,6 +78,16 @@ public class AiravataManager {
         return airavataProjects;
     }
 
+    public static Project getProject(String projectId){
+        try {
+            return getClient().getProject(projectId);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
     public static Project getCurrentProject() throws ProjectException {
         return currentProject;
     }
@@ -507,7 +517,7 @@ public class AiravataManager {
     }
 
     public static void createExperiment() throws Exception{
-        String appId = "Echo_995bdc27-55b0-42f2-adc1-e5ee8d615916";
+        String appId = "Echo_66933a38-8bca-4265-b67c-c87f6fb892b4";
 
         List<InputDataObjectType> exInputs = new ArrayList<InputDataObjectType>();
         InputDataObjectType input = new InputDataObjectType();
@@ -545,6 +555,7 @@ public class AiravataManager {
 
     public static void main(String [] args) {
         try {
+
             //createExperiment();
             //Project project = ProjectModelUtil.createProject("default", "dimuthu2", "test project");
             //getClient().createProject(project);
@@ -554,7 +565,8 @@ public class AiravataManager {
               //  System.out.println(app.getAppDeploymentDescription());
 
             //}
-            getClient().getApplicationDeployment("Echo_dcd59b1a-b291-4750-8d89-87531e0739e6");
+            createExperiment();
+            //getClient().getApplicationDeployment("Echo_dcd59b1a-b291-4750-8d89-87531e0739e6");
 
         }catch(Exception e){
             e.printStackTrace();
