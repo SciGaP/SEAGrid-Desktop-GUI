@@ -17,4 +17,5 @@ public class ExpetimentConst {
     public static final String START_TIME="START_TIME";
     public static final String MEMORY="MEMORY";
     public static final String PROJECT_ACCOUNT="PROJECT_ACCOUNT";
+    public static final String INPUT_FILES="INPUT_FILES";
 }

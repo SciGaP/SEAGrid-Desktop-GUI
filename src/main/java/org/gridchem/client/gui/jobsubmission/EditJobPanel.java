@@ -82,7 +82,12 @@ import nanocad.newNanocad;
 
 import org.apache.airavata.ExpetimentConst;
 import org.apache.airavata.gridchem.AiravataManager;
+import org.apache.airavata.gridchem.experiment.AddExperimentHandler;
+import org.apache.airavata.gridchem.experiment.EchoExperimentHandler;
+import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
+import org.apache.airavata.gridchem.experiment.ExperimentHandler;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
+import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDescription;
 import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
 import org.apache.airavata.model.util.ExperimentModelUtil;
@@ -205,8 +210,9 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     private Preferences preferences = Preferences.getInstance();
 
-    private Map<String,Object> experimentParmas = new HashMap<>();
-
+    private Map<String, Object> experimentParmas = new HashMap<>();
+    private List<ApplicationInterfaceDescription> interfaceDescriptions = null;
+    private List<ComputeResourceDescription> availableCompResources = null;
 
     /**
      * Create a new job.
@@ -224,22 +230,22 @@ public class EditJobPanel extends JDialog implements ActionListener,
             dsLmpUserIDSet.add("dspearot");
         }
 
+        interfaceDescriptions = AiravataManager.getAllAppInterfaces();
+
         String expName = GridChem.user.getUserName() + "_experiment";
         experimentParmas.put(ExpetimentConst.EXP_NAME, expName);
-        experimentParmas.put(ExpetimentConst.PROJECT_ID,GridChem.project.getProjectID());
-        experimentParmas.put(ExpetimentConst.USER_ID,GridChem.user.getUserName());
+        experimentParmas.put(ExpetimentConst.PROJECT_ID, GridChem.project.getProjectID());
+        experimentParmas.put(ExpetimentConst.USER_ID, GridChem.user.getUserName());
         ExperimentModelUtil.createComputationResourceScheduling(null, 1, 1, 1, "normal", 30, 0, 1, "sds128");
 
         experimentParmas.put(ExpetimentConst.CPU_COUNT, 1);
-        experimentParmas.put(ExpetimentConst.NODE_COUNT,1);
-        experimentParmas.put(ExpetimentConst.THREADS,1);
-        experimentParmas.put(ExpetimentConst.QUEUE,"normal");
-        experimentParmas.put(ExpetimentConst.WALL_TIME,30);
-        experimentParmas.put(ExpetimentConst.START_TIME,0);
-        experimentParmas.put(ExpetimentConst.MEMORY,1);
-        experimentParmas.put(ExpetimentConst.PROJECT_ACCOUNT,"sds128");
-
-
+        experimentParmas.put(ExpetimentConst.NODE_COUNT, 1);
+        experimentParmas.put(ExpetimentConst.THREADS, 1);
+        experimentParmas.put(ExpetimentConst.QUEUE, "normal");
+        experimentParmas.put(ExpetimentConst.WALL_TIME, 30);
+        experimentParmas.put(ExpetimentConst.START_TIME, 0);
+        experimentParmas.put(ExpetimentConst.MEMORY, 1);
+        experimentParmas.put(ExpetimentConst.PROJECT_ACCOUNT, "sds128");
 
 
         ComputeResourceDescription hw = GridChem.getMachineList().get(0);
@@ -252,30 +258,22 @@ public class EditJobPanel extends JDialog implements ActionListener,
             }
         }
 
-        experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID,hw.getComputeResourceId());
+        experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, hw.getComputeResourceId());
 
-        ApplicationDeploymentDescription sw = GridChem.getSoftwareforMachine(hw.getComputeResourceId()).get(0);
-        for (ApplicationDeploymentDescription cb : GridChem.getSoftwareforMachine(hw.getComputeResourceId())) {
-            System.out.println("*******************************");
-            System.out.println(cb.getAppModuleId());
-            if (cb.getAppModuleId().equals(Preferences.getString("last_app"))) {
-                System.out.println("Found last used application");
-                sw = cb;
+        for (ApplicationInterfaceDescription ifd : interfaceDescriptions) {
+            String intefaceID = ifd.getApplicationInterfaceId();
+            List<ComputeResourceDescription> compds = AiravataManager.getComputationalResources(intefaceID);
+            for (ComputeResourceDescription bean : compds) {
+                if (bean.getComputeResourceId().equals(hw.getComputeResourceId())) {
+                    System.out.println("Found App " + ifd.getApplicationName() + "in resource " + bean.getComputeResourceId());
+                    experimentParmas.put(ExpetimentConst.APP_ID, ifd.getApplicationInterfaceId());
+                    break;
+                }
+            }
+            if (experimentParmas.get(ExpetimentConst.APP_ID) != null) {
+                break;
             }
         }
-
-        experimentParmas.put(ExpetimentConst.APP_ID,sw.getAppDeploymentId());
-        /*for (String modName : getModuleList(sw.getName())) {
-            if (modName.equals(Preferences.getString("last_module"))) {
-        		System.out.println("Found last used module");
-        		this.job.setModuleName(modName);
-        	}
-        }*/
-        //this.application = sw.getName();
-        //this.job.setSoftwareName(this.application);
-        //this.job.setAllocationName(hw.getAllocations().iterator().next());
-        //this.job.setQueueName(hw.getQueues().get(0).getName());
-        //this.job.setRequestedCpus(new Long(1));
 
         ArrayList<LogicalFileBean> inFiles = new ArrayList<LogicalFileBean>();
         for (File f : FileUtility.getDefaultInputFiles(this.application)) {
@@ -345,19 +343,19 @@ public class EditJobPanel extends JDialog implements ActionListener,
         try {
             isLoading = true;
             // populate fields with given job information
-            changeExperimentNameField((String)experimentParmas.get(ExpetimentConst.EXP_NAME));
+            changeExperimentNameField((String) experimentParmas.get(ExpetimentConst.EXP_NAME));
 //            changeAppPackage(job.getSystemName());
 //            changeModule(job.getApplication());
-            populateMachineList((String)experimentParmas.get(ExpetimentConst.APP_ID));
+            //populateMachineList((String) experimentParmas.get(ExpetimentConst.APP_ID));
 
-            System.out.println("Loading machine " + (String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
-            ComputeResourceDescription hpc = GridChem.getMachineByName((String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
+            System.out.println("Loading machine " + (String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
+            ComputeResourceDescription hpc = GridChem.getMachineByName((String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
 
             String machineName = "";
             if (hpc != null) {
                 System.out
                         .println("Found machine in user's VO: "
-                                + (String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID) + " = "
+                                + (String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID) + " = "
                                 + hpc.getHostName());
                 machineName = hpc.getComputeResourceId();
             } else {
@@ -365,7 +363,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
                 machineName = (String) hpcListModel.get(hpcList.getSelectedIndex());
 
                 System.out.println("Did not find machine in user's VO: "
-                        +(String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
+                        + (String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
 
                 JOptionPane.showMessageDialog(null,
                         "The machine associated with this job\n"
@@ -379,14 +377,14 @@ public class EditJobPanel extends JDialog implements ActionListener,
             //changeProject(job.getProjectName());
             populateQueues(machineName);
 
-            changeQueue((String)experimentParmas.get(ExpetimentConst.QUEUE));
+            changeQueue((String) experimentParmas.get(ExpetimentConst.QUEUE));
 
-            changeNumProc((int)experimentParmas.get(ExpetimentConst.CPU_COUNT));
+            changeNumProc((int) experimentParmas.get(ExpetimentConst.CPU_COUNT));
 
 //            updateInputInfoPanel(job,FileUtility.getDefaultInputFiles(job.getApplication()));
 
             System.out.println("Updated editing stuff with values for job "
-                    + (String)experimentParmas.get(ExpetimentConst.EXP_NAME));
+                    + (String) experimentParmas.get(ExpetimentConst.EXP_NAME));
 
 
             isLoading = false;
@@ -409,7 +407,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         // left panel for choicesBoxs
         // --->namePane
         expNameText = new JTextField(20);
-        expNameText.setText((String)experimentParmas.get(ExpetimentConst.EXP_NAME));
+        expNameText.setText((String) experimentParmas.get(ExpetimentConst.EXP_NAME));
         JLabel projNameLabel = new JLabel("Experiment name: ");
         projNameLabel.setLabelFor(expNameText);
         JPanel namePane = new JPanel();
@@ -438,10 +436,16 @@ public class EditJobPanel extends JDialog implements ActionListener,
             populateMachineList(Invariants.APP_NAME_GAUSSIAN);
         } else {
             //populateMachineList(this.job.getSystemName());
-            String appId = (String)experimentParmas.get(ExpetimentConst.APP_ID);
-            System.out.println("Experiment App module id is : " + appId);
-            populateMachineList(appId);
-            changeMachine((String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
+            String appId = (String) experimentParmas.get(ExpetimentConst.APP_ID);
+            String appName = null;
+            for (ApplicationInterfaceDescription desc : interfaceDescriptions) {
+                if (desc.getApplicationInterfaceId().equals(appId)) {
+                    appName = desc.getApplicationName();
+                }
+            }
+            System.out.println("Experiment App Interface Name id is : " + appName);
+            populateMachineList(appName);
+            changeMachine((String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
             // reqPane.remove(numProcEdLabel);
         }
 
@@ -455,7 +459,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         apphpcBox.add(apphpcScrollPane);
         // apphpcBoard.setSelectedIndex(0);
 
-        int selectedIndices = ((DefaultListModel) hpcList.getModel()).indexOf((String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
+        int selectedIndices = ((DefaultListModel) hpcList.getModel()).indexOf((String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
         hpcList.setSelectedIndex(selectedIndices);
 //        hpcList.setSelectedIndices(new int[]{selectedIndices});
         hpcList.ensureIndexIsVisible(selectedIndices);
@@ -490,47 +494,25 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         appModuleLabel = new JLabel("Module");
 
-        if (Settings.WEBSERVICE) {
-            List<ApplicationDeploymentDescription> software = GridChem.getSoftware();
-            List<String> applicationNames = new ArrayList<String>();
-            for (ApplicationDeploymentDescription bean : software) {
-                applicationNames.add(bean.getAppDeploymentId());
-            }
 
-            appCombo = new JComboBox(applicationNames.toArray());
-            //appCombo.setSelectedItem(job.getSoftwareName());
-            
-            
-            /*if (job.getSoftwareName().equals("Lammps")) {
-                 if (dsLmpUserIDSet.contains(GridChem.user.getUserName())) {
-         			appModuleCombo = new JComboBox(getModuleList(job.getSoftwareName()));
-        		} else {        			
-        			appModuleCombo = new JComboBox(new String[] {"lmp"});
-        			
-        		}
-        	} else {
-        		appModuleCombo = new JComboBox();
-        		changeModuleList(GridChem.getSoftware(job.getSoftwareName()));
-        	}*/
-
-            //appModuleCombo = new JComboBox(getModuleList(job.getSoftwareName()));
-            //appModuleCombo.setSelectedIndex(0);
-            /*if ((job.getModuleName() != null) && (!job.getModuleName().equals(""))) {
-                appModuleCombo.setSelectedItem(job.getModuleName());
-            } else {
-            	appModuleCombo.setSelectedIndex(0);
-            }*/
-        } else {
-            String[] appItems = GridChem.getAvailableApplications();
-            appCombo = new JComboBox(appItems);
-            appModuleCombo = new JComboBox(getModuleList((String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID)));
+        Set<String> applicationNames = new HashSet<>();
+        for (ApplicationInterfaceDescription bean : interfaceDescriptions) {
+            applicationNames.add(bean.getApplicationName());
         }
+
+        appCombo = new JComboBox(applicationNames.toArray());
+
+        for (ApplicationInterfaceDescription desc : interfaceDescriptions) {
+            if (desc.getApplicationName().equals(experimentParmas.get(ExpetimentConst.APP_ID))) {
+                appCombo.setSelectedItem(desc.getApplicationName());
+            }
+        }
+
         appModuleCombo = new JComboBox();
         appCombo.setPreferredSize(new Dimension(50, 30));
         appModuleCombo.setPreferredSize(new Dimension(50, 30));
 
-        System.out.println("374:name of HPC System: " + (String)experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
-
+        System.out.println("374:name of HPC System: " + (String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
 
 
         JPanel appPane = new JPanel();
@@ -563,10 +545,10 @@ public class EditJobPanel extends JDialog implements ActionListener,
         projCombo = new JComboBox();
 
         populateProjects();
-        if(experimentParmas.get("PROJECT_ID")!=null){
-            String projId = (String)experimentParmas.get(ExpetimentConst.PROJECT_ID);
+        if (experimentParmas.get("PROJECT_ID") != null) {
+            String projId = (String) experimentParmas.get(ExpetimentConst.PROJECT_ID);
             Project expProject = AiravataManager.getProject(projId);
-            if(expProject!=null){
+            if (expProject != null) {
                 projCombo.setSelectedItem(expProject.getName());
             }
         }
@@ -642,7 +624,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         numNodeSpin.setModel(new SpinnerNumberModel(1, 1, 1000, 1));
 
-        numThreadSpin.setModel(new SpinnerNumberModel(1,1,1000,1));
+        numThreadSpin.setModel(new SpinnerNumberModel(1, 1, 1000, 1));
 
         // Create Memory Configuration
         memSizeLabel = new JLabel("Preferred Memory (Mbytes):");
@@ -756,7 +738,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     }
 
-    private void setListeners(){
+    private void setListeners() {
         machListSelectionListener ms = new machListSelectionListener();
         edbumolButton.addActionListener(this);
         OKButton.addActionListener(this);
@@ -777,9 +759,9 @@ public class EditJobPanel extends JDialog implements ActionListener,
         qCombo.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-              //  String queue = qCombo.getSelectedItem().toString();
-               // System.out.println("Changing queue to : "+queue);
-               // experimentParmas.put(ExpetimentConst.QUEUE,queue);
+                //  String queue = qCombo.getSelectedItem().toString();
+                // System.out.println("Changing queue to : "+queue);
+                // experimentParmas.put(ExpetimentConst.QUEUE,queue);
             }
 
         });
@@ -828,8 +810,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
         hr.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                int time = ((int)min.getValue())+((int)hr.getValue())*60;
-                experimentParmas.put(ExpetimentConst.WALL_TIME,time);
+                int time = ((int) min.getValue()) + ((int) hr.getValue()) * 60;
+                experimentParmas.put(ExpetimentConst.WALL_TIME, time);
             }
 
         });
@@ -838,8 +820,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
         min.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                int time = ((int)min.getValue())+((int)hr.getValue())*60;
-                experimentParmas.put(ExpetimentConst.WALL_TIME,time);
+                int time = ((int) min.getValue()) + ((int) hr.getValue()) * 60;
+                experimentParmas.put(ExpetimentConst.WALL_TIME, time);
             }
 
         });
@@ -860,7 +842,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
                 update();
             }
 
-            public void update(){
+            public void update() {
                 experimentParmas.put(ExpetimentConst.MEMORY, Integer.parseInt(memSizeTextField.getText()));
             }
         });
@@ -949,27 +931,27 @@ public class EditJobPanel extends JDialog implements ActionListener,
         numNodesLabel = new JLabel("Number of Nodes");
         gbcons.weightx = 0.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
-        gbcons.gridx =0;
-        rpgbl.setConstraints(numNodesLabel,gbcons);
+        gbcons.gridx = 0;
+        rpgbl.setConstraints(numNodesLabel, gbcons);
         reqPane.add(numNodesLabel);
 
         gbcons.weightx = 0.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
         gbcons.gridx = 1;
-        rpgbl.setConstraints(numNodeSpin,gbcons);
+        rpgbl.setConstraints(numNodeSpin, gbcons);
         reqPane.add(numNodeSpin);
 
         numThreadLabel = new JLabel("Number of Threads");
         gbcons.weightx = 0.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
-        gbcons.gridx =0;
-        rpgbl.setConstraints(numThreadLabel,gbcons);
+        gbcons.gridx = 0;
+        rpgbl.setConstraints(numThreadLabel, gbcons);
         reqPane.add(numThreadLabel);
 
         gbcons.weightx = 0.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
         gbcons.gridx = 1;
-        rpgbl.setConstraints(numThreadSpin,gbcons);
+        rpgbl.setConstraints(numThreadSpin, gbcons);
         reqPane.add(numThreadSpin);
 
         gbcons.weightx = 0.0;
@@ -1046,24 +1028,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         return queues.toArray(a);
     }
 
-    private String[] getModuleList(String appName) {
-
-//        HashSet<String> moduleNames = new HashSet<String>();
-        String[] a = {};
-//        
-//        String appPackageName = appPackageAndModuleName(appName)[0];
-//        
-//        moduleNames = APP_MODULE_HASHTABLE.get(appPackageName);
-//        
-//        System.out.println("\n (DEBUG) module list "+ moduleNames);
-//        
-//        return moduleNames.toArray(a);
-
-
-        return GridChem.getSoftware(appName).getModules().toArray(a);
-    }
-
-
     private String[] getMachineProjects() {
         ArrayList<String> projects = new ArrayList<String>();
         for (ComputeBean hpc : GridChem.systems) {
@@ -1086,33 +1050,28 @@ public class EditJobPanel extends JDialog implements ActionListener,
     // Now change the machines according to which ones have the application.
     public void populateMachineList(String application) {
         System.out.println("Applic " + application);
-//        ArrayList appMachineList = new ArrayList();
-        if (Settings.WEBSERVICE) {
-            hpcListModel.removeAllElements();
-            for (ComputeResourceDescription hpc : GridChem.getSoftwareMachineList(application)) { //remove comment
-                hpcListModel.addElement(hpc.getComputeResourceId());
-            }
-            //hpcListModel.addElement(SCHEDULER);
-            System.out.println("EJP:1142:Webservice: MachineList for " + application + " is" + hpcListModel.toString());
-        } else {
-//            ArrayList machines = (ArrayList) GridChem.resourceHash
-//                    .get("machines");
-//            for (int j = 0; j < machines.size(); j++) {
-//                Integer isPresent = (Integer) GridChem.resourceHash
-//                        .get(application + "_" + machines.get(j));
-//                if (isPresent != null) {
-//                    appMachineList.add(machines.get(j));
-//                }
-//
-//            }
-//            hpcListModel.removeAllElements();
-//            for (int i = 0; i < appMachineList.size(); i++) {
-//                if (GridChem.machineContainsApplication((String) appMachineList
-//                        .get(i), application)) {
-//                    hpcListModel.addElement((String) appMachineList.get(i));
-//                }
-//            }
+        ArrayList appMachineList = new ArrayList();
+        if (availableCompResources != null) {
+            availableCompResources.clear();
         }
+        for (ApplicationInterfaceDescription bean : interfaceDescriptions) {
+            if (bean.getApplicationName().equals(application)) {
+                System.out.println(bean.getApplicationInterfaceId());
+                if (availableCompResources == null) {
+                    availableCompResources = AiravataManager.getComputationalResources(bean.getApplicationInterfaceId());
+                } else {
+                    availableCompResources.addAll(AiravataManager.getComputationalResources(bean.getApplicationInterfaceId()));
+                }
+            }
+        }
+
+        hpcListModel.removeAllElements();
+        for (ComputeResourceDescription hpc : availableCompResources) { //remove comment
+            hpcListModel.addElement(hpc.getHostName());
+        }
+
+        System.out.println("MachineList for " + application + " is" + hpcListModel.toString());
+
         hpcList.setModel(hpcListModel);
         hpcList.setSelectedIndex(0);
 
@@ -1121,8 +1080,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
     public void populateProjects() {
         projCombo.removeAllItems();
 
-        List<Project> projectList=AiravataManager.getProjects();
-        for (Project p:projectList){
+        List<Project> projectList = AiravataManager.getProjects();
+        for (Project p : projectList) {
             projCombo.addItem(p.getName());
         }
     }
@@ -1137,21 +1096,11 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private void populateQueues(String machine) {
         qCombo.removeAllItems();
 
-        if (Settings.WEBSERVICE) {
-
-            ComputeResourceDescription bean = GridChem.getMachineByName(machine);
-            qCombo.addItem(DEFAULT_QUEUE);
-            if (bean.isSetBatchQueues()) {
-                for (BatchQueue queue : bean.getBatchQueues()) {
-                    qCombo.addItem(queue.getQueueName());
-                }
-            }
-
-        } else {
-            ArrayList items = GridChem.getMachineQueuesList(machine);
-
-            for (int i = 0; i < items.size(); i++) {
-                qCombo.addItem((String) items.get(i));
+        ComputeResourceDescription bean = GridChem.getMachineByName(machine);
+        qCombo.addItem(DEFAULT_QUEUE);
+        if (bean.isSetBatchQueues()) {
+            for (BatchQueue queue : bean.getBatchQueues()) {
+                qCombo.addItem(queue.getQueueName());
             }
         }
     }
@@ -1241,9 +1190,24 @@ public class EditJobPanel extends JDialog implements ActionListener,
             //preferences.put("last_module", getModuleName());
             //preferences.put("last_app", getAppPackageName());
             //preferences.put("last_machine", getSubmitMachine());
-            experimentParmas.put(ExpetimentConst.EXP_NAME,expNameText.getText());
-            experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID,hpcList.getSelectedValue().toString());
-            experimentParmas.put(ExpetimentConst.APP_ID,(String)appCombo.getSelectedItem());
+            experimentParmas.put(ExpetimentConst.EXP_NAME, expNameText.getText());
+            experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, availableCompResources.get(hpcList.getSelectedIndex()).getComputeResourceId());
+
+
+            for(ApplicationInterfaceDescription desc : interfaceDescriptions){
+                if(desc.getApplicationName().equals(appCombo.getSelectedItem())){
+                    List<ComputeResourceDescription> coputationalResources = AiravataManager.getComputationalResources(desc.getApplicationInterfaceId());
+                    for(ComputeResourceDescription comp : coputationalResources){
+                        if(comp.getComputeResourceId().equals(experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID))){
+                            experimentParmas.put(ExpetimentConst.APP_ID,desc.getApplicationInterfaceId());
+                            break;
+                        }
+                    }
+                }
+            }
+
+            List<File> inputFiles = inputFilePanel.getInputFiles();
+            experimentParmas.put(ExpetimentConst.INPUT_FILES, inputFiles);
 
             System.out.println(experimentParmas.get(ExpetimentConst.EXP_NAME));
             System.out.println(experimentParmas.get(ExpetimentConst.APP_ID));
@@ -1258,6 +1222,15 @@ public class EditJobPanel extends JDialog implements ActionListener,
             System.out.println(experimentParmas.get(ExpetimentConst.START_TIME));
             System.out.println(experimentParmas.get(ExpetimentConst.MEMORY));
             System.out.println(experimentParmas.get(ExpetimentConst.PROJECT_ACCOUNT));
+            System.out.println();
+
+            ExperimentHandler experimentHandler = new AddExperimentHandler();
+            try {
+                String expId = experimentHandler.createExperiment(experimentParmas);
+                experimentHandler.launchExperiment(expId);
+            } catch (ExperimentCreationException ex) {
+                ex.printStackTrace();
+            }
 
         } else if (e.getActionCommand() == "Cancel") {
 
@@ -2463,7 +2436,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
                     return;
                 } else {
 
-                    populateQueues(hpcList.getSelectedValue().toString());
+                    populateQueues(availableCompResources.get(hpcList.getSelectedIndex()).getComputeResourceId());
 
                 }
             }
@@ -2484,43 +2457,26 @@ public class EditJobPanel extends JDialog implements ActionListener,
                                                       int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected,
                     cellHasFocus);
-            setToolTipText(createTTTHTML((String) value));
+            setToolTipText(createTTTHTML(index));
             return this;
         }
 
-        private String createTTTHTML(String hpcName) {
+        private String createTTTHTML(int selectedIndex) {
+            ComputeResourceDescription hpc = availableCompResources.get(selectedIndex);
+
             String toolTipHTML = "";
 
-            if (hpcName.equals(SCHEDULER)) {
-                toolTipHTML += "<html><body bgcolor=\"#666666\"><table bgcolor=\"#666666\">";
-                toolTipHTML += "<tr><th colspan=\"2\"  bgcolor=\"#9999FF\">Machine Summary</th></tr>";
-                toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Name:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
-                        + SCHEDULER + "</FONT></td></tr>";
-                toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Description:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
-                        + "<p>This option will enable the CCG middleware to select</p>"
-                        + "<p>a resource for you based on the values you have entered</p>"
-                        + "<p>for this job.</FONT></td></tr>";
-                toolTipHTML += "</table></body></html>";
-
-                return toolTipHTML;
-
-            } else {
-
-                ComputeResourceDescription hpc = GridChem.getMachineByName(hpcName);
-
-                toolTipHTML += "<html><body bgcolor=\"#666666\"><table bgcolor=\"#666666\">";
-                toolTipHTML += "<tr><th colspan=\"2\"  bgcolor=\"#9999FF\">Machine Summary</th></tr>";
-                toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Name:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
-                        + hpc.getHostName() + "</FONT></td></tr>";
-                toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Location:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
-                        + hpc.getHostName() + "</FONT></td></tr>";
-                toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Description:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
-                        + hpc.getHostName() + "</FONT></td></tr>";
-                toolTipHTML += "<tr><th colspan=\"2\"  bgcolor=\"#9999FF\"><b>Current Loads</th></tr>";
-                // toolTipHTML += "<tr><td><FONT
-                // COLOR=\"#FFFFFF\"><b>Queue:</b></FONT></td><td><FONT
-                // COLOR=\"#FFFFFF\">" + hpc.getLoad().getQueueName() +
-                // "</FONT></td></tr>";
+            toolTipHTML += "<html><body bgcolor=\"#666666\"><table bgcolor=\"#666666\">";
+            toolTipHTML += "<tr><th colspan=\"2\"  bgcolor=\"#9999FF\">Machine Summary</th></tr>";
+            toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Name:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
+                    + hpc.getHostName() + "</FONT></td></tr>";
+            toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>ID:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
+                    + hpc.getComputeResourceId() + "</FONT></td></tr>";
+            toolTipHTML += "<tr><th colspan=\"2\"  bgcolor=\"#9999FF\"><b>Current Loads</th></tr>";
+            // toolTipHTML += "<tr><td><FONT
+            // COLOR=\"#FFFFFF\"><b>Queue:</b></FONT></td><td><FONT
+            // COLOR=\"#FFFFFF\">" + hpc.getLoad().getQueueName() +
+            // "</FONT></td></tr>";
 
                 /*if (hpc.getHostName().equals("Condor")) {
                     toolTipHTML += "<tr><td><FONT COLOR=\"#FFFFFF\"><b>Running CPU:</b></FONT></td><td><FONT COLOR=\"#FFFFFF\">"
@@ -2548,10 +2504,10 @@ public class EditJobPanel extends JDialog implements ActionListener,
                             + "</FONT></td></tr>";
                 }*/ //remoce comment
 
-                toolTipHTML += "</table></body></html>";
+            toolTipHTML += "</table></body></html>";
 
-                return toolTipHTML;
-            }
+            return toolTipHTML;
+
         }
     }
 

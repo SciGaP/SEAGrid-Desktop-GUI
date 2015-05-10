@@ -178,7 +178,7 @@ public final class SubmitJob implements HardWorker, StatusListener {
 		//SwingUtilities.invokeLater(new Runnable() {
 			//public void run() {
 
-				jobIndexInQueue = stuffInside.queueJobList.getJobIndex(job);
+				//jobIndexInQueue = stuffInside.queueJobList.getJobIndex(job); remove comment
 
 				System.out.println("\n\nMOVE JOB TO DONE LIST CALLED FOR JOB "
 						+ job.getName() + "...");

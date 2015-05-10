@@ -80,6 +80,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.apache.airavata.gridchem.AiravataManager;
 import org.gridchem.client.gui.buttons.ApplicationMenuItem;
 import org.gridchem.client.gui.buttons.DropDownButton;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
@@ -197,8 +198,8 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		buttonBox.add(cancelButton);
 
 		// I just added this line, does it help?
-		queueJobList = new JobList(SubmitJobsWindow.jobQueue);
-		doneJobList = new JobList(SubmitJobsWindow.jobSubmitted);
+		queueJobList = new JobList(AiravataManager.getQueuedExperiments(GridChem.user.getUserName()));
+		doneJobList = new JobList(AiravataManager.getLaunchedExperiments(GridChem.user.getUserName()));
 		ArrayList serializedJobList = queueJobList.getJobNamesList();
 		System.out.println("ListOfJobs:nl is empty:"
 				+ serializedJobList.isEmpty() + "\n");
@@ -221,7 +222,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 
 				setButtonsEnabled(!queueList.isSelectionEmpty());
 
-				if (e.getClickCount() >= 2) {
+				/*if (e.getClickCount() >= 2) {
 
 					int n = queueList.getSelectedIndex();
 
@@ -229,7 +230,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 						jobEditor = new EditJobPanel(null, queueJobList
 								.getJob(n));
 					}
-				}
+				}*/
 			}
 		});
 
@@ -310,7 +311,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 					int n = doneList.getSelectedIndex();
 
 					if (n >= 0) {
-						JobBean oldJob = doneJobList.getJob(n);
+						/*JobBean oldJob = doneJobList.getJob(n);
 						JobBean newJob = new JobBean();
 						newJob.setName(oldJob.getName());
 						newJob.setExperimentName(oldJob.getExperimentName());
@@ -335,7 +336,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							newJob.getInputFiles().add(lFile);
 						}
 
-						jobEditor = new EditJobPanel(null, newJob);
+						jobEditor = new EditJobPanel(null, newJob);*/
 					}
 				}
 			}
@@ -396,9 +397,9 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 
 		// rebuild the job queue list
 		queueJobList.clear();
-		queueJobList.addAll(SubmitJobsWindow.jobQueue);
+		queueJobList.addAll(AiravataManager.getQueuedExperiments(GridChem.user.getUserName()));
 		doneJobList.clear();
-		doneJobList.addAll(SubmitJobsWindow.jobSubmitted);
+		doneJobList.addAll(AiravataManager.getLaunchedExperiments(GridChem.user.getUserName()));
 
 		queueModel.clear();
 		for (String entry : queueJobList.getJobNamesList()) {

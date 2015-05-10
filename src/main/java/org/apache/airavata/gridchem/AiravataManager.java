@@ -3,6 +3,7 @@ package org.apache.airavata.gridchem;
 import org.apache.airavata.AiravataConfig;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationModule;
+import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDescription;
 import org.apache.airavata.model.appcatalog.appinterface.DataType;
 import org.apache.airavata.model.appcatalog.appinterface.InputDataObjectType;
 import org.apache.airavata.model.appcatalog.appinterface.OutputDataObjectType;
@@ -14,6 +15,7 @@ import org.apache.airavata.model.util.ProjectModelUtil;
 import org.apache.airavata.model.workspace.Project;
 import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
 import org.apache.airavata.model.workspace.experiment.Experiment;
+import org.apache.airavata.model.workspace.experiment.ExperimentState;
 import org.apache.airavata.model.workspace.experiment.UserConfigurationData;
 import org.apache.axis2.AxisFault;
 import org.apache.thrift.TException;
@@ -508,6 +510,22 @@ public class AiravataManager {
 
     }
 
+    public static List<ComputeResourceDescription> getComputationalResources(String appInterfaceID){
+        List<ComputeResourceDescription> compResourceList = new ArrayList<>();
+        try {
+            Map<String, String> comps = getClient().getAvailableAppInterfaceComputeResources(appInterfaceID);
+            Iterator<String> it = comps.keySet().iterator();
+            while(it.hasNext()){
+                String comID = it.next();
+                compResourceList.add(getComputeResourceDescriptionFromId(comID));
+            }
+            return compResourceList;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
     public static ApplicationModule getApplicationModule(String id) throws AiravataClientConnectException, TException {
         return getClient().getApplicationModule(id);
     }
@@ -516,8 +534,46 @@ public class AiravataManager {
         return getClient().getApplicationDeployment(id);
     }
 
+    public static List<ApplicationInterfaceDescription> getAllAppInterfaces(){
+        try{
+            return getClient().getAllApplicationInterfaces();
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<Experiment> getQueuedExperiments(String userName){
+        List<Experiment> exp = new ArrayList<>();
+        try{
+            List<Experiment> allexp = getClient().getAllUserExperiments(userName);
+            for(Experiment experiment:allexp){
+                if(experiment.getExperimentStatus().getExperimentState()==ExperimentState.CREATED)
+                    exp.add(experiment);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return exp;
+    }
+
+    public static List<Experiment> getLaunchedExperiments(String userName){
+        List<Experiment> exp = new ArrayList<>();
+        try{
+            List<Experiment> allexp = getClient().getAllUserExperiments(userName);
+            for(Experiment experiment:allexp){
+                ExperimentState state = experiment.getExperimentStatus().getExperimentState();
+                if(state!=ExperimentState.CREATED)
+                    exp.add(experiment);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return exp;
+    }
+
     public static void createExperiment() throws Exception{
-        String appId = "Echo_66933a38-8bca-4265-b67c-c87f6fb892b4";
+        String appId = "Echo_e82aa96b-66ea-4f31-97e7-1182a32e55d2";
 
         List<InputDataObjectType> exInputs = new ArrayList<InputDataObjectType>();
         InputDataObjectType input = new InputDataObjectType();
@@ -550,13 +606,28 @@ public class AiravataManager {
         simpleExperiment.setUserConfigurationData(userConfigurationData);
 
         String exp = getClient().createExperiment(simpleExperiment);
-        getClient().launchExperiment(exp,"sample");
+        ExperimentState s;
+        System.out.println(getClient().getExperimentStatus(exp).getExperimentState().name());
+        getClient().launchExperiment(exp, "sample");
+
+        Thread.sleep(10000);
+        System.out.println(getClient().getExperimentStatus(exp).getExperimentState().name());
     }
 
     public static void main(String [] args) {
         try {
+            //Map<String,String> ifn = getClient().getAllApplicationInterfaceNames();
 
-            //createExperiment();
+            //List<ApplicationInterfaceDescription> apd = getClient().getAllApplicationInterfaces();
+            //ApplicationInterfaceDescription a = apd.get(0);
+            //a.getApplication
+
+            //Iterator<String> it = ifn.keySet().iterator();
+            //while(it.hasNext()){
+           ///     String id = it.next();
+           //     System.out.println(id+ " "+ifn.get(id));
+           // }
+            createExperiment();
             //Project project = ProjectModelUtil.createProject("default", "dimuthu2", "test project");
             //getClient().createProject(project);
 
@@ -565,7 +636,7 @@ public class AiravataManager {
               //  System.out.println(app.getAppDeploymentDescription());
 
             //}
-            createExperiment();
+            //createExperiment();
             //getClient().getApplicationDeployment("Echo_dcd59b1a-b291-4750-8d89-87531e0739e6");
 
         }catch(Exception e){
