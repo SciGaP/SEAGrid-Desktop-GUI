@@ -161,28 +161,6 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		suballButton = new JButton("Submit All Jobs to Queue"); // lixh_3_3
 		cancelButton = new JButton("Close");
 
-		// inputGeneratorGuiButton.setSize(5,6)
-
-		// add(leftClickPopup);
-		/*
-		 * leftClickPopup.addMenuListener(new MenuListener( ) { public void
-		 * menuCanceled(MenuEvent e){ }
-		 * 
-		 * public void menuDeselected(MenuEvent e){ }
-		 * 
-		 * public void menuSelected(MenuEvent e) {
-		 * 
-		 * int a,i,j; String
-		 * causedGroup=null,causedKeyword=null,causedValue=null
-		 * ,incompatibilityType=null; String
-		 * affectedGroup=null,affectedKeyword=null,affectedValue=null;
-		 * 
-		 * JMenu menuSelected=(JMenu)e.getSource(); String
-		 * keywordSelected=menuSelected.getText();
-		 * System.out.println("listener called:"+keywordSelected);
-		 * 
-		 * } });
-		 */
 
 		JPanel buttonBox = new JPanel();
 		// buttonBox.setPreferredSize(new Dimension(200,400));
