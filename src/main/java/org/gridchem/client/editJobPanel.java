@@ -46,6 +46,7 @@ import javax.swing.UIManager;
 
 import nanocad.nanocadFrame;
 
+import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.common.Settings;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
 import org.gridchem.service.beans.JobBean;
@@ -77,7 +78,7 @@ public class editJobPanel
      * 
      * @param job
      */
-    public editJobPanel(JobBean job) {
+    public editJobPanel(Experiment job) {
         frame = new JFrame("GridChem: Job Editor");
         es = new EditJobPanel(null,job);
         frame.getContentPane().add(es);

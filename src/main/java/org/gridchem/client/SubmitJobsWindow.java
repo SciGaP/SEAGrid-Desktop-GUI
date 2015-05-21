@@ -51,6 +51,7 @@ import java.util.Properties;
 
 import javax.swing.JFrame;
 
+import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.common.Settings;
 import org.gridchem.client.util.GMS3;
 import org.gridchem.service.beans.JobBean;
@@ -66,103 +67,9 @@ public class SubmitJobsWindow
     public static JFrame frame;
     public static stuffInside si;
 
-    public static ArrayList<JobBean> jobQueue = new ArrayList<JobBean>();  // replaces the JobList
-    public static ArrayList<JobBean> jobSubmitted = new ArrayList<JobBean>();
-    
-    public static void main (String[] args) {
-    
-        GridChem gc = new GridChem();
-        
-        Properties props = new Properties();
-        
-        Settings.WEBSERVICE = true;
-        
-//        GMSSession session = GMSSession.getInstance();
-//                
-//        try {
-//            session.establishSession();
-//        } catch (ConnectException e1) {
-//            // TODO Auto-generated catch block
-//            e1.printStackTrace();
-//            JOptionPane.showMessageDialog(null, "A session error has occurred.\n" + 
-//                    "Please check your connection\nand authenticate again.",
-//                    "Connection Error", JOptionPane.ERROR_MESSAGE);
-//        } catch (SessionException e1) {
-//            // TODO Auto-generated catch block
-//            e1.printStackTrace();
-//            JOptionPane.showMessageDialog(null, "A session error has occurred.\n" + 
-//                    "Please check your connection\nand authenticate again.",
-//                    "Connection Error", JOptionPane.ERROR_MESSAGE);
-//        } catch (PermissionException e) {
-//            e.printStackTrace();
-//            JOptionPane.showMessageDialog(null, "A session error has occurred.\n" + 
-//                    "Please check your connection\nand authenticate again.",
-//                    "Connection Error", JOptionPane.ERROR_MESSAGE);
-//        } 
-        
-//        final GMS gms = GMS.getInstance();
-//        
-        // Read in user information from the configuration file
-        try {
-            props.load(new FileInputStream("etc/test.properties"));
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        String username = props.getProperty("gridchem.username");
-        
-        String password = props.getProperty("gridchem.password");
-        
-        // Authenticate with the GMS_WS
-        if (Settings.DEBUG)
-            System.out.println("Logging " + username + " into the CCG.");
-        String key = "";
-        try {
-            GMS3.login(username,password,AccessType.COMMUNITY,new HashMap<String,String>());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        Settings.authenticated = true;
-        Settings.authenticatedGridChem = true;
-        Settings.gridchemusername = username;
-        
-        try {
-            
-            // Load the user's resources into the session.
-            ProjectBean project = null;
-            
-            for(ProjectBean p: GMS3.getProjects()) {
-                if(p.getType().equals(AccessType.COMMUNITY)) {
-                    project = p;
-                }
-            }
-            
-            if (Settings.DEBUG)
-                System.out.println("Successfully loaded user's VO");
-            
-//            TODO: figure out how to work around this vo issue.
-//            GridChem.userVO = GMS3.getUserVo();
-            
-            javax.swing.SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    // Start up the file browser in standalone mode
-                    SubmitJobsWindow sw = new SubmitJobsWindow();
-                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                }
-            });
-            
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-    
+    public static ArrayList<Experiment> jobQueue = new ArrayList<Experiment>();  // replaces the JobList
+    public static ArrayList<Experiment> jobSubmitted = new ArrayList<Experiment>();
+
     public static void getInstance() {
         if (frame == null) {
             si = new stuffInside();
@@ -173,7 +80,7 @@ public class SubmitJobsWindow
         }
     }
     
-    public static void getInstance(JobBean job) {
+    public static void getInstance(Experiment job) {
         if (frame == null) {
             si = new stuffInside(job);
             init();
@@ -216,52 +123,22 @@ public class SubmitJobsWindow
             frame.dispose();
         }
     }
-    
+
     public void setJobFocus(int jobid) {
     		si.setSelectedIndex(jobid);
     }
     
-    public static void addJob(JobBean job) {
-        jobQueue.add(job);
+    public static void addJob(Experiment experiment) {
+        jobQueue.add(experiment);
     }
 
-    public static void updateJob(JobBean job) {
-        int index = jobQueue.indexOf(job);
+    public static void updateJob(Experiment experiment) {
+        int index = jobQueue.indexOf(experiment);
         if (index > -1) {
             jobQueue.remove(index);
-            jobQueue.add(index, job);
+            jobQueue.add(index, experiment);
         } else {
             throw new JobException("Could not locate job in the existing job queue.  Job was not updated.");
         }
     }
 }
-
-// Moved to stuffInside.java @CCS,UKy
-
-//class doSubBetween extends MyLongTask
-//{
-//    int wha;
-//    
-//    doSubBetween() {
-//    	super();
-//    	wha = 0;
-//    }
-//    
-//    public void go() {
-//    	current = 0;
-//    	final SwingWorker worker = new SwingWorker() {
-//    	    public Object construct() {
-//    	        try {
-//                    new doSubmitJobs();
-//                } catch (Exception e) {
-//                    SubmitJobsWindow.si.setButtonsEnabled(true);
-//                }
-//                
-//                return null;
-//    	    }
-//    	};
-//        
-//    	worker.start();
-//    }
-//
-//}

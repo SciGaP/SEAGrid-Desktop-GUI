@@ -315,18 +315,21 @@ public class EditJobPanel extends JDialog implements ActionListener,
      * @param owner
      * @throws HeadlessException
      */
-    public EditJobPanel(Frame owner, JobBean job) throws HeadlessException {
+    public EditJobPanel(Frame owner, Experiment experiment) throws HeadlessException {
         super(owner);
 
         //this.job = job;
 
         this.isUpdating = true;
-
+        interfaceDescriptions = AiravataManager.getAllAppInterfaces();
+        experimentParmas.put(ExpetimentConst.APP_ID,experiment.getApplicationId());
+        //experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID,experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId());
         init();
+        updateForm(experiment);
 
     }
 
-    public EditJobPanel(Frame owner, JobBean job, ArrayList<File> files) throws HeadlessException {
+    public EditJobPanel(Frame owner, Experiment job, ArrayList<File> files) throws HeadlessException {
         this(owner, job);
 
         this.inputFilePanel.clearFileInput();
@@ -393,6 +396,36 @@ public class EditJobPanel extends JDialog implements ActionListener,
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateForm(Experiment experiment){
+        expNameText.setText(experiment.getName());
+        ApplicationInterfaceDescription appDesc =null;
+        for (ApplicationInterfaceDescription desc: interfaceDescriptions){
+            if(desc.getApplicationInterfaceId().equals(experiment.getApplicationId())){
+                appDesc =desc;
+                break;
+            }
+        }
+        appCombo.setSelectedItem(appDesc.getApplicationName());
+        populateMachineList(appDesc.getApplicationName());
+        int compResourceIndex = 0;
+        for (int i=0;i<availableCompResources.size();i++){
+            ComputeResourceDescription comp  =  availableCompResources.get(i);
+            if(comp.getComputeResourceId().equals(experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId())){
+                compResourceIndex = i;
+                break;
+            }
+        }
+        hpcList.setSelectedIndex(compResourceIndex);
+        populateProjects();
+        Project expProject = AiravataManager.getProject(experiment.getProjectID());
+        //projCombo.setSelectedItem(expProject.getName());
+        changeQueue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName());
+        numProcSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount());
+        numNodeSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getNodeCount());
+        numThreadSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getNumberOfThreads());
+        memSizeTextField.setText(experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory()+"");
     }
 
     private void jbInit() {
@@ -1348,13 +1381,13 @@ public class EditJobPanel extends JDialog implements ActionListener,
     }
 
     public void doAddJobToQueue() {
-        
+
         /*this.job.setName(getJobName().replaceAll("\\s", ""));
         this.job.setExperimentName(getResProj());
         this.job.setAllocationName(getProject());
         this.job.setSystemName(
                 (getSubmitMachine().equals(SCHEDULER))?null:getSubmitMachine());
-        
+
         this.job.setSoftwareName(getAppPackageName());
         *///remove comment
         /* ************************************************ */
@@ -1367,27 +1400,27 @@ public class EditJobPanel extends JDialog implements ActionListener,
         this.job.setUserId(GridChem.user.getId());
         this.job.setQueueName(getQueueName());
         this.job.setRequestedCpus(new Long(getNumProc()));
-        
+
         this.job.setRequestedCpuTime(getCalendarTime());
-        
+
         Calendar cal = Calendar.getInstance();
         cal.clear();
         cal.add(Calendar.MINUTE, Integer.parseInt(this.min.getValue().toString()));
         cal.add(Calendar.HOUR, Integer.parseInt(this.hr.getValue().toString()));
-        
+
         this.job.setRequestedCpuTime(cal);
         this.job.getInputFiles().clear();
-        
-        // Job is already populated.  Now add in the input files 
+
+        // Job is already populated.  Now add in the input files
         for (File file: getInputFiles()) {
             LogicalFileBean lFile = new LogicalFileBean();
             lFile.setJobId(-1);
             lFile.setLocalPath(file.getAbsolutePath());
             this.job.getInputFiles().add(lFile);
         }
-        
+
         try {
-            
+
             System.out.println(this.job.toString());
 
             SubmitJobsWindow.addJob(this.job);
@@ -1429,7 +1462,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
                 System.out.println(localJob.toString());
 
-                SubmitJobsWindow.addJob(localJob);
+                //SubmitJobsWindow.addJob(localJob);
 
             } catch (JobException e) {
                 e.printStackTrace();

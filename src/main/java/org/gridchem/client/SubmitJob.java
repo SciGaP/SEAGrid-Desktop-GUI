@@ -188,7 +188,7 @@ public final class SubmitJob implements HardWorker, StatusListener {
 						+ stuffInside.queueModel.getElementAt(jobIndexInQueue));
 
 				// remove the job from the static job queue
-				SubmitJobsWindow.jobSubmitted.add(job);
+				//SubmitJobsWindow.jobSubmitted.add(job);
 				// unselect the job in the queue list
 				stuffInside.queueList.removeSelectionInterval(jobIndexInQueue,
 						jobIndexInQueue);
@@ -454,7 +454,7 @@ public final class SubmitJob implements HardWorker, StatusListener {
 					//System.out.println("I'm here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + SubmitJobsWindow.jobQueue.size());
 					//System.out.println("I'm here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + stuffInside.queueJobList.size());
 					if (SubmitJobsWindow.jobQueue.size() != 0) {
-						this.job = SubmitJobsWindow.jobQueue.get(0);
+						//this.job = SubmitJobsWindow.jobQueue.get(0);
 						this.progressDialog = new ProgressDialog(
 								SubmitJobsWindow.frame,
 								"Job \"" + this.job.getName() + "\" Submission Progress");

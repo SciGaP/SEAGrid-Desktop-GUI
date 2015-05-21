@@ -81,10 +81,10 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import org.apache.airavata.gridchem.AiravataManager;
+import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.gui.buttons.ApplicationMenuItem;
 import org.gridchem.client.gui.buttons.DropDownButton;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
-import org.gridchem.service.beans.JobBean;
 import org.gridchem.service.beans.LogicalFileBean;
 
 import G03Input.InputFile;
@@ -101,7 +101,6 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 {
 	public static JFrame mainFrame;
 	public static int selectedGUI = 0;
-	JobBean job;
 	JPanel buttonBox;
 	JSplitPane queueSplitPane;
 
@@ -137,12 +136,38 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 
 	// private javax.swing.Timer timer;
 
-	public stuffInside(JobBean job) {
+	public stuffInside(Experiment experiment) {
 		this();
 
-		doEditNewJob(job);
+		doEditNewJob(experiment);
 	}
 
+	public void initLists(){
+		queueJobList = new JobList(AiravataManager.getQueuedExperiments(GridChem.user.getUserName()));
+		doneJobList = new JobList(AiravataManager.getLaunchedExperiments(GridChem.user.getUserName()));
+
+		ArrayList serializedJobList = queueJobList.getJobNamesList();
+		System.out.println("ListOfJobs:nl is empty:"
+				+ serializedJobList.isEmpty() + "\n");
+		queueModel = new DefaultListModel();
+		int N = serializedJobList.size();
+		for (int i = 0; i < N; i++) {
+			queueModel.addElement((String) serializedJobList.get(i));
+		}
+		queueList = new JList(queueModel);
+
+		ArrayList nldone = doneJobList.getJobNamesList();
+		System.out.println("ListOfJobsdone:nldone is empty:" + nldone.isEmpty()
+				+ "\n");
+		doneModel = new DefaultListModel();
+		int Ndone = nldone.size();
+
+		for (int i = 0; i < Ndone; i++) {
+			doneModel.addElement((String) nldone.get(i));
+		}
+		doneList = new JList(doneModel);
+
+	}
 	public stuffInside() {
 
 		// dsb.stop();
@@ -175,25 +200,9 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		buttonBox.add(suballButton); // lixh_3_3
 		buttonBox.add(cancelButton);
 
-		// I just added this line, does it help?
-		queueJobList = new JobList(AiravataManager.getQueuedExperiments(GridChem.user.getUserName()));
-		doneJobList = new JobList(AiravataManager.getLaunchedExperiments(GridChem.user.getUserName()));
-		ArrayList serializedJobList = queueJobList.getJobNamesList();
-		System.out.println("ListOfJobs:nl is empty:"
-				+ serializedJobList.isEmpty() + "\n");
-		queueModel = new DefaultListModel();
+		//getting done and pending experiments from Airavata
 
-		// something in here is not quite right, which is why
-		// we have to do that job shuffle nonsense at the beginning
-		// qbModel.addElement(j.getJobName());
-		// try the following instead:
-		int N = serializedJobList.size();
-		for (int i = 0; i < N; i++) {
-			queueModel.addElement((String) serializedJobList.get(i));
-		}
-		queueList = new JList(queueModel);
-
-		System.out.println("***set name of queueboard here******");
+		initLists();
 
 		queueList.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -236,10 +245,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		// add(queueBoxPane);
 
 		// queuedonescrollPane
-		ArrayList nldone = doneJobList.getJobNamesList();
-		System.out.println("ListOfJobsdone:nldone is empty:" + nldone.isEmpty()
-				+ "\n");
-		doneModel = new DefaultListModel();
+
 		doneModel.addListDataListener(new ListDataListener() {
 
 			public void intervalAdded(ListDataEvent arg0) {
@@ -270,13 +276,6 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 
 		});
 
-		int Ndone = nldone.size();
-
-		for (int i = 0; i < Ndone; i++) {
-			doneModel.addElement((String) nldone.get(i));
-		}
-
-		doneList = new JList(doneModel);
 		// queuedoneBoard.setName("Submitted");
 		// queuedoneBoard.TOOL_TIP_TEXT_KEY;
 		doneList.addMouseListener(new MouseAdapter() {
@@ -517,19 +516,19 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 						public Object construct() {
 
 							submittingJob = true;
-							JobBean job = SubmitJobsWindow.jobQueue
+							Experiment experiment = SubmitJobsWindow.jobQueue
 									.get(queueList.getSelectedIndex());
 
 							progressDialog = new ProgressDialog(
 									SubmitJobsWindow.frame,
-									"Job \"" + job.getName() + "\" Submission Progress");
+									"Job \"" + experiment.getName() + "\" Submission Progress");
 							progressDialog.millisToPopup = 0;
 							progressDialog.millisToDecideToPopup = 0;
 							progressDialog.displayTimeLeft = false;
 
-							SubmitJob sj = new SubmitJob(job);
+							/*SubmitJob sj = new SubmitJob(job);
 							sj.addProgressMonitor(progressDialog);
-							sj.submit();
+							sj.submit();*/
 							//
 							return progressDialog;
 						}
@@ -588,11 +587,11 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							progressDialog.millisToDecideToPopup = 0;
 							progressDialog.displayTimeLeft = false;
 
-							SubmitJob sj = new SubmitJob(
+							/*SubmitJob sj = new SubmitJob(
 									SubmitJobsWindow.jobQueue.get(0));
 							sj.addProgressMonitor(progressDialog);
 							sj.setSumitMultiple();
-							sj.submitAll1();
+							sj.submitAll1();*/
 
 							return progressDialog;
 						}
@@ -632,32 +631,6 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		editButton.setEnabled(enable);
 	}
 
-	// public void valueChanged(ListSelectionEvent e) {
-	//
-	// if (e.getValueIsAdjusting() == false){
-	// // System.out.println("dsb max = " + dsb.getLengthOfTask() +
-	// // ", dsb value = " + dsb.getCurrent());
-	// System.out.println("stage 9: stuffInside.java: 407");
-	// if (dsb.done()) {
-	// if (queueList.getSelectedIndex() == -1) {
-	// editButton.setEnabled(false);
-	// submButton.setEnabled(false); //lixh_add
-	// delButton.setEnabled(false);
-	// } else {
-	// editButton.setEnabled(true);
-	// delButton.setEnabled(true);
-	// submButton.setEnabled(true); //lixh_add
-	// }
-	//
-	// if (queueModel.getSize() > 0) {
-	// suballButton.setEnabled(true);
-	// } else {
-	// suballButton.setEnabled(false);
-	// } //
-	// } //end if (dsb.done)
-	// }
-	// }
-
 	public static void showNewGUI() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
@@ -690,7 +663,8 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 			JOptionPane.showMessageDialog(null, "You must select a job",
 					"Error", JOptionPane.INFORMATION_MESSAGE);
 		} else {// edit the job that was selected
-			jobEditor = new EditJobPanel(null, SubmitJobsWindow.jobQueue.get(n));
+			Experiment selectedExperiment = (Experiment)queueJobList.get(n);
+			jobEditor = new EditJobPanel(null, selectedExperiment);
 		}
 	}
 
@@ -705,8 +679,8 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		System.err.println("job index is: " + (size + 1));
 	}
 
-	public void doEditNewJob(JobBean job) {
-		jobEditor = new EditJobPanel(null, job);
+	public void doEditNewJob(Experiment experiment) {
+		jobEditor = new EditJobPanel(null, experiment);
 
 		int size = queueModel.getSize();
 
@@ -747,7 +721,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		new Thread() {
 			public void run() {
 
-				JobBean job = SubmitJobsWindow.jobQueue.get(queueList
+				Experiment experiment = SubmitJobsWindow.jobQueue.get(queueList
 						.getSelectedIndex());
 				// SubmitJobsWindow.jobQueue.remove(0);
 				System.out
@@ -757,16 +731,16 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 				ProgressDialog progressDialog = new ProgressDialog(sj,
 						"Job Submission Progress");
 				progressDialog
-						.beginTask("Submitting " + job.getName(), 5, true);
+						.beginTask("Submitting " + experiment.getName(), 5, true);
 
 				// submit the Job j to the queue
-				SubmitJob sj = new SubmitJob(job);
+				/*SubmitJob sj = new SubmitJob(job);
 				sj.addProgressMonitor(progressDialog);
 				sj.submit();
 
-				GridChem.appendMessage("Job " + job.getName()
+				GridChem.appendMessage("Job " + experiment.getName()
 						+ " successfully submitted to machine \n"
-						+ job.getSystemName() + "\n");
+						+ job.getSystemName() + "\n");*/
 
 				// return null;
 			}

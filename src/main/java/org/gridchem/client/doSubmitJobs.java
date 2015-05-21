@@ -65,7 +65,7 @@ public class doSubmitJobs
         
         System.out.println("User requested " + selectedJobsIndices.length + " jobs be submitted.");
         for(int i=selectedJobsIndices.length-1; i>=0; i--) {
-            j = SubmitJobsWindow.jobQueue.get(selectedJobsIndices[i]);
+            //j = SubmitJobsWindow.jobQueue.get(selectedJobsIndices[i]);
             System.out.println("Preparing to submit job " + i + ": " + j.getName());
             selectedindex = i;
             // submit the Job j to the queue

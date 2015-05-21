@@ -133,6 +133,7 @@ import javax.swing.table.TableColumnModel;
 import nanocad.nanocadFrame2;
 import nanocad.newNanocad;
 
+import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.DataTree;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.SpectraOutputParser;
@@ -950,7 +951,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @param job
 	 */
-	private void doResubmit(final JobBean job) {
+	private void doResubmit(final Experiment job) {
 		SwingWorker worker = new SwingWorker() {
 			public Object construct() {
 				EditJobPanel jobEditor = new EditJobPanel(null, job);
@@ -2822,7 +2823,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			} else if (item == editTagsMenuItem) {
 				createJobMetadataDialog(getSelectedJob());
 			} else if (item == resubmitMenuItem) {
-				doResubmit(getSelectedJob());
+				//doResubmit(getSelectedJob());
 			} else if (item == killMenuItem) {
 				doKillJob(getSelectedJob());
 			} else if (item == refreshMenuItem) {
