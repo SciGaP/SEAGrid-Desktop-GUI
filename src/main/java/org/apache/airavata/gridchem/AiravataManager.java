@@ -73,7 +73,7 @@ public class AiravataManager {
 
         List<Project> airavataProjects;
         try {
-            airavataProjects = getClient().getAllUserProjects(Settings.gridchemusername);
+            airavataProjects = getClient().getAllUserProjects(AiravataConfig.getProperty(AiravataConfig.GATEWAY),Settings.gridchemusername);
         }catch (Exception e) {
             throw new ProjectException(e.getMessage());
         }
@@ -389,7 +389,7 @@ public class AiravataManager {
     }
 
     public static List<ApplicationDeploymentDescription> getAplicationDeployments() throws AiravataClientConnectException, TException {
-        return getClient().getAllApplicationDeployments();
+        return getClient().getAllApplicationDeployments(AiravataConfig.getProperty(AiravataConfig.GATEWAY));
     }
 
     public static List<SoftwareBean> getSoftware(JobCommand command) throws SoftwareException {
@@ -454,7 +454,7 @@ public class AiravataManager {
     }
 
     public static  List<ApplicationDeploymentDescription> getAppDepDescriptionforMachine(String computeHostId) throws AiravataClientConnectException, TException {
-        List<ApplicationDeploymentDescription> appDeployments = getClient().getAllApplicationDeployments();
+        List<ApplicationDeploymentDescription> appDeployments = getClient().getAllApplicationDeployments(AiravataConfig.getProperty(AiravataConfig.GATEWAY));
         List<ApplicationDeploymentDescription> returnApps = new ArrayList<ApplicationDeploymentDescription>();
         for (ApplicationDeploymentDescription ad : appDeployments){
             if(ad.getComputeHostId().equals(computeHostId)){
@@ -466,7 +466,7 @@ public class AiravataManager {
 
     public static List<ComputeResourceDescription> getCompResourcesForAppModule(String appModuleName) throws AiravataClientConnectException, TException {
         List<ComputeResourceDescription> computeResources = new ArrayList<>();
-        List<ApplicationDeploymentDescription> appDeployments =  getClient().getAllApplicationDeployments();
+        List<ApplicationDeploymentDescription> appDeployments =  getClient().getAllApplicationDeployments(AiravataConfig.getProperty(AiravataConfig.GATEWAY));
         Set<String> comResourceids= new HashSet<>();
         for(ApplicationDeploymentDescription app:appDeployments){
             if(getClient().getApplicationModule(app.getAppModuleId()).getAppModuleName().equals(appModuleName)){
@@ -536,7 +536,7 @@ public class AiravataManager {
 
     public static List<ApplicationInterfaceDescription> getAllAppInterfaces(){
         try{
-            return getClient().getAllApplicationInterfaces();
+            return getClient().getAllApplicationInterfaces(AiravataConfig.getProperty(AiravataConfig.GATEWAY));
         }catch (Exception ex){
             ex.printStackTrace();
             return null;
@@ -546,7 +546,7 @@ public class AiravataManager {
     public static List<Experiment> getQueuedExperiments(String userName){
         List<Experiment> exp = new ArrayList<>();
         try{
-            List<Experiment> allexp = getClient().getAllUserExperiments(userName);
+            List<Experiment> allexp = getClient().getAllUserExperiments(AiravataConfig.getProperty(AiravataConfig.GATEWAY),userName);
             for(Experiment experiment:allexp){
                 if(experiment.getExperimentStatus().getExperimentState()==ExperimentState.CREATED)
                     exp.add(experiment);
@@ -560,7 +560,7 @@ public class AiravataManager {
     public static List<Experiment> getLaunchedExperiments(String userName){
         List<Experiment> exp = new ArrayList<>();
         try{
-            List<Experiment> allexp = getClient().getAllUserExperiments(userName);
+            List<Experiment> allexp = getClient().getAllUserExperiments(AiravataConfig.getProperty(AiravataConfig.GATEWAY),userName);
             for(Experiment experiment:allexp){
                 ExperimentState state = experiment.getExperimentStatus().getExperimentState();
                 if(state!=ExperimentState.CREATED)
@@ -605,7 +605,7 @@ public class AiravataManager {
         userConfigurationData.setComputationalResourceScheduling(scheduling);
         simpleExperiment.setUserConfigurationData(userConfigurationData);
 
-        String exp = getClient().createExperiment(simpleExperiment);
+        String exp = getClient().createExperiment(AiravataConfig.getProperty(AiravataConfig.GATEWAY),simpleExperiment);
         ExperimentState s;
         System.out.println(getClient().getExperimentStatus(exp).getExperimentState().name());
         getClient().launchExperiment(exp, "sample");

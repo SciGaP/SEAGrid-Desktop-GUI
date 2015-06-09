@@ -1,5 +1,6 @@
 package org.apache.airavata.gridchem.experiment;
 
+import org.apache.airavata.AiravataConfig;
 import org.apache.airavata.ExpetimentConst;
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.appcatalog.appinterface.DataType;
@@ -116,7 +117,7 @@ public class AddExperimentHandler extends ExperimentHandler{
 
         String experimentId = null;
         try {
-            experimentId = AiravataManager.getClient().createExperiment(echoExp);
+            experimentId = AiravataManager.getClient().createExperiment(AiravataConfig.getProperty(AiravataConfig.GATEWAY),echoExp);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ExperimentCreationException("Error at creating experiment "+expName+ " on machine "+hostID,e);
