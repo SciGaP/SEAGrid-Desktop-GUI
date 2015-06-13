@@ -81,6 +81,8 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import org.apache.airavata.gridchem.AiravataManager;
+import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
+import org.apache.airavata.gridchem.experiment.ExperimentHandler;
 import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.gui.buttons.ApplicationMenuItem;
 import org.gridchem.client.gui.buttons.DropDownButton;
@@ -505,19 +507,13 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 						doEditNewJob();
 					}
 				} else {
-					// setButtonsEnabled(false);
-					// timer = doSubTimer();
-					// dsb.go();
-					// timer.start();
-					System.out.println("stage 10 :stuffinside.java:349");
-					// doSubmitJobs();
+
 					new SwingWorker() {
 
 						public Object construct() {
 
 							submittingJob = true;
-							Experiment experiment = SubmitJobsWindow.jobQueue
-									.get(queueList.getSelectedIndex());
+							Experiment experiment = SubmitJobsWindow.si.queueJobList.get(queueList.getSelectedIndex());
 
 							progressDialog = new ProgressDialog(
 									SubmitJobsWindow.frame,
@@ -525,21 +521,16 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							progressDialog.millisToPopup = 0;
 							progressDialog.millisToDecideToPopup = 0;
 							progressDialog.displayTimeLeft = false;
-
-							/*SubmitJob sj = new SubmitJob(job);
-							sj.addProgressMonitor(progressDialog);
-							sj.submit();*/
-							//
+							try {
+								ExperimentHandler.launchExperiment(experiment.getExperimentID());
+							}catch (ExperimentCreationException e) {
+								e.printStackTrace();
+								JOptionPane.showMessageDialog(mainFrame, "Error at launching experiment", e.getMessage(), JOptionPane.ERROR_MESSAGE);
+								return null;
+							}
 							return progressDialog;
 						}
 
-						// public void finished() {
-						// SwingUtilities.invokeLater(new Runnable() {
-						// public void run() {
-						// setButtonsEnabled(true);
-						// }
-						// });
-						// }
 					}.start();
 				}
 			} else if (e.getSource() == suballButton) {

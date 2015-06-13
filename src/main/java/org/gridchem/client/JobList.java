@@ -200,9 +200,9 @@ public class JobList implements java.util.List {
 		return theList.retainAll(c);
 	}
 
-	public Object get(int index) {
-		Experiment jobOnDeck = (Experiment) theList.get(index);
-		return (Object) jobOnDeck;
+	public Experiment get(int index) {
+		Experiment jobOnDeck = theList.get(index)==null?null:(Experiment)theList.get(index);
+		return jobOnDeck;
 	}
 
 	public Object set(int index, Object o) {

@@ -637,8 +637,7 @@ public class AiravataManager {
 
             //}
             //createExperiment();
-            //getClient().getApplicationDeployment("Echo_dcd59b1a-b291-4750-8d89-87531e0739e6");
-
+            //getClient().getApplicationDeployment("Echo_dcd59b1a-b291-4750-8d89-87531e0739e6")
         }catch(Exception e){
             e.printStackTrace();
         }

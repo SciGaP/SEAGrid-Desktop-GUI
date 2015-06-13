@@ -68,22 +68,22 @@
         <dependency>
             <groupId>org.apache.airavata</groupId>
             <artifactId>airavata-data-models</artifactId>
-            <version>0.16-SNAPSHOT</version>
+            <version>0.15-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.airavata</groupId>
             <artifactId>airavata-model-utils</artifactId>
-            <version>0.16-SNAPSHOT</version>
+            <version>0.15-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.airavata</groupId>
             <artifactId>airavata-api-stubs</artifactId>
-            <version>0.16-SNAPSHOT</version>
+            <version>0.15-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.airavata</groupId>
             <artifactId>airavata-client-configuration</artifactId>
-            <version>0.16-SNAPSHOT</version>
+            <version>0.15-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>

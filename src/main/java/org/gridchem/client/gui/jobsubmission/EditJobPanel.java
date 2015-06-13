@@ -246,7 +246,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         experimentParmas.put(ExpetimentConst.START_TIME, 0);
         experimentParmas.put(ExpetimentConst.MEMORY, 1);
         experimentParmas.put(ExpetimentConst.PROJECT_ACCOUNT, "sds128");
-
+        //TODO remove calling this twise
 
         ComputeResourceDescription hw = GridChem.getMachineList().get(0);
         for (ComputeResourceDescription cb : GridChem.getMachineList()) {
@@ -1260,9 +1260,10 @@ public class EditJobPanel extends JDialog implements ActionListener,
             ExperimentHandler experimentHandler = new AddExperimentHandler();
             try {
                 String expId = experimentHandler.createExperiment(experimentParmas);
-                experimentHandler.launchExperiment(expId);
+                doClose();
             } catch (ExperimentCreationException ex) {
                 ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error at creating experiment", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
             }
 
         } else if (e.getActionCommand() == "Cancel") {
@@ -1471,10 +1472,13 @@ public class EditJobPanel extends JDialog implements ActionListener,
         }
     }
 
+    public void doClose(){
+        SubmitJobsWindow.getInstance();
+        this.dispose();
+    }
     public void doCancel() {
 
         SubmitJobsWindow.getInstance();
-
         this.dispose();
         // EditJobPanel.frame.setVisible(false);
         // editSSHJobPanel.frame.setVisible(false);

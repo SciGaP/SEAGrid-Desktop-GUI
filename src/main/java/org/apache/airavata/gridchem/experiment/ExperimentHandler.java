@@ -23,7 +23,7 @@ public class ExperimentHandler {
         return null;
     }
 
-    public void launchExperiment(String expID) throws ExperimentCreationException {
+    public static void launchExperiment(String expID) throws ExperimentCreationException {
         String sshTokenId = "2c308fa9-99f8-4baa-92e4-d062e311483c";
         try {
             AiravataManager.getClient().launchExperiment(expID, sshTokenId);
