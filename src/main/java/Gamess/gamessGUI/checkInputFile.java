@@ -125,7 +125,7 @@ public class checkInputFile implements ActionListener{
         EditJobPanel ejp = new EditJobPanel();
         newNanocad.exportedApplication = Invariants.APP_NAME_GAMESS;
         ejp.changeApp(newNanocad.exportedApplication);
-        ejp.populateMachineList(newNanocad.exportedApplication);
+        ejp.populateMachineList();
 //        ejp.changeInputText(GamessGUI.inputFilePane.getText());
         //SubmitJobsWindow.si.mainFrame.dispose();
 	}

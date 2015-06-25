@@ -82,10 +82,7 @@ import nanocad.newNanocad;
 
 import org.apache.airavata.ExpetimentConst;
 import org.apache.airavata.gridchem.AiravataManager;
-import org.apache.airavata.gridchem.experiment.AddExperimentHandler;
-import org.apache.airavata.gridchem.experiment.EchoExperimentHandler;
-import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
-import org.apache.airavata.gridchem.experiment.ExperimentHandler;
+import org.apache.airavata.gridchem.experiment.*;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
 import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDescription;
 import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
@@ -248,19 +245,19 @@ public class EditJobPanel extends JDialog implements ActionListener,
         experimentParmas.put(ExpetimentConst.PROJECT_ACCOUNT, "sds128");
         //TODO remove calling this twise
 
-        ComputeResourceDescription hw = GridChem.getMachineList().get(0);
-        for (ComputeResourceDescription cb : GridChem.getMachineList()) {
+       // ComputeResourceDescription hw = GridChem.getMachineList().get(0);
+        /*for (ComputeResourceDescription cb : GridChem.getMachineList()) {
             System.out.println("*a******************************");
             System.out.println(cb.getHostName());
             if (cb.getHostName().equals(Preferences.getString("last_machine"))) {
                 System.out.println("Found last used machine");
                 hw = cb;
             }
-        }
+        }*/
 
-        experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, hw.getComputeResourceId());
+        //experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, hw.getComputeResourceId());
 
-        for (ApplicationInterfaceDescription ifd : interfaceDescriptions) {
+        /*for (ApplicationInterfaceDescription ifd : interfaceDescriptions) {
             String intefaceID = ifd.getApplicationInterfaceId();
             List<ComputeResourceDescription> compds = AiravataManager.getComputationalResources(intefaceID);
             for (ComputeResourceDescription bean : compds) {
@@ -273,7 +270,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             if (experimentParmas.get(ExpetimentConst.APP_ID) != null) {
                 break;
             }
-        }
+        }*/
 
         ArrayList<LogicalFileBean> inFiles = new ArrayList<LogicalFileBean>();
         for (File f : FileUtility.getDefaultInputFiles(this.application)) {
@@ -298,7 +295,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         appCombo.setSelectedItem(appName);
         changeModuleList(GridChem.getSoftware((String) (appName)));
-        populateMachineList(appName);
+        populateMachineList();
 
         this.inputFilePanel.addTextInput(input);
     }
@@ -322,7 +319,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         this.isUpdating = true;
         interfaceDescriptions = AiravataManager.getAllAppInterfaces();
-        experimentParmas.put(ExpetimentConst.APP_ID,experiment.getApplicationId());
+        experimentParmas.put(ExpetimentConst.APP_ID, experiment.getApplicationId());
         //experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID,experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId());
         init();
         updateForm(experiment);
@@ -345,11 +342,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         try {
             isLoading = true;
-            // populate fields with given job information
             changeExperimentNameField((String) experimentParmas.get(ExpetimentConst.EXP_NAME));
-//            changeAppPackage(job.getSystemName());
-//            changeModule(job.getApplication());
-            //populateMachineList((String) experimentParmas.get(ExpetimentConst.APP_ID));
 
             System.out.println("Loading machine " + (String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
             ComputeResourceDescription hpc = GridChem.getMachineByName((String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
@@ -408,7 +401,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             }
         }
         appCombo.setSelectedItem(appDesc.getApplicationName());
-        populateMachineList(appDesc.getApplicationName());
+        populateMachineList();
         int compResourceIndex = 0;
         for (int i=0;i<availableCompResources.size();i++){
             ComputeResourceDescription comp  =  availableCompResources.get(i);
@@ -425,12 +418,32 @@ public class EditJobPanel extends JDialog implements ActionListener,
         numProcSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount());
         numNodeSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getNodeCount());
         numThreadSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getNumberOfThreads());
-        memSizeTextField.setText(experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory()+"");
+        memSizeTextField.setText(experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory() + "");
+    }
+
+    private JPanel getArrowButtonPane(){
+        JPanel arrowButtonPane = new JPanel();
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridwidth = GridBagConstraints.REMAINDER; // next-to-last
+        c.fill = GridBagConstraints.VERTICAL; // reset to default
+        c.anchor = GridBagConstraints.SOUTH;
+        c.weightx = 1.0;
+        gridbag.setConstraints(upButton, c);
+        arrowButtonPane.add(upButton);
+        c.gridwidth = GridBagConstraints.REMAINDER; // end row
+        c.fill = GridBagConstraints.VERTICAL;
+        c.anchor = GridBagConstraints.NORTH;
+        c.weightx = 1.0;
+        gridbag.setConstraints(downButton, c);
+        arrowButtonPane.add(downButton);
+        arrowButtonPane.setLayout(gridbag);
+        arrowButtonPane.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        return arrowButtonPane;
     }
 
     private void jbInit() {
 
-//        verifyInputsForMultipleInputApp();
 
         // Border
         Border eBorder1 = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -455,78 +468,9 @@ public class EditJobPanel extends JDialog implements ActionListener,
         namePane.add(projNameLabel);
         namePane.add(expNameText);
 
-
-        // ---> AppPane
-        Container apphpcBox = Box.createVerticalBox();
-        hpcListModel = new DefaultListModel();
-        hpcList = new JList(hpcListModel);
-        //this.job.setSoftwareName(Invariants.APP_NAME_GAUSSIAN);
-        //populateMachineList(Invariants.APP_NAME_GAUSSIAN);
-        //this.job.setSystemName("Cobalt");
-        //System.out.println("312:init editingstuff=" + this.scheduling.getResourceHostId());
-        if (experimentParmas.get(ExpetimentConst.APP_ID) == null) {
-            System.out.println("get app is blank");
-            populateMachineList(Invariants.APP_NAME_GAUSSIAN);
-        } else {
-            //populateMachineList(this.job.getSystemName());
-            String appId = (String) experimentParmas.get(ExpetimentConst.APP_ID);
-            String appName = null;
-            for (ApplicationInterfaceDescription desc : interfaceDescriptions) {
-                if (desc.getApplicationInterfaceId().equals(appId)) {
-                    appName = desc.getApplicationName();
-                }
-            }
-            System.out.println("Experiment App Interface Name id is : " + appName);
-            populateMachineList(appName);
-            changeMachine((String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
-            // reqPane.remove(numProcEdLabel);
-        }
-
-        // apphpcBoard.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        hpcList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        hpcList.setCellRenderer(new HPCCellRenderer());
-
-        apphpcScrollPane = new JScrollPane(hpcList);
-        apphpcBox.setMinimumSize(new Dimension(250, 100));
-        apphpcBox.setPreferredSize(new Dimension(250, 150));
-        apphpcBox.add(apphpcScrollPane);
-        // apphpcBoard.setSelectedIndex(0);
-
-        int selectedIndices = ((DefaultListModel) hpcList.getModel()).indexOf((String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
-        hpcList.setSelectedIndex(selectedIndices);
-//        hpcList.setSelectedIndices(new int[]{selectedIndices});
-        hpcList.ensureIndexIsVisible(selectedIndices);
-
-        makeButtons();
-        JPanel arrowButtonPane = new JPanel();
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridwidth = GridBagConstraints.REMAINDER; // next-to-last
-        c.fill = GridBagConstraints.VERTICAL; // reset to default
-        c.anchor = GridBagConstraints.SOUTH;
-        c.weightx = 1.0;
-        gridbag.setConstraints(upButton, c);
-        arrowButtonPane.add(upButton);
-        c.gridwidth = GridBagConstraints.REMAINDER; // end row
-        c.fill = GridBagConstraints.VERTICAL;
-        c.anchor = GridBagConstraints.NORTH;
-        c.weightx = 1.0;
-        gridbag.setConstraints(downButton, c);
-        arrowButtonPane.add(downButton);
-        arrowButtonPane.setLayout(gridbag);
-        arrowButtonPane.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-
-        JPanel apphpcBoxPane = new JPanel();
-        apphpcBoxPane.setLayout(new BoxLayout(apphpcBoxPane, BoxLayout.X_AXIS));
-//        apphpcBoxPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
-        apphpcBoxPane.add(apphpcBox);
-        apphpcBoxPane.add(arrowButtonPane);
-
-        // create applications combo box + application moddules combo box (JK)
-//        getAppPackageAndModuleListFromDatabase();
-
-        appModuleLabel = new JLabel("Module");
-
+        /**
+         * initializing application specific  data
+         */
 
         Set<String> applicationNames = new HashSet<>();
         for (ApplicationInterfaceDescription bean : interfaceDescriptions) {
@@ -541,12 +485,64 @@ public class EditJobPanel extends JDialog implements ActionListener,
             }
         }
 
+        appModuleLabel = new JLabel("Module");
         appModuleCombo = new JComboBox();
+        appModuleCombo.removeAllItems();
+        updateAppModules();
         appCombo.setPreferredSize(new Dimension(50, 30));
         appModuleCombo.setPreferredSize(new Dimension(50, 30));
+        //////////////////////////////////////////////
 
-        System.out.println("374:name of HPC System: " + (String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
 
+        /**
+         * Initializing compute resources
+         */
+        hpcListModel = new DefaultListModel();
+        hpcList = new JList(hpcListModel);
+
+        //if no application was selected before
+        if(experimentParmas.get(ExpetimentConst.APP_ID)==null){
+            System.out.println("App ID is null");
+            experimentParmas.put(ExpetimentConst.APP_ID, appCombo.getSelectedItem());
+        } else {
+
+            String appId = (String) experimentParmas.get(ExpetimentConst.APP_ID);
+            String appName = null;
+            for (ApplicationInterfaceDescription desc : interfaceDescriptions) {
+                if (desc.getApplicationInterfaceId().equals(appId)) {
+                    appName = desc.getApplicationName();
+                }
+            }
+            System.out.println("Experiment App Interface Name id is : " + appName);
+        }
+
+        populateMachineList();
+
+        hpcList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        hpcList.setCellRenderer(new HPCCellRenderer());
+        apphpcScrollPane = new JScrollPane(hpcList);
+
+        int selectedIndices = experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID)==null?-1:((DefaultListModel) hpcList.getModel()).indexOf((String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
+        if(selectedIndices==-1){
+            experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID,availableCompResources.get(0).getComputeResourceId());
+            selectedIndices=0;
+        }
+        hpcList.setSelectedIndex(selectedIndices);
+        hpcList.ensureIndexIsVisible(selectedIndices);
+
+        /////////////////////////////////////
+
+        Container apphpcBox = Box.createVerticalBox();
+        apphpcBox.setMinimumSize(new Dimension(250, 100));
+        apphpcBox.setPreferredSize(new Dimension(250, 150));
+        apphpcBox.add(apphpcScrollPane);
+
+        makeButtons();
+
+        JPanel apphpcBoxPane = new JPanel();
+        apphpcBoxPane.setLayout(new BoxLayout(apphpcBoxPane, BoxLayout.X_AXIS));
+        apphpcBoxPane.add(apphpcBox);
+        apphpcBoxPane.add(getArrowButtonPane());
 
         JPanel appPane = new JPanel();
         TitledBorder appPaneTitled = BorderFactory.createTitledBorder(leBorder,
@@ -561,22 +557,15 @@ public class EditJobPanel extends JDialog implements ActionListener,
         appPane.add(appModuleLabel); // JK
         appPane.add(appModuleCombo); // JK
 
-        // Add another title for systems
-        JPanel HPCsysPane = new JPanel();
-        TitledBorder appPaneTitled1 = BorderFactory.createTitledBorder(
-                leBorder, "HPC Systems", TitledBorder.LEFT,
-                TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD,
-                        14));
-        apphpcBoxPane.setBorder(BorderFactory.createCompoundBorder(appPaneTitled1,
-                eBorder2));
-//        HPCsysPane.setLayout(new BoxLayout(HPCsysPane, BoxLayout.X_AXIS));
-//        HPCsysPane.add(apphpcBoxPane);
+        TitledBorder appPaneTitled1 = BorderFactory.createTitledBorder(leBorder, "HPC Systems", TitledBorder.LEFT, TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD, 14));
+        apphpcBoxPane.setBorder(BorderFactory.createCompoundBorder(appPaneTitled1, eBorder2));
 
+
+        /**
+         * Populating projects
+         */
         psnLabel = new JLabel("Choose a project:");
-
-
         projCombo = new JComboBox();
-
         populateProjects();
         if (experimentParmas.get("PROJECT_ID") != null) {
             String projId = (String) experimentParmas.get(ExpetimentConst.PROJECT_ID);
@@ -591,12 +580,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         // create queue drop down box
         qLabel = new JLabel("Choose a queue:");
         qCombo = new JComboBox();
-
-        //populateQueues(hpcList.getSelectedValue().toString());
         qCombo.setEditable(true);
-        //qCombo.setRenderer(new QueueComboBoxRenderer());
-
-        // create time wall clock time spinner boxes
         timeLable = new JLabel("Est. walltime (hr:min):");
 
         int maximum = 2048, maxmint = 59, minimum = 0, initial = 0, step = 1;
@@ -700,7 +684,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         inputFilePanel = new InputFilePanel(this);
 
-        // We do not add defaut input files to inputFilePanel if isUpdating is true (editing a job) 
+        // We do not add defaut input files to inputFilePanel if isUpdating is true (editing a job)
         if (this.isUpdating == false) {
             //	inputFilePanel.addMultipleFileInput(FileUtility.getDefaultInputFiles(this.job.getSoftwareName())); remove comment
         }
@@ -736,7 +720,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         // layout with gridbag --- too much space surrounding req pane when readjust
         setLayout(new GridBagLayout());
-//        
+//
         GridBagConstraints constraint = new GridBagConstraints();
 //        constraint.fill = GridBagConstraints.VERTICAL;
 ////        constraint.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -771,14 +755,36 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     }
 
+    private void updateAppModules(){
+        String applicationName = (String)appCombo.getSelectedItem();
+        appModuleCombo.removeAllItems();
+        for(ApplicationInterfaceDescription desc : interfaceDescriptions){
+            if(applicationName.equals(desc.getApplicationName())) {
+                appModuleCombo.addItem(desc.getApplicationInterfaceId());
+            }
+        }
+    }
+
     private void setListeners() {
         machListSelectionListener ms = new machListSelectionListener();
         edbumolButton.addActionListener(this);
         OKButton.addActionListener(this);
         CancelButton.addActionListener(this);
         hpcList.addListSelectionListener(ms);
-        appCombo.addItemListener(new appComboListener());
-        appModuleCombo.addItemListener(new appModuleComboListener());
+        appCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateAppModules();
+                populateMachineList();
+            }
+        });
+
+        appModuleCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                populateMachineList();
+            }
+        });
 
         projCombo.addActionListener(new ActionListener() {
 
@@ -1081,33 +1087,22 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     // Amr
     // Now change the machines according to which ones have the application.
-    public void populateMachineList(String application) {
+    public void populateMachineList() {
         System.out.println("Applic " + application);
         ArrayList appMachineList = new ArrayList();
-        if (availableCompResources != null) {
-            availableCompResources.clear();
-        }
-        for (ApplicationInterfaceDescription bean : interfaceDescriptions) {
-            if (bean.getApplicationName().equals(application)) {
-                System.out.println(bean.getApplicationInterfaceId());
-                if (availableCompResources == null) {
-                    availableCompResources = AiravataManager.getComputationalResources(bean.getApplicationInterfaceId());
-                } else {
-                    availableCompResources.addAll(AiravataManager.getComputationalResources(bean.getApplicationInterfaceId()));
-                }
+        if(appModuleCombo.getItemCount()>0) {
+            availableCompResources = AiravataManager.getComputationalResources((String) appModuleCombo.getSelectedItem());
+
+            hpcListModel.removeAllElements();
+            for (ComputeResourceDescription hpc : availableCompResources) { //remove comment
+                hpcListModel.addElement(hpc.getHostName());
             }
+
+            System.out.println("MachineList for " + application + " is" + hpcListModel.toString());
+
+            hpcList.setModel(hpcListModel);
+            hpcList.setSelectedIndex(0);
         }
-
-        hpcListModel.removeAllElements();
-        for (ComputeResourceDescription hpc : availableCompResources) { //remove comment
-            hpcListModel.addElement(hpc.getHostName());
-        }
-
-        System.out.println("MachineList for " + application + " is" + hpcListModel.toString());
-
-        hpcList.setModel(hpcListModel);
-        hpcList.setSelectedIndex(0);
-
     }
 
     public void populateProjects() {
@@ -1119,13 +1114,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         }
     }
 
-    /**
-     * Populate project dropdown box with the projects corresponding to the
-     * machine currently visible in the machine dropdown box
-     *
-     * @param machine Name of machine whose queue info will be used to populate the
-     *                queue dropdown box.
-     */
     private void populateQueues(String machine) {
         qCombo.removeAllItems();
 
@@ -1136,21 +1124,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
                 qCombo.addItem(queue.getQueueName());
             }
         }
-    }
-
-    // end Amr
-
-    private ArrayList parsePref(String prefName) {
-        Trace.entry();
-        ArrayList nl = new ArrayList();
-        String s;
-        String[] hpcSystems = Preferences.getString(prefName).split(",");
-        int machineCount = hpcSystems.length;
-        for (int i = 0; i < machineCount; i++) {
-            nl.add(hpcSystems[i]);
-        }
-        Trace.exit();
-        return nl;
     }
 
     private void makeButtons() {
@@ -1225,19 +1198,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             //preferences.put("last_machine", getSubmitMachine());
             experimentParmas.put(ExpetimentConst.EXP_NAME, expNameText.getText());
             experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, availableCompResources.get(hpcList.getSelectedIndex()).getComputeResourceId());
-
-
-            for(ApplicationInterfaceDescription desc : interfaceDescriptions){
-                if(desc.getApplicationName().equals(appCombo.getSelectedItem())){
-                    List<ComputeResourceDescription> coputationalResources = AiravataManager.getComputationalResources(desc.getApplicationInterfaceId());
-                    for(ComputeResourceDescription comp : coputationalResources){
-                        if(comp.getComputeResourceId().equals(experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID))){
-                            experimentParmas.put(ExpetimentConst.APP_ID,desc.getApplicationInterfaceId());
-                            break;
-                        }
-                    }
-                }
-            }
+            experimentParmas.put(ExpetimentConst.APP_ID,(String)appModuleCombo.getSelectedItem());
 
             List<File> inputFiles = inputFilePanel.getInputFiles();
             experimentParmas.put(ExpetimentConst.INPUT_FILES, inputFiles);
@@ -1257,7 +1218,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
             System.out.println(experimentParmas.get(ExpetimentConst.PROJECT_ACCOUNT));
             System.out.println();
 
-            ExperimentHandler experimentHandler = new AddExperimentHandler();
+            ExperimentHandler experimentHandler = ExperimentHandlerUtils
+                    .getExperimentHandler((String) experimentParmas.get(ExpetimentConst.APP_ID));
             try {
                 String expId = experimentHandler.createExperiment(experimentParmas);
                 doClose();
@@ -1495,32 +1457,32 @@ public class EditJobPanel extends JDialog implements ActionListener,
         this.job.setProjectName(getProject());
         this.job.setQueueName(getQueueName());
         this.job.setRequestedCpus(new Long(getNumProc()));
-        
+
         this.job.setRequestedCpuTime(getCalendarTime());
-        
+
         Calendar cal = Calendar.getInstance();
         cal.clear();
         cal.add(Calendar.MINUTE, Integer.parseInt(this.min.getValue().toString()));
         cal.add(Calendar.HOUR, Integer.parseInt(this.hr.getValue().toString()));
-        
+
         this.job.setRequestedCpuTime(cal);
-        
+
         // Job is already populated.  Now add in the input files
         this.job.getInputFiles().clear();
-        
+
         for (File file: getInputFiles()) {
             LogicalFileBean lFile = new LogicalFileBean();
             lFile.setJobId(-1);
             lFile.setLocalPath(file.getAbsolutePath());
             job.getInputFiles().add(lFile);
         }
-        
+
         try {
-            
+
             if(SubmitJobsWindow.jobQueue.contains(this.job)) {
-            
+
                 //SubmitJobsWindow.updateJob(this.job);
-                
+
 //                System.out
 //                        .println("doRepJobToQueue: after replacing with the new job");
 //
@@ -1531,7 +1493,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 //                        .println("doAddJobToQueue: after replacing job to the big list");
 
             }
-            
+
         } catch (JobException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(),
                     "Queue Wall Time Error", JOptionPane.OK_OPTION);
@@ -1603,7 +1565,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             this.changeAppPackage(newNanocad.exportedApplication);
             this.changeModule(newNanocad.exportedApplication);
 
-            this.populateMachineList(newNanocad.exportedApplication);
+            this.populateMachineList();
             this.populateProjects();
             numProcMethod();
 
@@ -1652,7 +1614,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             this.changeAppPackage(newNanocad.exportedApplication);
             this.changeModule(newNanocad.exportedApplication);
 
-            this.populateMachineList(newNanocad.exportedApplication);
+            this.populateMachineList();
             this.populateProjects();
 
             System.out.println("****Application name: " + application);
@@ -1913,7 +1875,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
     }
 
     public void changeAppPackage(String system) {
-        // not sure how this should change since a change in system does not trigger a 
+        // not sure how this should change since a change in system does not trigger a
         // change in software, but rather a change in software triggers a change in
         // systems.  My guess is that there is a relationship between the module and
         // the compute resource, which would mean that there is a joint relationship
@@ -1924,11 +1886,11 @@ public class EditJobPanel extends JDialog implements ActionListener,
         // as it stands now, I'm disregarding this call since all it will do is
         // selecte the same app and module every time.
 //    	SoftwareBean software = GridChem.getSoftware(appName);
-//        
+//
 //        System.out.println("changing application name :" + software.getName());
-//        
+//
 //        appCombo.setSelectedItem(software.getName());
-//        changeModuleList(software); 
+//        changeModuleList(software);
         // numProcMethod();
     }
 
@@ -2043,427 +2005,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         double minutes = cal.get(Calendar.MINUTE);
         return days + hours + (minutes / 60);
     }
-
-    // lixh_add
-    // called when the different application is selected
-    private class appComboListener implements ItemListener {
-
-        public void itemStateChanged(ItemEvent e) {
-            if (e.getStateChange() == ItemEvent.DESELECTED) {
-                return;
-            }
-            isLoading = true;
-            //changeModuleList(GridChem.getSoftware((String) (e.getItem()))); //remove comment
-            populateMachineList((String) (e.getItem()));
-            System.out.println("(Debug) choosen app name:" + e.getItem());
-            isLoading = false;
-            hpcList.setSelectedIndex(0);
-        }
-
-        private void printDefaultInputFile(String app) {
-            String newInput = "";
-
-            if (app.equalsIgnoreCase(Invariants.APP_NAME_GAUSSIAN)) {
-                System.out.println("Trying Gaussian Run");
-                newInput = "%chk=water.chk\n"
-                        + "%nprocshared=1\n"
-                        + "%mem=500MB\n"
-                        + "#P RHF/6-31g* opt pop=reg gfinput gfprint iop(6/7=3) SCF=direct \n"
-                        + " \n" + "Gaussian Test Job 00\n"
-                        + "Water with archiving\n" + " \n" + "0 1\n" + "O\n"
-                        + "H 1 0.96\n" + "H 1 0.96 2 109.471221\n\n";
-
-                FileUtility.printDefaultInput(app, "gaussian_sample0.inp", newInput);
-
-            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_GAMESS)) {
-
-                System.out.println("Trying GAMESS Run");
-                newInput = "! GAMESS Test Job 00. \n\n"
-                        + " $CONTRL SCFTYP=RHF RUNTYP=OPTIMIZE COORD=ZMT NZVAR=0 $END \n"
-                        + " $SYSTEM TIMLIM=2 MEMORY=500000 $END \n"
-                        + " $STATPT OPTTOL=1.0E-5  $END \n"
-                        + " $BASIS  GBASIS=STO NGAUSS=2 $END \n"
-                        + " $GUESS  GUESS=HUCKEL $END \n" + " $DATA \n"
-                        + "Methylene...1-A-1 state...RHF/STO-2G\n" + "Cnv  2\n"
-                        + " \n" + "C\n" + "H  1 rCH\n" + "H  1 rCH  2 aHCH\n"
-                        + " \n" + "rCH=1.09\n" + "aHCH=110.0 \n" + " $END\n\n";
-
-                FileUtility.printDefaultInput(app, "gamess_sample0.inp", newInput);
-
-            } else if (app.equalsIgnoreCase("gamess-xml")) {
-                System.out.println("Trying Gamess-XML Run");
-                newInput = "start h2o_scf \n\n" + "geometry units au\n"
-                        + "  O 0.00000000 0.00000000 0.24029800\n"
-                        + "  H 0.00000000 1.43256600 -0.96119100\n"
-                        + "  H 0.00000000 -1.43256600 -0.96119100\n" + "end\n\n"
-                        + "basis noprint\n" + " H library sto-3g\n"
-                        + " O library sto-3g\n" + "end\n\n" + "scf\n"
-                        + "  thresh 1.e-10\n" + "  print low\n" + "end\n\n"
-                        + "gradients\n" + "  print none\n" + "end\n\n" + "md\n"
-                        + " system h2o_scf\n" + " equil 0 data 10 step 0.0005\n"
-                        + " print step 1 stat 10\n" + " record scoor 1 prop 1\n"
-                        + " test 10\n" + "end\n\n" + "task scf dynamics\n\n";
-
-                FileUtility.printDefaultInput(app, "gamess-XML_sample0.inp", newInput);
-
-            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_QMCPACK)) {
-                System.out.println("Trying QMC Run");
-                newInput = "<?xml version=\"1.0\"?>\n"
-                        + "<simulation xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-                        + "  xsi:noNamespaceSchemaLocation=\"http://www.mcc.uiuc.edu/qmc/schema/molecu.xsd\"> \n"
-                        + "  <project id=\"H2O.GTO\" series=\"0>\" \n"
-                        + "<application name=\"qmcapp\" role=\"molecu\" class=\"serial\" version=\"0.2\"> \n"
-                        + "QMC of H2O molecule using Slater-type Orbitals by Aung, Pitzer and Chan,\n"
-                        + "JCP 49 2071 (1968) of wavefunction II.  See JCP, 77, 5593 (1982). \n"
-                        + " </application> \n"
-                        + " <random parallel=\"true\" seed=\"-1\"/> \n"
-                        + "</project>\n"
-                        + " \n"
-                        + "  <include href=\"H2O.GamesXml.xml\"/> \n"
-                        + " <wavefunction name=\"psi0\" target=\"e\"> \n"
-                        + " <!-- add correlation functions --> \n"
-                        + " <jastrow name=\"Jee\" type=\"Two-Body\" function=\"pade\"> \n"
-                        + " <distancetable source=\"e\" target=\"e\"/> \n"
-                        + " <correlation speciesA=\"e\" speciesB=\"e\"> \n"
-                        + "<parameter id=\"juu_a\" name=\"A\">-0.5</parameter> \n"
-                        + "<parameter id=\"juu_b\" name=\"B\">2.60015</parameter> \n"
-                        + "</correlation>\n"
-                        + "</jastrow> \n"
-                        + "\n"
-                        + "                           </wavefunction> \n"
-                        + "<hamiltonian name=\"h0\" type=\"generic\" target=\"e\"> \n"
-                        + " <pairpot name=\"ElecElec\" type=\"coulomb\" source=\"e\" target=\"e\"/> \n"
-                        + "<pairpot name=\"Coulomb\" type=\"coulomb\" source=\"i\" target=\"e\"/> \n"
-                        + " <constant name=\"IonIon\" type=\"coulomb\" source=\"i\" target=\"i\"/> \n"
-                        + "</hamiltonian> \n" + "<qmc method=\"vmc\"> \n"
-                        + " <parameter name=\"blocks\">100</parameter> \n"
-                        + "<parameter name=\"steps\">100</parameter>  \n"
-                        + "<parameter name=\"walkers\">20</parameter> \n"
-                        + "<parameter name=\"timestep\">0.01</parameter> \n"
-                        + "</qmc> \n" + "<qmc method=\"vmc\"> \n"
-                        + " <parameter name=\"blocks\">500</parameter>\n"
-                        + " <parameter name=\"steps\">100</parameter> \n"
-                        + "<parameter name=\"timestep\">0.01</parameter> \n"
-                        + " </qmc> \n" + "<qmc method=\"dmc-ptcl\"> \n"
-                        + " <parameter name=\"num_gen\">30</parameter> \n"
-                        + " <parameter name=\"target_walkers\">200</parameter> \n"
-                        + " <parameter name=\"blocks\">500</parameter> \n"
-                        + " <parameter name=\"steps\">200</parameter> \n"
-                        + " <parameter name=\"timestep\">1.0e-3</parameter> \n"
-                        + " </qmc> \n" + " \n" + "                      \n\n";
-
-                FileUtility.printDefaultInput(app, "qmcpack_sample0.inp", newInput);
-
-            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_NWCHEM)) {
-
-                System.out.println("Trying NWChem Run");
-                newInput = "start h2o_scf \n\n" + "geometry units au\n"
-                        + "  O 0.00000000 0.00000000 0.24029800\n"
-                        + "  H 0.00000000 1.43256600 -0.96119100\n"
-                        + "  H 0.00000000 -1.43256600 -0.96119100\n" + "end\n\n"
-                        + "basis noprint\n" + " H library sto-3g\n"
-                        + " O library sto-3g\n" + "end\n\n" + "scf\n"
-                        + "  thresh 1.e-10\n" + "  print low\n" + "end\n\n"
-                        + "gradients\n" + "  print none\n" + "end\n\n" + "md\n"
-                        + " system h2o_scf\n" + " equil 0 data 10 step 0.0005\n"
-                        + " print step 1 stat 10\n" + " record scoor 1 prop 1\n"
-                        + " test 10\n" + "end\n\n" + "task scf dynamics\n\n";
-
-                FileUtility.printDefaultInput(app, "nwchem_sample0.inp", newInput);
-
-            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_MOLPRO)) {
-                System.out.println("Trying Molpro Run");
-                newInput = "***, Allene geometry optimization\n"
-                        + "memory,1,m\n\n"
-                        + "basis=sto-3g\n"
-                        + "ierr=0\n\n"
-                        + "text,optimized values:\n"
-                        + "e_old=[-114.42171910,-114.42171910,-114.42171910,-114.42171910,-114.42171910,-114.42171910]\n"
-                        + "step_old=[5,5,5,5,5,5]\n\n"
-                        + "bmat=['  ','BMAT']\n"
-                        + "optm=['RF','AH','DIIS']\n\n"
-                        + "i=0\n"
-                        + "do ibmat=1,#bmat\n"
-                        + "do imeth=1,#optm\n"
-                        + "clear,x*,y*,z*\n"
-                        + "i=i+1\n\n"
-                        + "text,start geometry\n"
-                        + "rcc=1.32 ang\n"
-                        + "rch=1.08 ang\n"
-                        + "acc=120 degree\n\n"
-                        + "Geometry={C1;\n"
-                        + "         C2,c1,rcc\n"
-                        + "          Q1,c1,rcc,c2,45\n"
-                        + "          C3,c2,rcc,c1,180,q1,0\n"
-                        + "          h1,c1,rch,c2,acc,q1,0\n"
-                        + "          h2,c1,rch,c2,acc,h1,180\n"
-                        + "          h3,c3,rch,c2,acc,h1,90\n"
-                        + "          h4,c3,rch,c2,acc,h2,90}\n\n"
-                        + "int\n"
-                        + "hf;\n"
-                        + "optg,grad=1.d-4\n"
-                        + "coord,$bmat(ibmat)\n"
-                        + "method,$optm(imeth);\n"
-                        + "method(i)='$optm(imeth) $bmat(ibmat)'\n"
-                        + "e1(i)=energy\n"
-                        + "rcc_opt(i)=rcc\n"
-                        + "rch_opt(i)=rch\n"
-                        + "acc_opt(i)=acc\n\n"
-                        + "steps(i)=optstep\n"
-                        + "de(i)=abs(e1(i)-e_old(i))\n"
-                        + "if(de(i).gt.1.d-7.or.steps(i).gt.step_old(i)) ierr=1\n\n"
-                        + "enddo\n"
-                        + "enddo\n\n"
-                        + "demax=max(de)\n\n"
-                        + "if(ierr.eq.0) then\n"
-                        + "table,method,e1,rcc_opt,rch_opt,acc_opt,steps\n"
-                        + "save,test.log\n"
-                        + "title,Results for job allene_opt.test\n"
-                        + "title,No errors detected. Max error: de=$demax\n\n"
-                        + "else\n\n"
-                        + "table,method,e1,e_old,de,rcc_opt,rch_opt,acc_opt,steps,step_old\n"
-                        + "save,test.log\n"
-                        + "title,Results for job allene_opt.test\n"
-                        + "title,ERRORS DETECTED. Max error: de=$demax\n"
-                        + "endif\n\n";
-
-                FileUtility.printDefaultInput(app, "molpro_sample0.inp", newInput);
-
-            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_AMBER_SANDER)) {
-
-                System.out.println("Trying Amber Run");
-
-                newInput = "(Use 1 processor!) Very simple bond minimization with a water molecule\n"
-                        + " &cntrl\n"
-                        + "  imin = 1, maxcyc=200,\n"
-                        + "  ntb=0, cut = 30.0,"
-                        + "  ntpr = 5,\n"
-                        + "/ \n";
-
-                FileUtility.printDefaultInput(app, "amber_sample0.inp", newInput);
-
-                newInput = "TP3\n"
-                        + "     3\n"
-                        + "   0.0000000   0.0000000   0.0000000\n"
-                        + "   0.9572000   0.0000000   0.0000000\n"
-                        + "  -0.2399880   0.9266270   0.0000000\n";
-                FileUtility.printDefaultInput(app, "amber_sample0.inpcrd", newInput);
-
-                newInput = "%VERSION  VERSION_STAMP = V0001.000  DATE = 08/25/06  10:38:44\n"
-                        + "%FLAG TITLE\n"
-                        + "%FORMAT(20a4)\n"
-                        + "TP3\n"
-                        + "%FLAG POINTERS\n"
-                        + "%FORMAT(10I8)\n"
-                        + "       3       2       3       0       0       0       0       0       0       0\n"
-                        + "       4       1       0       0       0       2       0       0       2       1\n"
-                        + "       0       0       0       0       0       0       0       0       3       0\n"
-                        + "       0\n"
-                        + "%FLAG ATOM_NAME\n"
-                        + "%FORMAT(20a4)\n"
-                        + "O   H1  H2\n"
-                        + "%FLAG CHARGE\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + " -1.51973982E+01  7.59869910E+00  7.59869910E+00\n"
-                        + "%FLAG MASS\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + "  1.60000000E+01  1.00800000E+00  1.00800000E+00\n"
-                        + "%FLAG ATOM_TYPE_INDEX\n"
-                        + "%FORMAT(10I8)\n"
-                        + "       1       2       2\n"
-                        + "%FLAG NUMBER_EXCLUDED_ATOMS\n"
-                        + "%FORMAT(10I8)\n"
-                        + "       2       1       1\n"
-                        + "%FLAG NONBONDED_PARM_INDEX\n"
-                        + "%FORMAT(10I8)\n"
-                        + "       1      -1      -1       3\n"
-                        + "%FLAG RESIDUE_LABEL\n"
-                        + "%FORMAT(20a4)\n"
-                        + "WAT\n"
-                        + "%FLAG RESIDUE_POINTER\n"
-                        + "%FORMAT(10I8)\n"
-                        + "       1\n"
-                        + "%FLAG BOND_FORCE_CONSTANT\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + "  5.53000000E+02  5.53000000E+02\n"
-                        + "%FLAG BOND_EQUIL_VALUE\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + "  1.51360000E+00  9.57200000E-01\n"
-                        + "%FLAG ANGLE_FORCE_CONSTANT\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + "\n"
-                        + "%FLAG ANGLE_EQUIL_VALUE\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + "\n"
-                        + "%FLAG DIHEDRAL_FORCE_CONSTANT\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + "\n"
-                        + "%FLAG DIHEDRAL_PERIODICITY\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + "\n"
-                        + "%FLAG DIHEDRAL_PHASE\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + "\n"
-                        + "%FLAG SOLTY\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + "  0.00000000E+00  0.00000000E+00\n"
-                        + "%FLAG LENNARD_JONES_ACOEF\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + "  5.81935564E+05  0.00000000E+00  0.00000000E+00\n"
-                        + "%FLAG LENNARD_JONES_BCOEF\n"
-                        + "%FORMAT(5E16.8)\n"
-                        + "  5.94825035E+02  0.00000000E+00  0.00000000E+00\n"
-                        + "%FLAG BONDS_INC_HYDROGEN\n"
-                        + "%FORMAT(10I8)\n"
-                        + "       3       6       1       0       3       2       0       6       2\n"
-                        + "%FLAG BONDS_WITHOUT_HYDROGEN\n" + "%FORMAT(10I8)\n"
-                        + "\n" + "%FLAG ANGLES_INC_HYDROGEN\n" + "%FORMAT(10I8)\n"
-                        + "\n" + "%FLAG ANGLES_WITHOUT_HYDROGEN\n"
-                        + "%FORMAT(10I8)\n" + "\n"
-                        + "%FLAG DIHEDRALS_INC_HYDROGEN\n" + "%FORMAT(10I8)\n"
-                        + "\n" + "%FLAG DIHEDRALS_WITHOUT_HYDROGEN\n"
-                        + "%FORMAT(10I8)\n" + "\n" + "%FLAG EXCLUDED_ATOMS_LIST\n"
-                        + "%FORMAT(10I8)\n" + "       2       3       3       0\n"
-                        + "%FLAG HBOND_ACOEF\n" + "%FORMAT(5E16.8)\n"
-                        + "  0.00000000E+00\n" + "%FLAG HBOND_BCOEF\n"
-                        + "%FORMAT(5E16.8)\n" + "  0.00000000E+00\n"
-                        + "%FLAG HBCUT\n" + "%FORMAT(5E16.8)\n"
-                        + "  0.00000000E+00\n" + "%FLAG AMBER_ATOM_TYPE\n"
-                        + "%FORMAT(20a4)\n" + "OW  HW  HW\n"
-                        + "%FLAG TREE_CHAIN_CLASSIFICATION\n" + "%FORMAT(20a4)\n"
-                        + "BLA BLA BLA\n" + "%FLAG JOIN_ARRAY\n"
-                        + "%FORMAT(10I8)\n" + "       0       0       0\n"
-                        + "%FLAG IROTAT\n" + "%FORMAT(10I8)\n"
-                        + "       0       0       0\n" + "%FLAG RADIUS_SET\n"
-                        + "%FORMAT(1a80)\n" + "modified Bondi radii (mbondi)\n"
-                        + "%FLAG RADII\n" + "%FORMAT(5E16.8)\n"
-                        + "  1.50000000E+00  8.00000000E-01  1.20000000E+00\n"
-                        + "%FLAG SCREEN\n" + "%FORMAT(5E16.8)\n"
-                        + "  8.50000000E-01  8.50000000E-01  8.50000000E-01\n";
-
-                FileUtility.printDefaultInput(app, "amber_sample0.top", newInput);
-
-            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_DMOL3)) {
-
-                System.out.println("Now DMOL3 Run");
-
-                newInput = "Put or load your input text here";
-                FileUtility.printDefaultInput(app, "dmol3.car", newInput);
-
-                newInput = "Put or load your input text here";
-                FileUtility.printDefaultInput(app, "dmol3.input", newInput);
-
-            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_CASTEP)) {
-
-                System.out.println("Now CASTEP Run");
-
-                newInput = "Put or load your input text here";
-                FileUtility.printDefaultInput(app, "castep.cell", newInput);
-
-                newInput = "Put or load your input text here";
-                FileUtility.printDefaultInput(app, "castep.param", newInput);
-
-            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_ADF)) {
-
-                System.out.println("Trying ADF Run");
-                newInput = "Title Water Opt\n" + "\n" + "Atoms\n"
-                        + "   O   0.0     0.0        0.0\n"
-                        + "   H   0.0    -0.68944   -0.578509\n"
-                        + "   H   0.0     0.689440  -0.578509\n" + "End\n" + "\n"
-                        + "Basis\n" + "  Type TZP\n" + "  Core Small\n" + "End\n"
-                        + "\n" + "Geometry\n" + "  Optim Deloc\n" + "End\n" + "\n"
-                        + "End Input\n";
-
-                FileUtility.printDefaultInput(app, "adf_sample0.inp", newInput);
-
-            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_WIEN2K)) {
-
-                System.out.println("Trying Wien2k Run");
-                newInput = "Not yet";
-                FileUtility.printDefaultInput(app, "wien2k_sample0.inp", newInput);
-
-            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_ACES3)) {
-
-                System.out.println("Trying ACES3 Run");
-                newInput = "O2 \n"
-                        + "O \n"
-                        + "O 1 B1 \n"
-                        + "\n B1 = 1.68420053 \n"
-                        + "\n *ACES2(CALC=CCSD,BASIS=CC-PVTZ,MEMORY=10000000,REF=RHF,SPHERICAL=ON, \n"
-                        + "DIRECT=ON,INTEGRALS=GAMESS, MULT=1, CC_CONV=8, SYMMETRY=OFF) \n"
-                        + "\n\n"
-                        + "*SIP \n"
-                        + "MAXMEM= 2000 \n"
-                        + "COMPANY = 1 1 3 0 \n"
-                        + "IOCOMPANY = 2 1 1 0 \n"
-                        + "SIAL_PROGRAM = scf_rhf_isymm_diis10.sio  \n"
-                        + "SIAL_PROGRAM = lccd_rhf.sio \n";
-
-                FileUtility.printDefaultInput(app, "aces3_ZMAT", newInput);
-                ;
-
-            } else if (app.equalsIgnoreCase(Invariants.APP_NAME_ADF_QUILD)) {
-
-                System.out.println("Trying ADF_Quild Run");
-                newInput = "title Geometry optimization \n"
-                        + "EPRINT \n"
-                        + "  SFO  NOEIG  NOOVL \n"
-                        + "END\n"
-                        + "XC \n"
-                        + " GGA BLYP \n"
-                        + "END\n"
-                        + "ATOMS\n"
-                        + "O   0.000000   0.000000    0.000000\n"
-                        + "C   0.000000   0.000000    0.000000\n"
-                        + "END\n"
-                        + "BASIS\n"
-                        + "  type DZ\n"
-                        + "  core NONE\n"
-                        + "END\n"
-                        + "GEOMETRY\n"
-                        + "END\n"
-                        + "SCF\n"
-                        + " converge  1.0e-5  1.03-5\n"
-                        + " diis ok=0.01\n"
-                        + "END\n"
-                        + "QUILD\n"
-                        + "  cvg_grid 1.0e-4\n"
-                        + "  numgrid 1\n"
-                        + "  SMETAGGA B3LYP(VWN5)\n"
-                        + "END\n"
-                        + "METAGGA\n"
-                        + "HFEXCHANGE\n"
-                        + "INTEGRATION 5.0  5.0\n"
-                        + "endinput\n";
-
-                FileUtility.printDefaultInput(app, "quild_sample0.inp", newInput);
-
-            } else {
-
-                System.out.println("Trying" + app + " Run");
-                newInput = "You can load your input here by clicking addfile button";
-                FileUtility.printDefaultInput(app, "default.inp", newInput);
-
-            }
-        }
-    }
-
-    private class appModuleComboListener implements ItemListener {
-
-        public void itemStateChanged(ItemEvent e) {
-            if (e.getStateChange() == ItemEvent.DESELECTED) {
-                return;
-            }
-
-            System.out.println("(Debug) choosen module name:" + e.getItem());
-
-            String app = appName(getAppPackageName(), (String) e.getItem());
-
-            createAndShowSampleJob(app);
-
-        }
-    }
-
 
     // called when the different machine is selected
     private class machListSelectionListener implements ListSelectionListener {

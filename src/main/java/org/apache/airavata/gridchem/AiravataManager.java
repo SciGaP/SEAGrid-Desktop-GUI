@@ -17,6 +17,7 @@ import org.apache.airavata.model.workspace.experiment.ComputationalResourceSched
 import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.apache.airavata.model.workspace.experiment.ExperimentState;
 import org.apache.airavata.model.workspace.experiment.UserConfigurationData;
+import org.apache.airavata.util.FileManager;
 import org.apache.axis2.AxisFault;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -27,13 +28,17 @@ import org.apache.thrift.transport.TTransportException;
 import org.gridchem.client.common.Preferences;
 import org.gridchem.client.common.Settings;
 import org.gridchem.client.common.Status;
+import org.gridchem.client.gui.filebrowser.FileBrowserWorkerImpl;
 import org.gridchem.client.gui.filebrowser.commands.FileCommand;
 import org.gridchem.client.gui.jobsubmission.commands.JobCommand;
 import org.gridchem.client.interfaces.StatusListener;
+import org.gridchem.client.util.GMS3;
 import org.gridchem.service.beans.*;
 import org.gridchem.service.exceptions.*;
 import org.gridchem.service.model.enumeration.AccessType;
+import org.gridchem.service.socket.FileUploadThread;
 import org.gridchem.service.stub.file.ExceptionException;
+import org.gridchem.service.stub.file.FileServiceStub;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -442,7 +447,6 @@ public class AiravataManager {
 
     public static ArrayList<ComputeResourceDescription> getComputationalResources() throws AiravataClientConnectException, TException {
         Map <String,String> compResources = getClient().getAllComputeResourceNames();
-
         Iterator<String> it = compResources.keySet().iterator();
 
         ArrayList<ComputeResourceDescription> compList = new ArrayList<ComputeResourceDescription>();
@@ -614,10 +618,11 @@ public class AiravataManager {
         System.out.println(getClient().getExperimentStatus(exp).getExperimentState().name());
     }
 
+
+
     public static void main(String [] args) {
         try {
             //Map<String,String> ifn = getClient().getAllApplicationInterfaceNames();
-
             //List<ApplicationInterfaceDescription> apd = getClient().getAllApplicationInterfaces();
             //ApplicationInterfaceDescription a = apd.get(0);
             //a.getApplication
@@ -627,10 +632,15 @@ public class AiravataManager {
            ///     String id = it.next();
            //     System.out.println(id+ " "+ifn.get(id));
            // }
-            createExperiment();
-            //Project project = ProjectModelUtil.createProject("default", "dimuthu2", "test project");
-            //getClient().createProject(project);
-
+            //createExperiment();
+            //GMS3.login("dimuthu","changeme@1",AccessType.COMMUNITY,new HashMap<String, String>());
+            //FileBrowserAiravata fileBrowser = new FileBrowserAiravata();
+            //fileBrowser.makeDirectory("/tmp/dimuthu2");
+            //GMS3.getClient().getFileService().mkdir();
+            //uploadFileToGridChem("dimuthu","exp1","job1","testinput.txt","/Users/dimuthuupeksha/testinput.txt");
+            //Project project = ProjectModelUtil.createProject("php_reference_gateway", "dimuthu", "sample1");
+            //getClient().createProject("php_reference_gateway",project);
+            FileManager.uploadFile("/Users/dimuthuupeksha/Downloads/c4b4nhtwbs3.inp","/tmp/dimuthu/c4b4nhtwbs3.inp");
             //List<ApplicationDeploymentDescription> appDeployments =  getClient().getAllApplicationDeployments();
             //for(ApplicationDeploymentDescription app:appDeployments){
               //  System.out.println(app.getAppDeploymentDescription());
@@ -638,6 +648,8 @@ public class AiravataManager {
             //}
             //createExperiment();
             //getClient().getApplicationDeployment("Echo_dcd59b1a-b291-4750-8d89-87531e0739e6")
+            //File file = new File("http://climatedataapi.worldbank.org/climateweb/rest/v1/country/mavg/pr/2020/2039/USA.csv");
+            //System.out.println(file.exists());
         }catch(Exception e){
             e.printStackTrace();
         }

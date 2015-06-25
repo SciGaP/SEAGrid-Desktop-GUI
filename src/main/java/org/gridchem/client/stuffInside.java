@@ -53,9 +53,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -83,6 +81,7 @@ import javax.swing.event.ListDataListener;
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
 import org.apache.airavata.gridchem.experiment.ExperimentHandler;
+import org.apache.airavata.gridchem.experiment.ExperimentHandlerUtils;
 import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.gui.buttons.ApplicationMenuItem;
 import org.gridchem.client.gui.buttons.DropDownButton;
@@ -521,8 +520,14 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							progressDialog.millisToPopup = 0;
 							progressDialog.millisToDecideToPopup = 0;
 							progressDialog.displayTimeLeft = false;
+							Map params = new HashMap();
+							params.put("progressDialog",progressDialog);
 							try {
-								ExperimentHandler.launchExperiment(experiment.getExperimentID());
+								ExperimentHandlerUtils
+										.getExperimentHandler(experiment.getApplicationId())
+										.launchExperiment(experiment.getExperimentID(), params);
+								//initLists();
+								update();
 							}catch (ExperimentCreationException e) {
 								e.printStackTrace();
 								JOptionPane.showMessageDialog(mainFrame, "Error at launching experiment", e.getMessage(), JOptionPane.ERROR_MESSAGE);

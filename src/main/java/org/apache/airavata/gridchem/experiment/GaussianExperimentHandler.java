@@ -1,16 +1,16 @@
 package org.apache.airavata.gridchem.experiment;
 
-import com.asprise.util.ui.progress.ProgressDialog;
 import org.apache.airavata.AiravataConfig;
 import org.apache.airavata.ExpetimentConst;
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.appcatalog.appinterface.DataType;
 import org.apache.airavata.model.appcatalog.appinterface.InputDataObjectType;
 import org.apache.airavata.model.appcatalog.appinterface.OutputDataObjectType;
-import org.apache.airavata.model.error.AiravataClientConnectException;
 import org.apache.airavata.model.util.ExperimentModelUtil;
-import org.apache.airavata.model.workspace.experiment.*;
-import org.apache.thrift.TException;
+import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
+import org.apache.airavata.model.workspace.experiment.Experiment;
+import org.apache.airavata.model.workspace.experiment.UserConfigurationData;
+import org.apache.airavata.util.FileManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by dimuthuupeksha on 5/10/15.
+ * Created by dimuthuupeksha on 6/14/15.
  */
-public class EchoExperimentHandler extends ExperimentHandler {
+public class GaussianExperimentHandler extends ExperimentHandler {
     @Override
     public String createExperiment(Map<String, Object> params) throws ExperimentCreationException {
-
         String projectID = null, userID = null, expName = null, expDesc = null, appId = null, hostID = null, queue = null, projectAccount = null;
         Integer cpuCount = null, threadCount = null, nodeCount = null, wallTime = null, startTime = null, physicalMemory = null;
+        List<File> inputFiles = null;
 
         if (params.get(ExpetimentConst.PROJECT_ID) != null)
             projectID = (String) params.get(ExpetimentConst.PROJECT_ID);
@@ -67,31 +67,46 @@ public class EchoExperimentHandler extends ExperimentHandler {
             physicalMemory = (Integer) params.get(ExpetimentConst.MEMORY);
 
         if(params.get(ExpetimentConst.INPUT_FILES)!=null){
-            List<File> inputFiles = (List<File>)params.get(ExpetimentConst.INPUT_FILES);
+            inputFiles = (List<File>)params.get(ExpetimentConst.INPUT_FILES);
         }
+
+        if(inputFiles.size()==0){
+            throw new ExperimentCreationException("For gaussian jobs there should be an input file");
+        }
+        int random = (int)Math.random()*10000000;
+        String remotePath = "/tmp/gridchem_client_"+random+"/"+inputFiles.get(0).getName();
+        System.out.println("Remote path "+ remotePath);
+        System.out.println("Uploading file ....");
+        //uploads file to server
+        if(FileManager.uploadFile(inputFiles.get(0).getAbsolutePath(),remotePath)){
+            System.out.println("Input file successfully uploaded");
+        }else{
+            throw new ExperimentCreationException("Input file upload failed");
+        }
+
 
         List<InputDataObjectType> exIputs = new ArrayList<>();
         InputDataObjectType input = new InputDataObjectType();
-        input.setName("Input_to-Echo");
-        input.setType(DataType.STRING);
-        input.setValue("Echoed_Output=Hello World");
+        input.setName("MainInputFile");
+        input.setType(DataType.URI);
+        input.setValue(remotePath);
         exIputs.add(input);
 
         List<OutputDataObjectType> exOut = new ArrayList<>();
         OutputDataObjectType output = new OutputDataObjectType();
-        output.setName("Echoed_Output");
-        output.setType(DataType.STRING);
+        output.setName("gaussian.out");
+        output.setType(DataType.URI);
         output.setValue("");
         exOut.add(output);
 
-        Experiment echoExp =
+        Experiment gaussianExp =
                 ExperimentModelUtil.createSimpleExperiment(null, null, null, null, null, null);
-        echoExp.setProjectID(projectID);
-        echoExp.setUserName(userID);
-        echoExp.setName(expName);
-        echoExp.setDescription(expDesc);
-        echoExp.setApplicationId(appId); //application interface ID
-        echoExp.setExperimentInputs(exIputs);
+        gaussianExp.setProjectID(projectID);
+        gaussianExp.setUserName(userID);
+        gaussianExp.setName(expName);
+        gaussianExp.setDescription(expDesc);
+        gaussianExp.setApplicationId(appId); //application interface ID
+        gaussianExp.setExperimentInputs(exIputs);
 
         ComputationalResourceScheduling scheduling =
                 ExperimentModelUtil.createComputationResourceScheduling(null, 0, 0, 0, null, 0, 0, 0, null);
@@ -111,21 +126,15 @@ public class EchoExperimentHandler extends ExperimentHandler {
         userConfigurationData.setAiravataAutoSchedule(false);
         userConfigurationData.setOverrideManualScheduledParams(false);
         userConfigurationData.setComputationalResourceScheduling(scheduling);
-        echoExp.setUserConfigurationData(userConfigurationData);
+        gaussianExp.setUserConfigurationData(userConfigurationData);
 
         String experimentId = null;
         try {
-            experimentId = AiravataManager.getClient().createExperiment(AiravataConfig.getProperty(AiravataConfig.GATEWAY),echoExp);
+            experimentId = AiravataManager.getClient().createExperiment(AiravataConfig.getProperty(AiravataConfig.GATEWAY),gaussianExp);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ExperimentCreationException("Error at creating experiment "+expName+ " on machine "+hostID,e);
         }
         return experimentId;
-
-    }
-
-    @Override
-    public void launchExperiment(String expID, Map<String, Object> params) throws ExperimentCreationException {
-        super.launchExperiment(expID,params);
     }
 }
