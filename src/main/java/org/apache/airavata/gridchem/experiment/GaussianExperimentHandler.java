@@ -73,7 +73,7 @@ public class GaussianExperimentHandler extends ExperimentHandler {
         if(inputFiles.size()==0){
             throw new ExperimentCreationException("For gaussian jobs there should be an input file");
         }
-        int random = (int)Math.random()*10000000;
+        int random = (int)(Math.random()*10000000.0);
         String remotePath = "/tmp/gridchem_client_"+random+"/"+inputFiles.get(0).getName();
         System.out.println("Remote path "+ remotePath);
         System.out.println("Uploading file ....");
