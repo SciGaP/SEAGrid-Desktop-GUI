@@ -344,6 +344,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             isLoading = true;
             changeExperimentNameField((String) experimentParmas.get(ExpetimentConst.EXP_NAME));
 
+
             System.out.println("Loading machine " + (String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
             ComputeResourceDescription hpc = GridChem.getMachineByName((String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
 
@@ -522,14 +523,15 @@ public class EditJobPanel extends JDialog implements ActionListener,
         hpcList.setCellRenderer(new HPCCellRenderer());
         apphpcScrollPane = new JScrollPane(hpcList);
 
-        int selectedIndices = experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID)==null?-1:((DefaultListModel) hpcList.getModel()).indexOf((String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
-        if(selectedIndices==-1){
-            experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID,availableCompResources.get(0).getComputeResourceId());
-            selectedIndices=0;
+        if(availableCompResources.size()>0) {
+            int selectedIndices = experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID) == null ? -1 : ((DefaultListModel) hpcList.getModel()).indexOf((String) experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
+            if (selectedIndices == -1) {
+                experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, availableCompResources.get(0).getComputeResourceId());
+                selectedIndices = 0;
+            }
+            hpcList.setSelectedIndex(selectedIndices);
+            hpcList.ensureIndexIsVisible(selectedIndices);
         }
-        hpcList.setSelectedIndex(selectedIndices);
-        hpcList.ensureIndexIsVisible(selectedIndices);
-
         /////////////////////////////////////
 
         Container apphpcBox = Box.createVerticalBox();
@@ -798,9 +800,9 @@ public class EditJobPanel extends JDialog implements ActionListener,
         qCombo.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                //  String queue = qCombo.getSelectedItem().toString();
-                // System.out.println("Changing queue to : "+queue);
-                // experimentParmas.put(ExpetimentConst.QUEUE,queue);
+                 /*String queue = qCombo.getSelectedItem().toString();
+                 System.out.println("Changing queue to : "+queue);
+                 experimentParmas.put(ExpetimentConst.QUEUE,queue);*/
             }
 
         });
@@ -1202,6 +1204,10 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
             List<File> inputFiles = inputFilePanel.getInputFiles();
             experimentParmas.put(ExpetimentConst.INPUT_FILES, inputFiles);
+
+            String queue = qCombo.getSelectedItem().toString();
+            System.out.println("Changing queue to : "+queue);
+            experimentParmas.put(ExpetimentConst.QUEUE,queue);
 
             System.out.println(experimentParmas.get(ExpetimentConst.EXP_NAME));
             System.out.println(experimentParmas.get(ExpetimentConst.APP_ID));

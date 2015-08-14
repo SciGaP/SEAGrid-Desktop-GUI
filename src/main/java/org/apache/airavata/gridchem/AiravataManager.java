@@ -640,7 +640,7 @@ public class AiravataManager {
             //uploadFileToGridChem("dimuthu","exp1","job1","testinput.txt","/Users/dimuthuupeksha/testinput.txt");
             //Project project = ProjectModelUtil.createProject("php_reference_gateway", "dimuthu", "sample1");
             //getClient().createProject("php_reference_gateway",project);
-            FileManager.uploadFile("/Users/dimuthuupeksha/Downloads/c4b4nhtwbs3.inp","/tmp/dimuthu/c4b4nhtwbs3.inp");
+            //FileManager.uploadFile("/Users/dimuthuupeksha/Downloads/c4b4nhtwbs3.inp","/tmp/dimuthu/c4b4nhtwbs3.inp");
             //List<ApplicationDeploymentDescription> appDeployments =  getClient().getAllApplicationDeployments();
             //for(ApplicationDeploymentDescription app:appDeployments){
               //  System.out.println(app.getAppDeploymentDescription());

@@ -57,9 +57,12 @@
 
     </build>
 
-
-
     <dependencies>
+        <dependency>
+            <groupId>org.apache.oodt</groupId>
+            <artifactId>cas-filemgr</artifactId>
+            <version>0.9</version>
+        </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -460,13 +463,13 @@
                     <family>windows</family>
                 </os>
             </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>jogl</groupId>
-                    <artifactId>jogl_win</artifactId>
-                    <version>1.0</version>
-                </dependency>
-            </dependencies>
+            <!--<dependencies>-->
+                <!--<dependency>-->
+                    <!--<groupId>jogl</groupId>-->
+                    <!--<artifactId>jogl_win</artifactId>-->
+                    <!--<version>1.0</version>-->
+                <!--</dependency>-->
+            <!--</dependencies>-->
         </profile>
         <profile>
             <id>jnlp</id>
