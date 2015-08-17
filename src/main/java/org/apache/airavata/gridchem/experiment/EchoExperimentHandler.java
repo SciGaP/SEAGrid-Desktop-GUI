@@ -26,6 +26,7 @@ public class EchoExperimentHandler extends ExperimentHandler {
 
         String projectID = null, userID = null, expName = null, expDesc = null, appId = null, hostID = null, queue = null, projectAccount = null;
         Integer cpuCount = null, threadCount = null, nodeCount = null, wallTime = null, startTime = null, physicalMemory = null;
+        List<InputDataObjectType> inputs = null;
 
         if (params.get(ExpetimentConst.PROJECT_ID) != null)
             projectID = (String) params.get(ExpetimentConst.PROJECT_ID);
@@ -66,23 +67,9 @@ public class EchoExperimentHandler extends ExperimentHandler {
         if (params.get(ExpetimentConst.MEMORY) != null)
             physicalMemory = (Integer) params.get(ExpetimentConst.MEMORY);
 
-        if(params.get(ExpetimentConst.INPUT_FILES)!=null){
-            List<File> inputFiles = (List<File>)params.get(ExpetimentConst.INPUT_FILES);
+        if(params.get(ExpetimentConst.INPUTS)!=null){
+            inputs = (List<InputDataObjectType>)params.get(ExpetimentConst.INPUTS);
         }
-
-        List<InputDataObjectType> exIputs = new ArrayList<>();
-        InputDataObjectType input = new InputDataObjectType();
-        input.setName("Input_to-Echo");
-        input.setType(DataType.STRING);
-        input.setValue("Echoed_Output=Hello World");
-        exIputs.add(input);
-
-        List<OutputDataObjectType> exOut = new ArrayList<>();
-        OutputDataObjectType output = new OutputDataObjectType();
-        output.setName("Echoed_Output");
-        output.setType(DataType.STRING);
-        output.setValue("");
-        exOut.add(output);
 
         Experiment echoExp =
                 ExperimentModelUtil.createSimpleExperiment(null, null, null, null, null, null);
@@ -91,7 +78,7 @@ public class EchoExperimentHandler extends ExperimentHandler {
         echoExp.setName(expName);
         echoExp.setDescription(expDesc);
         echoExp.setApplicationId(appId); //application interface ID
-        echoExp.setExperimentInputs(exIputs);
+        echoExp.setExperimentInputs(inputs);
 
         ComputationalResourceScheduling scheduling =
                 ExperimentModelUtil.createComputationResourceScheduling(null, 0, 0, 0, null, 0, 0, 0, null);

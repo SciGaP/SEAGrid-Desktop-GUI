@@ -24,6 +24,7 @@ public class AddExperimentHandler extends ExperimentHandler{
 
         String projectID = null, userID = null, expName = null, expDesc = null, appId = null, hostID = null, queue = null, projectAccount = null;
         Integer cpuCount = null, threadCount = null, nodeCount = null, wallTime = null, startTime = null, physicalMemory = null;
+        List<InputDataObjectType> inputs = null;
 
         if (params.get(ExpetimentConst.PROJECT_ID) != null)
             projectID = (String) params.get(ExpetimentConst.PROJECT_ID);
@@ -64,27 +65,11 @@ public class AddExperimentHandler extends ExperimentHandler{
         if (params.get(ExpetimentConst.MEMORY) != null)
             physicalMemory = (Integer) params.get(ExpetimentConst.MEMORY);
 
+        if(params.get(ExpetimentConst.INPUTS)!=null){
+            inputs = (List<InputDataObjectType>)params.get(ExpetimentConst.INPUTS);
+        }
 
-        List<InputDataObjectType> exIputs = new ArrayList<>();
-        InputDataObjectType input1 = new InputDataObjectType();
-        input1.setName("x");
-        input1.setType(DataType.STRING);
-        input1.setValue("23");
 
-        InputDataObjectType input2 = new InputDataObjectType();
-        input2.setName("y");
-        input2.setType(DataType.STRING);
-        input2.setValue("3");
-
-        exIputs.add(input1);
-        exIputs.add(input2);
-
-        List<OutputDataObjectType> exOut = new ArrayList<>();
-        OutputDataObjectType output = new OutputDataObjectType();
-        output.setName("Result");
-        output.setType(DataType.STRING);
-        output.setValue("");
-        exOut.add(output);
 
         Experiment echoExp =
                 ExperimentModelUtil.createSimpleExperiment(null, null, null, null, null, null);
@@ -93,7 +78,7 @@ public class AddExperimentHandler extends ExperimentHandler{
         echoExp.setName(expName);
         echoExp.setDescription(expDesc);
         echoExp.setApplicationId(appId);
-        echoExp.setExperimentInputs(exIputs);
+        echoExp.setExperimentInputs(inputs);
 
         ComputationalResourceScheduling scheduling =
                 ExperimentModelUtil.createComputationResourceScheduling(null, 0, 0, 0, null, 0, 0, 0, null);

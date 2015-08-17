@@ -622,6 +622,11 @@ public class AiravataManager {
 
     public static void main(String [] args) {
         try {
+            ApplicationInterfaceDescription a= getClient().getApplicationInterface("Echo_af847f04-ca31-48da-a92b-3225602db4e0");
+            a.getApplicationOutputs();
+            //getClient().getComputeResource().
+            //ApplicationInterfaceDescription a= getClient().getApplicationInterface("Echo_2e539083-665d-40fd-aaa2-4a751028326b");
+            //a.getApplicationInterfaceId();
             //Map<String,String> ifn = getClient().getAllApplicationInterfaceNames();
             //List<ApplicationInterfaceDescription> apd = getClient().getAllApplicationInterfaces();
             //ApplicationInterfaceDescription a = apd.get(0);
@@ -638,8 +643,8 @@ public class AiravataManager {
             //fileBrowser.makeDirectory("/tmp/dimuthu2");
             //GMS3.getClient().getFileService().mkdir();
             //uploadFileToGridChem("dimuthu","exp1","job1","testinput.txt","/Users/dimuthuupeksha/testinput.txt");
-            //Project project = ProjectModelUtil.createProject("php_reference_gateway", "dimuthu", "sample1");
-            //getClient().createProject("php_reference_gateway",project);
+            //Project project = ProjectModelUtil.createProject("project1", "dimuthu", "sample1");
+            //getClient().createProject("pgascigap",project);
             //FileManager.uploadFile("/Users/dimuthuupeksha/Downloads/c4b4nhtwbs3.inp","/tmp/dimuthu/c4b4nhtwbs3.inp");
             //List<ApplicationDeploymentDescription> appDeployments =  getClient().getAllApplicationDeployments();
             //for(ApplicationDeploymentDescription app:appDeployments){

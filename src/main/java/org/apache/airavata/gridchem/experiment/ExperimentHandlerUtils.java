@@ -10,22 +10,22 @@ import java.util.List;
  */
 public class ExperimentHandlerUtils {
     public static ExperimentHandler getExperimentHandler(String appInterfaceDescID){
-
-        List<ApplicationInterfaceDescription> appInterfaces = AiravataManager.getAllAppInterfaces();
-        String applicationName =null;
-        for(ApplicationInterfaceDescription desc : appInterfaces){
-            if(desc.getApplicationInterfaceId().equals(appInterfaceDescID)){
-                applicationName = desc.getApplicationName();
-                break;
-            }
-        }
-        switch (applicationName){
-            case "Echo":
-                return new EchoExperimentHandler();
-            case "Gaussian":
-                return new GaussianExperimentHandler();
-            default:
-                return new ExperimentHandler();
-        }
+        return new ExperimentHandler();
+//        List<ApplicationInterfaceDescription> appInterfaces = AiravataManager.getAllAppInterfaces();
+//        String applicationName =null;
+//        for(ApplicationInterfaceDescription desc : appInterfaces){
+//            if(desc.getApplicationInterfaceId().equals(appInterfaceDescID)){
+//                applicationName = desc.getApplicationName();
+//                break;
+//            }
+//        }
+//        switch (applicationName){
+//            case "Echo":
+//                return new EchoExperimentHandler();
+//            case "Gaussian":
+//                return new GaussianExperimentHandler();
+//            default:
+//                return new ExperimentHandler();
+//        }
     }
 }

@@ -139,7 +139,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private JPanel timePanel = new JPanel();
     private JPanel buttonBox = new JPanel();
 
-    private InputFilePanel inputFilePanel;
+    private DynamicInputPanel dynamicInputPanel;
 
     private BasicArrowButton upButton;
     private BasicArrowButton downButton;
@@ -297,13 +297,11 @@ public class EditJobPanel extends JDialog implements ActionListener,
         changeModuleList(GridChem.getSoftware((String) (appName)));
         populateMachineList();
 
-        this.inputFilePanel.addTextInput(input);
     }
 
     public EditJobPanel(ArrayList<File> files) {
         this();
 
-        this.inputFilePanel.addMultipleFileInput(files);
     }
 
     /**
@@ -326,13 +324,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     }
 
-    public EditJobPanel(Frame owner, Experiment job, ArrayList<File> files) throws HeadlessException {
-        this(owner, job);
-
-        this.inputFilePanel.clearFileInput();
-
-        this.inputFilePanel.addMultipleFileInput(files);
-    }
 
     private void init() {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -684,18 +675,19 @@ public class EditJobPanel extends JDialog implements ActionListener,
             System.out.println("\n(DEBUG) inputLength :\n"+ new File(lFile.getLocalPath()).length());
         }*/ //remove comment
 
-        inputFilePanel = new InputFilePanel(this);
+        dynamicInputPanel = new DynamicInputPanel(this);
+        initializeDynamicInputPanel();
 
         // We do not add defaut input files to inputFilePanel if isUpdating is true (editing a job)
         if (this.isUpdating == false) {
             //	inputFilePanel.addMultipleFileInput(FileUtility.getDefaultInputFiles(this.job.getSoftwareName())); remove comment
         }
 
-        inputFilePanel.setMinimumSize(new Dimension(250, 700));
+        dynamicInputPanel.setMinimumSize(new Dimension(250, 700));
         TitledBorder inputInfoTitled = BorderFactory.createTitledBorder(
                 leBorder, "Input File Information", TitledBorder.LEFT,
                 TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD, 14));
-        inputFilePanel.setBorder(BorderFactory.createCompoundBorder(inputInfoTitled,
+        dynamicInputPanel.setBorder(BorderFactory.createCompoundBorder(inputInfoTitled,
                 BorderFactory.createEmptyBorder(5, 0, 0, 0)));
 
         // buttonBox
@@ -717,7 +709,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         buttonBox.add(OKButton);
         buttonBox.add(CancelButton);
 
-        rightPanel.add(inputFilePanel);
+        rightPanel.add(dynamicInputPanel);
         rightPanel.add(buttonBox);
 
         // layout with gridbag --- too much space surrounding req pane when readjust
@@ -767,6 +759,17 @@ public class EditJobPanel extends JDialog implements ActionListener,
         }
     }
 
+    private void initializeDynamicInputPanel() {
+        if(appModuleCombo.getSelectedItem() != null) {
+            String ifId = (String)appModuleCombo.getSelectedItem();
+            for (ApplicationInterfaceDescription aid : interfaceDescriptions) {
+                if (ifId.equals(aid.getApplicationInterfaceId())) {
+                   dynamicInputPanel.draw(aid.getApplicationInputs());
+                }
+            }
+        }
+    }
+
     private void setListeners() {
         machListSelectionListener ms = new machListSelectionListener();
         edbumolButton.addActionListener(this);
@@ -784,6 +787,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         appModuleCombo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                initializeDynamicInputPanel();
                 populateMachineList();
             }
         });
@@ -1202,8 +1206,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
             experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, availableCompResources.get(hpcList.getSelectedIndex()).getComputeResourceId());
             experimentParmas.put(ExpetimentConst.APP_ID,(String)appModuleCombo.getSelectedItem());
 
-            List<File> inputFiles = inputFilePanel.getInputFiles();
-            experimentParmas.put(ExpetimentConst.INPUT_FILES, inputFiles);
+            //List<File> inputFiles = inputFilePanel.getInputFiles();
+            //experimentParmas.put(ExpetimentConst.INPUT_FILES, inputFiles);
 
             String queue = qCombo.getSelectedItem().toString();
             System.out.println("Changing queue to : "+queue);
@@ -1226,6 +1230,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
             ExperimentHandler experimentHandler = ExperimentHandlerUtils
                     .getExperimentHandler((String) experimentParmas.get(ExpetimentConst.APP_ID));
+            experimentParmas.put(ExpetimentConst.INPUTS, dynamicInputPanel.getInputs());
             try {
                 String expId = experimentHandler.createExperiment(experimentParmas);
                 doClose();
@@ -1238,16 +1243,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
             doCancel();
 //            System.out.println("Size:" + leftPanelForchoicesBox.getWidth() + ", " + leftPanelForchoicesBox.getHeight());
-        } else if (e.getSource() == this.inputFilePanel.scriptInput) {
-
-            if (this.inputFilePanel.scriptInput.isSelected()) {
-                disableReqPane();
-                isSubmittingScript = true;
-            } else {
-                enableReqPane();
-                isSubmittingScript = false;
-            }
-
         } else {
 
             JOptionPane.showMessageDialog(null, "huh?", " should not happen",
@@ -1317,127 +1312,12 @@ public class EditJobPanel extends JDialog implements ActionListener,
         return ta;
     }
 
-//    public void doSaveFile() {
-//        JFileChooser chooser = new JFileChooser();
-//        int retVal = chooser.showSaveDialog(this);
-//
-//        try {
-//            if (retVal == JFileChooser.APPROVE_OPTION) {
-//                File file = chooser.getSelectedFile();
-//                // save the file data
-//                FileWriter fw = new FileWriter(file);
-//                String outp = getInput();
-//                fw.write(outp);
-//                fw.close();
-//                // changeFileName(file.getName());
-//
-//                ((InputInfoPanel) inputInfoBox).changeInputFileName(0, file);
-//
-//            }
-//        } catch (IOException e) {
-//            JOptionPane.showMessageDialog(null, "Error writing to file",
-//                    "Save File Error", JOptionPane.INFORMATION_MESSAGE);
-//        }
-//        // changeFileName(file.getName());
-//    }
-
     public void doMakeDefaultJob() {
 
         String app = appName(getAppPackageName(), getModuleName());
 
         createAndShowSampleJob(app);
 
-    }
-
-    public void doAddJobToQueue() {
-
-        /*this.job.setName(getJobName().replaceAll("\\s", ""));
-        this.job.setExperimentName(getResProj());
-        this.job.setAllocationName(getProject());
-        this.job.setSystemName(
-                (getSubmitMachine().equals(SCHEDULER))?null:getSubmitMachine());
-
-        this.job.setSoftwareName(getAppPackageName());
-        *///remove comment
-        /* ************************************************ */
-        /*this.job.setModuleName(getModuleName());
-        this.job.setUsedMemory(Long.parseLong(memSizeTextField.getText()));*/ //remove comment
-        /* ************************************************ */
-
-        /*
-        this.job.setProjectName(GridChem.project.getName());
-        this.job.setUserId(GridChem.user.getId());
-        this.job.setQueueName(getQueueName());
-        this.job.setRequestedCpus(new Long(getNumProc()));
-
-        this.job.setRequestedCpuTime(getCalendarTime());
-
-        Calendar cal = Calendar.getInstance();
-        cal.clear();
-        cal.add(Calendar.MINUTE, Integer.parseInt(this.min.getValue().toString()));
-        cal.add(Calendar.HOUR, Integer.parseInt(this.hr.getValue().toString()));
-
-        this.job.setRequestedCpuTime(cal);
-        this.job.getInputFiles().clear();
-
-        // Job is already populated.  Now add in the input files
-        for (File file: getInputFiles()) {
-            LogicalFileBean lFile = new LogicalFileBean();
-            lFile.setJobId(-1);
-            lFile.setLocalPath(file.getAbsolutePath());
-            this.job.getInputFiles().add(lFile);
-        }
-
-        try {
-
-            System.out.println(this.job.toString());
-
-            SubmitJobsWindow.addJob(this.job);
-
-//            System.out.println("doAddJobToQueue: after adding the new job");
-//
-//            // Do something about adding the new job to the list pane or
-//            // whatever
-//            stuffInside
-//                    .AddElement(j.getResProj() + " " + j.getJobName() + " "
-//                            + j.getApp() + " "
-//                            + ((mach == null) ? SCHEDULER : mach[0]));
-//
-//            System.out
-//                    .println("doAddJobToQueue: after adding job to the big list");
-
-        } catch (JobException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(),
-                    "Queue Wall Time Error", JOptionPane.OK_OPTION);
-            e.printStackTrace();
-        }*/ //remove comment
-
-    }
-
-    public void doAddJobsToQueue() {
-        List<File> inputs = getInputFiles();
-
-        if (inputs.size() == 0) {
-            return;
-        }
-
-        JobScriptParser parser = new JobScriptParser(this, inputs.get(0).getAbsolutePath());
-        parser.parse();
-
-        List<JobBean> jobList = parser.getJobList();
-
-        for (JobBean localJob : jobList) {
-            try {
-
-                System.out.println(localJob.toString());
-
-                //SubmitJobsWindow.addJob(localJob);
-
-            } catch (JobException e) {
-                e.printStackTrace();
-            }
-
-        }
     }
 
     public void doClose(){
@@ -1452,64 +1332,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         // editSSHJobPanel.frame.setVisible(false);
     }
 
-    public void doUpdateJobInQueue() {
-        /*this.job.setId(null);
-        this.job.setName(getJobName());
-        this.job.setExperimentName(getResProj());
-        this.job.setSystemName(
-                (getSubmitMachine().equals(SCHEDULER))?null:getSubmitMachine());
-        this.job.setSoftwareName(getAppPackageName());
-        this.job.setModuleName(getModuleName());
-        this.job.setProjectName(getProject());
-        this.job.setQueueName(getQueueName());
-        this.job.setRequestedCpus(new Long(getNumProc()));
-
-        this.job.setRequestedCpuTime(getCalendarTime());
-
-        Calendar cal = Calendar.getInstance();
-        cal.clear();
-        cal.add(Calendar.MINUTE, Integer.parseInt(this.min.getValue().toString()));
-        cal.add(Calendar.HOUR, Integer.parseInt(this.hr.getValue().toString()));
-
-        this.job.setRequestedCpuTime(cal);
-
-        // Job is already populated.  Now add in the input files
-        this.job.getInputFiles().clear();
-
-        for (File file: getInputFiles()) {
-            LogicalFileBean lFile = new LogicalFileBean();
-            lFile.setJobId(-1);
-            lFile.setLocalPath(file.getAbsolutePath());
-            job.getInputFiles().add(lFile);
-        }
-
-        try {
-
-            if(SubmitJobsWindow.jobQueue.contains(this.job)) {
-
-                //SubmitJobsWindow.updateJob(this.job);
-
-//                System.out
-//                        .println("doRepJobToQueue: after replacing with the new job");
-//
-//                stuffInside.qbModel.setElementAt(j.getResProj() + " "
-//                        + j.getJobName() + " " + j.getApp() + " "
-//                        + j.getMachine()[0], Index);
-//                System.out
-//                        .println("doAddJobToQueue: after replacing job to the big list");
-
-            }
-
-        } catch (JobException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(),
-                    "Queue Wall Time Error", JOptionPane.OK_OPTION);
-            e.printStackTrace();
-        }
-        // SubmitJobsWindow.si.delButton.setEnabled(true);
-        // SubmitJobsWindow.si.newJButton.setEnabled(true);
-        // SubmitJobsWindow.si.submButton.setEnabled(true);
-        // SubmitJobsWindow.si.suballButton.setEnabled(true);*/ //remove comment
-    }
 
     public void doCallNanocad() {
         System.out.println(" Calling Nanocad");
@@ -1719,72 +1541,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         return (String) this.appCombo.getSelectedItem();
     }
 
-    private int getNumProc() {
-        int np;
-        Integer NP;
-        // return this.numProcSpin.getSelectedItem();
-        if (getAppPackageName().equalsIgnoreCase(Invariants.APP_NAME_GAUSSIAN)) {
-            // For Gaussian this value need to be obtained form input
-            // Read input and grep %nproclinda and %nprocshared
-            // The np should be %nprocshared X %nproclinda Sudhakar
-            // Pamidighantam
-            String inptxt = getInputText(getInputFiles().get(0));
-            int npl = -1;
-            int nps = -1;
-            int lpt = 0, spt = 0;
-            StringTokenizer ginpt = new StringTokenizer(inptxt);
 
-            while (ginpt.hasMoreTokens()) {
-                String NextInpToken = ginpt.nextToken().toLowerCase();
-
-                if (NextInpToken.contains("%nproclinda")) {
-                    String lpts = NextInpToken.substring(NextInpToken
-                            .indexOf("=") + 1, NextInpToken.length());
-                    NP = java.lang.Integer.parseInt(lpts.trim(), 10);
-                    npl = NP.intValue();
-                } else if (NextInpToken.contains("%nprocshared")) {
-                    String spts = NextInpToken.substring(NextInpToken
-                            .indexOf("=") + 1, NextInpToken.length());
-                    NP = java.lang.Integer.parseInt(spts.trim(), 10);
-                    nps = NP.intValue();
-                }
-
-            }
-            System.out
-                    .println("Number of Processor for the job for G03 from input (linda) "
-                            + npl + " (shared) " + nps);
-
-            if (nps < 0) {
-                nps = 2;
-                System.out
-                        .println("Number of shared memory Processors defaulted to 2");
-            }
-
-            if (npl < 0) {
-                npl = 1;
-                System.out.println("Number of Linda Processors defaulted to 1");
-            }
-
-            np = npl * nps;
-        } else {
-            NP = (Integer) this.numProcSpin.getValue();
-            System.out.println("##################### DEBUG ################### " + NP);
-            np = NP.intValue();
-
-        }
-        return np;
-    }
-
-
-    /**
-     * Get input files from embedded input file panel.
-     *
-     * @return
-     */
-    private ArrayList<File> getInputFiles() {
-        // return this.inputText.getText();
-        return this.inputFilePanel.getInputFiles();
-    }
 
     private String getInputText(File f) {
         String inText = "";
@@ -1926,51 +1683,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     }
 
-    public void updateInputInfoPanel(Experiment exp, ArrayList<File> files) {
-
-        if (!this.inputFilePanel.isEmpty()) {
-            int keepFiles = JOptionPane.showConfirmDialog(this, "Remove the existing input files?", "", JOptionPane.YES_NO_OPTION);
-            if (keepFiles == JOptionPane.OK_OPTION) {
-                //            this.rightPanel.remove(inputFilePanel);
-                //
-                //            Border leBorder = BorderFactory
-                //                    .createEtchedBorder(EtchedBorder.LOWERED);
-                //            TitledBorder inputInfoTitled = BorderFactory.createTitledBorder(
-                //                    leBorder, "Input File Information", TitledBorder.LEFT,
-                //                    TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD,14));
-                //
-                //            inputFilePanel = new InputFilePanel(this);
-                inputFilePanel.clearFileInput();
-                inputFilePanel.addMultipleFileInput(files);
-
-                System.out.println("(DEBUG)\nnow updateInputInfoPanel : # of inputs = " + inputFilePanel.getInputFiles().size());
-
-                //            inputFilePanel.setBorder(BorderFactory.createCompoundBorder(
-                //                    inputInfoTitled, BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-            }
-        } else {
-            inputFilePanel.addMultipleFileInput(files);
-            System.out.println("(DEBUG)\nnow updateInputInfoPanel : # of inputs = " + inputFilePanel.getInputFiles().size());
-        }
-
-
-//        GridBagConstraints rightPanelConstraints = new GridBagConstraints();
-//
-//        rightPanelConstraints.weighty = 1.0;
-//        rightPanelConstraints.gridheight = 6;
-//        rightPanelConstraints.gridy = 0;
-//        rightPanelConstraints.gridx = 0;
-//        rightPanelConstraints.fill = GridBagConstraints.BOTH;
-//        rightPanelConstraints.anchor = GridBagConstraints.PAGE_START;
-
-        //this.rightPanel.add(inputFilePanel, 0);
-
-        this.rightPanel.repaint();
-    }
-
-    private void setMaxQueueTime(int hours, int minutes) {
-
-    }
 
     /**
      * Get rid of all the web characters.

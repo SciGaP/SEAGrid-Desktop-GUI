@@ -25,7 +25,7 @@ public class GaussianExperimentHandler extends ExperimentHandler {
     public String createExperiment(Map<String, Object> params) throws ExperimentCreationException {
         String projectID = null, userID = null, expName = null, expDesc = null, appId = null, hostID = null, queue = null, projectAccount = null;
         Integer cpuCount = null, threadCount = null, nodeCount = null, wallTime = null, startTime = null, physicalMemory = null;
-        List<File> inputFiles = null;
+        List<InputDataObjectType> inputs = null;
 
         if (params.get(ExpetimentConst.PROJECT_ID) != null)
             projectID = (String) params.get(ExpetimentConst.PROJECT_ID);
@@ -66,13 +66,10 @@ public class GaussianExperimentHandler extends ExperimentHandler {
         if (params.get(ExpetimentConst.MEMORY) != null)
             physicalMemory = (Integer) params.get(ExpetimentConst.MEMORY);
 
-        if(params.get(ExpetimentConst.INPUT_FILES)!=null){
-            inputFiles = (List<File>)params.get(ExpetimentConst.INPUT_FILES);
+        if(params.get(ExpetimentConst.INPUTS)!=null){
+            inputs = (List<InputDataObjectType>)params.get(ExpetimentConst.INPUTS);
         }
 
-        if(inputFiles.size()==0){
-            throw new ExperimentCreationException("For gaussian jobs there should be an input file");
-        }
         /*int random = (int)(Math.random()*10000000.0);
         String remotePath = "/tmp/gridchem_client_"+random+"/"+inputFiles.get(0).getName();
         System.out.println("Remote path "+ remotePath);
@@ -85,20 +82,6 @@ public class GaussianExperimentHandler extends ExperimentHandler {
         }
 */
 
-        List<InputDataObjectType> exIputs = new ArrayList<>();
-        InputDataObjectType input = new InputDataObjectType();
-        input.setName("MainInputFile");
-        input.setType(DataType.URI);
-        input.setValue("/tmp/gridchem/c4b4nhtwbs3.inp");
-        exIputs.add(input);
-
-        List<OutputDataObjectType> exOut = new ArrayList<>();
-        OutputDataObjectType output = new OutputDataObjectType();
-        output.setName("gaussian.out");
-        output.setType(DataType.URI);
-        output.setValue("");
-        exOut.add(output);
-
         Experiment gaussianExp =
                 ExperimentModelUtil.createSimpleExperiment(null, null, null, null, null, null);
         gaussianExp.setProjectID(projectID);
@@ -106,7 +89,7 @@ public class GaussianExperimentHandler extends ExperimentHandler {
         gaussianExp.setName(expName);
         gaussianExp.setDescription(expDesc);
         gaussianExp.setApplicationId(appId); //application interface ID
-        gaussianExp.setExperimentInputs(exIputs);
+        gaussianExp.setExperimentInputs(inputs);
 
         ComputationalResourceScheduling scheduling =
                 ExperimentModelUtil.createComputationResourceScheduling(null, 0, 0, 0, null, 0, 0, 0, null);
