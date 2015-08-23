@@ -103,6 +103,7 @@ import org.gridchem.client.common.Status;
 import org.gridchem.client.common.StatusEvent;
 import org.gridchem.client.exceptions.CharmmInputFileParsingException;
 import org.gridchem.client.gui.jobsubmission.commands.GETHARDWARECommand;
+import org.gridchem.client.gui.panels.CancelCommandPrompt;
 import org.gridchem.client.gui.panels.myccg.MonitorVO;
 import org.gridchem.client.util.Env;
 import org.gridchem.client.util.GMS3;
@@ -327,7 +328,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     private void init() {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
         jbInit();
 
 
@@ -1328,8 +1328,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         SubmitJobsWindow.getInstance();
         this.dispose();
-        // EditJobPanel.frame.setVisible(false);
-        // editSSHJobPanel.frame.setVisible(false);
     }
 
 

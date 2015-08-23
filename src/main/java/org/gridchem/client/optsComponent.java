@@ -96,6 +96,7 @@ import org.gridchem.client.gui.buttons.ApplicationMenuItem;
 import org.gridchem.client.gui.buttons.DropDownButton;
 import org.gridchem.client.gui.login.LoginDialog;
 import org.gridchem.client.gui.panels.BareBonesBrowserLaunch;
+import org.gridchem.client.gui.panels.CancelCommandPrompt;
 import org.gridchem.client.gui.panels.RSSViewer;
 import org.gridchem.client.gui.panels.parseRSS;
 import org.gridchem.client.gui.panels.myccg.MonitorVO;
@@ -445,6 +446,34 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         return inputGeneratorGuiButton;
     }
 
+    CancelCommandPrompt progressCancelPrompt;
+
+    private void startWaiting(String title, String labelText, SwingWorker worker) {
+        progressCancelPrompt =
+                new CancelCommandPrompt(this,title,labelText,-1,worker);
+
+    }
+
+    private void updateProgress(int value) {
+        progressCancelPrompt.updateStatus();
+    }
+
+    private void updateProgress(String message) {
+        progressCancelPrompt.updateStatus(message);
+    }
+
+    private void updateProgress(String message,int value) {
+        progressCancelPrompt.updateStatus();
+        progressCancelPrompt.updateStatus(message);
+    }
+
+    private void stopWaiting() {
+        if (progressCancelPrompt != null) {
+            progressCancelPrompt.finished();
+            progressCancelPrompt = null;
+        }
+    }
+
     public class PopupListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             ApplicationMenuItem item = (ApplicationMenuItem) event.getSource();
@@ -484,26 +513,23 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                 CheckAuth ca = new CheckAuth();
                 if (ca.authorized) {
                     if (Settings.WEBSERVICE) {
-//                        if(sjw == null) {
-//                            doSubmission();
-//                        } else {
-//                            SubmitJobsWindow.frame.setVisible(true);
-//                        }
-                        SubmitJobsWindow.getInstance();
+                        SwingWorker worker = new SwingWorker() {
+                            @Override
+                            public Object construct() {
+                                updateProgress("Loading");
+                                SubmitJobsWindow.getInstance();
+                                updateProgress("Finished loading");
+                                return null;
+                            }
+
+                            @Override
+                            public void finished() {
+                                stopWaiting();
+                            }
+                        };
+                        progressCancelPrompt = new CancelCommandPrompt(buttonBox,"Loading Submit Jobs","Please wait few seconds", -1,worker);
+                        worker.start();
                     }
-//                    else {
-//                        if (GetFile.getfileisdone && LoginPanel.isprefFile) {
-//                            SubmitJobsWindow.getInstance();
-//                        } else {
-//                            JOptionPane.showMessageDialog(
-//                                this,
-//                                "Getting preferences log file " +
-//                                "(preferences.hist)... Please wait\n",
-//                                "Get Preferences",
-//                                JOptionPane.INFORMATION_MESSAGE
-//                                );
-//                        }
-//                    }
                 } else {
                     doWarning();
                 }

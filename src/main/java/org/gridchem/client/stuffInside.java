@@ -86,6 +86,7 @@ import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.gui.buttons.ApplicationMenuItem;
 import org.gridchem.client.gui.buttons.DropDownButton;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
+import org.gridchem.client.gui.panels.CancelCommandPrompt;
 import org.gridchem.service.beans.LogicalFileBean;
 
 import G03Input.InputFile;
@@ -133,9 +134,33 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 
 	public boolean submittingJob = false;
 
-	// static doSubBetween dsb = new doSubBetween();
+	private CancelCommandPrompt progressCancelPrompt;
 
-	// private javax.swing.Timer timer;
+	private void startWaiting(String title, String labelText, SwingWorker worker) {
+		progressCancelPrompt =
+				new CancelCommandPrompt(this,title,labelText,-1,worker);
+
+	}
+
+	private void updateProgress(int value) {
+		progressCancelPrompt.updateStatus();
+	}
+
+	private void updateProgress(String message) {
+		progressCancelPrompt.updateStatus(message);
+	}
+
+	private void updateProgress(String message,int value) {
+		progressCancelPrompt.updateStatus();
+		progressCancelPrompt.updateStatus(message);
+	}
+
+	private void stopWaiting() {
+		if (progressCancelPrompt != null) {
+			progressCancelPrompt.finished();
+			progressCancelPrompt = null;
+		}
+	}
 
 	public stuffInside(Experiment experiment) {
 		this();
@@ -471,11 +496,25 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 				}
 
 			} else if (e.getSource() == newJButton) {
-				RouteClass.keyIndex = 0;
-				RouteClass.initCount = 0;
-				OptTable.optC = 0;
-				selectedGUI = 0;
-				doEditNewJob();
+
+				SwingWorker worker = new SwingWorker() {
+					@Override
+					public Object construct() {
+						RouteClass.keyIndex = 0;
+						RouteClass.initCount = 0;
+						OptTable.optC = 0;
+						selectedGUI = 0;
+						doEditNewJob();
+						return null;
+					}
+
+					@Override
+					public void finished() {
+						stopWaiting();
+					}
+				};
+				startWaiting("Opening Create New Experiment Window", "Please wait few seconds", worker);
+				worker.start();
 
 			} else if (e.getSource() == inputGeneratorGuiButton) {
 

@@ -49,6 +49,7 @@ import nanocad.nanocadFrame;
 import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.common.Settings;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
+import org.gridchem.client.gui.panels.CancelCommandPrompt;
 import org.gridchem.service.beans.JobBean;
 
 public class editJobPanel
@@ -57,7 +58,6 @@ public class editJobPanel
     //public JFrame frame;
 	public EditJobPanel es;
     public nanocadFrame nanoFRM;
-
     //    public editJobPanel() {}
 
     public editJobPanel(int n)
