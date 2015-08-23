@@ -112,9 +112,8 @@ import Gamess.gamessGUI.GamessGUI;
 import Nanocad3d.Nanocad3D;
 
 
-public class optsComponent extends JComponent implements ActionListener, WindowListener, ComponentListener
-{
-//    public static LoginPanel lp;
+public class optsComponent extends JComponent implements ActionListener, WindowListener, ComponentListener {
+    //    public static LoginPanel lp;
     public static Accounting acw;
     public static PreferencesWindow pw;
     public static SubmitJobsWindow sjw;
@@ -126,13 +125,13 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
     public static JFrame mainFrame;
     public static Nanocad3D nano3DWindow; // added for nanocad 3D - Narendra Kumar Polani (CCS, UKY)
     public static nanocadFrame2 nanWindow;
-    public static int selectedFrontPanel=0;
-// lixh_add
+    public static int selectedFrontPanel = 0;
+    // lixh_add
     private JobBean j;
 
     JPanel buttonBox;
     Container messageBox;
-    
+
     JButton authButton;
     JButton readButton;
     JButton prefButton;
@@ -144,7 +143,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
     JButton licenseButton;
     JButton exitButton;
     JButton helpButton;
-    
+
     DropDownButton inputGeneratorGuiButton;
     DropDownButton moleditorGuiButton; //added -nik
     DropDownButton submGuiButton; //added -nik
@@ -152,11 +151,11 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
     ApplicationMenuItem flowMenuItem; //added -nik
     ApplicationMenuItem gaussianMenuItem;
     ApplicationMenuItem gamessMenuItem;
-    
+
     public JTextPane dyninfoPane;
     public static JTextArea messageBoard;
     public JTextArea inputText;
-    
+
     ApplicationMenuItem nano3dMenuItem; // added for nanocad 3d - Narendra Kumar Polani (CCS,UKY)
     //start addition nik
     ApplicationMenuItem nanoMenuItem;
@@ -166,13 +165,12 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
     ApplicationMenuItem tubeMenuItem;
     ApplicationMenuItem javaMenuItem;
     //end addition nik
-    
+
     public boolean nanbool = false;
-    
+
     //static JobList ListOfJobs = new JobList();
 
-    public optsComponent()
-    {
+    public optsComponent() {
         // insert main control buttons
         authButton = new JButton("Sign In");
         readButton = new JButton("Announcements");
@@ -187,55 +185,55 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         licenseButton = new JButton("View License");
         exitButton = new JButton("Exit");
         helpButton = new JButton("Help");
-        
+
         // set their tool tip texts
         authButton.setToolTipText("<html><p>Authenticate to the CCG.</p><html>");
-        readButton.setToolTipText("<html><p>View real-time announcements</p>" + 
+        readButton.setToolTipText("<html><p>View real-time announcements</p>" +
                 "<p>from across the CCG.");
         prefButton.setToolTipText("<html><p>View and edit user preferences.</p><html>");
-        usageButton.setToolTipText("<html><p>View comprehensive individual</p>" + 
+        usageButton.setToolTipText("<html><p>View comprehensive individual</p>" +
                 "<p>and group usage across all projects.</p><html>");
         //submButton.setToolTipText("<html><p>Create and submit jobs.</p><html>");
         mangButton.setToolTipText(
-                "<html><p>Manage your jobs, monitor</p>" + 
-                "<p>CCG resources and view </p>" + 
-                "<p>individual and group</p>" + 
-                "<p>usage across all projects.</p><html>");
+                "<html><p>Manage your jobs, monitor</p>" +
+                        "<p>CCG resources and view </p>" +
+                        "<p>individual and group</p>" +
+                        "<p>usage across all projects.</p><html>");
         //nanocadButton.setToolTipText("<html><p>Launch the Nanocad editor.</p><html>");
         moleditorGuiButton.setToolTipText("<html><p>Launch the Molecular editor.</p><html>");
-        licenseButton.setToolTipText("<html><p>View the full GridChem</p>" + 
+        licenseButton.setToolTipText("<html><p>View the full GridChem</p>" +
                 "<p>licensing agreement.</p><html>");
         exitButton.setToolTipText("<html><p>Exit GridChem.</p><html>");
-        helpButton.setToolTipText("<html><p>View comprehensive help:</p>" + 
-                "<p>documentation on GridChem and </p>" + 
+        helpButton.setToolTipText("<html><p>View comprehensive help:</p>" +
+                "<p>documentation on GridChem and </p>" +
                 "<p>its supported applications.</p><html>");
         inputGeneratorGuiButton.setDropDownToolTipText("<html><p>Launch the Gaussian/GAMESS input builder.</p>" +
-        		"<p>Press Alt + 1 for Gaussian</p>" +
-        		"<p>Press Alt + 2 for GAMESS</p><html>");
+                "<p>Press Alt + 1 for Gaussian</p>" +
+                "<p>Press Alt + 2 for GAMESS</p><html>");
         submGuiButton.setDropDownToolTipText("<html><p>Launch Job/Work Flow Editor.</p>+" +
-        		"<p> Press Alt + 3 for Job Editor</p>" +
-        		"<p> Press Alt + 4 for Work Flow Editor </p>");
-        
+                "<p> Press Alt + 3 for Job Editor</p>" +
+                "<p> Press Alt + 4 for Work Flow Editor </p>");
+
         JPanel buttonBox = new JPanel();
         Container messageBox = Box.createVerticalBox();
-        
-        if(Settings.WEBSERVICE) {
-            buttonBox.setLayout(new GridLayout(10,1,0,10));
+
+        if (Settings.WEBSERVICE) {
+            buttonBox.setLayout(new GridLayout(10, 1, 0, 10));
         } else {
-            buttonBox.setLayout(new GridLayout(11,1,0,10));
+            buttonBox.setLayout(new GridLayout(11, 1, 0, 10));
         }
         // Changed from 7 to 8 @CCS,UKy
-    
+
         Border rbBorder = BorderFactory.createRaisedBevelBorder();
-        Border eBorder1 = BorderFactory.createEmptyBorder(0,10,0,0);
+        Border eBorder1 = BorderFactory.createEmptyBorder(0, 10, 0, 0);
         Border leBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-        buttonBox.setBorder(eBorder1); 
+        buttonBox.setBorder(eBorder1);
         //buttonBox.setPreferredSize(new Dimension(180,280));
         JPanel buttonBoxouter = new JPanel();
         //buttonBoxouter.setBorder(BorderFactory.createCompoundBorder(eBorder1,leBorder));
         buttonBoxouter.setBorder(eBorder1);
         buttonBoxouter.setLayout(new BorderLayout());
-        buttonBoxouter.add(buttonBox,BorderLayout.CENTER);
+        buttonBoxouter.add(buttonBox, BorderLayout.CENTER);
 
         buttonBox.add(authButton);
         buttonBox.add(mangButton);
@@ -255,62 +253,63 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
 
 
         final ImageIcon logo = new ImageIcon(Env.getGridChemLogoLocation());
-         
+
         //RSSDisplayPanel rdp = new RSSDisplayPanel();
         parseRSS prss = new parseRSS();
-        String imgtext = "<img src=\"File:///"+Env.getGridChemLogoLocation()+"\" height=50 width=50>";
+        String imgtext = "<img src=\"File:///" + Env.getGridChemLogoLocation() + "\" height=50 width=50>";
         //System.out.println("Image info "+ Env.getGridChemLogoLocation()+" "+imgtext);
         String textinfo1 = "<div style=\"background-color:#E7EEF6; color:#000000\">" +
                 "<div style=\"background-color:#A7B3C7; color:#FFFFFF;\">" +
                 imgtext + "<font size=5> Welcome to GridChem: " +
                 "Portal to the Computational Chemistry Grid!! </font>" +
-                "<p><br></div>"  +
+                "<p><br></div>" +
                 "You are running the " +
                 "<Font color='green'>AXIS2 Web Service </font>" +
                 "version of the client with the <Font color='blue'>" +
-                ((Settings.DEVEL)?"DEVELOPMENT":
-                    ((Settings.FAILOVER)?"FAILOVER":
-                        ((Settings.LOCAL)?"LOCAL":"PRODUCTION"))) +
-                " </font> cyberinfrastructure. <p>" +                  
+                ((Settings.DEVEL) ? "DEVELOPMENT" :
+                        ((Settings.FAILOVER) ? "FAILOVER" :
+                                ((Settings.LOCAL) ? "LOCAL" : "PRODUCTION"))) +
+                " </font> cyberinfrastructure. <p>" +
                 "Developed by: CCS(UKy), CCT(LSU), NCSA(UIUC), OSC(OSU), and TACC(UTAustin).\n\n<p>";
-        String textinfo2 ="For more information, " +
-        "please visit http://www.gridchem.org/</div>";
-        URL rssurl;  
+        String textinfo2 = "For more information, " +
+                "please visit http://www.gridchem.org/</div>";
+        URL rssurl;
         try {
-        rssurl = new URL(Invariants.CCGRSSFeed);
-        dyninfoPane = new JTextPane();
-        dyninfoPane.setEditorKit( new HTMLEditorKit() );
-        dyninfoPane.setText(textinfo1+prss.parseRSS(rssurl)+textinfo2);
-        dyninfoPane.setCaretPosition(0);
-    
-        }catch (MalformedURLException e) {
+            rssurl = new URL(Invariants.CCGRSSFeed);
+            dyninfoPane = new JTextPane();
+            dyninfoPane.setEditorKit(new HTMLEditorKit());
+            dyninfoPane.setText(textinfo1 + prss.parseRSS(rssurl) + textinfo2);
+            dyninfoPane.setCaretPosition(0);
+
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         //messageBoard.setEditable(false);
         JScrollPane jscrollpaned = new JScrollPane(dyninfoPane);
         jscrollpaned.setWheelScrollingEnabled(true);
-        jscrollpaned.setPreferredSize(new Dimension(550,450));
+        jscrollpaned.setPreferredSize(new Dimension(550, 450));
         jscrollpaned.setBorder(
                 BorderFactory.createCompoundBorder(
-                    BorderFactory.createEmptyBorder(5,5,5,5),
-                                    jscrollpaned.getBorder()));
+                        BorderFactory.createEmptyBorder(5, 5, 5, 5),
+                        jscrollpaned.getBorder()));
         //lixh_add for automatic moving the scrollbar
-        
-            //jscrollpane.setWheelScrollingEnabled(true);
-        messageBoard = new JTextArea("",5,55){};
+
+        //jscrollpane.setWheelScrollingEnabled(true);
+        messageBoard = new JTextArea("", 5, 55) {
+        };
         JScrollPane jscrollpane = new JScrollPane(messageBoard);
-        messageBox.add(jscrollpaned);    
+        messageBox.add(jscrollpaned);
         messageBox.add(jscrollpane);
-    
+
         // set up the layout of the buttons
-        setBorder(BorderFactory.createEmptyBorder(25,25,25,25)); //lixh_add
-            setLayout(new BoxLayout(this,BoxLayout.X_AXIS)); //lixh_add
-    
+        setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25)); //lixh_add
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS)); //lixh_add
+
         // add each box to the layout
-        add(messageBox);       
+        add(messageBox);
         add(buttonBoxouter);
-    
-    
+
+
         // listen for an action for each button
         authButton.addActionListener(this);
         readButton.addActionListener(this);
@@ -322,177 +321,166 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         exitButton.addActionListener(this);
         helpButton.addActionListener(this);
         // commented nik nanocadButton.addActionListener(this);
-        
+
         updateAuthenticatedStatus();
     }
 
     private DropDownButton createMolEdDDB() {
         PopupListener popupListener = new PopupListener();
-        
+
         moleditorGuiButton = new DropDownButton("Open Nano CAD GUI");
         moleditorGuiButton.getButton().setToolTipText(
                 "Open the Nanocad Molecualr Editor.");
-        nanoMenuItem = new ApplicationMenuItem("Nano CAD",KeyEvent.VK_5);
+        nanoMenuItem = new ApplicationMenuItem("Nano CAD", KeyEvent.VK_5);
         nanoMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_5, ActionEvent.ALT_MASK));
         nanoMenuItem.getAccessibleContext().setAccessibleDescription(
                 "Opens the Nano CAD Molecular Editor");
         nanoMenuItem.addActionListener(popupListener);
-        
+
         // begins: added for nanocad 3d - Narendra Kumar Polani (CCS, UKY)        
-        nano3dMenuItem = new ApplicationMenuItem("NanoCAD 3D",KeyEvent.VK_A);
+        nano3dMenuItem = new ApplicationMenuItem("NanoCAD 3D", KeyEvent.VK_A);
         nano3dMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_A, ActionEvent.ALT_MASK));
         nano3dMenuItem.getAccessibleContext().setAccessibleDescription(
                 "Opens the NanoCAD 3D Molecular Editor");
         nano3dMenuItem.addActionListener(popupListener);
         // end: added for nanocad 3D
-        
-        javaMenuItem = new ApplicationMenuItem("Java ANU",KeyEvent.VK_6);
+
+        javaMenuItem = new ApplicationMenuItem("Java ANU", KeyEvent.VK_6);
         javaMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_6, ActionEvent.ALT_MASK));
         javaMenuItem.getAccessibleContext().setAccessibleDescription(
                 "Opens the Java ANU Molecular Editor");
         javaMenuItem.addActionListener(popupListener);
-        
-        molMenuItem = new ApplicationMenuItem("Mol Den",KeyEvent.VK_7);
+
+        molMenuItem = new ApplicationMenuItem("Mol Den", KeyEvent.VK_7);
         molMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_7, ActionEvent.ALT_MASK));
         molMenuItem.getAccessibleContext().setAccessibleDescription(
                 "Opens the Mol Den Molecular Editor");
         molMenuItem.addActionListener(popupListener);
-        
-        gdisMenuItem = new ApplicationMenuItem("GDIS",KeyEvent.VK_8);
+
+        gdisMenuItem = new ApplicationMenuItem("GDIS", KeyEvent.VK_8);
         gdisMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_8, ActionEvent.ALT_MASK));
         gdisMenuItem.getAccessibleContext().setAccessibleDescription(
                 "Opens the GDIS Molecular Editor");
         gdisMenuItem.addActionListener(popupListener);
-        
-        jmolMenuItem = new ApplicationMenuItem("JMol",KeyEvent.VK_9);
+
+        jmolMenuItem = new ApplicationMenuItem("JMol", KeyEvent.VK_9);
         jmolMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_9, ActionEvent.ALT_MASK));
         jmolMenuItem.getAccessibleContext().setAccessibleDescription(
                 "Opens the JMol Molecular Editor");
         jmolMenuItem.addActionListener(popupListener);
-        
-        tubeMenuItem = new ApplicationMenuItem("Tube Gen",KeyEvent.VK_0);
+
+        tubeMenuItem = new ApplicationMenuItem("Tube Gen", KeyEvent.VK_0);
         tubeMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_0, ActionEvent.ALT_MASK));
         tubeMenuItem.getAccessibleContext().setAccessibleDescription(
                 "Opens the Tube Gen Molecular Editor");
         tubeMenuItem.addActionListener(popupListener);
 
-        moleditorGuiButton.getMenu().add(nano3dMenuItem);	// added for nanocad 3d - Narendra Kumar Polani (CCS, UKY)
+        moleditorGuiButton.getMenu().add(nano3dMenuItem);    // added for nanocad 3d - Narendra Kumar Polani (CCS, UKY)
         moleditorGuiButton.getMenu().add(nanoMenuItem);
         moleditorGuiButton.getMenu().add(javaMenuItem);
         moleditorGuiButton.getMenu().add(molMenuItem);
         moleditorGuiButton.getMenu().add(gdisMenuItem);
         moleditorGuiButton.getMenu().add(jmolMenuItem);
         moleditorGuiButton.getMenu().add(tubeMenuItem);
-        
+
         return moleditorGuiButton;
     }
-    
+
     private DropDownButton createJobDDB() {
         PopupListener popupListener = new PopupListener();
-        
+
         submGuiButton = new DropDownButton("Create Job");
         submGuiButton.getButton().setToolTipText(
                 "Open the Job/Work Flow Editor.");
-        jobMenuItem = new ApplicationMenuItem("Job",KeyEvent.VK_3);
+        jobMenuItem = new ApplicationMenuItem("Job", KeyEvent.VK_3);
         jobMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_3, ActionEvent.ALT_MASK));
         jobMenuItem.getAccessibleContext().setAccessibleDescription(
                 "Opens the Job Editor");
         jobMenuItem.addActionListener(popupListener);
-        
-        flowMenuItem = new ApplicationMenuItem("Work Flow",KeyEvent.VK_4);
+
+        flowMenuItem = new ApplicationMenuItem("Work Flow", KeyEvent.VK_4);
         flowMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_4, ActionEvent.ALT_MASK));
         flowMenuItem.getAccessibleContext().setAccessibleDescription(
                 "Opens the Work Flow Editor");
         flowMenuItem.addActionListener(popupListener);
-              
+
         submGuiButton.getMenu().add(jobMenuItem);
         submGuiButton.getMenu().add(flowMenuItem);
-        
+
         return submGuiButton;
     }
-    
+
     private DropDownButton createDDB() {
         PopupListener popupListener = new PopupListener();
-        
+
         inputGeneratorGuiButton = new DropDownButton("Open Gaussian GUI");
         inputGeneratorGuiButton.getButton().setToolTipText(
                 "Open the Gaussian input builder.");
-        gaussianMenuItem = new ApplicationMenuItem("Gaussian",KeyEvent.VK_1);
+        gaussianMenuItem = new ApplicationMenuItem("Gaussian", KeyEvent.VK_1);
         gaussianMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_1, ActionEvent.ALT_MASK));
         gaussianMenuItem.getAccessibleContext().setAccessibleDescription(
                 "Opens the Gaussian GUI");
         gaussianMenuItem.addActionListener(popupListener);
-        
-        gamessMenuItem = new ApplicationMenuItem("GAMESS",KeyEvent.VK_2);
+
+        gamessMenuItem = new ApplicationMenuItem("GAMESS", KeyEvent.VK_2);
         gamessMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_2, ActionEvent.ALT_MASK));
         gamessMenuItem.getAccessibleContext().setAccessibleDescription(
                 "Opens the GAMESS GUI");
         gamessMenuItem.addActionListener(popupListener);
-              
+
         inputGeneratorGuiButton.getMenu().add(gaussianMenuItem);
         inputGeneratorGuiButton.getMenu().add(gamessMenuItem);
-        
+
         return inputGeneratorGuiButton;
     }
 
     public class PopupListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            ApplicationMenuItem item = (ApplicationMenuItem)event.getSource();
-            
-            if(item.equals(gaussianMenuItem)){
-            	stuffInside.selectedGUI = 1;
-            	showNewGUI();
-            	gaussianMenuItem.setLastSelected(true);
+            ApplicationMenuItem item = (ApplicationMenuItem) event.getSource();
+
+            if (item.equals(gaussianMenuItem)) {
+                stuffInside.selectedGUI = 1;
+                showNewGUI();
+                gaussianMenuItem.setLastSelected(true);
                 gamessMenuItem.setLastSelected(false);
-            } else if (item.equals(gamessMenuItem)){
-            	stuffInside.selectedGUI=1;
-            	GamessGUI.main(null);
+            } else if (item.equals(gamessMenuItem)) {
+                stuffInside.selectedGUI = 1;
+                GamessGUI.main(null);
                 gaussianMenuItem.setLastSelected(false);
                 gamessMenuItem.setLastSelected(true);
-            } 
-            else if(item.equals(nano3dMenuItem)){
-            	// added for nanocad 3d - Narendra Kumar Polani (CCS, UKY)
-            	selectedFrontPanel = 1;
-            	doCallNanoCad3D();            	
-            }            
-            else if (item.equals(nanoMenuItem)) {
-            	//jayeeta added following two lines. 
-            	System.out.println("Launching Nanocad Molecular Editor");
-                selectedFrontPanel=1;
-            	doCallNanocad();
-      
-            } else if (item.equals(javaMenuItem)){
-            	doCallJavaANU();
-     	  
-            } 
-            else if (item.equals(molMenuItem))
-        	{
-            	doCallMolDen();
-        	}
-            else if (item.equals(gdisMenuItem))
-        	{
-            	doCallGDIS();
-        	}
-            else if (item.equals(jmolMenuItem))
-        	{
-            	doCallJMol();
-        	}
-            else if (item.equals(tubeMenuItem))
-        	{
-            	doCallTubeGen();
-        	}
-            else if (item.equals(jobMenuItem)){//else if (e.getSource() == submButton) {
+            } else if (item.equals(nano3dMenuItem)) {
+                // added for nanocad 3d - Narendra Kumar Polani (CCS, UKY)
+                selectedFrontPanel = 1;
+                doCallNanoCad3D();
+            } else if (item.equals(nanoMenuItem)) {
+                //jayeeta added following two lines.
+                System.out.println("Launching Nanocad Molecular Editor");
+                selectedFrontPanel = 1;
+                doCallNanocad();
+
+            } else if (item.equals(javaMenuItem)) {
+                doCallJavaANU();
+
+            } else if (item.equals(molMenuItem)) {
+                doCallMolDen();
+            } else if (item.equals(gdisMenuItem)) {
+                doCallGDIS();
+            } else if (item.equals(jmolMenuItem)) {
+                doCallJMol();
+            } else if (item.equals(tubeMenuItem)) {
+                doCallTubeGen();
+            } else if (item.equals(jobMenuItem)) {//else if (e.getSource() == submButton) {
                 CheckAuth ca = new CheckAuth();
                 if (ca.authorized) {
                     if (Settings.WEBSERVICE) {
@@ -519,11 +507,11 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                 } else {
                     doWarning();
                 }
-            } else if (item.equals(flowMenuItem)){
-            	//final String[] newarray = new String[14];
-            	//The following try block added to read the proxy information from a
-            	//file instead of hardcoding it here.. -nikhil dec 14 2009
-            	/*try{
+            } else if (item.equals(flowMenuItem)) {
+                //final String[] newarray = new String[14];
+                //The following try block added to read the proxy information from a
+                //file instead of hardcoding it here.. -nikhil dec 14 2009
+                /*try{
                 FileInputStream fis = new FileInputStream(Env.getApplicationDataDir() + 
           	       		Settings.fileSeparator + "xbaya_proxy");
                 DataInputStream dis = new DataInputStream(new BufferedInputStream(fis));
@@ -552,67 +540,63 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
             	ie.printStackTrace();
                 }
             	catch (Exception ie) {System.out.println("Exception in optsComponent"+ie);}*/
-            
-            	CheckAuth ca = new CheckAuth();
-            	if (ca.authorized) { 		
-            		try {
-						Process p = Runtime.getRuntime().exec("javaws " + Invariants.XBayaJnlpURL);
-						System.out.println("Exit XBaya");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+
+                CheckAuth ca = new CheckAuth();
+                if (ca.authorized) {
+                    try {
+                        Process p = Runtime.getRuntime().exec("javaws " + Invariants.XBayaJnlpURL);
+                        System.out.println("Exit XBaya");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    doWarning();
                 }
-                else {
-                	doWarning();
-                }
-            }            
-            
-            if(item.equals(nanoMenuItem)||item.equals(javaMenuItem)
-            		||item.equals(molMenuItem)||item.equals(gdisMenuItem)
-            		||item.equals(jmolMenuItem)||item.equals(tubeMenuItem)){
-    	            moleditorGuiButton.getButton().setText("Open " + item.getText() + " GUI");
-    	            moleditorGuiButton.getButton().setToolTipText("Open " + item.getText() + " GUI");
-                } else if(item.equals(gaussianMenuItem)||item.equals(gamessMenuItem)){
-    	            inputGeneratorGuiButton.getButton().setText("Open " + item.getText() + " GUI");
-    	            inputGeneratorGuiButton.getButton().setToolTipText("Open " + item.getText() + " GUI");
-                }
-                else if(item.equals(jobMenuItem)){
-                	submGuiButton.getButton().setText("Create Job");
-                	submGuiButton.getButton().setToolTipText("Open Job Editor GUI");
-                }
-                else if(item.equals(flowMenuItem)){
-                	submGuiButton.getButton().setText("Create Work Flow");
-                	submGuiButton.getButton().setToolTipText("Open Work Flow Editor GUI");
-                }
+            }
+
+            if (item.equals(nanoMenuItem) || item.equals(javaMenuItem)
+                    || item.equals(molMenuItem) || item.equals(gdisMenuItem)
+                    || item.equals(jmolMenuItem) || item.equals(tubeMenuItem)) {
+                moleditorGuiButton.getButton().setText("Open " + item.getText() + " GUI");
+                moleditorGuiButton.getButton().setToolTipText("Open " + item.getText() + " GUI");
+            } else if (item.equals(gaussianMenuItem) || item.equals(gamessMenuItem)) {
+                inputGeneratorGuiButton.getButton().setText("Open " + item.getText() + " GUI");
+                inputGeneratorGuiButton.getButton().setToolTipText("Open " + item.getText() + " GUI");
+            } else if (item.equals(jobMenuItem)) {
+                submGuiButton.getButton().setText("Create Job");
+                submGuiButton.getButton().setToolTipText("Open Job Editor GUI");
+            } else if (item.equals(flowMenuItem)) {
+                submGuiButton.getButton().setText("Create Work Flow");
+                submGuiButton.getButton().setToolTipText("Open Work Flow Editor GUI");
+            }
             //inputGeneratorGuiButton.getButton().setText("Open " + item.getText() + " GUI");
             //inputGeneratorGuiButton.getButton().setToolTipText("Open " + item.getText() + " GUI");
         }
     }
-    
-    public static void showNewGUI() {  
-	    JFrame.setDefaultLookAndFeelDecorated(true);
-		JDialog.setDefaultLookAndFeelDecorated(true);
-		
-		InputFile.tempinput = new String();
-		InputfileReader.route = new String();
-		showMolEditor.tempmol = new String();
-		InputFile.inputfetched = 0;
-		InputfileReader.chrgStr=null;
-		InputfileReader.mulStr=null;
-        
+
+    public static void showNewGUI() {
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JDialog.setDefaultLookAndFeelDecorated(true);
+
+        InputFile.tempinput = new String();
+        InputfileReader.route = new String();
+        showMolEditor.tempmol = new String();
+        InputFile.inputfetched = 0;
+        InputfileReader.chrgStr = null;
+        InputfileReader.mulStr = null;
+
         mainFrame = new G03Input.G03MenuTree();
-	    mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		mainFrame.pack();
-		
+        mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        mainFrame.pack();
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		
-		mainFrame.setSize(screenSize.width-200,screenSize.height-150);
-		mainFrame.setResizable(true);
-		mainFrame.setVisible(true);
+
+        mainFrame.setSize(screenSize.width - 200, screenSize.height - 150);
+        mainFrame.setResizable(true);
+        mainFrame.setVisible(true);
     }
-    
-    public void actionPerformed(ActionEvent e)
-    {
+
+    public void actionPerformed(ActionEvent e) {
         Trace.entry();
         if (e.getSource() == authButton) {
             // Authentication is handled a bit differently now
@@ -623,20 +607,20 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
             // This is done in LoginPanel.clearLogin().
             if (Settings.authenticated) {
                 int result = JOptionPane.showConfirmDialog(
-                    this,
-                    "Do you really want to disconnect from "+
-                    "this \n resource and authenticate to " +
-                    "another resource?",
-                    "Authentication",
-                    JOptionPane.YES_NO_OPTION
-                    );
+                        this,
+                        "Do you really want to disconnect from " +
+                                "this \n resource and authenticate to " +
+                                "another resource?",
+                        "Authentication",
+                        JOptionPane.YES_NO_OPTION
+                );
                 if (result == 0) {
                     GridChem.appendMessage("Resetting user authentication...");
-                    
+
                     LoginDialog.clearLogin();
-                    
+
                     GridChem.appendMessage("Complete\n");
-                    
+
                     updateAuthenticatedStatus();
                     doAuthentication();
                 }
@@ -646,7 +630,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
             }
         } else if (e.getSource() == readButton) {
             if (Settings.WEBSERVICE) {
-                if(rssw == null) {
+                if (rssw == null) {
                     doReadAnnouncements();
                 } else {
                     rssw.frame.setVisible(true);
@@ -663,7 +647,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                     } else {
                         PreferencesWindow.frame.setVisible(true);
                     }
-                
+
 //                } else {
 //                    Trace.note( "GetFile.getfileisdone = " + GetFile.getfileisdone);
 //                    Trace.note( "LoginPanel.isprefFile = " + LoginPanel.isprefFile);
@@ -682,8 +666,8 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
 //                        JOptionPane.INFORMATION_MESSAGE
 //                        );
 //                    }
-                } 
-            }else {
+                }
+            } else {
                 doWarning();
             }
 //        }else if (e.getSource() == usageButton) {
@@ -719,43 +703,24 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
              */
             CheckAuth ca = new CheckAuth();
             if (ca.authorized) {
-                if (Settings.DEBUG) {
-                    System.out.println("mw = "+mw+"\n");
-                }
-                if (Settings.WEBSERVICE) {
-                    if(GridChem.user != null) {
-                        doMonitor();
-                    } else {
-                        JOptionPane.showMessageDialog(
+
+                if (GridChem.user != null) {
+                    doMonitor();
+                } else {
+                    JOptionPane.showMessageDialog(
                             this,
                             "Monitoring information not available. \n" +
-                            "User did not successfully log into the CCG.",
+                                    "User did not successfully log into the CCG.",
                             "Authentication Failed",
                             JOptionPane.INFORMATION_MESSAGE
-                            );
-                    }
-                } 
-//                else {
-//                    if (GetFile.getfileisdone && LoginPanel.ishistFile) {
-//                        doManagement();
-//                    } else {
-//                        JOptionPane.showMessageDialog(
-//                            this,
-//                            "Getting job log file(qcrjm.hist)... " +
-//                            "Please wait\n",
-//                            "Get log file",
-//                            JOptionPane.INFORMATION_MESSAGE
-//                            );
-//                    }
-//                }
+                    );
+                }
             } else {
                 doWarning();
             }
-        }
-        
-        else if (e.getSource() == licenseButton) {
-            doLicense();        
-        } else if (e.getSource() == helpButton) { 
+        } else if (e.getSource() == licenseButton) {
+            doLicense();
+        } else if (e.getSource() == helpButton) {
             doHelp();
         } else if (e.getSource() == exitButton) {
             int result1 = JOptionPane.showConfirmDialog(
@@ -763,12 +728,12 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                     "Do you really want to close the client? ",
                     "Confirmation",
                     JOptionPane.YES_NO_OPTION
-                    );
-            if (result1==0) {
-            	if (Settings.authenticated) { 
-            		GMS3.logout();
-            	}
-            	doShutdown();
+            );
+            if (result1 == 0) {
+                if (Settings.authenticated) {
+                    GMS3.logout();
+                }
+                doShutdown();
             }
         } 
         
@@ -804,34 +769,33 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         authButton.setText(text);
         authButton.setToolTipText(tooltiptext);
     }
-    
+
     public void doShutdown() {
 //        if(lp != null) lp.setVisible(false);
-        if(acw != null) acw.setVisible(false);
-        if(pw != null) pw.setVisible(false);
-        if(sjw != null) sjw.setVisible(false);
-        if(mw != null) mw.setVisible(false);
-        if(monitorWindow != null) monitorWindow.setVisible(false);
-        if(sdw != null) sdw.si.setVisible(false);
-        if(rssw != null) rssw.setVisible(false);
-        if(nanWindow != null) nanWindow.setVisible(false);
+        if (acw != null) acw.setVisible(false);
+        if (pw != null) pw.setVisible(false);
+        if (sjw != null) sjw.setVisible(false);
+        if (mw != null) mw.setVisible(false);
+        if (monitorWindow != null) monitorWindow.setVisible(false);
+        if (sdw != null) sdw.si.setVisible(false);
+        if (rssw != null) rssw.setVisible(false);
+        if (nanWindow != null) nanWindow.setVisible(false);
         System.exit(0);
     }
+
     /**
      * Open the authentication panel where users can authenticate
      * to the GridChem middleware server. This must be the first
-     * action the user takes in order to perform accountable 
-     * actions with the client. Since the LoginPanel is disposed 
+     * action the user takes in order to perform accountable
+     * actions with the client. Since the LoginPanel is disposed
      * at shutdown and when the user confirms they wish to re-
      * authenticate, we get a new instance of LoginPanel every time
      * this is called.
-     *
      */
-    public void doAuthentication()
-    {
-    	messageBoard.append("Authentication requested...\n");
-        messageBoard.setCaretPosition( messageBoard.getDocument().getLength()); //lixh_add
-        
+    public void doAuthentication() {
+        messageBoard.append("Authentication requested...\n");
+        messageBoard.setCaretPosition(messageBoard.getDocument().getLength()); //lixh_add
+
         new LoginDialog(mainFrame, true);
     }
 
@@ -839,7 +803,6 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
      * Open the announcement panel where the user can find
      * new and exciting information on GridChem via RSS from
      * the gridchem website.
-     *
      */
     public void doReadAnnouncements() {
         /*messageBoard.append("Reading announcements...\n");*/
@@ -847,7 +810,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         rssw = new RSSViewer(Invariants.CCGRSSFeed);
         //rssw.setSize(new Dimension(350,400));
     }
-    
+
     /**
      * pre-ws client launches a browser to veiw announcements.
      */
@@ -858,18 +821,16 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
     /**
      * Open user preferences pane where user can specify the look and feel
      * they wish to remember from session to session.
-     *
      */
-    public void doPreferences()
-    {
-        if(pw == null) {
+    public void doPreferences() {
+        if (pw == null) {
             pw = new PreferencesWindow();
         } else {
             pw.setVisible(true);
         }
         messageBoard.append("Checking preferences...\n");
-        messageBoard.setCaretPosition( messageBoard.getDocument().getLength()); //lixh_3/27/06
-        
+        messageBoard.setCaretPosition(messageBoard.getDocument().getLength()); //lixh_3/27/06
+
     }
 
 //    /**
@@ -893,13 +854,10 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
      * they have submitted with the client and manage the data
      * associated with each job through our file browser and
      * output parsers.
-     *
      */
-    public void doManagement() 
-    {
-        if(mw == null)
-        {
-            if(Settings.authenticatedSSH) {
+    public void doManagement() {
+        if (mw == null) {
+            if (Settings.authenticatedSSH) {
 //                    mw = new SSHManageWindow();
             } else {
                 mw = new ManageWindow();
@@ -908,16 +866,15 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
             mw.setVisible(true);
         }
         messageBoard.append("Manage Jobs window opened...\n");
-        messageBoard.setCaretPosition( messageBoard.getDocument().getLength());
+        messageBoard.setCaretPosition(messageBoard.getDocument().getLength());
     }
 
     /**
-     * Open tabbed pane displaying job, resource, and usage information for the 
+     * Open tabbed pane displaying job, resource, and usage information for the
      * user's current VO.
-     * 
      */
     public void doMonitor() {
-        if(monitorWindow == null) {
+        if (monitorWindow == null) {
             monitorWindow = new MonitorVO();
         } else {
             monitorWindow.refresh();
@@ -925,58 +882,57 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         }
         GridChem.appendMessage("Monitoring window opened...\n");
     }
-    
+
     /**
-     * Download remote data for viewing.  
-     * 
+     * Download remote data for viewing.
+     *
      * @deprecated This method is deprecated as of GridChem 0.3.
      */
-    public void doExplore() 
-    {
+    public void doExplore() {
         messageBoard.append("Explore data...\n");
-        JOptionPane.showMessageDialog( null,
-                "Coming soon...","explore data",
+        JOptionPane.showMessageDialog(null,
+                "Coming soon...", "explore data",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
-    
+
     /**
      * Display GridChem public license in dialog box.
      */
     public void doLicense() {
         String message = "GridChem: Portal to the Computational Chemistry Grid!!\n\n" +
-            "Developed by: \n\n" +
-            "CCS, University of Kentucky\n" +
-            "CCT, Louisiana State University\n" +
-            "NCSA, University of Illinois at Urbana-Champaign\n" +
-            "OSC, Ohio Supercomputer Center\n" +
-            "TACC, University of Texas at Austin\n\n" +
-            "http://www.gridchem.org/\n\n" +
-            "Copyright (c) 2004,University of Illinois at Urbana-Champaign.  All rights reserved.\n\n" +
-            "Permission is hereby granted, free of charge, to any person obtaining a copy \n" +
-            "of this software and associated documentation files (the \"Software\"),to deal with \n" +
-            "the Software without restriction, including without limitation the rights to use, \n" +
-            "copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the \n" +
-            "Software, and to permit persons to whom the Software is furnished to do so, \n" +
-            "subject to the following conditions:\n\n" +
-            "1. Redistributions of source code must retain the above copyright notice, \n" +
-            "   this list of conditions and the following disclaimers.\n" +
-            "2. Redistributions in binary form must reproduce the above copyright notice, \n" +
-            "   this list of conditions and the following disclaimers in the documentation \n" +
-            "   and/or other materials provided with the distribution.\n" +
-            "3. Neither the names of Chemistry and Computational Biology Group , NCSA, \n" +
-            "   University of Illinois at Urbana-Champaign, nor the names of its contributors \n" +
-            "   may be used to endorse or promote products derived from this Software without \n" +
-            "   specific prior written permission.\n\n" +
-            "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY\n" +
-            "KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE\n" +
-            "WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR\n" +
-            "PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n" +
-            "CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,\n" +
-            "DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\n" +
-            "TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH\n" + 
-            "THE SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE SOFTWARE.\n\n";
-            
+                "Developed by: \n\n" +
+                "CCS, University of Kentucky\n" +
+                "CCT, Louisiana State University\n" +
+                "NCSA, University of Illinois at Urbana-Champaign\n" +
+                "OSC, Ohio Supercomputer Center\n" +
+                "TACC, University of Texas at Austin\n\n" +
+                "http://www.gridchem.org/\n\n" +
+                "Copyright (c) 2004,University of Illinois at Urbana-Champaign.  All rights reserved.\n\n" +
+                "Permission is hereby granted, free of charge, to any person obtaining a copy \n" +
+                "of this software and associated documentation files (the \"Software\"),to deal with \n" +
+                "the Software without restriction, including without limitation the rights to use, \n" +
+                "copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the \n" +
+                "Software, and to permit persons to whom the Software is furnished to do so, \n" +
+                "subject to the following conditions:\n\n" +
+                "1. Redistributions of source code must retain the above copyright notice, \n" +
+                "   this list of conditions and the following disclaimers.\n" +
+                "2. Redistributions in binary form must reproduce the above copyright notice, \n" +
+                "   this list of conditions and the following disclaimers in the documentation \n" +
+                "   and/or other materials provided with the distribution.\n" +
+                "3. Neither the names of Chemistry and Computational Biology Group , NCSA, \n" +
+                "   University of Illinois at Urbana-Champaign, nor the names of its contributors \n" +
+                "   may be used to endorse or promote products derived from this Software without \n" +
+                "   specific prior written permission.\n\n" +
+                "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY\n" +
+                "KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE\n" +
+                "WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR\n" +
+                "PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n" +
+                "CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,\n" +
+                "DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\n" +
+                "TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH\n" +
+                "THE SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE SOFTWARE.\n\n";
+
         ScrollableDisplay sd = new ScrollableDisplay("GridChem License", message);
         sd.setVisible(true);
         /*JOptionPane.showMessageDialog(null,
@@ -1014,55 +970,54 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                     "GridChem Public License",
                     JOptionPane.INFORMATION_MESSAGE);*/
     }
-    
+
     /**
      * Throw up an authentication warning.  This should be handled in
      * an error code.
      */
-    public void doWarning()
-    {
+    public void doWarning() {
         JOptionPane.showMessageDialog(null, "You must authenticate " +
-            "to use this function", "GridChem", 
-            JOptionPane.ERROR_MESSAGE);
+                        "to use this function", "GridChem",
+                JOptionPane.ERROR_MESSAGE);
     }
-    
+
     /**
      * Delete the files on the local system associated with the job.
+     *
      * @param directoryFile
      */
-    public void doDeletion(File directoryFile)
-    {
+    public void doDeletion(File directoryFile) {
         java.util.List list = Arrays.asList(directoryFile.listFiles());
-    
+
         ArrayList directories = new ArrayList(list);
         ArrayList toBeDeleted = new ArrayList();
         ArrayList dirsToBeDeleted = new ArrayList();
-     
+
         for (int i = 0; i < directories.size(); i++) {
             File f = (File) directories.get(i);
-            if (f.isDirectory() == true) { 
+            if (f.isDirectory() == true) {
                 dirsToBeDeleted.add(f);
                 doDeletion(f);
             } else {
                 toBeDeleted.add(f);
             }
         }
-        
+
         for (int i = 0; i < dirsToBeDeleted.size(); i++) {
             File g = (File) dirsToBeDeleted.get(i);
-            System.err.println("doDeletion: deleting file " + 
+            System.err.println("doDeletion: deleting file " +
                     g.getName());
             g.delete();
         }
-        
+
         for (int i = 0; i < toBeDeleted.size(); i++) {
             File t = (File) toBeDeleted.get(i);
-            System.err.println("doDeletion: deleting file " + 
+            System.err.println("doDeletion: deleting file " +
                     t.getName());
             t.delete();
         }
     }
-    
+
     public void doHelp() {
         if (helpBrowser == null) {
             helpBrowser = new HelpBrowser();
@@ -1073,66 +1028,60 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
     
     
 	/*Added nikhil*/
-	
-	public void doCallMolDen()
-	{
-		JOptionPane.showMessageDialog(null, "doCallMolGen"); 
-		try {
-			Runtime.getRuntime().exec(".\\etc\\MolDen\\molden_windows_nt_95\\molden.exe");
-		}
-	    catch (Exception err) {
-	    	err.printStackTrace();
-	    }
-	}
-	public void doCallGDIS()
-	{
-		//JOptionPane.showMessageDialog(null, "doCallGDIS"); 
-		try {
-			Runtime.getRuntime().exec(".\\etc\\GDIS\\gdis\\gdis.exe");
-		}
-	    catch (Exception err) {
-	    	err.printStackTrace();
-	    }
-	}
-	public void doCallJMol()
-	{
-		try {
-			String[] cmdarray = { "javaws", 
-					Invariants.JmolJnlpURL};
-			Runtime.getRuntime().exec(cmdarray);
-		}
-	    catch (Exception err) {
-	    	err.printStackTrace();
-	    }
-	}
-	public void doCallTubeGen()
-	{
-		
-		JOptionPane.showMessageDialog(null, "doCallTubeGen"); 
-		try {
-			Runtime.getRuntime().exec(".\\etc\\TubeGen\\tubegen.exe");
-		}
-	    catch (Exception err) {
-	    	err.printStackTrace();
-	    }
-	}
-	public void doCallJavaANU()
-	{
-		try {
-			String[] cmdarray = { "javaws", 
-					Invariants.JamberooJnlpURL};
-			Runtime.getRuntime().exec(cmdarray);
-		}
-	    catch (Exception err) {
-	    	err.printStackTrace();
-	    }
-	}
+
+    public void doCallMolDen() {
+        JOptionPane.showMessageDialog(null, "doCallMolGen");
+        try {
+            Runtime.getRuntime().exec(".\\etc\\MolDen\\molden_windows_nt_95\\molden.exe");
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+    }
+
+    public void doCallGDIS() {
+        //JOptionPane.showMessageDialog(null, "doCallGDIS");
+        try {
+            Runtime.getRuntime().exec(".\\etc\\GDIS\\gdis\\gdis.exe");
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+    }
+
+    public void doCallJMol() {
+        try {
+            String[] cmdarray = {"javaws",
+                    Invariants.JmolJnlpURL};
+            Runtime.getRuntime().exec(cmdarray);
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+    }
+
+    public void doCallTubeGen() {
+
+        JOptionPane.showMessageDialog(null, "doCallTubeGen");
+        try {
+            Runtime.getRuntime().exec(".\\etc\\TubeGen\\tubegen.exe");
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+    }
+
+    public void doCallJavaANU() {
+        try {
+            String[] cmdarray = {"javaws",
+                    Invariants.JamberooJnlpURL};
+            Runtime.getRuntime().exec(cmdarray);
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+    }
 	
 	/* End additions */
-	
-	
-	public void doCallNanoCad3D() {
-		Trace.entry();
+
+
+    public void doCallNanoCad3D() {
+        Trace.entry();
         System.out.println(" Calling NanoCAD 3D");
         String setsfile = ".settings";
         boolean append = false;
@@ -1152,21 +1101,21 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
             fw2.close();
         } catch (IOException ioe) {
         }
-        
+
         String tmpfile = "tmp.txt";
         File fa = new File(Env.getApplicationDataDir() + Settings.fileSeparator
                 + tmpfile);
-        
+
         if (fa.exists()) {
             fa.delete();
-        }        
-                
+        }
+
         // launch nanocad
         if (Settings.VERBOSE) System.out.println("Calling NanoCAD 3D Main");
-        
+
         nano3DWindow = new Nanocad3D();
-        nano3DWindow.setVisible(true);        
-        
+        nano3DWindow.setVisible(true);
+
         nano3DWindow.addWindowListener(this);
         nano3DWindow.addComponentListener(this);
         //Nanocad3D.glcanvas.requestFocusInWindow();
@@ -1174,10 +1123,10 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         System.out.println(" Done with NanoCAD 3D");
         Trace.exit();
     }
-	
+
     public void doCallNanocad() {
         System.out.println(" Calling Nanocad");
-        
+
         String setsfile = ".settings";
         boolean append = false;
         File sets = new File(Settings.defaultDirStr + Settings.fileSeparator
@@ -1196,51 +1145,51 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
             fw2.close();
         } catch (IOException ioe) {
         }
-        
+
         String tmpfile = "tmp.txt";
 
         File fa = new File(Env.getApplicationDataDir() + Settings.fileSeparator
                 + tmpfile);
-        
+
         if (fa.exists()) {
             fa.delete();
         }
-        
+
         // launch nanocad
         if (Settings.VERBOSE) System.out.println("Calling nanocadMain");
-        
+
         nanWindow = new nanocadFrame2();
-        
+
         nanWindow.addWindowListener(this);
-        
+
         nanWindow.nano.addComponentListener(this);
 
         System.out.println(" Done with Nanocad");
     }
-    
-    public void changeInputText(String i) {
-    	try {
-        // this.inputText = new JTextArea(i, 20,40);
-        //inputText.selectAll();
-        //inputText.replaceSelection(i);
-        //inputText.setCaretPosition(0);
-        // inputText.append(i);
-    	
-    	//jayeeta added following lines
-    	showMolEditor.tempmol=i;
-		//Set the Label in G03MenuTree
-		G03MenuTree.nanocadNotice.setText("Molecular Specification Imported from Nanocad");
-		
-		
-			//tempmol+="\n"+i;
-		} catch (RuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-    	
+    public void changeInputText(String i) {
+        try {
+            // this.inputText = new JTextArea(i, 20,40);
+            //inputText.selectAll();
+            //inputText.replaceSelection(i);
+            //inputText.setCaretPosition(0);
+            // inputText.append(i);
+
+            //jayeeta added following lines
+            showMolEditor.tempmol = i;
+            //Set the Label in G03MenuTree
+            G03MenuTree.nanocadNotice.setText("Molecular Specification Imported from Nanocad");
+
+
+            //tempmol+="\n"+i;
+        } catch (RuntimeException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
     }
-    
+
 //    public void enableButtons(boolean enable) {
 //        readButton.setEnabled(enable);
 //        prefButton.setEnabled(enable);
@@ -1254,7 +1203,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
 //            usageButton.setEnabled(enable);
 //        }
 //    }
-    
+
     public void updateAuthenticatedStatus() {
         prefButton.setEnabled(Settings.authenticated);
         mangButton.setEnabled(Settings.authenticated);
@@ -1264,33 +1213,39 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         if (!Settings.WEBSERVICE) {
             usageButton.setEnabled(Settings.authenticated);
         }
-        
+
         if (Settings.authenticated) {
             setAuthButton("Sign Out",
-                          "<html><p>Disconnect from the CCG.</p><html>");
+                    "<html><p>Disconnect from the CCG.</p><html>");
         } else {
             setAuthButton("Sign In",
-            "<html><p>Authenticate to the CCG.</p><html>");
+                    "<html><p>Authenticate to the CCG.</p><html>");
         }
     }
-    
+
     /* WindowListener interface definition methods */
-    public void windowOpened(WindowEvent e) {}
+    public void windowOpened(WindowEvent e) {
+    }
 
-    public void windowClosed(WindowEvent e) {}
+    public void windowClosed(WindowEvent e) {
+    }
 
-    public void windowIconified(WindowEvent e) {}
-    
-    public void windowDeiconified(WindowEvent e) {}
+    public void windowIconified(WindowEvent e) {
+    }
 
-    public void windowActivated(WindowEvent e) {}
+    public void windowDeiconified(WindowEvent e) {
+    }
 
-    public void windowDeactivated(WindowEvent e) {}
-    
+    public void windowActivated(WindowEvent e) {
+    }
+
+    public void windowDeactivated(WindowEvent e) {
+    }
+
     public void windowClosing(WindowEvent e) {
-    	
-    	Trace.entry();    	
-    	String name = "";
+
+        Trace.entry();
+        String name = "";
         // check for temp file and if it exists, load into text box
         System.err.println("editingStuff:load tmp.txt file here!");
 
@@ -1316,43 +1271,46 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                 System.err.println("IOException in editJobPanel");
             }
         }
-        
+
         name = e.getWindow().getClass().getName();
-        name = name.substring(name.lastIndexOf(".")+1);
+        name = name.substring(name.lastIndexOf(".") + 1);
         if (name.equalsIgnoreCase("Nanocad3D")) {
-        	
-        	nano3DWindow.dispose();        	
-        	Nanocad3D.glcanvas.setVisible(false);
+
+            nano3DWindow.dispose();
+            Nanocad3D.glcanvas.setVisible(false);
         	/*if(nano3DWindow.glcanvas != null){
         			nano3DWindow.glcanvas.setVisible(false);
-        	}*/        	
-        	nanbool = false;
-        	optsComponent.selectedFrontPanel=0;  
-            
-        }else if (name.equalsIgnoreCase("nanocadFrame2")){
-        	nanWindow.dispose();
-            if (nanWindow.nano.t != null)
-            	nanWindow.nano.t.setVisible(false);
+        	}*/
             nanbool = false;
-            optsComponent.selectedFrontPanel=0;
+            optsComponent.selectedFrontPanel = 0;
+
+        } else if (name.equalsIgnoreCase("nanocadFrame2")) {
+            nanWindow.dispose();
+            if (nanWindow.nano.t != null)
+                nanWindow.nano.t.setVisible(false);
+            nanbool = false;
+            optsComponent.selectedFrontPanel = 0;
         }
-        Trace.exit();               
+        Trace.exit();
     }
 
     /* ComponentListener interface definition methods */
-    public void componentMoved(ComponentEvent e) {}
+    public void componentMoved(ComponentEvent e) {
+    }
 
-    public void componentResized(ComponentEvent e) {}
+    public void componentResized(ComponentEvent e) {
+    }
 
-    public void componentShown(ComponentEvent e) {}
-    
+    public void componentShown(ComponentEvent e) {
+    }
+
     public void componentHidden(ComponentEvent e) {
         System.err.println("load temp file here!");
 
         // File f = new File(Settings.defaultDirStr +
         File f = new File(Env.getApplicationDataDir() + Settings.fileSeparator
                 + "tmp.txt");
-        
+
         if ((f.exists())) {
             try {
                 BufferedReader inStream = new BufferedReader(new FileReader(f));
@@ -1378,7 +1336,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
             }
         }*/
         nanWindow.dispose();
-        optsComponent.selectedFrontPanel=0;
+        optsComponent.selectedFrontPanel = 0;
         /*
         JOptionPane.showMessageDialog(null, "Go to Nanocad via the 'Submit Jobs' Window to use this option",
             "Information Message", JOptionPane.INFORMATION_MESSAGE);

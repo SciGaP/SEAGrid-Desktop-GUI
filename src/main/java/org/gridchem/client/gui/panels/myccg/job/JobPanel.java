@@ -134,6 +134,7 @@ import nanocad.nanocadFrame2;
 import nanocad.newNanocad;
 
 import org.apache.airavata.model.workspace.experiment.Experiment;
+import org.apache.airavata.model.workspace.experiment.ExperimentState;
 import org.gridchem.client.DataTree;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.SpectraOutputParser;
@@ -239,7 +240,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	int defaultColumns[] = { 0, 1, 13, 4, 5, 7, 10 };
 
 	public static int num_column = columnNames.length;
-	private List<JobBean> jobs;
+	private List<Experiment> experiments;
 	private Clipboard clipboard;
 	private JFrame jobFrame;
 
@@ -314,12 +315,11 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,
 			ActionEvent.CTRL_MASK, false);
 
-	public JobPanel(List<JobBean> jobs) {
+	public JobPanel(List<Experiment> experiments) {
 
 		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-		this.jobs = jobs;
-		// setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
+		this.experiments = experiments;
 
 		setLayout(new GridBagLayout());
 
@@ -329,7 +329,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		c.weightx = 1.0;
 		c.gridheight = 2;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
-		add(createJobContainer(this.jobs), c);
+		add(createJobContainer(this.experiments), c);
 
 		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0.0;
@@ -554,10 +554,10 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @return
 	 */
-	private Container createJobContainer(List<JobBean> jobs) {
+	private Container createJobContainer(List<Experiment> experiments) {
 		jobBox = Box.createVerticalBox();
 
-		m_data = new JobTableData(jobs);
+		m_data = new JobTableData(experiments);
 
 		jobTable = new JTable();
 		jobTable.setAutoCreateColumnsFromModel(false);
@@ -683,7 +683,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		// how they found it. Second, we don't want to annoy the user, so we
 		// set the "show.progress" flag to "false" so the JobPanel won't
 		// pop up a progress panel when it's refreshing on the timer.
-		JobCommand command;
+		/*JobCommand command;
 
 		if (!isInProcess()) {
 			if (isUpdatedWithSearchResults()) {
@@ -697,7 +697,8 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			if (Settings.DEBUG)
 				System.out
 						.println("Skipped update because gui was already busy.");
-		}
+		}*/
+		updateJobTable(experiments);
 	}
 
 	/**
@@ -723,7 +724,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @param jobs
 	 */
-	public synchronized void updateJobTable(List<JobBean> jobs) {
+	public synchronized void updateJobTable(List<Experiment> jobs) {
 
 		jobTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -778,19 +779,18 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		JobBean job = getSelectedJob();
+		Experiment experiment = getSelectedJob();
 		if (e.getSource() == statusButton) {
-			if (job == null) {
+			if (experiment == null) {
 				JOptionPane.showMessageDialog(null, "Please select a job.", "",
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 
-			System.out
-					.println("Estimating Start and End Time of submitted Job");
-			if (!job.getStatus().equals(JobStatusType.FINISHED)
-					& !job.getStatus().equals(JobStatusType.STOPPED)
-					& !job.getStatus().equals(JobStatusType.TIME_ELAPSED)) {
+			/*System.out.println("Estimating Start and End Time of submitted Job");
+			if (!experiment.getStatus().equals(JobStatusType.FINISHED)
+					& !experiment.getStatus().equals(JobStatusType.STOPPED)
+					& !experiment.getStatus().equals(JobStatusType.TIME_ELAPSED)) {
 
 				PredictTimeCommand predicttimeCommand = new PredictTimeCommand(
 						this);
@@ -800,8 +800,9 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 				statusChanged(new StatusEvent(predicttimeCommand, Status.START));
 
 			} else {
-				createJobInfoDialog(job);
-			}
+				createJobInfoDialog(experiment);
+			}*/
+			createJobInfoDialog(experiment);
 
 			/*
 			 * new SwingWorker() { public Object construct() { int range = 10;
@@ -825,23 +826,23 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			doSearchJobs();
 
 		} else if (e.getSource() == killButton) {
-			if (job == null) {
+			if (experiment == null) {
 				JOptionPane.showMessageDialog(null, "Please select a job.", "",
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-			doKillJob(job);
+			doKillJob(experiment);
 
 		} else if (e.getSource() == dataButton) {
-			if (job == null) {
+			if (experiment == null) {
 				JOptionPane.showMessageDialog(null, "Please select a job.", "",
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-			doVisualizeJob(job);
+			doVisualizeJob(experiment);
 
 		} else if (e.getSource() == moldenButton) {
-			if (job == null) {
+			if (experiment == null) {
 				JOptionPane.showMessageDialog(null, "Please select a job.", "",
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
@@ -902,29 +903,29 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 	}
 
-	public void estimateTime(JobBean job) {
-		System.out.println("Estimating Start and End Time of submitted Job");
-		if (!job.getStatus().equals(JobStatusType.FINISHED)
-				& !job.getStatus().equals(JobStatusType.STOPPED)
-				& !job.getStatus().equals(JobStatusType.TIME_ELAPSED)) {
-
-			PredictTimeCommand predicttimeCommand = new PredictTimeCommand(this);
-
-			predicttimeCommand.getArguments().put("job", job);
-
-			statusChanged(new StatusEvent(predicttimeCommand, Status.START));
-
-		} else {
-			createJobInfoDialog(job);
-		}
+	public void estimateTime(Experiment experiment) { //TODO to be implemented in Airavata
+//		System.out.println("Estimating Start and End Time of submitted Job");
+//		if (!job.getStatus().equals(JobStatusType.FINISHED)
+//				& !job.getStatus().equals(JobStatusType.STOPPED)
+//				& !job.getStatus().equals(JobStatusType.TIME_ELAPSED)) {
+//
+//			PredictTimeCommand predicttimeCommand = new PredictTimeCommand(this);
+//
+//			predicttimeCommand.getArguments().put("job", job);
+//
+//			statusChanged(new StatusEvent(predicttimeCommand, Status.START));
+//
+//		} else {
+//			createJobInfoDialog(job);
+//		}
 	}
 
-	private void createJobInfoDialog(JobBean job) {
-		getInfoDialog = new JobInfoDialog(job);
+	private void createJobInfoDialog(Experiment experiment) {
+		getInfoDialog = new JobInfoDialog(experiment);
 	}
 	
-	private void createJobInfoDialog(JobBean job, String estStartTime) {
-		getInfoDialog = new JobInfoDialog(job, estStartTime);
+	private void createJobInfoDialog(Experiment experiment, String estStartTime) {
+		getInfoDialog = new JobInfoDialog(experiment, estStartTime);
 	}
 
 	/**
@@ -961,8 +962,8 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		worker.start();
 	}
 
-	private void doKillJob(final JobBean job) {
-		if (job.getStatus().equals(JobStatusType.RUNNING)
+	private void doKillJob(final Experiment job) {
+		/*if (job.getStatus().equals(JobStatusType.RUNNING)
 				|| job.getStatus().equals(JobStatusType.SUBMITTING)
 				|| job.getStatus().equals(JobStatusType.INITIAL)
 				|| job.getStatus().equals(JobStatusType.SCHEDULED)
@@ -977,10 +978,10 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		} else {
 			JOptionPane.showMessageDialog(this, "Job is already stopped.",
 					"Job Management Error", JOptionPane.OK_OPTION);
-		}
+		}*/
 	}
 
-	private void doSteerJob(JobBean job) {
+	private void doSteerJob(Experiment job) {
 		NotificationManagerDialog.getInstance(this.frame, job);
 	}
 
@@ -1162,8 +1163,8 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	// provides file browser
 	// ...for locating molden locally. This also confirms whether X-server is
 	// running locally in case of Windows.....Kailash Kotwani
-	public void viewMoldenJob(final JobBean job) {
-		String molden = "";
+	public void viewMoldenJob(final Experiment experiment) {
+		/*String molden = "";
 		String molden_mac_linux = "";
 		moldenPathFileLoc = Env.getApplicationDataDir() + File.separator
 				+ "moldenPathFile.inp";
@@ -1375,7 +1376,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			} catch (Exception ig) {
 				System.err.println("error in thread sleep");
 			}
-		}
+		}*/
 	}
 
 	/*
@@ -1431,9 +1432,9 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 	}
 
-	public void viewJMOLJob(final JobBean job) {
+	public void viewJMOLJob(final Experiment experiment) {
 
-		String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
+		/*String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
 
 		Settings.jobDir = Settings.defaultDirStr + File.separator
 				+ job.getExperimentName() + File.separator + job.getName()
@@ -1541,12 +1542,12 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 				}
 			}
 
-		}
+		}*/
 	}
 
-	public void viewAbaqusCAEJob(final JobBean job) {
+	public void viewAbaqusCAEJob(final Experiment experiment) {
 
-		String abaqusExec = "";
+		/*String abaqusExec = "";
 		AbaqusCAEPathLoc = Env.getApplicationDataDir() + File.separator
 				+ "AbaqusCAEPath.inp";
 		System.out.println("AbaqusCAEPath.inp: " + AbaqusCAEPathLoc);
@@ -1640,16 +1641,16 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			} catch (Exception e) {
 				System.out.println("Problem running Abaqus CAE");
 			}
-		}
+		}*/
 	}
 
 	// Method below launches JMolEditor for all three OS for Gamess and Gaussian
 	// files. It confirms whether output file
 	// ...file exist locally, if not downloads first.....Kailash Kotwani
 
-	public void viewJMolJob(final JobBean job) {
+	public void viewJMolJob(final Experiment experiment) {
 
-		String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
+		/*String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
 
 		Settings.jobDir = Settings.defaultDirStr + File.separator
 				+ job.getExperimentName() + File.separator + job.getName()
@@ -1690,11 +1691,11 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 				} catch (Exception ex) {
 					System.err.println(ex.getMessage());
-					/*
+					*//*
 					 * JOptionPane.showMessageDialog(new
 					 * Frame(),"Error Loading GAMESS Output file : " +
 					 * ex.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
-					 */
+					 *//*
 					return;
 				}
 			} else if (job.getSoftwareName().equals("Gaussian")) {
@@ -1798,7 +1799,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			} catch (Exception ig) {
 				System.err.println("error in thread sleep");
 			}
-		}
+		}*/
 
 	}
 
@@ -1820,8 +1821,8 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	// ...file exist locally, if not downloads first. For first time user is
 	// provided with file browser
 	// ...for locating VMD locally. ..Kailash Kotwani
-	public void viewVMDJob(final JobBean job) {
-		String VMD = "";
+	public void viewVMDJob(final Experiment experiment) {
+		/*String VMD = "";
 		String VMD_mac_linux = "";
 		VMDPathFileLoc = Env.getApplicationDataDir() + File.separator
 				+ "VMDPathFile.inp";
@@ -1915,7 +1916,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 						System.out
 								.println("value of output form command prompt after running VMD is: "
 										+ comOutput);
-						/*
+						*//*
 						 * if (comOutput.equals("")){
 						 * JOptionPane.showMessageDialog(null,
 						 * "Perhaps X-server (e.g. Exceed) on this machine is not running.\n"
@@ -1923,7 +1924,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 						 * "If this is the case, please go ahead and start it first and then try again."
 						 * , "X Server Problem!!", JOptionPane.WARNING_MESSAGE);
 						 * }
-						 */
+						 *//*
 						// Runtime.getRuntime().exec(windowsCommandStr);
 					} else if (osName.startsWith("Mac")) {
 						// copying output file to a file with common name
@@ -1958,7 +1959,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 						System.out
 								.println("value of output form command prompt after running VMD is: "
 										+ comOutput);
-						/*
+						*//*
 						 * if (comOutput.equals("")){
 						 * JOptionPane.showMessageDialog(null,
 						 * "Perhaps X-server (e.g. Exceed) on this machine is not running.\n"
@@ -1966,7 +1967,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 						 * "If this is the case, please go ahead and start it first and then try again."
 						 * , "X Server Problem!!", JOptionPane.WARNING_MESSAGE);
 						 * }
-						 */
+						 *//*
 
 					} else {
 						// Runtime.getRuntime().exec("cp "+dataFileName+" ./molden.out");
@@ -2019,7 +2020,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			} catch (Exception ig) {
 				System.err.println("error in thread sleep");
 			}
-		}
+		}*/
 	}
 
 	public void saveVMDPath() {
@@ -2093,9 +2094,9 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 	}
 
-	private void doVisualizeJob(final JobBean job) {
+	private void doVisualizeJob(final Experiment experiment) {
 
-		String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
+		/*String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
 
 		Settings.jobDir = Settings.defaultDirStr + File.separator
 				+ job.getExperimentName() + File.separator
@@ -2290,11 +2291,11 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			getOutputCommand.getArguments().put("localFile", dataFileName);
 			statusChanged(new StatusEvent(getOutputCommand, Status.START));
 
-		}
+		}*/
 	}
 
-	private void doBrowseFiles(JobBean job) {
-		try {
+	private void doBrowseFiles(Experiment experiment) {
+		/*try {
 
 			String fileUri = "";
 
@@ -2361,7 +2362,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			// e1.printStackTrace();
 		} catch (Exception e1) {
 			e1.printStackTrace();
-		}
+		}*/
 	}
 
 	/**
@@ -2412,8 +2413,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	/**
 	 * Prompt the user to make sure they mean to delete the given job. If so,
 	 * then call the gms to delete the job and refresh the work space.
-	 * 
-	 * @param job
+	 *
 	 */
 	private void doDeleteJobs(JobBean[] jobs) {
 		String message = (jobs.length > 1) ? "Delete selected jobs?"
@@ -2442,7 +2442,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @return the JobBean associated with the selected row
 	 */
-	public JobBean getSelectedJob() {
+	public Experiment getSelectedJob() {
 		int k = jobTable.getSelectedRow();
 
 		if (k == -1) {
@@ -2460,13 +2460,13 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @return the JobBean associated with the selected row
 	 */
-	public JobBean[] getSelectedJobs() {
-		JobBean[] jobs;
+	public Experiment[] getSelectedJobs() {
+		Experiment[] jobs;
 
 		int[] k = jobTable.getSelectedRows();
 
 		if (k.length > 0) {
-			jobs = new JobBean[k.length];
+			jobs = new Experiment[k.length];
 			for (int i = 0; i < k.length; i++) {
 				System.out.println("Job " + m_data.getJobAtRow(k[i]));
 				jobs[i] = m_data.getJobAtRow(k[i]);
@@ -2522,8 +2522,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 	/**
 	 * Updates the value of a progress panel
-	 * 
-	 * @param message
+	 *
 	 * @param value
 	 */
 	private void updateProgress(int value) {
@@ -2534,7 +2533,6 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * Updates the message of a progress panel
 	 * 
 	 * @param message
-	 * @param value
 	 */
 	private void updateProgress(String message) {
 		progressCancelPrompt.updateStatus(message);
@@ -2575,7 +2573,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	/**
 	 * Put string date into yymmdd format
 	 * 
-	 * @param date
+	 * @param dateString
 	 * @return
 	 */
 	public String stringToDate(String dateString) {
@@ -2607,12 +2605,11 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	private void showPopupMenu(Component component, Point p) {
 		int row = jobTable.rowAtPoint(p);
 
-		JobBean job = getSelectedJob();
+		Experiment experiment = getSelectedJob();
 
 		// disable kill depending on job status
-		if (job.getStatus().equals(JobStatusType.RUNNING)
-				|| job.getStatus().equals(JobStatusType.SCHEDULED)
-				|| job.getStatus().equals(JobStatusType.MIGRATING)) {
+		if (experiment.getExperimentStatus().getExperimentState().equals(ExperimentState.EXECUTING)
+				|| experiment.getExperimentStatus().getExperimentState().equals(ExperimentState.SCHEDULED)) {
 			killMenuItem.setEnabled(true);
 			editNotificationsMenuItem.setEnabled(true);
 		} else {
@@ -2743,7 +2740,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		public void actionPerformed(ActionEvent event) {
 			JMenuItem item = (JMenuItem) event.getSource();
 
-			if (item == getInfoMenuItem) {
+			/*if (item == getInfoMenuItem) {
 				estimateTime(getSelectedJob());
 			} else if (item == estTimeMenuItem) {
 				System.out.println("This is a just dummy option");
@@ -2837,7 +2834,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 				doUnhideAllJobs();
 			} else if (item == deleteMenuItem) {
 				doDeleteJobs(getSelectedJobs());
-			}
+			}*/
 		}
 	}
 
@@ -2986,7 +2983,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @param selectedJobs
 	 */
-	private void resetSelectedTableItems(JobBean[] selectedJobs) {
+	private void resetSelectedTableItems(Experiment[] selectedJobs) {
 		int i = 0;
 		int startSelectedRowInterval = -1;
 		int endSelectedRowInterval = -1;
@@ -3000,7 +2997,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 		while (startSelectedRowInterval == -1 && i < selectedJobs.length) {
 			startSelectedRowInterval = m_data.getRowOfJob(selectedJobs[i]
-					.getId());
+					.getExperimentID());
 			i++;
 		}
 
@@ -3018,7 +3015,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 			while (endSelectedRowInterval == -1 && i > startSelectedRowInterval) {
 				endSelectedRowInterval = m_data.getRowOfJob(selectedJobs[i]
-						.getId());
+						.getExperimentID());
 				i--;
 			}
 
@@ -3043,7 +3040,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	}
 
 	public void statusChanged(StatusEvent event) {
-		Trace.entry();
+		/*Trace.entry();
 		Status status = event.getStatus();
 		System.out.println("Status changed to: " + status.name());
 		System.out.println("StatusListener is: "
@@ -3079,7 +3076,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 					} else if (command.getCommand().equals(JobCommand.KILL)) {
 						message = "Killing job "
 								+ command.getArguments().get("jobIDs") + "...";
-						/* added nik for copying from hpc */} else if (command
+						*//* added nik for copying from hpc *//*} else if (command
 							.getCommand().equals(JobCommand.CP)) {
 						message = "Requesting file...";
 						killAfter = true;
@@ -3246,10 +3243,10 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 					// System.out.println("jobpanel:1314");
 
-					/* Hotfix To Be changed */
-					/*
+					*//* Hotfix To Be changed *//*
+					*//*
 					 * if (doAbaqus!=1) { doViewSpectraPlot(getSelectedJob()); }
-					 */
+					 *//*
 
 					SwingWorker worker = new SwingWorker() {
 						public Object construct() {
@@ -3266,12 +3263,12 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 								viewMoldenJob(getSelectedJob());
 								doMolden = 0;
 							}
-							/*
+							*//*
 							 * if (doSpectra==1){
 							 * doViewSpectraPlot(getSelectedJob());
-							 * 
+							 *
 							 * }
-							 */
+							 *//*
 
 							if (doVMD == 1) {
 								viewVMDJob(getSelectedJob());
@@ -3321,23 +3318,23 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 					Trace.note("Finished Predicting Job Start Time");
 					stopWaiting();
 					//String estStartTime = parseShowstart();
-					/*
+					*//*
 					 * if (estStartTime.equals(
 					 * "Job has started 'Running'. Its no longer scheduled.")) {
 					 * System.out.println ("from - sign change status"); final
 					 * QSTATCommand qstatCommand = new QSTATCommand(this);
-					 * 
+					 *
 					 * statusChanged(new
 					 * StatusEvent(qstatCommand,Status.START)); }
-					 */
+					 *//*
 					//final QSTATCommand qstatCommand = new QSTATCommand(this);
 
 					//statusChanged(new StatusEvent(qstatCommand, Status.START));
-					/*
+					*//*
 					 * JOptionPane.showMessageDialog(this, estStartTime,
 					 * "Start Time Prediction",
 					 * JOptionPane.INFORMATION_MESSAGE);
-					 */
+					 *//*
 					createJobInfoDialog(getSelectedJob(), (String) command.getOutput());
 
 				} else if (command.getCommand().equals(JobCommand.UPDATE)) {
@@ -3552,16 +3549,16 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 					}
 				} else if (command.getCommand().equals(JobCommand.PREDICT)) {
 					// System.out.println("predict command failed: database error***********");
-					
+
 					createJobInfoDialog(getSelectedJob(), "N/A");
 					stopWaiting();
-					/*
+					*//*
 					 * JOptionPane.showMessageDialog( this,
 					 * "Cannot Predict Job Start Time: " +
 					 * ((Exception)command.getArguments
 					 * ().get("exception")).getMessage(),
 					 * "Time Prediciton Error", JOptionPane.ERROR_MESSAGE );
-					 */
+					 *//*
 
 				} else if (command.getCommand().equals(JobCommand.KILL)
 						|| command.getCommand().equals(JobCommand.DELETE)) {
@@ -3664,7 +3661,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			// "Connection Error", JOptionPane.ERROR_MESSAGE);
 			LoginDialog.clearLogin();
 		}
-		Trace.exit();
+		Trace.exit();*/
 	}
 
 	private void launchNanoCad(File file) {
@@ -3947,23 +3944,21 @@ class ColorData {
 		m_data = data;
 	}
 
-	public ColorData(JobStatusType status) {
-		if (status.equals(JobStatusType.FAILED)
-				|| status.equals(JobStatusType.REMOVED)
-				|| status.equals(JobStatusType.RUNTIME_ERROR)
-				|| status.equals(JobStatusType.SUBMISSION_ERROR)) {
+	public ColorData(ExperimentState status) {
+		if (status.equals(ExperimentState.FAILED)
+				|| status.equals(ExperimentState.SUSPENDED)) {
 			m_color = RED;
-		} else if (status.equals(JobStatusType.FINISHED)
-				|| status.equals(JobStatusType.NOT_IN_QUEUE)) {
+		} else if (status.equals(ExperimentState.COMPLETED)
+				|| status.equals(ExperimentState.CREATED)) {
 			m_color = BLUE;
-		} else if (status.equals(JobStatusType.REMOVED)
-				|| status.equals(JobStatusType.STOPPED)) {
+		} else if (status.equals(ExperimentState.CANCELING)
+				|| status.equals(ExperimentState.CANCELED)) {
 			m_color = PINK;
-		} else if (status.equals(JobStatusType.INITIAL)
-				|| status.equals(JobStatusType.SUBMITTING)) {
+		} else if (status.equals(ExperimentState.SCHEDULED)
+				|| status.equals(ExperimentState.VALIDATED)) {
 			m_color = ORANGE;
-		} else if (status.equals(JobStatusType.RUNNING)
-				|| status.equals(JobStatusType.MIGRATING)) {
+		} else if (status.equals(ExperimentState.LAUNCHED)
+				|| status.equals(ExperimentState.EXECUTING)) {
 			m_color = GREEN;
 		} else {
 			m_color = CYAN;
@@ -4002,12 +3997,12 @@ class JobData {
 					+ "sortdown.gif");
 	public static ImageIcon ICON_BLANK = new ImageIcon("blank.gif");
 
-	public JobBean jobBean;
+	public Experiment experiment;
 	public ColorData status;
 
-	public JobData(JobBean jobBean) {
-		this.jobBean = jobBean;
-		this.status = new ColorData(jobBean.getStatus());
+	public JobData(Experiment experiment) {
+		this.experiment = experiment;
+		this.status = new ColorData(experiment.getExperimentStatus().getExperimentState());
 	}
 
 	public static ImageIcon getIcon(double change) {
@@ -4067,24 +4062,24 @@ class JobTableData extends AbstractTableModel implements
 	public int m_sortCol = 0;
 	public boolean m_sortAsc = false;
 
-	public JobTableData(List<JobBean> jobs) {
+	public JobTableData(List<Experiment> experiments) {
 		m_vector = new Vector<JobData>();
 		hidden_vector = new Vector<JobData>();
-		setDefaultData(jobs);
+		setDefaultData(experiments);
 	}
 
 	/**
 	 * Builds 2 vectors, m_vector and hidden_vector of JobData elements. The
 	 * former holds all visible job rows. The latter holds all hidden job rows.
 	 * 
-	 * @param jobs
+	 * @param experiments
 	 */
-	public void setDefaultData(List<JobBean> jobs) {
+	public void setDefaultData(List<Experiment> experiments) {
 		m_vector.removeAllElements();
 		hidden_vector.removeAllElements();
-		for (JobBean job : jobs) {
+		for (Experiment experiment : experiments) {
 			// if (!job.isHidden()) {
-			m_vector.add(new JobData(job));
+			m_vector.add(new JobData(experiment));
 			// } else {
 			// hidden_vector.add(new JobData(job));
 			// }
@@ -4108,7 +4103,7 @@ class JobTableData extends AbstractTableModel implements
 	 * 
 	 * @param jobID
 	 */
-	public void deleteJob(Long jobID) {
+	public void deleteJob(String jobID) {
 		deleteJobAtRow(getRowOfJob(jobID));
 		fireTableDataChanged();
 		sortData();
@@ -4127,10 +4122,10 @@ class JobTableData extends AbstractTableModel implements
 		if (jobIDs.indexOf(";") > -1) {
 			String[] ids = jobIDs.split(";");
 			for (int i = 0; i < ids.length; i++) {
-				deleteJob(new Long(ids[i]));
+				deleteJob(ids[i]);
 			}
 		} else {
-			deleteJob(new Long(jobIDs));
+			deleteJob(jobIDs);
 		}
 	}
 
@@ -4154,7 +4149,7 @@ class JobTableData extends AbstractTableModel implements
 	 * 
 	 * @param jobID
 	 */
-	public void hideJob(Long jobID) {
+	public void hideJob(String jobID) {
 		hideJobAtRow(getRowOfJob(jobID));
 		sortData();
 	}
@@ -4164,7 +4159,7 @@ class JobTableData extends AbstractTableModel implements
 	 * m_vector and places them in hidden_vector. This method calls hideJob()
 	 * with each job id.
 	 * 
-	 * @param jobID
+	 * @param jobIDs
 	 */
 	public void hideJobs(String jobIDs) {
 		if (jobIDs == null || jobIDs.equals("")) {
@@ -4173,10 +4168,10 @@ class JobTableData extends AbstractTableModel implements
 		if (jobIDs.indexOf(";") > -1) {
 			String[] ids = jobIDs.split(";");
 			for (int i = 0; i < ids.length; i++) {
-				hideJob(new Long(ids[i]));
+				hideJob(ids[i]);
 			}
 		} else {
-			hideJob(new Long(jobIDs));
+			hideJob(jobIDs);
 		}
 
 		fireTableDataChanged();
@@ -4241,59 +4236,52 @@ class JobTableData extends AbstractTableModel implements
 		JobData row = (JobData) m_vector.elementAt(nRow);
 		switch (nCol) {
 		case 0:
-			return row.jobBean.getId();
+			return row.experiment.getExperimentID();
 		case 1:
-			return row.jobBean.getName();
+			return row.experiment.getName();
 		case 2:
-			return row.jobBean.getExperimentName();
+			return row.experiment.getDescription();
 		case 3:
-			return row.jobBean.getProjectName();
+			return row.experiment.getProjectID();
 		case 4:
-			return row.jobBean.getSoftwareName();
+			return row.experiment.getApplicationId();
 		case 5:
-			return row.jobBean.getSystemName();
+			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId();
 		case 6:
-			return row.jobBean.getQueueName();
+			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName();
 		case 7:
-			return row.jobBean.getLocalId();
+			return "Local Id";
 		case 8:
-			return row.jobBean.getRequestedCpus();
+			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount();
 		case 9:
-			return row.jobBean.getRequestedMemory();
+			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory();
 		case 10:
 			return row.status;
 		case 11:
-			if (row.jobBean.getStartTime() == null
-					|| row.jobBean.getStartTime().equals(new Date(0))) {
-				return "---";
-			} else {
-				return new SimpleDateFormat("MM/dd/yyyy h:mm a")
-						.format(row.jobBean.getStartTime());
-			}
+			return row.experiment.getCreationTime();
 		case 12:
-			if (row.jobBean.getStopTime() == null
-					|| row.jobBean.getStopTime().equals(new Date(0))) {
-				return "---";
-			} else {
-				return new SimpleDateFormat("MM/dd/yyyy h:mm a")
-						.format(row.jobBean.getStopTime());
-			}
+			return "----";
 		case 13:
-			if (isToday(row.jobBean.getCreated())) {
-				return new SimpleDateFormat("hh:mm a").format(row.jobBean
-						.getCreated());
-			} else {
-				return new SimpleDateFormat("MM/dd/yyyy").format(row.jobBean
-						.getCreated());
-			}
+//			if (isToday(row.jobBean.getCreated())) {
+//				return new SimpleDateFormat("hh:mm a").format(row.jobBean
+//						.getCreated());
+//			} else {
+//				return new SimpleDateFormat("MM/dd/yyyy").format(row.jobBean
+//						.getCreated());
+//			}
+			return row.experiment.getCreationTime();
 		case 14:
-			return row.jobBean.getUsedCpus();
+//			return row.jobBean.getUsedCpus();
+			return 0;
 		case 15:
-			return row.jobBean.getUsedMemory();
+//			return row.jobBean.getUsedMemory();
+			return 0;
 		case 16:
-			return row.jobBean.getCost();
+//			return row.jobBean.getCost();
+			return 0;
 		case 17:
-			return resolveTimeLimit(row.jobBean.getRequestedCpuTime());
+//			return resolveTimeLimit(row.jobBean.getRequestedCpuTime());
+			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getWallTimeLimit();
 		}
 		return "";
 	}
@@ -4345,14 +4333,14 @@ class JobTableData extends AbstractTableModel implements
 		}
 	}
 
-	public void loadData(final List<JobBean> jobs) {
+	public void loadData(final List<Experiment> experiments) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				m_vector.removeAllElements();
 				m_vector = new Vector();
-				for (JobBean job : jobs) {
+				for (Experiment experiment : experiments) {
 					// if (!job.isHidden()) {
-					m_vector.add(new JobData(job));
+					m_vector.add(new JobData(experiment));
 					// } else {
 					// hidden_vector.add(new JobData(job));
 					// }
@@ -4375,14 +4363,14 @@ class JobTableData extends AbstractTableModel implements
 			m_sortCol = -1;
 	}
 
-	public JobBean getJobAtRow(int row) {
-		return ((JobData) m_vector.elementAt(row)).jobBean;
+	public Experiment getJobAtRow(int row) {
+		return ((JobData) m_vector.elementAt(row)).experiment;
 	}
 
-	public int getRowOfJob(Long jobID) {
+	public int getRowOfJob(String jobID) {
 		int row = 0;
 		for (JobData rowItem : m_vector) {
-			if (rowItem.jobBean.getId().equals(jobID)) {
+			if (rowItem.experiment.getExperimentID().equals(jobID)) {
 				return row;
 			}
 			row++;
@@ -4417,77 +4405,69 @@ class JobComparator implements Comparator {
 		JobData s1 = (JobData) o1;
 		JobData s2 = (JobData) o2;
 		int result = 0;
-		Long l1, l2;
+		int l1, l2;
 		switch (m_sortCol) {
 		case 0: // jobID
-			l1 = s1.jobBean.getId();
-			l2 = (Long) s2.jobBean.getId();
-			result = l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
+			result = s1.experiment.getExperimentID().compareTo(s2.experiment.getExperimentID());
 			break;
 		case 1: // name
-			result = s1.jobBean.getName().compareTo(s2.jobBean.getName());
+			result = s1.experiment.getName().compareTo(s2.experiment.getName());
 			break;
 		case 2: // research project
-			result = s1.jobBean.getExperimentName().compareTo(
-					s2.jobBean.getExperimentName());
+			result = s1.experiment.getDescription().compareTo(
+					s2.experiment.getDescription());
 			break;
 		case 3: // project
-			result = s1.jobBean.getProjectName().compareTo(
-					s2.jobBean.getProjectName());
+			result = s1.experiment.getProjectID().compareTo(
+					s2.experiment.getProjectID());
 			break;
 		case 4: // application
-			result = s1.jobBean.getSoftwareName().compareTo(
-					s2.jobBean.getSoftwareName());
+			result = s1.experiment.getApplicationId()
+					.compareTo(s2.experiment.getApplicationId());
 			break;
 		case 5: // hpc system
-			result = s1.jobBean.getSystemName().compareTo(
-					s2.jobBean.getSystemName());
+			result = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId()
+					.compareTo(s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId());
 			break;
 		case 6: // queue
-			result = s1.jobBean.getQueueName().compareTo(
-					s2.jobBean.getQueueName());
+			result = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName()
+					.compareTo(s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName());
 			break;
 		case 7: // local job id
-			result = s1.jobBean.getLocalId().compareTo(s2.jobBean.getLocalId());
+			result = 0;
 			break;
 		case 8: // requested cpus
-			l1 = s1.jobBean.getRequestedCpus();
-			l2 = s2.jobBean.getRequestedCpus();
+			l1 = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount();
+			l2 = s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount();
 			result = l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
 			break;
 		case 9: // requested memory
-			l1 = s1.jobBean.getRequestedMemory();
-			l2 = s2.jobBean.getRequestedMemory();
+			l1 = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory();
+			l2 = s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory();
 			result = l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
 			break;
 		case 10: // status
-			result = s1.jobBean.getStatus().compareTo(s2.jobBean.getStatus());
+			result = s1.experiment.getExperimentStatus().getExperimentState().name()
+					.compareTo(s2.experiment.getExperimentStatus().getExperimentState().name());
 			break;
 		case 11: // start time
-			result = s1.jobBean.getStartTime().compareTo(
-					s2.jobBean.getStartTime());
+			result = (""+s1.experiment.getCreationTime()).compareTo(
+					(""+s2.experiment.getCreationTime()));
 			break;
 		case 12: // stop time
-			result = s1.jobBean.getStopTime().compareTo(
-					s2.jobBean.getStopTime());
+			result = 0;
 			break;
 		case 13: // created
-			result = s1.jobBean.getCreated().compareTo(s2.jobBean.getCreated());
+			result = 0;
 			break;
 		case 14: // used cpus
-			l1 = s1.jobBean.getUsedCpus();
-			l2 = s2.jobBean.getRequestedMemory();
-			result = l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
+			result = 0;
 			break;
 		case 15: // used memory
-			l1 = s1.jobBean.getUsedMemory();
-			l2 = s2.jobBean.getUsedMemory();
-			result = l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
+			result = 0;
 			break;
 		case 16: // cost
-			Double d1 = s1.jobBean.getCost();
-			Double d2 = s2.jobBean.getCost();
-			result = d1 < d2 ? -1 : (d1 > d2 ? 1 : 0);
+			result = 0;
 			break;
 		}
 

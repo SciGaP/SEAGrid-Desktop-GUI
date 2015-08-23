@@ -40,6 +40,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.SwingWorker;
 import org.gridchem.client.common.Settings;
 import org.gridchem.client.common.Status;
@@ -73,7 +74,7 @@ public class NotificationManagerDialog extends JDialog implements ActionListener
     public static ImageIcon ICON_SUB = new ImageIcon(Env.getApplicationDataDir() + 
             File.separator + "images" + File.separator + "icons" + File.separator + "subinput.gif");
     
-    private JobBean job;
+    private Experiment experiment;
     private Frame parent;
     
     private JButton btnAdd;
@@ -88,17 +89,17 @@ public class NotificationManagerDialog extends JDialog implements ActionListener
     
     protected boolean isLoading = false;
     
-    public static void getInstance(Frame parent, JobBean job) {
-        new  NotificationManagerDialog(parent,job);
+    public static void getInstance(Frame parent, Experiment experiment) {
+        new  NotificationManagerDialog(parent,experiment);
     }
     
-    private NotificationManagerDialog(Frame parent, JobBean job) {
+    private NotificationManagerDialog(Frame parent, Experiment experiment) {
         super(parent);
         
-        this.job = job;
+        this.experiment = experiment;
         this.parent = parent;
         
-        setTitle("Job " + job.getId() + " Notifications");
+        setTitle("Job " + experiment.getExperimentID() + " Notifications");
         
         getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 //        setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -126,9 +127,9 @@ public class NotificationManagerDialog extends JDialog implements ActionListener
         setVisible(true);
         
         GETNOTIFICATIONSCommand command = new GETNOTIFICATIONSCommand(this);
-        command.getArguments().put("job", job);
-        command.getArguments().put("progressDialog", new ProgressDialog(parent,""));
-        statusChanged(new StatusEvent(command,Status.START));
+        //command.getArguments().put("job", job); // remove comment
+        //command.getArguments().put("progressDialog", new ProgressDialog(parent,""));
+        //statusChanged(new StatusEvent(command,Status.START));
     }
     
     private Box createTable() {
@@ -285,11 +286,11 @@ public class NotificationManagerDialog extends JDialog implements ActionListener
             
         } else if (event.getSource() == btnClear) {
             
-            CLEARNOTIFICATIONSCommand command = new CLEARNOTIFICATIONSCommand(this);
-            command.getArguments().put("progressDialog", new ProgressDialog(parent,""));
-            command.getArguments().put("job",job);
+            //CLEARNOTIFICATIONSCommand command = new CLEARNOTIFICATIONSCommand(this);
+            //command.getArguments().put("progressDialog", new ProgressDialog(parent,""));
+            //command.getArguments().put("job",job);
             
-            statusChanged(new StatusEvent(command,Status.START));
+            //statusChanged(new StatusEvent(command,Status.START));
         }
     }
     
@@ -436,7 +437,7 @@ public class NotificationManagerDialog extends JDialog implements ActionListener
         public NotificationBean getNotification() {
             notification.setType((NotificationType)cmbType.getSelectedItem());
             notification.setStatus((JobStatusType)cmbStatus.getSelectedItem());
-            notification.setJobId(job.getId());
+            //notification.setJobId(job.getId());
             return notification;
         }
     }

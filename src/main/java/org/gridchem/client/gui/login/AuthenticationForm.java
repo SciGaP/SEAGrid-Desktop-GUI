@@ -172,15 +172,6 @@ public class AuthenticationForm extends JPanel {
 				Thread.currentThread().sleep(500);
 				loginDialog.updateMessage("Updating details...");
 				GridChem.project = AiravataManager.getCurrentProject();
-				
-				/*System.out.println("#########################");
-				for (ComputeBean cb : GridChem.project.getSystems()) {
-					System.out.println(cb.getName());
-					for (SoftwareBean sb : cb.getSoftware()) {
-						System.out.println("\t" + sb.getName());
-					}
-				}
-				System.out.println("#########################");*/
 
 			} else {
 				ProjectSelectionDialog psd = new ProjectSelectionDialog(

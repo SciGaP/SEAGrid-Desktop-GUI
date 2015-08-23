@@ -64,6 +64,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.airavata.gridchem.AiravataManager;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.Invariants;
 import org.gridchem.client.common.Settings;
@@ -415,7 +416,7 @@ public class MonitorVO extends JFrame implements Timeable {
             tabbedPane = new JTabbedPane();
             //ImageIcon icon = createImageIcon("etc/ccglogo1.jpg");
     
-            jobPanel = new JobPanel(GridChem.jobs);
+            jobPanel = new JobPanel(AiravataManager.getLaunchedExperiments(Settings.gridchemusername));
             //JComponent panel1 = makeTextPanel("Job History");
             tabbedPane.addTab("Job History", null, jobPanel,
                               "Show historical job information.");

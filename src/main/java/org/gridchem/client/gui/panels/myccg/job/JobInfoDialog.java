@@ -65,6 +65,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
+import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
+import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.service.beans.JobBean;
 import org.gridchem.service.model.enumeration.JobStatusType;
 
@@ -98,72 +100,73 @@ public class JobInfoDialog extends JDialog {
         }
     };
     
-    public JobInfoDialog(JobBean job) {
-    	this(job, "NULL");
+    public JobInfoDialog(Experiment experiment) {
+    	this(experiment, "NULL");
     }
     
-    public JobInfoDialog(JobBean job, String estStartTime) {
+    public JobInfoDialog(Experiment experiment, String estStartTime) {
         super();
         getInfoDialogPanel = new JPanel(new GridLayout(6,1,5,5));
 
         //          ((GridLayout) getInfoDialogPanel.getLayout()).setVgap(5);
-        String jobStatus = job.getStatus().name();
+        String jobStatus = experiment.getExperimentStatus().getExperimentState().name();
         
         getInfoDialogPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), 
-                "Information about job [" + job.getId() + "]: " + job.getName()));
+                "Information about job [" + experiment.getExperimentID() + "]: " + experiment.getName()));
               
         createJobInfoPopupMenu();
         
-        String text = "<html><b>Name: </b><span style='background:#F0F0F0'>" + job.getName() + "</span></html>";
+        String text = "<html><b>Name: </b><span style='background:#F0F0F0'>" + experiment.getName() + "</span></html>";
         String toolTip = "The name of the job.";
         JLabel name = createLabel(text,toolTip);
         
         
         text = "<html><b>Research Project: </b><span style='background:#F0F0F0'>" + 
-                ((job.getExperimentName().length() > 20)?
-                        job.getExperimentName().substring(0,20):job.getExperimentName()) +
+                ((experiment.getName().length() > 20)?
+                        experiment.getName().substring(0,20):experiment.getName()) +
                 " </span><html>";
-        toolTip = "The research project under study by this job: " + job.getExperimentName();
+        toolTip = "The research project under study by this job: " + experiment.getName();
         JLabel researchProject = createLabel(text,toolTip);
         
         text = "<html><b>User Project: </b><span style='background:#F0F0F0'>" + 
-                ((job.getProjectName().length() > 20)?
-                        job.getProjectName().substring(0,20):job.getProjectName()) +
+                ((experiment.getProjectID().length() > 20)?
+                        experiment.getProjectID().substring(0,20):experiment.getProjectID()) +
                 "</span></html>";
-        toolTip = "The CCG project associated with this job: " + job.getProjectName();
+        toolTip = "The CCG project associated with this job: " + experiment.getProjectID();
         JLabel project= createLabel(text,toolTip);
         
-        text = "<html><b>Application: </b><span style='background:#F0F0F0'>" + job.getSoftwareName() + "</span></html>";
+        text = "<html><b>Application: </b><span style='background:#F0F0F0'>" + experiment.getApplicationId() + "</span></html>";
         toolTip = "The application run by this job.";
         JLabel app = createLabel(text,toolTip); 
+
+        ComputationalResourceScheduling crs= experiment.getUserConfigurationData().getComputationalResourceScheduling();
         
-        
-        text = "<html><b>HPC System: </b><span style='background:#F0F0F0'>" + job.getSystemName() + "</span></html>";
+        text = "<html><b>HPC System: </b><span style='background:#F0F0F0'>" + crs.getResourceHostId() + "</span></html>";
         toolTip = "The HPC system on which this job ran.";
         JLabel hpc = createLabel(text,toolTip); 
 
-        text = "<html><b>Queue: </b><span style='background:#F0F0F0'>" + job.getQueueName() + "</span></html>";
+        text = "<html><b>Queue: </b><span style='background:#F0F0F0'>" + crs.getQueueName() + "</span></html>";
         toolTip = "<html>The queue in which this job ran. This may<br>" + 
                             "not necessarily be the same queue requested<br>during job submission.</html>";
         JLabel queue = createLabel(text,toolTip); 
         
-        text = "<html><b>Local Job ID: </b><span style='background:#F0F0F0'>" + job.getLocalId() + "</span></html>";
+        text = "<html><b>Local Job ID: </b><span style='background:#F0F0F0'>" + "Local ID" + "</span></html>";
         toolTip = "The local job id of this job on the remote resource.";
         JLabel localID = createLabel(text,toolTip);
         
-        text = "<html><b>Requested CPUs: </b><span style='background:#F0F0F0'>" + job.getRequestedCpus() + "</span></html>";
+        text = "<html><b>Requested CPUs: </b><span style='background:#F0F0F0'>" + crs.getTotalCPUCount() + "</span></html>";
         toolTip = "The number of cpu's requested during job submission.";
         JLabel rcpu = createLabel(text,toolTip);
         
         text = "<html><b>Requested Memory: </b><span style='background:#F0F0F0'>" + 
-            ((job.getRequestedMemory() == null)?" ---":job.getRequestedMemory()) + 
+            ((crs.getTotalPhysicalMemory() == 0)?" ---":crs.getTotalPhysicalMemory()) +
             "</span></html>";
         toolTip = "The amount of memory requested during job submission.";
         JLabel rmem = createLabel(text,toolTip);
         
         text = "<html><b>Requested WallTime: </b><span style='background:#F0F0F0'>" + 
-        ((job.getRequestedCpuTime() == null)?" ---":resolveTimeLimit(job.getRequestedCpuTime())) + 
+        ((crs.getTotalCPUCount() == 0)?" ---":(crs.getTotalCPUCount())) +
         "</span></html>";
         toolTip = "The amount of wall clock time requested during job submission.";
         JLabel rwct = createLabel(text,toolTip);
@@ -173,59 +176,25 @@ public class JobInfoDialog extends JDialog {
         JLabel status = createLabel(text,toolTip);
         
         
-        text = "<html><b>Used CPUs: </b><span style='background:#F0F0F0'>" + job.getUsedCpus() + "</span></html>";
+        text = "<html><b>Used CPUs: </b><span style='background:#F0F0F0'>" + 0 + "</span></html>";
         toolTip = "The number of CPU's actually used by this job.";
         JLabel ucpu = createLabel(text,toolTip);         
         
         text = "<html><b>Used Memory: </b><span style='background:#F0F0F0'>" + 
-            ((job.getUsedMemory() == null)?" ---":job.getUsedMemory()) + 
+            0 +
             "</span></html>";
         toolTip = "The amount of memory actually allocated during the running of this job.";
         JLabel umem = createLabel(text,toolTip);         
         
-        text = "<html><b>Cost: </b><span style='background:#F0F0F0'>" + job.getCost() + "</span></html>";
+        text = "<html><b>Cost: </b><span style='background:#F0F0F0'>" + 0 + "</span></html>";
         toolTip = "The number of SU's charged to the CCG project associated with this job.";
         JLabel cost = createLabel(text,toolTip);         
         
         text = "<html><b>Est. Start Time: </b><span style='background:#F0F0F0'>" + estStartTime + "</span></html>";
         toolTip = "Expected start time for job";
         JLabel eStartTime = createLabel(text,toolTip);
-        
-        try {
-            Calendar start = Calendar.getInstance();
-            start.setTimeInMillis(job.getStartTime().getTime());
-            System.out.println("Date year is " + start.get(Calendar.YEAR));
-            if (job.getStartTime() == null || start.get(Calendar.YEAR) == 3000) {
-                System.out.println("Job " + job.getId() + " start time is " + job.getStartTime());
-                formattedDate = " ---";
-            } else {
-                formattedDate = new SimpleDateFormat("E MMM d, yyyy hh:mm a").format(job.getStartTime());
-            }
-        } catch (Exception e) {
-            System.out.println("Error with start time of " + job.getStartTime());
-            
-            formattedDate = " ---";
-        }
-        text = "<html><b>Start Date: </b><span style='background:#F0F0F0'>" + formattedDate + "</span></html>";
-        toolTip = "The start date and time of this job.";
-        JLabel start = createLabel(text,toolTip);         
-        
-        
-        try {
-            Calendar stop = Calendar.getInstance();
-            stop.setTimeInMillis(job.getStopTime().getTime());
-            System.out.println("Date year is " + stop.get(Calendar.YEAR));
-            if (job.getStopTime() == null || stop.get(Calendar.YEAR) == 3000) {
-                System.out.println("Job " + job.getId() + " stop time is " + job.getStopTime());
-                formattedDate = " ---";
-            } else {
-                formattedDate = new SimpleDateFormat("E MMM d, yyyy hh:mm a").format(job.getStopTime());
-            }
-        } catch (Exception e) {
-            System.out.println("Error with stop time of " + job.getStopTime());
-            formattedDate = " ---";
-        }
-        
+
+        formattedDate = " ---";
         text = "<html><b>Stop Date: </b><span style='background:#F0F0F0'>" + formattedDate + "</span></html>";
         toolTip = "The stop date and time of this job.";
         JLabel stop = createLabel(text,toolTip);
@@ -245,22 +214,21 @@ public class JobInfoDialog extends JDialog {
         
         getInfoDialogPanel.add(app);
         getInfoDialogPanel.add(ucpu);
-        getInfoDialogPanel.add(start);
         
         getInfoDialogPanel.add(status);
         getInfoDialogPanel.add(umem);
         getInfoDialogPanel.add(stop);
         
         getInfoDialogPanel.add(cost);
-        if (job.getStatus().equals(JobStatusType.SUBMITTING) ||
-        job.getStatus().equals(JobStatusType.INITIAL) ||
-        job.getStatus().equals(JobStatusType.SCHEDULED) ||
-        job.getStatus().equals(JobStatusType.MIGRATING) || 
-        job.getStatus().equals(JobStatusType.NOT_IN_QUEUE))
-        getInfoDialogPanel.add(eStartTime);
-        else {
-        	getInfoDialogPanel.add(new JLabel(""));
-        }
+//        if (experiment.getStatus().equals(JobStatusType.SUBMITTING) ||
+//                experiment.getStatus().equals(JobStatusType.INITIAL) ||
+//                experiment.getStatus().equals(JobStatusType.SCHEDULED) ||
+//                experiment.getStatus().equals(JobStatusType.MIGRATING) ||
+//                experiment.getStatus().equals(JobStatusType.NOT_IN_QUEUE))
+//        getInfoDialogPanel.add(eStartTime);
+//        else {
+//        	getInfoDialogPanel.add(new JLabel(""));
+//        }
         getInfoDialogPanel.add(new JLabel(""));
         
         
@@ -283,7 +251,7 @@ public class JobInfoDialog extends JDialog {
         this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, binding);
         this.getRootPane().getActionMap().put(binding, action);
         this.setContentPane(getInfoDialogPanel);
-        this.setTitle(job.getName() + " Info");
+        this.setTitle(experiment.getName() + " Info");
         this.pack();
         this.setVisible(true);
     }

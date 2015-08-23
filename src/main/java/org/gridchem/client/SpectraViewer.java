@@ -72,6 +72,7 @@ import java.text.SimpleDateFormat;
 
 import javax.swing.JFrame;
 
+import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.gridchem.client.common.Settings;
 import org.gridchem.service.beans.JobBean;
 
@@ -98,9 +99,9 @@ import org.gridchem.service.beans.JobBean;
 
 public class SpectraViewer extends JFrame {
 	
-    public SpectraViewer(JobBean job) {
+    public SpectraViewer(Experiment experiment) {
 
-    	String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
+    	/*String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
         
         Settings.jobDir = Settings.defaultDirStr + File.separator + 
                 job.getExperimentName() + File.separator + 
@@ -164,7 +165,7 @@ public class SpectraViewer extends JFrame {
 
 
 
-        setVisible(true);
+        setVisible(true);*/
 
     }
 
