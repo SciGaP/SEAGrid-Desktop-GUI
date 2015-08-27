@@ -33,7 +33,10 @@ public class AiravataClient extends Airavata.Client{
         String clientId = AiravataConfig.getProperty("client_id");
         String clientSecret = AiravataConfig.getProperty("client_secret");
         OAuthClient oAuthClient= new OAuthClient(endPoint,clientId,clientSecret);
-
+        if(AiravataConfig.getProperty("identity_server_tenant_domain") != null
+                && !AiravataConfig.getProperty("identity_server_tenant_domain").isEmpty()){
+            userName = userName + "@" + AiravataConfig.getProperty("identity_server_tenant_domain");
+        }
         OAuthClient.AuthResponse authResponse=oAuthClient.authenticate(userName, password);
         return authResponse.getAccess_token();
     }

@@ -7,17 +7,14 @@ import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDes
 import org.apache.airavata.model.appcatalog.appinterface.DataType;
 import org.apache.airavata.model.appcatalog.appinterface.InputDataObjectType;
 import org.apache.airavata.model.appcatalog.appinterface.OutputDataObjectType;
-import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
 import org.apache.airavata.model.error.AiravataClientConnectException;
 import org.apache.airavata.model.util.ExperimentModelUtil;
-import org.apache.airavata.model.util.ProjectModelUtil;
 import org.apache.airavata.model.workspace.Project;
 import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
 import org.apache.airavata.model.workspace.experiment.Experiment;
 import org.apache.airavata.model.workspace.experiment.ExperimentState;
 import org.apache.airavata.model.workspace.experiment.UserConfigurationData;
-import org.apache.airavata.util.FileManager;
 import org.apache.axis2.AxisFault;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -25,31 +22,23 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
-import org.gridchem.client.common.Preferences;
 import org.gridchem.client.common.Settings;
 import org.gridchem.client.common.Status;
-import org.gridchem.client.gui.filebrowser.FileBrowserWorkerImpl;
 import org.gridchem.client.gui.filebrowser.commands.FileCommand;
 import org.gridchem.client.gui.jobsubmission.commands.JobCommand;
 import org.gridchem.client.interfaces.StatusListener;
-import org.gridchem.client.util.GMS3;
 import org.gridchem.service.beans.*;
 import org.gridchem.service.exceptions.*;
-import org.gridchem.service.model.enumeration.AccessType;
-import org.gridchem.service.socket.FileUploadThread;
 import org.gridchem.service.stub.file.ExceptionException;
-import org.gridchem.service.stub.file.FileServiceStub;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URLConnection;
 import java.rmi.RemoteException;
 import java.util.*;
 
-/**
- * Created by dimuthuupeksha on 4/17/15.
- */
 public class AiravataManager {
 
     public static String accessToken="";
@@ -80,7 +69,13 @@ public class AiravataManager {
         try {
             airavataProjects = getClient().getAllUserProjects(AiravataConfig.getProperty(AiravataConfig.GATEWAY),Settings.gridchemusername);
         }catch (Exception e) {
-            throw new ProjectException(e.getMessage());
+            //User does not exists in the system - creating default project
+            try{
+                getClient().createProject(AiravataConfig.GATEWAY, new Project("no-id",Settings.gridchemusername,"Default Project"));
+                airavataProjects = getClient().getAllUserProjects(AiravataConfig.getProperty(AiravataConfig.GATEWAY),Settings.gridchemusername);
+            }catch (Exception ex){
+                throw new ProjectException(e.getMessage());
+            }
         }
         return airavataProjects;
     }
@@ -119,6 +114,8 @@ public class AiravataManager {
         JSONObject json = new JSONObject(query);
 
         UserBean userBean = new UserBean();
+
+        userBean.setUserName(Settings.gridchemusername);
 
         if(json.has("preferred_username"))
             userBean.setUserName(json.getString("preferred_username"));

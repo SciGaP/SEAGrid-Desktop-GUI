@@ -3,31 +3,20 @@
  */
 package org.gridchem.client.gui.login;
 
-import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.util.HashMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
-
 import org.apache.airavata.gridchem.AiravataManager;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.Invariants;
 import org.gridchem.client.LabelTextRows;
 import org.gridchem.client.SwingWorker;
 import org.gridchem.client.common.Settings;
-import org.gridchem.service.beans.ComputeBean;
-import org.gridchem.service.beans.SoftwareBean;
 import org.gridchem.service.exceptions.LoginException;
 import org.gridchem.service.model.enumeration.AccessType;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import java.awt.*;
+import java.util.HashMap;
 
 /**
  * @author dooley
