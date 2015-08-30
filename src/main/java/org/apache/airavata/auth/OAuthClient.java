@@ -18,7 +18,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 /**
- * Created by dimuthuupeksha on 4/16/15.
+ * @author Dimuthu
  */
 public class OAuthClient {
 

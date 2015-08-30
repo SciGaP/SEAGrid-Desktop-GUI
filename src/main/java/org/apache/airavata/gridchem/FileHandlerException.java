@@ -1,7 +1,7 @@
 package org.apache.airavata.gridchem;
 
 /**
- * Created by dimuthuupeksha on 8/17/15.
+ * @author Dimuthu
  */
 public class FileHandlerException extends Exception {
     public FileHandlerException () {

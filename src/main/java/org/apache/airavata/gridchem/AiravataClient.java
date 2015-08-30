@@ -14,7 +14,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.thrift.protocol.TProtocol;
 
 /**
- * Created by dimuthuupeksha on 4/16/15.
+ * @author Dimuthu
  */
 public class AiravataClient extends Airavata.Client{
 

@@ -3,34 +3,19 @@ package org.apache.airavata.gridchem;
 import org.apache.commons.lang.Validate;
 import org.apache.oodt.cas.filemgr.datatransfer.DataTransfer;
 import org.apache.oodt.cas.filemgr.datatransfer.RemoteDataTransferFactory;
-import org.apache.oodt.cas.filemgr.datatransfer.RemoteDataTransferer;
 import org.apache.oodt.cas.filemgr.ingest.StdIngester;
 import org.apache.oodt.cas.filemgr.metadata.CoreMetKeys;
 import org.apache.oodt.cas.filemgr.structs.Product;
 import org.apache.oodt.cas.filemgr.structs.exceptions.ConnectionException;
 import org.apache.oodt.cas.filemgr.system.XmlRpcFileManagerClient;
 import org.apache.oodt.cas.metadata.Metadata;
-import org.apache.oodt.cas.metadata.SerializableMetadata;
-import org.gridchem.client.GridChem;
-import org.gridchem.client.SwingWorker;
-import org.gridchem.client.common.StatusEvent;
-import org.gridchem.client.exceptions.GMSException;
-import org.gridchem.client.exceptions.SessionException;
-import org.gridchem.client.gui.filebrowser.commands.FileCommand;
-import org.gridchem.client.gui.filebrowser.commands.MKDIRCommand;
-import org.gridchem.client.gui.login.LoginDialog;
-import org.gridchem.client.interfaces.StatusListener;
-import org.gridchem.client.optsComponent;
-import org.gridchem.service.socket.FileUploadThread;
 
-import javax.swing.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Created by dimuthuupeksha on 6/14/15.
+ * @author Dimuthu
  */
 public class FileBrowserAiravata {
     private static final String transferServiceFacClass = "org.apache.oodt.cas.filemgr.datatransfer.RemoteDataTransferFactory";
@@ -74,7 +59,7 @@ public class FileBrowserAiravata {
             DataTransfer dt = new RemoteDataTransferFactory().createDataTransfer();
             XmlRpcFileManagerClient fmClient = getClient();
             dt.setFileManagerUrl(fmClient.getFileManagerUrl());
-            Product product = null;
+            Product product;
             if (productId != null) {
                 product = fmClient.getProductById(productId);
             } else if (productName != null) {
@@ -119,7 +104,8 @@ public class FileBrowserAiravata {
         if (client != null) {
             return client;
         } else {
-            return new XmlRpcFileManagerClient(new URL(getUrl()), false);
+            client = new XmlRpcFileManagerClient(new URL(getUrl()), false);
+            return client;
         }
     }
 

@@ -6,26 +6,10 @@ import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDes
 import java.util.List;
 
 /**
- * Created by dimuthuupeksha on 6/13/15.
+ * @author Dimuthu
  */
 public class ExperimentHandlerUtils {
     public static ExperimentHandler getExperimentHandler(String appInterfaceDescID){
         return new ExperimentHandler();
-//        List<ApplicationInterfaceDescription> appInterfaces = AiravataManager.getAllAppInterfaces();
-//        String applicationName =null;
-//        for(ApplicationInterfaceDescription desc : appInterfaces){
-//            if(desc.getApplicationInterfaceId().equals(appInterfaceDescID)){
-//                applicationName = desc.getApplicationName();
-//                break;
-//            }
-//        }
-//        switch (applicationName){
-//            case "Echo":
-//                return new EchoExperimentHandler();
-//            case "Gaussian":
-//                return new GaussianExperimentHandler();
-//            default:
-//                return new ExperimentHandler();
-//        }
     }
 }

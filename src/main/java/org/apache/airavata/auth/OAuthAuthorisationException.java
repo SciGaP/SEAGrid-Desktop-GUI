@@ -1,7 +1,7 @@
 package org.apache.airavata.auth;
 
 /**
- * Created by dimuthuupeksha on 4/16/15.
+ * @author Dimuthu
  */
 public class OAuthAuthorisationException extends Exception{
     public OAuthAuthorisationException () {
