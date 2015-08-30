@@ -151,7 +151,6 @@ public class GridChem
     }
     
 	private static void init() {
-
         settings = Settings.getInstance();
         env = Env.getInstance();
 //        SimpleHook hook = new SimpleHook();
@@ -160,6 +159,7 @@ public class GridChem
     
     public static void main (String[] args)
     {
+		Trace.traceOff();
         Trace.entry();
 
         try {

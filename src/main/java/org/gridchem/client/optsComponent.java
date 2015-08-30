@@ -279,7 +279,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
             rssurl = new URL(Invariants.CCGRSSFeed);
             dyninfoPane = new JTextPane();
             dyninfoPane.setEditorKit(new HTMLEditorKit());
-            dyninfoPane.setText(textinfo1 + prss.parseRSS(rssurl) + textinfo2);
+            dyninfoPane.setText(textinfo1 + /**prss.parseRSS(rssurl)**/  textinfo2);
             dyninfoPane.setCaretPosition(0);
 
         } catch (MalformedURLException e) {
