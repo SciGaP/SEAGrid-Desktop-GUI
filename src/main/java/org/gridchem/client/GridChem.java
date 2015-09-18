@@ -40,46 +40,29 @@ DEALINGS WITH THE SOFTWARE.
 
 package org.gridchem.client;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationModule;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
-import org.apache.airavata.model.error.AiravataClientConnectException;
 import org.apache.airavata.model.workspace.Project;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.PosixParser;
-import org.apache.thrift.TException;
+import org.apache.commons.cli.*;
 import org.gridchem.client.common.Settings;
 import org.gridchem.client.util.Env;
 import org.gridchem.client.util.GMS3;
 import org.gridchem.service.beans.ComputeBean;
 import org.gridchem.service.beans.JobBean;
-import org.gridchem.service.beans.ProjectBean;
 import org.gridchem.service.beans.SoftwareBean;
 import org.gridchem.service.beans.UserBean;
 import org.gridchem.service.model.enumeration.AccessType;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 @SuppressWarnings("static-access")
 public class GridChem
@@ -616,7 +599,7 @@ public class GridChem
     public static List<ApplicationDeploymentDescription> getSoftware() {
         List<ApplicationDeploymentDescription> apps = new ArrayList<ApplicationDeploymentDescription>();
 		try {
-			apps = AiravataManager.getAplicationDeployments();
+			apps = AiravataManager.getApplicationDeployments();
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}

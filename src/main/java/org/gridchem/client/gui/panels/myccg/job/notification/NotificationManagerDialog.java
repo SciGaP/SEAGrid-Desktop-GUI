@@ -40,7 +40,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.apache.airavata.model.workspace.experiment.Experiment;
+import org.apache.airavata.model.experiment.ExperimentModel;
 import org.gridchem.client.SwingWorker;
 import org.gridchem.client.common.Settings;
 import org.gridchem.client.common.Status;
@@ -74,7 +74,7 @@ public class NotificationManagerDialog extends JDialog implements ActionListener
     public static ImageIcon ICON_SUB = new ImageIcon(Env.getApplicationDataDir() + 
             File.separator + "images" + File.separator + "icons" + File.separator + "subinput.gif");
     
-    private Experiment experiment;
+    private ExperimentModel experiment;
     private Frame parent;
     
     private JButton btnAdd;
@@ -89,17 +89,17 @@ public class NotificationManagerDialog extends JDialog implements ActionListener
     
     protected boolean isLoading = false;
     
-    public static void getInstance(Frame parent, Experiment experiment) {
+    public static void getInstance(Frame parent, ExperimentModel experiment) {
         new  NotificationManagerDialog(parent,experiment);
     }
     
-    private NotificationManagerDialog(Frame parent, Experiment experiment) {
+    private NotificationManagerDialog(Frame parent, ExperimentModel experiment) {
         super(parent);
         
         this.experiment = experiment;
         this.parent = parent;
         
-        setTitle("Job " + experiment.getExperimentID() + " Notifications");
+        setTitle("Job " + experiment.getExperimentId() + " Notifications");
         
         getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 //        setBorder(BorderFactory.createEmptyBorder(10,10,10,10));

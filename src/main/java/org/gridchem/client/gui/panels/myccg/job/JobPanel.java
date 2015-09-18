@@ -38,153 +38,46 @@ package org.gridchem.client.gui.panels.myccg.job;
  * DEALINGS WITH THE SOFTWARE.
  */
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.HeadlessException;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.net.ConnectException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.ProgressMonitor;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.event.TableColumnModelListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-
+import cct.dialogs.JEditorFrame;
+import cct.interfaces.AtomInterface;
+import cct.interfaces.MoleculeInterface;
+import cct.modelling.MolecularGeometry;
+import cct.vecmath.vPoint3f;
 import nanocad.nanocadFrame2;
 import nanocad.newNanocad;
-
-import org.apache.airavata.model.workspace.experiment.Experiment;
-import org.apache.airavata.model.workspace.experiment.ExperimentState;
-import org.gridchem.client.DataTree;
-import org.gridchem.client.GridChem;
-import org.gridchem.client.SpectraOutputParser;
-import org.gridchem.client.SpectraViewer;
+import org.apache.airavata.model.experiment.ExperimentModel;
+import org.apache.airavata.model.status.ExperimentState;
+import org.gridchem.client.*;
 import org.gridchem.client.SwingWorker;
-import org.gridchem.client.TableSorter;
-import org.gridchem.client.Trace;
 import org.gridchem.client.common.Settings;
 import org.gridchem.client.common.Status;
 import org.gridchem.client.common.StatusEvent;
-import org.gridchem.client.exceptions.GMSException;
-import org.gridchem.client.exceptions.SessionException;
 import org.gridchem.client.exceptions.VisualizationException;
-import org.gridchem.client.gui.filebrowser.FileBrowserImpl;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
-import org.gridchem.client.gui.jobsubmission.commands.DELETECommand;
-import org.gridchem.client.gui.jobsubmission.commands.GETOUTPUTCommand;
-import org.gridchem.client.gui.jobsubmission.commands.HIDECommand;
-import org.gridchem.client.gui.jobsubmission.commands.JobCommand;
-import org.gridchem.client.gui.jobsubmission.commands.KILLCommand;
-import org.gridchem.client.gui.jobsubmission.commands.PredictTimeCommand;
-import org.gridchem.client.gui.jobsubmission.commands.QSTATCommand;
-import org.gridchem.client.gui.jobsubmission.commands.SEARCHCommand;
-import org.gridchem.client.gui.jobsubmission.commands.UNHIDECommand;
-import org.gridchem.client.gui.jobsubmission.commands.UPDATECommand;
-import org.gridchem.client.gui.login.LoginDialog;
+import org.gridchem.client.gui.jobsubmission.commands.*;
 import org.gridchem.client.gui.metadataeditor.MetaDataEditor;
 import org.gridchem.client.gui.panels.CancelCommandPrompt;
-import org.gridchem.client.gui.panels.WarningDialog;
-import org.gridchem.client.gui.panels.myccg.MonitorVO;
 import org.gridchem.client.gui.panels.myccg.job.notification.NotificationManagerDialog;
 import org.gridchem.client.interfaces.StatusListener;
 import org.gridchem.client.util.Env;
-import org.gridchem.service.beans.ComputeBean;
 import org.gridchem.service.beans.JobBean;
-import org.gridchem.service.exceptions.PermissionException;
-import org.gridchem.service.model.enumeration.AccessType;
-import org.gridchem.service.model.enumeration.JobStatusType;
 
-import cct.dialogs.JChoiceDialog;
-import cct.dialogs.JEditorFrame;
-import cct.gamess.GamessOutput;
-import cct.gaussian.ParseGaussianOutput;
-import cct.interfaces.AtomInterface;
-import cct.interfaces.MoleculeInterface;
-import cct.modelling.CCTAtomTypes;
-import cct.modelling.MolecularGeometry;
-import cct.modelling.Molecule;
-import cct.tools.ui.JShowText;
-import cct.vecmath.vPoint3f;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.*;
+import javax.swing.table.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import java.util.Timer;
 
 /**
  * Panel to display and provide manipulation for user jobs. This was initially
@@ -240,7 +133,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	int defaultColumns[] = { 0, 1, 13, 4, 5, 7, 10 };
 
 	public static int num_column = columnNames.length;
-	private List<Experiment> experiments;
+	private List<ExperimentModel> experiments;
 	private Clipboard clipboard;
 	private JFrame jobFrame;
 
@@ -315,7 +208,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,
 			ActionEvent.CTRL_MASK, false);
 
-	public JobPanel(List<Experiment> experiments) {
+	public JobPanel(List<ExperimentModel> experiments) {
 
 		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
@@ -554,7 +447,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @return
 	 */
-	private Container createJobContainer(List<Experiment> experiments) {
+	private Container createJobContainer(List<ExperimentModel> experiments) {
 		jobBox = Box.createVerticalBox();
 
 		m_data = new JobTableData(experiments);
@@ -724,7 +617,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @param jobs
 	 */
-	public synchronized void updateJobTable(List<Experiment> jobs) {
+	public synchronized void updateJobTable(List<ExperimentModel> jobs) {
 
 		jobTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -779,7 +672,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		Experiment experiment = getSelectedJob();
+		ExperimentModel experiment = getSelectedJob();
 		if (e.getSource() == statusButton) {
 			if (experiment == null) {
 				JOptionPane.showMessageDialog(null, "Please select a job.", "",
@@ -903,7 +796,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 	}
 
-	public void estimateTime(Experiment experiment) { //TODO to be implemented in Airavata
+	public void estimateTime(ExperimentModel experiment) { //TODO to be implemented in Airavata
 //		System.out.println("Estimating Start and End Time of submitted Job");
 //		if (!job.getStatus().equals(JobStatusType.FINISHED)
 //				& !job.getStatus().equals(JobStatusType.STOPPED)
@@ -920,11 +813,11 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 //		}
 	}
 
-	private void createJobInfoDialog(Experiment experiment) {
+	private void createJobInfoDialog(ExperimentModel experiment) {
 		getInfoDialog = new JobInfoDialog(experiment);
 	}
 	
-	private void createJobInfoDialog(Experiment experiment, String estStartTime) {
+	private void createJobInfoDialog(ExperimentModel experiment, String estStartTime) {
 		getInfoDialog = new JobInfoDialog(experiment, estStartTime);
 	}
 
@@ -952,7 +845,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @param job
 	 */
-	private void doResubmit(final Experiment job) {
+	private void doResubmit(final ExperimentModel job) {
 		SwingWorker worker = new SwingWorker() {
 			public Object construct() {
 				EditJobPanel jobEditor = new EditJobPanel(null, job);
@@ -962,7 +855,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		worker.start();
 	}
 
-	private void doKillJob(final Experiment job) {
+	private void doKillJob(final ExperimentModel job) {
 		/*if (job.getStatus().equals(JobStatusType.RUNNING)
 				|| job.getStatus().equals(JobStatusType.SUBMITTING)
 				|| job.getStatus().equals(JobStatusType.INITIAL)
@@ -981,7 +874,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		}*/
 	}
 
-	private void doSteerJob(Experiment job) {
+	private void doSteerJob(ExperimentModel job) {
 		NotificationManagerDialog.getInstance(this.frame, job);
 	}
 
@@ -1025,7 +918,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		String jobDir = Settings.jobDir;
 		String goutFileName = jobName + ".out";
 		String goutFileNameWithPath = jobDir + File.separator
-				+ getSelectedJob().getName() + ".out";
+				+ getSelectedJob().getExperimentName() + ".out";
 		String delete1 = Env.getApplicationDataDir() + File.separator
 				+ "vibrational_analysis" + File.separator + "*.out";
 		delete1 = '"' + delete1 + '"';
@@ -1163,7 +1056,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	// provides file browser
 	// ...for locating molden locally. This also confirms whether X-server is
 	// running locally in case of Windows.....Kailash Kotwani
-	public void viewMoldenJob(final Experiment experiment) {
+	public void viewMoldenJob(final ExperimentModel experiment) {
 		/*String molden = "";
 		String molden_mac_linux = "";
 		moldenPathFileLoc = Env.getApplicationDataDir() + File.separator
@@ -1432,7 +1325,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 	}
 
-	public void viewJMOLJob(final Experiment experiment) {
+	public void viewJMOLJob(final ExperimentModel experiment) {
 
 		/*String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
 
@@ -1545,7 +1438,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		}*/
 	}
 
-	public void viewAbaqusCAEJob(final Experiment experiment) {
+	public void viewAbaqusCAEJob(final ExperimentModel experiment) {
 
 		/*String abaqusExec = "";
 		AbaqusCAEPathLoc = Env.getApplicationDataDir() + File.separator
@@ -1648,7 +1541,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	// files. It confirms whether output file
 	// ...file exist locally, if not downloads first.....Kailash Kotwani
 
-	public void viewJMolJob(final Experiment experiment) {
+	public void viewJMolJob(final ExperimentModel experiment) {
 
 		/*String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
 
@@ -1821,7 +1714,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	// ...file exist locally, if not downloads first. For first time user is
 	// provided with file browser
 	// ...for locating VMD locally. ..Kailash Kotwani
-	public void viewVMDJob(final Experiment experiment) {
+	public void viewVMDJob(final ExperimentModel experiment) {
 		/*String VMD = "";
 		String VMD_mac_linux = "";
 		VMDPathFileLoc = Env.getApplicationDataDir() + File.separator
@@ -2094,7 +1987,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 	}
 
-	private void doVisualizeJob(final Experiment experiment) {
+	private void doVisualizeJob(final ExperimentModel experiment) {
 
 		/*String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
 
@@ -2294,7 +2187,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		}*/
 	}
 
-	private void doBrowseFiles(Experiment experiment) {
+	private void doBrowseFiles(ExperimentModel experiment) {
 		/*try {
 
 			String fileUri = "";
@@ -2442,7 +2335,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @return the JobBean associated with the selected row
 	 */
-	public Experiment getSelectedJob() {
+	public ExperimentModel getSelectedJob() {
 		int k = jobTable.getSelectedRow();
 
 		if (k == -1) {
@@ -2460,13 +2353,13 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @return the JobBean associated with the selected row
 	 */
-	public Experiment[] getSelectedJobs() {
-		Experiment[] jobs;
+	public ExperimentModel[] getSelectedJobs() {
+		ExperimentModel[] jobs;
 
 		int[] k = jobTable.getSelectedRows();
 
 		if (k.length > 0) {
-			jobs = new Experiment[k.length];
+			jobs = new ExperimentModel[k.length];
 			for (int i = 0; i < k.length; i++) {
 				System.out.println("Job " + m_data.getJobAtRow(k[i]));
 				jobs[i] = m_data.getJobAtRow(k[i]);
@@ -2605,11 +2498,11 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	private void showPopupMenu(Component component, Point p) {
 		int row = jobTable.rowAtPoint(p);
 
-		Experiment experiment = getSelectedJob();
+		ExperimentModel experiment = getSelectedJob();
 
 		// disable kill depending on job status
-		if (experiment.getExperimentStatus().getExperimentState().equals(ExperimentState.EXECUTING)
-				|| experiment.getExperimentStatus().getExperimentState().equals(ExperimentState.SCHEDULED)) {
+		if (experiment.getExperimentStatus().getState().equals(ExperimentState.EXECUTING)
+				|| experiment.getExperimentStatus().getState().equals(ExperimentState.SCHEDULED)) {
 			killMenuItem.setEnabled(true);
 			editNotificationsMenuItem.setEnabled(true);
 		} else {
@@ -2983,7 +2876,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @param selectedJobs
 	 */
-	private void resetSelectedTableItems(Experiment[] selectedJobs) {
+	private void resetSelectedTableItems(ExperimentModel[] selectedJobs) {
 		int i = 0;
 		int startSelectedRowInterval = -1;
 		int endSelectedRowInterval = -1;
@@ -2997,7 +2890,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 		while (startSelectedRowInterval == -1 && i < selectedJobs.length) {
 			startSelectedRowInterval = m_data.getRowOfJob(selectedJobs[i]
-					.getExperimentID());
+					.getExperimentId());
 			i++;
 		}
 
@@ -3015,7 +2908,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 			while (endSelectedRowInterval == -1 && i > startSelectedRowInterval) {
 				endSelectedRowInterval = m_data.getRowOfJob(selectedJobs[i]
-						.getExperimentID());
+						.getExperimentId());
 				i--;
 			}
 
@@ -3945,8 +3838,7 @@ class ColorData {
 	}
 
 	public ColorData(ExperimentState status) {
-		if (status.equals(ExperimentState.FAILED)
-				|| status.equals(ExperimentState.SUSPENDED)) {
+		if (status.equals(ExperimentState.FAILED)) {
 			m_color = RED;
 		} else if (status.equals(ExperimentState.COMPLETED)
 				|| status.equals(ExperimentState.CREATED)) {
@@ -3997,12 +3889,12 @@ class JobData {
 					+ "sortdown.gif");
 	public static ImageIcon ICON_BLANK = new ImageIcon("blank.gif");
 
-	public Experiment experiment;
+	public ExperimentModel experiment;
 	public ColorData status;
 
-	public JobData(Experiment experiment) {
+	public JobData(ExperimentModel experiment) {
 		this.experiment = experiment;
-		this.status = new ColorData(experiment.getExperimentStatus().getExperimentState());
+		this.status = new ColorData(experiment.getExperimentStatus().getState());
 	}
 
 	public static ImageIcon getIcon(double change) {
@@ -4062,7 +3954,7 @@ class JobTableData extends AbstractTableModel implements
 	public int m_sortCol = 0;
 	public boolean m_sortAsc = false;
 
-	public JobTableData(List<Experiment> experiments) {
+	public JobTableData(List<ExperimentModel> experiments) {
 		m_vector = new Vector<JobData>();
 		hidden_vector = new Vector<JobData>();
 		setDefaultData(experiments);
@@ -4074,10 +3966,10 @@ class JobTableData extends AbstractTableModel implements
 	 * 
 	 * @param experiments
 	 */
-	public void setDefaultData(List<Experiment> experiments) {
+	public void setDefaultData(List<ExperimentModel> experiments) {
 		m_vector.removeAllElements();
 		hidden_vector.removeAllElements();
-		for (Experiment experiment : experiments) {
+		for (ExperimentModel experiment : experiments) {
 			// if (!job.isHidden()) {
 			m_vector.add(new JobData(experiment));
 			// } else {
@@ -4236,15 +4128,15 @@ class JobTableData extends AbstractTableModel implements
 		JobData row = (JobData) m_vector.elementAt(nRow);
 		switch (nCol) {
 		case 0:
-			return row.experiment.getExperimentID();
+			return row.experiment.getExperimentId();
 		case 1:
-			return row.experiment.getName();
+			return row.experiment.getExperimentName();
 		case 2:
 			return row.experiment.getDescription();
 		case 3:
-			return row.experiment.getProjectID();
+			return row.experiment.getProjectId();
 		case 4:
-			return row.experiment.getApplicationId();
+			return row.experiment.getExecutionId();
 		case 5:
 			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId();
 		case 6:
@@ -4333,12 +4225,12 @@ class JobTableData extends AbstractTableModel implements
 		}
 	}
 
-	public void loadData(final List<Experiment> experiments) {
+	public void loadData(final List<ExperimentModel> experiments) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				m_vector.removeAllElements();
 				m_vector = new Vector();
-				for (Experiment experiment : experiments) {
+				for (ExperimentModel experiment : experiments) {
 					// if (!job.isHidden()) {
 					m_vector.add(new JobData(experiment));
 					// } else {
@@ -4363,14 +4255,14 @@ class JobTableData extends AbstractTableModel implements
 			m_sortCol = -1;
 	}
 
-	public Experiment getJobAtRow(int row) {
+	public ExperimentModel getJobAtRow(int row) {
 		return ((JobData) m_vector.elementAt(row)).experiment;
 	}
 
 	public int getRowOfJob(String jobID) {
 		int row = 0;
 		for (JobData rowItem : m_vector) {
-			if (rowItem.experiment.getExperimentID().equals(jobID)) {
+			if (rowItem.experiment.getExperimentId().equals(jobID)) {
 				return row;
 			}
 			row++;
@@ -4408,22 +4300,22 @@ class JobComparator implements Comparator {
 		int l1, l2;
 		switch (m_sortCol) {
 		case 0: // jobID
-			result = s1.experiment.getExperimentID().compareTo(s2.experiment.getExperimentID());
+			result = s1.experiment.getExperimentId().compareTo(s2.experiment.getExperimentId());
 			break;
 		case 1: // name
-			result = s1.experiment.getName().compareTo(s2.experiment.getName());
+			result = s1.experiment.getExperimentName().compareTo(s2.experiment.getExperimentName());
 			break;
 		case 2: // research project
 			result = s1.experiment.getDescription().compareTo(
 					s2.experiment.getDescription());
 			break;
 		case 3: // project
-			result = s1.experiment.getProjectID().compareTo(
-					s2.experiment.getProjectID());
+			result = s1.experiment.getProjectId().compareTo(
+					s2.experiment.getProjectId());
 			break;
 		case 4: // application
-			result = s1.experiment.getApplicationId()
-					.compareTo(s2.experiment.getApplicationId());
+			result = s1.experiment.getExecutionId()
+					.compareTo(s2.experiment.getExecutionId());
 			break;
 		case 5: // hpc system
 			result = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId()
@@ -4447,8 +4339,8 @@ class JobComparator implements Comparator {
 			result = l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
 			break;
 		case 10: // status
-			result = s1.experiment.getExperimentStatus().getExperimentState().name()
-					.compareTo(s2.experiment.getExperimentStatus().getExperimentState().name());
+			result = s1.experiment.getExperimentStatus().getState().name()
+					.compareTo(s2.experiment.getExperimentStatus().getState().name());
 			break;
 		case 11: // start time
 			result = (""+s1.experiment.getCreationTime()).compareTo(

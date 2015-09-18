@@ -41,16 +41,12 @@ DEALINGS WITH THE SOFTWARE.
 
 package org.gridchem.client;
 
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-
 import nanocad.nanocadFrame;
-
-import org.apache.airavata.model.workspace.experiment.Experiment;
+import org.apache.airavata.model.experiment.ExperimentModel;
 import org.gridchem.client.common.Settings;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
-import org.gridchem.client.gui.panels.CancelCommandPrompt;
-import org.gridchem.service.beans.JobBean;
+
+import javax.swing.*;
 
 public class editJobPanel
 {
@@ -78,7 +74,7 @@ public class editJobPanel
      * 
      * @param job
      */
-    public editJobPanel(Experiment job) {
+    public editJobPanel(ExperimentModel job) {
         frame = new JFrame("GridChem: Job Editor");
         es = new EditJobPanel(null,job);
         frame.getContentPane().add(es);

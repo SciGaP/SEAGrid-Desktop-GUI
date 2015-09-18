@@ -3,9 +3,6 @@ package org.apache.airavata;
 import java.io.IOException;
 import java.util.Properties;
 
-/**
- * Created by dimuthuupeksha on 4/19/15.
- */
 public class AiravataConfig {
     public static final String GATEWAY = "gateway";
     public static String getProperty(String key){

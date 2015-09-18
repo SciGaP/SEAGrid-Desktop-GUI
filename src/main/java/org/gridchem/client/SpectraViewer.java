@@ -64,17 +64,9 @@
 package org.gridchem.client;
 
 
+import org.apache.airavata.model.experiment.ExperimentModel;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.io.File;
-import java.text.SimpleDateFormat;
-
-import javax.swing.JFrame;
-
-import org.apache.airavata.model.workspace.experiment.Experiment;
-import org.gridchem.client.common.Settings;
-import org.gridchem.service.beans.JobBean;
+import javax.swing.*;
 
 
 
@@ -99,7 +91,7 @@ import org.gridchem.service.beans.JobBean;
 
 public class SpectraViewer extends JFrame {
 	
-    public SpectraViewer(Experiment experiment) {
+    public SpectraViewer(ExperimentModel experiment) {
 
     	/*String time = new SimpleDateFormat("yyMMdd").format(job.getCreated());
         

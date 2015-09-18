@@ -6,31 +6,20 @@ import org.apache.airavata.ExpetimentConst;
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.gridchem.FileBrowserAiravata;
 import org.apache.airavata.gridchem.FileHandlerException;
-import org.apache.airavata.model.appcatalog.appinterface.DataType;
-import org.apache.airavata.model.appcatalog.appinterface.InputDataObjectType;
-import org.apache.airavata.model.appcatalog.appinterface.OutputDataObjectType;
-import org.apache.airavata.model.error.AiravataClientException;
-import org.apache.airavata.model.error.AiravataSystemException;
-import org.apache.airavata.model.error.ExperimentNotFoundException;
-import org.apache.airavata.model.error.InvalidRequestException;
+import org.apache.airavata.model.application.io.DataType;
+import org.apache.airavata.model.application.io.InputDataObjectType;
+import org.apache.airavata.model.experiment.ExperimentModel;
+import org.apache.airavata.model.experiment.UserConfigurationDataModel;
+import org.apache.airavata.model.scheduling.ComputationalResourceSchedulingModel;
+import org.apache.airavata.model.status.ExperimentState;
 import org.apache.airavata.model.util.ExperimentModelUtil;
-import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
-import org.apache.airavata.model.workspace.experiment.Experiment;
-import org.apache.airavata.model.workspace.experiment.ExperimentState;
-import org.apache.airavata.model.workspace.experiment.UserConfigurationData;
-import org.apache.thrift.TException;
 
-import javax.swing.*;
 import java.io.File;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-/**
- * @author Dimuthu
- */
 public class ExperimentHandler {
 
     private final Random random = new Random();
@@ -64,9 +53,6 @@ public class ExperimentHandler {
         if (params.get(ExpetimentConst.QUEUE) != null)
             queue = (String) params.get(ExpetimentConst.QUEUE);
 
-        if (params.get(ExpetimentConst.PROJECT_ACCOUNT) != null)
-            projectAccount = (String) params.get(ExpetimentConst.PROJECT_ACCOUNT);
-
         if (params.get(ExpetimentConst.CPU_COUNT) != null)
             cpuCount = (Integer) params.get(ExpetimentConst.CPU_COUNT);
 
@@ -95,25 +81,25 @@ public class ExperimentHandler {
             e.printStackTrace();
         }
 
-        Experiment exp =
-                ExperimentModelUtil.createSimpleExperiment(null, null, null, null, null, null);
-        exp.setProjectID(projectID);
+        ExperimentModel exp =
+                ExperimentModelUtil.createSimpleExperiment(null, null, null, null, null, null,null);
+        exp.setProjectId(projectID);
         exp.setUserName(userID);
-        exp.setName(expName);
+        exp.setExperimentName(expName);
         exp.setDescription(expDesc);
-        exp.setApplicationId(appId);
+        exp.setExecutionId(appId);
         exp.setExperimentInputs(inputs);
         try {
             exp.setExperimentOutputs(AiravataManager
                     .getClient()
-                    .getApplicationInterface(appId)
+                    .getApplicationInterface(AiravataManager.authzToken,appId)
                     .getApplicationOutputs());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        ComputationalResourceScheduling scheduling =
-                ExperimentModelUtil.createComputationResourceScheduling(null, 0, 0, 0, null, 0, 0, 0, null);
+        ComputationalResourceSchedulingModel scheduling =
+                ExperimentModelUtil.createComputationResourceScheduling(null, 0, 0, 0, null, 0, 0);
 
         scheduling.setResourceHostId(hostID);
         scheduling.setTotalCPUCount(cpuCount);
@@ -121,11 +107,9 @@ public class ExperimentHandler {
         scheduling.setNumberOfThreads(threadCount);
         scheduling.setQueueName(queue);
         scheduling.setWallTimeLimit(wallTime);
-        scheduling.setJobStartTime(startTime);
         scheduling.setTotalPhysicalMemory(physicalMemory);
-        scheduling.setComputationalProjectAccount(projectAccount);
 
-        UserConfigurationData userConfigurationData = new UserConfigurationData();
+        UserConfigurationDataModel userConfigurationData = new UserConfigurationDataModel();
 
         userConfigurationData.setAiravataAutoSchedule(false);
         userConfigurationData.setOverrideManualScheduledParams(false);
@@ -134,7 +118,8 @@ public class ExperimentHandler {
 
         String experimentId = null;
         try {
-            experimentId = AiravataManager.getClient().createExperiment(AiravataConfig.getProperty(AiravataConfig.GATEWAY),exp);
+            experimentId = AiravataManager.getClient().createExperiment(AiravataManager.authzToken,
+                    AiravataConfig.getProperty(AiravataConfig.GATEWAY),exp);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ExperimentCreationException("Error at creating experiment "+expName+ " on machine "+hostID,e);
@@ -157,6 +142,7 @@ public class ExperimentHandler {
                     String fileName = file.getName();
                     String productId = fb.ingestFile(parent,fileName, randSeq, "GenericFile");
                     System.out.println("Product ID : "+productId);
+                    //FIXME
                     inputs.get(i).setValue("file://airavata@localhost:/home/airavata/oodt/archive/"+randSeq+"/"+fileName);
                 }
             }
@@ -171,11 +157,13 @@ public class ExperimentHandler {
         }
         String sshTokenId = "bdc612fe-401e-4684-88e9-317f99409c45";
         try {
-            AiravataManager.getClient().launchExperiment(expID, sshTokenId);
-            ExperimentState state = AiravataManager.getClient().getExperiment(expID).getExperimentStatus().getExperimentState();
+            AiravataManager.getClient().launchExperiment(AiravataManager.authzToken, expID, sshTokenId);
+            ExperimentState state = AiravataManager.getClient().getExperiment(AiravataManager.authzToken,
+                    expID).getExperimentStatus().getState();
             while (ExperimentState.CREATED.equals(state)){
                 Thread.sleep(1000);
-                state = AiravataManager.getClient().getExperiment(expID).getExperimentStatus().getExperimentState();
+                state = AiravataManager.getClient().getExperiment(AiravataManager.authzToken,expID)
+                        .getExperimentStatus().getState();
             }
         } catch (Exception ex) {
             ex.printStackTrace();

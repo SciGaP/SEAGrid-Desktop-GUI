@@ -42,61 +42,29 @@ DEALINGS WITH THE SOFTWARE.
  */
 package org.gridchem.client;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.*;
+import G03Input.*;
+import Gamess.gamessGUI.GamessGUI;
+import com.asprise.util.ui.progress.ProgressDialog;
+import org.apache.airavata.gridchem.AiravataManager;
+import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
+import org.apache.airavata.gridchem.experiment.ExperimentHandlerUtils;
+import org.apache.airavata.model.experiment.ExperimentModel;
+import org.gridchem.client.gui.buttons.ApplicationMenuItem;
+import org.gridchem.client.gui.buttons.DropDownButton;
+import org.gridchem.client.gui.jobsubmission.EditJobPanel;
+import org.gridchem.client.gui.panels.CancelCommandPrompt;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-
-import org.apache.airavata.gridchem.AiravataManager;
-import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
-import org.apache.airavata.gridchem.experiment.ExperimentHandler;
-import org.apache.airavata.gridchem.experiment.ExperimentHandlerUtils;
-import org.apache.airavata.model.workspace.experiment.Experiment;
-import org.gridchem.client.gui.buttons.ApplicationMenuItem;
-import org.gridchem.client.gui.buttons.DropDownButton;
-import org.gridchem.client.gui.jobsubmission.EditJobPanel;
-import org.gridchem.client.gui.panels.CancelCommandPrompt;
-import org.gridchem.service.beans.LogicalFileBean;
-
-import G03Input.InputFile;
-import G03Input.InputfileReader;
-import G03Input.OptTable;
-import G03Input.RouteClass;
-import G03Input.showMolEditor;
-import Gamess.gamessGUI.GamessGUI;
-
-import com.asprise.util.ui.progress.ProgressDialog;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 // TODO: refactor as internal class of SubmitJobsWindow
 public class stuffInside extends JComponent // implements ListSelectionListener
@@ -162,7 +130,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		}
 	}
 
-	public stuffInside(Experiment experiment) {
+	public stuffInside(ExperimentModel experiment) {
 		this();
 
 		doEditNewJob(experiment);
@@ -551,11 +519,11 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 						public Object construct() {
 
 							submittingJob = true;
-							Experiment experiment = SubmitJobsWindow.si.queueJobList.get(queueList.getSelectedIndex());
+							ExperimentModel experiment = SubmitJobsWindow.si.queueJobList.get(queueList.getSelectedIndex());
 
 							progressDialog = new ProgressDialog(
 									SubmitJobsWindow.frame,
-									"Job \"" + experiment.getName() + "\" Submission Progress");
+									"Job \"" + experiment.getExperimentName() + "\" Submission Progress");
 							progressDialog.millisToPopup = 0;
 							progressDialog.millisToDecideToPopup = 0;
 							progressDialog.displayTimeLeft = false;
@@ -563,8 +531,8 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							params.put("progressDialog",progressDialog);
 							try {
 								ExperimentHandlerUtils
-										.getExperimentHandler(experiment.getApplicationId())
-										.launchExperiment(experiment.getExperimentID(), params);
+										.getExperimentHandler(experiment.getExecutionId())
+										.launchExperiment(experiment.getExperimentId(), params);
 								//initLists();
 								update();
 							}catch (ExperimentCreationException e) {
@@ -698,7 +666,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 			JOptionPane.showMessageDialog(null, "You must select a job",
 					"Error", JOptionPane.INFORMATION_MESSAGE);
 		} else {// edit the job that was selected
-			Experiment selectedExperiment = (Experiment)queueJobList.get(n);
+			ExperimentModel selectedExperiment = (ExperimentModel)queueJobList.get(n);
 			jobEditor = new EditJobPanel(null, selectedExperiment);
 		}
 	}
@@ -714,7 +682,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		System.err.println("job index is: " + (size + 1));
 	}
 
-	public void doEditNewJob(Experiment experiment) {
+	public void doEditNewJob(ExperimentModel experiment) {
 		jobEditor = new EditJobPanel(null, experiment);
 
 		int size = queueModel.getSize();
@@ -756,7 +724,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		new Thread() {
 			public void run() {
 
-				Experiment experiment = SubmitJobsWindow.jobQueue.get(queueList
+				ExperimentModel experiment = SubmitJobsWindow.jobQueue.get(queueList
 						.getSelectedIndex());
 				// SubmitJobsWindow.jobQueue.remove(0);
 				System.out
@@ -766,7 +734,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 				ProgressDialog progressDialog = new ProgressDialog(sj,
 						"Job Submission Progress");
 				progressDialog
-						.beginTask("Submitting " + experiment.getName(), 5, true);
+						.beginTask("Submitting " + experiment.getExperimentName(), 5, true);
 
 				// submit the Job j to the queue
 				/*SubmitJob sj = new SubmitJob(job);

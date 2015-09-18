@@ -38,37 +38,15 @@
 
 package org.gridchem.client.gui.panels.myccg.job;
 
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Toolkit;
+import org.apache.airavata.model.experiment.ExperimentModel;
+import org.apache.airavata.model.scheduling.ComputationalResourceSchedulingModel;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
+import java.awt.event.*;
 import java.util.Calendar;
-import java.util.StringTokenizer;
-import java.util.TimeZone;
-
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-
-import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
-import org.apache.airavata.model.workspace.experiment.Experiment;
-import org.gridchem.service.beans.JobBean;
-import org.gridchem.service.model.enumeration.JobStatusType;
 
 /**
  * Displays inforamtion about a job with clipboard copy support for each field.
@@ -100,47 +78,47 @@ public class JobInfoDialog extends JDialog {
         }
     };
     
-    public JobInfoDialog(Experiment experiment) {
+    public JobInfoDialog(ExperimentModel experiment) {
     	this(experiment, "NULL");
     }
     
-    public JobInfoDialog(Experiment experiment, String estStartTime) {
+    public JobInfoDialog(ExperimentModel experiment, String estStartTime) {
         super();
         getInfoDialogPanel = new JPanel(new GridLayout(6,1,5,5));
 
         //          ((GridLayout) getInfoDialogPanel.getLayout()).setVgap(5);
-        String jobStatus = experiment.getExperimentStatus().getExperimentState().name();
+        String jobStatus = experiment.getExperimentStatus().getState().name();
         
         getInfoDialogPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), 
-                "Information about job [" + experiment.getExperimentID() + "]: " + experiment.getName()));
+                "Information about job [" + experiment.getExperimentId() + "]: " + experiment.getExperimentName()));
               
         createJobInfoPopupMenu();
         
-        String text = "<html><b>Name: </b><span style='background:#F0F0F0'>" + experiment.getName() + "</span></html>";
+        String text = "<html><b>Name: </b><span style='background:#F0F0F0'>" + experiment.getExperimentName() + "</span></html>";
         String toolTip = "The name of the job.";
         JLabel name = createLabel(text,toolTip);
         
         
         text = "<html><b>Research Project: </b><span style='background:#F0F0F0'>" + 
-                ((experiment.getName().length() > 20)?
-                        experiment.getName().substring(0,20):experiment.getName()) +
+                ((experiment.getExperimentName().length() > 20)?
+                        experiment.getExperimentName().substring(0,20):experiment.getExperimentName()) +
                 " </span><html>";
-        toolTip = "The research project under study by this job: " + experiment.getName();
+        toolTip = "The research project under study by this job: " + experiment.getExperimentName();
         JLabel researchProject = createLabel(text,toolTip);
         
         text = "<html><b>User Project: </b><span style='background:#F0F0F0'>" + 
-                ((experiment.getProjectID().length() > 20)?
-                        experiment.getProjectID().substring(0,20):experiment.getProjectID()) +
+                ((experiment.getProjectId().length() > 20)?
+                        experiment.getProjectId().substring(0,20):experiment.getProjectId()) +
                 "</span></html>";
-        toolTip = "The CCG project associated with this job: " + experiment.getProjectID();
+        toolTip = "The CCG project associated with this job: " + experiment.getProjectId();
         JLabel project= createLabel(text,toolTip);
         
-        text = "<html><b>Application: </b><span style='background:#F0F0F0'>" + experiment.getApplicationId() + "</span></html>";
+        text = "<html><b>Application: </b><span style='background:#F0F0F0'>" + experiment.getExecutionId() + "</span></html>";
         toolTip = "The application run by this job.";
         JLabel app = createLabel(text,toolTip); 
 
-        ComputationalResourceScheduling crs= experiment.getUserConfigurationData().getComputationalResourceScheduling();
+        ComputationalResourceSchedulingModel crs= experiment.getUserConfigurationData().getComputationalResourceScheduling();
         
         text = "<html><b>HPC System: </b><span style='background:#F0F0F0'>" + crs.getResourceHostId() + "</span></html>";
         toolTip = "The HPC system on which this job ran.";
@@ -251,7 +229,7 @@ public class JobInfoDialog extends JDialog {
         this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, binding);
         this.getRootPane().getActionMap().put(binding, action);
         this.setContentPane(getInfoDialogPanel);
-        this.setTitle(experiment.getName() + " Info");
+        this.setTitle(experiment.getExperimentId() + " Info");
         this.pack();
         this.setVisible(true);
     }

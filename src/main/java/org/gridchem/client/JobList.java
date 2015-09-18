@@ -40,12 +40,13 @@ DEALINGS WITH THE SOFTWARE.
 
 package org.gridchem.client;
 
+import org.apache.airavata.model.experiment.ExperimentModel;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import org.apache.airavata.model.workspace.experiment.Experiment;
 
 public class JobList implements java.util.List {
 	static final JobList DUMB_LIST = new JobList();
@@ -57,7 +58,7 @@ public class JobList implements java.util.List {
 		theList = new ArrayList(10);
 	}
 
-	public JobList(Experiment j) {
+	public JobList(ExperimentModel j) {
 		huh = 0;
 		theList = new ArrayList(10);
 		theList.add(j);
@@ -72,38 +73,38 @@ public class JobList implements java.util.List {
 	// Some initial add and subtract methods
 	// need to add more later, but it'll do for now
 
-	public boolean add(Experiment j) {
+	public boolean add(ExperimentModel j) {
 		return theList.add(j);
 	}
 
-	public Experiment getFirstJob() {
-		return (Experiment) theList.get(0);
+	public ExperimentModel getFirstJob() {
+		return (ExperimentModel) theList.get(0);
 	}
 
 	// lixh_add
-	public Experiment getLastJob() {
-		return (Experiment) theList.get(size() - 1);
+	public ExperimentModel getLastJob() {
+		return (ExperimentModel) theList.get(size() - 1);
 	}
 
 	// lixh_add
-	public Experiment getJob(int index) {
-		return (Experiment) theList.get(index);
+	public ExperimentModel getJob(int index) {
+		return (ExperimentModel) theList.get(index);
 	}
 
-	public void replaceJob(int index, Experiment job1) {
+	public void replaceJob(int index, ExperimentModel job1) {
 		theList.set(index, job1);
 	}
 
-	public Experiment removeFirstJob() {
-		return (Experiment) theList.remove(0);
+	public ExperimentModel removeFirstJob() {
+		return (ExperimentModel) theList.remove(0);
 	}
 
 	// lixh_add
-	public Experiment removeJob(int index) {
-		return (Experiment) theList.remove(index);
+	public ExperimentModel removeJob(int index) {
+		return (ExperimentModel) theList.remove(index);
 	}
 
-	public int getJobIndex(Experiment j) {
+	public int getJobIndex(ExperimentModel j) {
 		return theList.indexOf(j);
 	}
 
@@ -116,15 +117,15 @@ public class JobList implements java.util.List {
 	public ArrayList<String> getJobNamesList() {
 		ArrayList<String> s = new ArrayList<String>();
 		ArrayList t = new ArrayList(this.getList());
-		Experiment j;
+		ExperimentModel j;
 		// JobList t = new JobList(this.getList());
 		// Iterator i = t.iterator();
 		// while (i.hasNext())
 		while (!(t.isEmpty())) {
-			j = (Experiment) t.remove(0);
+			j = (ExperimentModel) t.remove(0);
 
 			// s.add(j.getJobName()+ "  " + j.getApp() + "  " + j.getMachine());
-			s.add(j.getName() +  " " + j.getExperimentStatus().getExperimentState().name());
+			s.add(j.getExperimentName() +  " " + j.getExperimentStatus().getState().name());
 		}
 		return s;
 	}
@@ -200,8 +201,8 @@ public class JobList implements java.util.List {
 		return theList.retainAll(c);
 	}
 
-	public Experiment get(int index) {
-		Experiment jobOnDeck = theList.get(index)==null?null:(Experiment)theList.get(index);
+	public ExperimentModel get(int index) {
+		ExperimentModel jobOnDeck = theList.get(index)==null?null:(ExperimentModel)theList.get(index);
 		return jobOnDeck;
 	}
 

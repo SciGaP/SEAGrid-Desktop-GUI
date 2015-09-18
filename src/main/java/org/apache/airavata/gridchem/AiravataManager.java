@@ -5,10 +5,12 @@ import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentD
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationModule;
 import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDescription;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
-import org.apache.airavata.model.error.AiravataClientConnectException;
+import org.apache.airavata.model.error.AiravataClientException;
+import org.apache.airavata.model.error.AiravataErrorType;
+import org.apache.airavata.model.experiment.ExperimentModel;
+import org.apache.airavata.model.security.AuthzToken;
+import org.apache.airavata.model.status.ExperimentState;
 import org.apache.airavata.model.workspace.Project;
-import org.apache.airavata.model.workspace.experiment.Experiment;
-import org.apache.airavata.model.workspace.experiment.ExperimentState;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -21,17 +23,22 @@ import org.gridchem.service.exceptions.*;
 import org.json.JSONObject;
 import java.util.*;
 
-/**
- * @author Dimuthu
- */
 public class AiravataManager {
 
     public static String accessToken="";
+    public static String refreshToken="";
+
+    public static AuthzToken authzToken;
     private static Project currentProject;
 
     public static boolean login(String uname, String passwd) {
         try {
-            accessToken = getClient().login(uname, passwd);
+            String[] response = getClient().login(uname, passwd);
+            accessToken = response[0];
+            refreshToken = response[1];
+
+            authzToken = new AuthzToken();
+            authzToken.setAccessToken(accessToken);
         }catch (Exception e){
             throw new SessionException(e.getMessage());
         }
@@ -44,21 +51,28 @@ public class AiravataManager {
 
     public static void logout() {
         accessToken = "";
+        refreshToken = "";
+        authzToken = null;
+
         Settings.gridchemusername = null;
         Settings.authenticated = false;
-
     }
 
     public static List<Project> getProjects() throws ProjectException {
 
         List<Project> airavataProjects;
         try {
-            airavataProjects = getClient().getAllUserProjects(AiravataConfig.getProperty(AiravataConfig.GATEWAY),Settings.gridchemusername);
+            airavataProjects = getClient().getUserProjects(
+                    authzToken, AiravataConfig.getProperty(AiravataConfig.GATEWAY)
+                    ,Settings.gridchemusername, -1, 0);
         }catch (Exception e) {
             //User does not exists in the system - creating default project
             try{
-                getClient().createProject(AiravataConfig.GATEWAY, new Project("no-id",Settings.gridchemusername,"Default Project"));
-                airavataProjects = getClient().getAllUserProjects(AiravataConfig.getProperty(AiravataConfig.GATEWAY),Settings.gridchemusername);
+                getClient().createProject(authzToken, AiravataConfig.GATEWAY
+                        , new Project("no-id",Settings.gridchemusername,"Default Project"));
+                airavataProjects = getClient().getUserProjects(
+                        authzToken, AiravataConfig.getProperty(AiravataConfig.GATEWAY)
+                        , Settings.gridchemusername, -1, 0);
             }catch (Exception ex){
                 throw new ProjectException(e.getMessage());
             }
@@ -68,7 +82,7 @@ public class AiravataManager {
 
     public static Project getProject(String projectId){
         try {
-            return getClient().getProject(projectId);
+            return getClient().getProject(authzToken, projectId);
         }catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -79,6 +93,8 @@ public class AiravataManager {
     public static Project getCurrentProject() throws ProjectException {
         return currentProject;
     }
+
+
     public static void setCurrentProject(Project p) throws SessionException {
         currentProject =p;
     }
@@ -116,11 +132,13 @@ public class AiravataManager {
         return userBean;
     }
 
-    public static List<ApplicationDeploymentDescription> getAplicationDeployments() throws AiravataClientConnectException, TException {
-        return getClient().getAllApplicationDeployments(AiravataConfig.getProperty(AiravataConfig.GATEWAY));
+    public static List<ApplicationDeploymentDescription> getApplicationDeployments()
+            throws AiravataClientException, TException {
+        return getClient().getAllApplicationDeployments(
+                authzToken, AiravataConfig.getProperty(AiravataConfig.GATEWAY));
     }
 
-    public static AiravataClient getClient() throws AiravataClientConnectException {
+    public static AiravataClient getClient() throws AiravataClientException {
         String host = AiravataConfig.getProperty("thrift_host");
         int port = Integer.parseInt(AiravataConfig.getProperty("thrift_port"));
         try {
@@ -130,24 +148,28 @@ public class AiravataManager {
             TProtocol protocol = new TBinaryProtocol(transport);
             return new AiravataClient(protocol);
         } catch (TTransportException e) {
-            throw new AiravataClientConnectException("Unable to connect to the server at "+host+":"+port);
+            throw new AiravataClientException(AiravataErrorType.UNKNOWN);
         }
     }
 
-    public static ArrayList<ComputeResourceDescription> getComputationalResources() throws AiravataClientConnectException, TException {
-        Map <String,String> compResources = getClient().getAllComputeResourceNames();
+    public static ArrayList<ComputeResourceDescription> getComputationalResources()
+            throws AiravataClientException, TException {
+        Map <String,String> compResources = getClient().getAllComputeResourceNames(authzToken);
         Iterator<String> it = compResources.keySet().iterator();
 
         ArrayList<ComputeResourceDescription> compList = new ArrayList<ComputeResourceDescription>();
         while (it.hasNext()){
-            compList.add(getClient().getComputeResource(it.next()));
+            compList.add(getClient().getComputeResource(authzToken, it.next()));
         }
 
         return compList;
     }
 
-    public static  List<ApplicationDeploymentDescription> getAppDepDescriptionforMachine(String computeHostId) throws AiravataClientConnectException, TException {
-        List<ApplicationDeploymentDescription> appDeployments = getClient().getAllApplicationDeployments(AiravataConfig.getProperty(AiravataConfig.GATEWAY));
+    public static  List<ApplicationDeploymentDescription> getAppDepDescriptionforMachine(
+            String computeHostId) throws AiravataClientException, TException {
+        List<ApplicationDeploymentDescription> appDeployments = getClient()
+                .getAllApplicationDeployments(authzToken, AiravataConfig
+                        .getProperty(AiravataConfig.GATEWAY));
         List<ApplicationDeploymentDescription> returnApps = new ArrayList<ApplicationDeploymentDescription>();
         for (ApplicationDeploymentDescription ad : appDeployments){
             if(ad.getComputeHostId().equals(computeHostId)){
@@ -157,38 +179,44 @@ public class AiravataManager {
         return returnApps;
     }
 
-    public static List<ComputeResourceDescription> getCompResourcesForAppModule(String appModuleName) throws AiravataClientConnectException, TException {
+    public static List<ComputeResourceDescription> getCompResourcesForAppModule(String appModuleName)
+            throws AiravataClientException, TException {
         List<ComputeResourceDescription> computeResources = new ArrayList<>();
-        List<ApplicationDeploymentDescription> appDeployments =  getClient().getAllApplicationDeployments(AiravataConfig.getProperty(AiravataConfig.GATEWAY));
+        List<ApplicationDeploymentDescription> appDeployments =  getClient()
+                .getAllApplicationDeployments(authzToken, AiravataConfig.getProperty(
+                        AiravataConfig.GATEWAY));
         Set<String> comResourceids= new HashSet<>();
         for(ApplicationDeploymentDescription app:appDeployments){
-            if(getClient().getApplicationModule(app.getAppModuleId()).getAppModuleName().equals(appModuleName)){
+            if(getClient().getApplicationModule(authzToken, app.getAppModuleId())
+                    .getAppModuleName().equals(appModuleName)){
                 comResourceids.add(app.getComputeHostId());
             }
         }
 
         Iterator<String> it = comResourceids.iterator();
         while(it.hasNext()){
-            computeResources.add(getClient().getComputeResource(it.next()));
+            computeResources.add(getClient().getComputeResource(authzToken, it.next()));
         }
 
         return computeResources;
     }
 
-    public static List<ComputeResourceDescription> getCompResourcesForAppId(String appId) throws AiravataClientConnectException, TException {
+    public static List<ComputeResourceDescription> getCompResourcesForAppId(String appId)
+            throws AiravataClientException, TException {
         List<ComputeResourceDescription> computeResources = new ArrayList<>();
-        ApplicationDeploymentDescription app =  getClient().getApplicationDeployment(appId);
-        computeResources.add(getClient().getComputeResource(app.getComputeHostId()));
+        ApplicationDeploymentDescription app =  getClient().getApplicationDeployment(authzToken, appId);
+        computeResources.add(getClient().getComputeResource(authzToken, app.getComputeHostId()));
         return computeResources;
     }
 
-    public static ComputeResourceDescription getComputeResourceDescriptionFromName(String hostName) throws AiravataClientConnectException, TException {
+    public static ComputeResourceDescription getComputeResourceDescriptionFromName(String hostName)
+            throws AiravataClientException, TException {
 
-        Map<String,String> compMap= getClient().getAllComputeResourceNames();
+        Map<String,String> compMap= getClient().getAllComputeResourceNames(authzToken);
         Iterator<String> it = compMap.keySet().iterator();
         while(it.hasNext()){
             String id =it.next();
-            ComputeResourceDescription desc = getClient().getComputeResource(id);
+            ComputeResourceDescription desc = getClient().getComputeResource(authzToken, id);
             if(desc.getHostName().equals(hostName)){
                 return desc;
             }
@@ -197,14 +225,16 @@ public class AiravataManager {
 
     }
 
-    public static ComputeResourceDescription getComputeResourceDescriptionFromId(String id) throws AiravataClientConnectException, TException {
-        return getClient().getComputeResource(id);
+    public static ComputeResourceDescription getComputeResourceDescriptionFromId(String id)
+            throws AiravataClientException, TException {
+        return getClient().getComputeResource(authzToken, id);
     }
 
     public static List<ComputeResourceDescription> getComputationalResources(String appInterfaceID){
         List<ComputeResourceDescription> compResourceList = new ArrayList<>();
         try {
-            Map<String, String> comps = getClient().getAvailableAppInterfaceComputeResources(appInterfaceID);
+            Map<String, String> comps = getClient().getAvailableAppInterfaceComputeResources(
+                    authzToken, appInterfaceID);
             Iterator<String> it = comps.keySet().iterator();
             while(it.hasNext()){
                 String comID = it.next();
@@ -217,29 +247,33 @@ public class AiravataManager {
         }
     }
 
-    public static ApplicationModule getApplicationModule(String id) throws AiravataClientConnectException, TException {
-        return getClient().getApplicationModule(id);
+    public static ApplicationModule getApplicationModule(String id)
+            throws AiravataClientException, TException {
+        return getClient().getApplicationModule(authzToken, id);
     }
 
-    public static ApplicationDeploymentDescription getApplicationDeploymentDescription(String id) throws AiravataClientConnectException, TException {
-        return getClient().getApplicationDeployment(id);
+    public static ApplicationDeploymentDescription getApplicationDeploymentDescription(String id)
+            throws AiravataClientException, TException {
+        return getClient().getApplicationDeployment(authzToken, id);
     }
 
     public static List<ApplicationInterfaceDescription> getAllAppInterfaces(){
         try{
-            return getClient().getAllApplicationInterfaces(AiravataConfig.getProperty(AiravataConfig.GATEWAY));
+            return getClient().getAllApplicationInterfaces(authzToken, AiravataConfig
+                    .getProperty(AiravataConfig.GATEWAY));
         }catch (Exception ex){
             ex.printStackTrace();
             return null;
         }
     }
 
-    public static List<Experiment> getQueuedExperiments(String userName){
-        List<Experiment> exp = new ArrayList<>();
+    public static List<ExperimentModel> getQueuedExperiments(String userName){
+        List<ExperimentModel> exp = new ArrayList<>();
         try{
-            List<Experiment> allexp = getClient().getAllUserExperiments(AiravataConfig.getProperty(AiravataConfig.GATEWAY),userName);
-            for(Experiment experiment:allexp){
-                if(experiment.getExperimentStatus().getExperimentState()==ExperimentState.CREATED)
+            List<ExperimentModel> allexp = getClient().getUserExperiments(
+                    authzToken, AiravataConfig.getProperty(AiravataConfig.GATEWAY), userName, -1, 0);
+            for(ExperimentModel experiment:allexp){
+                if(experiment.getExperimentStatus().getState()==ExperimentState.CREATED)
                     exp.add(experiment);
             }
         }catch (Exception ex){
@@ -248,12 +282,13 @@ public class AiravataManager {
         return exp;
     }
 
-    public static List<Experiment> getLaunchedExperiments(String userName){
-        List<Experiment> exp = new ArrayList<>();
+    public static List<ExperimentModel> getLaunchedExperiments(String userName){
+        List<ExperimentModel> exp = new ArrayList<>();
         try{
-            List<Experiment> allexp = getClient().getAllUserExperiments(AiravataConfig.getProperty(AiravataConfig.GATEWAY),userName);
-            for(Experiment experiment:allexp){
-                ExperimentState state = experiment.getExperimentStatus().getExperimentState();
+            List<ExperimentModel> allexp = getClient().getUserExperiments(
+                    authzToken,AiravataConfig.getProperty(AiravataConfig.GATEWAY), userName, -1, 0);
+            for(ExperimentModel experiment:allexp){
+                ExperimentState state = experiment.getExperimentStatus().getState();
                 if(state!=ExperimentState.CREATED)
                     exp.add(experiment);
             }
@@ -261,51 +296,5 @@ public class AiravataManager {
             ex.printStackTrace();
         }
         return exp;
-    }
-
-
-    public static void main(String [] args) {
-        try {
-            ApplicationInterfaceDescription a= getClient().getApplicationInterface("Echo_af847f04-ca31-48da-a92b-3225602db4e0");
-            a.getApplicationOutputs();
-            //getClient().getComputeResource().
-            //ApplicationInterfaceDescription a= getClient().getApplicationInterface("Echo_2e539083-665d-40fd-aaa2-4a751028326b");
-            //a.getApplicationInterfaceId();
-            //Map<String,String> ifn = getClient().getAllApplicationInterfaceNames();
-            //List<ApplicationInterfaceDescription> apd = getClient().getAllApplicationInterfaces();
-            //ApplicationInterfaceDescription a = apd.get(0);
-            //a.getApplication
-
-            //Iterator<String> it = ifn.keySet().iterator();
-            //while(it.hasNext()){
-           ///     String id = it.next();
-           //     System.out.println(id+ " "+ifn.get(id));
-           // }
-            //createExperiment();
-            //GMS3.login("dimuthu","changeme@1",AccessType.COMMUNITY,new HashMap<String, String>());
-            //FileBrowserAiravata fileBrowser = new FileBrowserAiravata();
-            //fileBrowser.makeDirectory("/tmp/dimuthu2");
-            //GMS3.getClient().getFileService().mkdir();
-            //uploadFileToGridChem("dimuthu","exp1","job1","testinput.txt","/Users/dimuthuupeksha/testinput.txt");
-            //Project project = ProjectModelUtil.createProject("project1", "dimuthu", "sample1");
-            //getClient().createProject("pgascigap",project);
-            //FileManager.uploadFile("/Users/dimuthuupeksha/Downloads/c4b4nhtwbs3.inp","/tmp/dimuthu/c4b4nhtwbs3.inp");
-            //List<ApplicationDeploymentDescription> appDeployments =  getClient().getAllApplicationDeployments();
-            //for(ApplicationDeploymentDescription app:appDeployments){
-              //  System.out.println(app.getAppDeploymentDescription());
-
-            //}
-            //createExperiment();
-            //getClient().getApplicationDeployment("Echo_dcd59b1a-b291-4750-8d89-87531e0739e6")
-            //File file = new File("http://climatedataapi.worldbank.org/climateweb/rest/v1/country/mavg/pr/2020/2039/USA.csv");
-            //System.out.println(file.exists());
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        //login("admin", "admin");
-        //System.out.println(getProfile().getFirstName());
-        //List<Project> projects = getProjects();
-        //System.out.println(projects.size());
-
     }
 }

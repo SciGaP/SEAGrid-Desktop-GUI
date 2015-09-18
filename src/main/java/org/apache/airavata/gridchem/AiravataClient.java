@@ -13,9 +13,6 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.thrift.protocol.TProtocol;
 
-/**
- * @author Dimuthu
- */
 public class AiravataClient extends Airavata.Client{
 
 
@@ -27,7 +24,7 @@ public class AiravataClient extends Airavata.Client{
         super(iprot, oprot);
     }
 
-    public String login(String userName,String password) throws OAuthAuthorisationException {
+    public String[] login(String userName,String password) throws OAuthAuthorisationException {
 
         String endPoint = AiravataConfig.getProperty("identity_server_host")+"/oauth2/token";
         String clientId = AiravataConfig.getProperty("client_id");
@@ -38,7 +35,7 @@ public class AiravataClient extends Airavata.Client{
             userName = userName + "@" + AiravataConfig.getProperty("identity_server_tenant_domain");
         }
         OAuthClient.AuthResponse authResponse=oAuthClient.authenticate(userName, password);
-        return authResponse.getAccess_token();
+        return new String[]{authResponse.getAccess_token(), authResponse.getRefresh_token()};
     }
 
     public String getProfile(String accessToken) throws OAuthSystemException, OAuthProblemException {

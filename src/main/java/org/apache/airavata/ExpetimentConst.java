@@ -1,8 +1,5 @@
 package org.apache.airavata;
 
-/**
- * Created by dimuthuupeksha on 4/28/15.
- */
 public class ExpetimentConst {
     public static final String EXP_NAME="EXP_NAME";
     public static final String APP_ID="APP_ID";

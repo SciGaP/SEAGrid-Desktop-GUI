@@ -1,7 +1,7 @@
 package org.gridchem.client.gui.jobsubmission;
 
-import org.apache.airavata.model.appcatalog.appinterface.DataType;
-import org.apache.airavata.model.appcatalog.appinterface.InputDataObjectType;
+import org.apache.airavata.model.application.io.DataType;
+import org.apache.airavata.model.application.io.InputDataObjectType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,9 +11,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by dimuthuupeksha on 8/15/15.
- */
 public class DynamicInputPanel extends JPanel {
     private EditJobPanel parent;
     private JPanel innerPanel;

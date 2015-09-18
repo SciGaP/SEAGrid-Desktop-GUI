@@ -9,114 +9,41 @@
 
 package org.gridchem.client.gui.jobsubmission;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.util.*;
+import nanocad.nanocadFrame2;
+import nanocad.newNanocad;
+import org.apache.airavata.ExpetimentConst;
+import org.apache.airavata.gridchem.AiravataManager;
+import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
+import org.apache.airavata.gridchem.experiment.ExperimentHandler;
+import org.apache.airavata.gridchem.experiment.ExperimentHandlerUtils;
+import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDescription;
+import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
+import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
+import org.apache.airavata.model.experiment.ExperimentModel;
+import org.apache.airavata.model.util.ExperimentModelUtil;
+import org.apache.airavata.model.workspace.Project;
+import org.gridchem.client.GridChem;
+import org.gridchem.client.Invariants;
+import org.gridchem.client.SubmitJobsWindow;
+import org.gridchem.client.common.Preferences;
+import org.gridchem.client.common.Settings;
+import org.gridchem.client.util.Env;
+import org.gridchem.client.util.GMS3;
+import org.gridchem.client.util.file.FileUtility;
+import org.gridchem.service.beans.*;
+import org.gridchem.service.model.enumeration.AccessType;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.InputVerifier;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.ToolTipManager;
-import javax.swing.Box.Filler;
-import javax.swing.JFormattedTextField.AbstractFormatter;
-import javax.swing.JSpinner.NumberEditor;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 import javax.swing.plaf.basic.BasicArrowButton;
-
-import nanocad.nanocadFrame2;
-import nanocad.newNanocad;
-
-import org.apache.airavata.ExpetimentConst;
-import org.apache.airavata.gridchem.AiravataManager;
-import org.apache.airavata.gridchem.experiment.*;
-import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
-import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDescription;
-import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
-import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
-import org.apache.airavata.model.util.ExperimentModelUtil;
-import org.apache.airavata.model.workspace.Project;
-import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
-import org.apache.airavata.model.workspace.experiment.Experiment;
-import org.gridchem.client.FileUtilities;
-import org.gridchem.client.GridChem;
-import org.gridchem.client.InputInfoPanel;
-import org.gridchem.client.Invariants;
-import org.gridchem.client.SubmitJobsWindow;
-import org.gridchem.client.Trace;
-import org.gridchem.client.common.Preferences;
-import org.gridchem.client.common.Settings;
-import org.gridchem.client.common.Status;
-import org.gridchem.client.common.StatusEvent;
-import org.gridchem.client.exceptions.CharmmInputFileParsingException;
-import org.gridchem.client.gui.jobsubmission.commands.GETHARDWARECommand;
-import org.gridchem.client.gui.panels.CancelCommandPrompt;
-import org.gridchem.client.gui.panels.myccg.MonitorVO;
-import org.gridchem.client.util.Env;
-import org.gridchem.client.util.GMS3;
-import org.gridchem.client.util.file.CharmmInputFileParser;
-import org.gridchem.client.util.file.FileUtility;
-import org.gridchem.service.beans.ComputeBean;
-import org.gridchem.service.beans.JobBean;
-import org.gridchem.service.beans.LogicalFileBean;
-import org.gridchem.service.beans.ProjectBean;
-import org.gridchem.service.beans.QueueBean;
-import org.gridchem.service.beans.SoftwareBean;
-import org.gridchem.service.exceptions.JobException;
-import org.gridchem.service.model.enumeration.AccessType;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
+import java.util.List;
 
 
 /**
@@ -234,7 +161,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         experimentParmas.put(ExpetimentConst.EXP_NAME, expName);
         experimentParmas.put(ExpetimentConst.PROJECT_ID, GridChem.project.getProjectID());
         experimentParmas.put(ExpetimentConst.USER_ID, GridChem.user.getUserName());
-        ExperimentModelUtil.createComputationResourceScheduling(null, 1, 1, 1, "normal", 30, 0, 1, "sds128");
+        ExperimentModelUtil.createComputationResourceScheduling(null, 1, 1, 1, "normal", 30, 0);
 
         experimentParmas.put(ExpetimentConst.CPU_COUNT, 1);
         experimentParmas.put(ExpetimentConst.NODE_COUNT, 1);
@@ -311,14 +238,14 @@ public class EditJobPanel extends JDialog implements ActionListener,
      * @param owner
      * @throws HeadlessException
      */
-    public EditJobPanel(Frame owner, Experiment experiment) throws HeadlessException {
+    public EditJobPanel(Frame owner, ExperimentModel experiment) throws HeadlessException {
         super(owner);
 
         //this.job = job;
 
         this.isUpdating = true;
         interfaceDescriptions = AiravataManager.getAllAppInterfaces();
-        experimentParmas.put(ExpetimentConst.APP_ID, experiment.getApplicationId());
+        experimentParmas.put(ExpetimentConst.APP_ID, experiment.getExecutionId());
         //experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID,experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId());
         init();
         updateForm(experiment);
@@ -383,11 +310,11 @@ public class EditJobPanel extends JDialog implements ActionListener,
         }
     }
 
-    private void updateForm(Experiment experiment){
-        expNameText.setText(experiment.getName());
+    private void updateForm(ExperimentModel experiment){
+        expNameText.setText(experiment.getExperimentName());
         ApplicationInterfaceDescription appDesc =null;
         for (ApplicationInterfaceDescription desc: interfaceDescriptions){
-            if(desc.getApplicationInterfaceId().equals(experiment.getApplicationId())){
+            if(desc.getApplicationInterfaceId().equals(experiment.getExecutionId())){
                 appDesc =desc;
                 break;
             }
@@ -404,7 +331,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         }
         hpcList.setSelectedIndex(compResourceIndex);
         populateProjects();
-        Project expProject = AiravataManager.getProject(experiment.getProjectID());
+        Project expProject = AiravataManager.getProject(experiment.getProjectId());
         //projCombo.setSelectedItem(expProject.getName());
         changeQueue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName());
         numProcSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount());
@@ -1225,7 +1152,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
             System.out.println(experimentParmas.get(ExpetimentConst.WALL_TIME));
             System.out.println(experimentParmas.get(ExpetimentConst.START_TIME));
             System.out.println(experimentParmas.get(ExpetimentConst.MEMORY));
-            System.out.println(experimentParmas.get(ExpetimentConst.PROJECT_ACCOUNT));
             System.out.println();
 
             ExperimentHandler experimentHandler = ExperimentHandlerUtils

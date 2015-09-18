@@ -40,24 +40,13 @@ DEALINGS WITH THE SOFTWARE.
 */
 
 package org.gridchem.client;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Properties;
 
-import javax.swing.JFrame;
-
-import org.apache.airavata.model.workspace.experiment.Experiment;
-import org.gridchem.client.common.Settings;
-import org.gridchem.client.util.GMS3;
-import org.gridchem.service.beans.JobBean;
-import org.gridchem.service.beans.ProjectBean;
+import org.apache.airavata.model.experiment.ExperimentModel;
 import org.gridchem.service.exceptions.JobException;
-import org.gridchem.service.model.enumeration.AccessType;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
 
 //TODO: the submitted jobs in the lower panel shoudl be refreshed (if status is displayed) when the monitorVO job panel refreshes
 //TODO: the monitorVO job panel should be effectively launched and refreshed after a job is submitted.
@@ -67,8 +56,8 @@ public class SubmitJobsWindow
     public static JFrame frame;
     public static stuffInside si;
 
-    public static ArrayList<Experiment> jobQueue = new ArrayList<Experiment>();  // replaces the JobList
-    public static ArrayList<Experiment> jobSubmitted = new ArrayList<Experiment>();
+    public static ArrayList<ExperimentModel> jobQueue = new ArrayList<ExperimentModel>();  // replaces the JobList
+    public static ArrayList<ExperimentModel> jobSubmitted = new ArrayList<ExperimentModel>();
 
     public static void getInstance() {
         if (frame == null) {
@@ -80,7 +69,7 @@ public class SubmitJobsWindow
         }
     }
     
-    public static void getInstance(Experiment job) {
+    public static void getInstance(ExperimentModel job) {
         if (frame == null) {
             si = new stuffInside(job);
             init();
@@ -128,11 +117,11 @@ public class SubmitJobsWindow
     		si.setSelectedIndex(jobid);
     }
     
-    public static void addJob(Experiment experiment) {
+    public static void addJob(ExperimentModel experiment) {
         jobQueue.add(experiment);
     }
 
-    public static void updateJob(Experiment experiment) {
+    public static void updateJob(ExperimentModel experiment) {
         int index = jobQueue.indexOf(experiment);
         if (index > -1) {
             jobQueue.remove(index);
