@@ -11,6 +11,7 @@ package org.gridchem.client.gui.jobsubmission;
 
 import nanocad.nanocadFrame2;
 import nanocad.newNanocad;
+import org.apache.airavata.AiravataConfig;
 import org.apache.airavata.ExpetimentConst;
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
@@ -1126,12 +1127,10 @@ public class EditJobPanel extends JDialog implements ActionListener,
             doMakeDefaultJob();
 
         } else if (e.getActionCommand() == "Submit") {
-            //preferences.put("last_module", getModuleName());
-            //preferences.put("last_app", getAppPackageName());
-            //preferences.put("last_machine", getSubmitMachine());
             experimentParmas.put(ExpetimentConst.EXP_NAME, expNameText.getText());
             experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, availableCompResources.get(hpcList.getSelectedIndex()).getComputeResourceId());
             experimentParmas.put(ExpetimentConst.APP_ID,(String)appModuleCombo.getSelectedItem());
+            experimentParmas.put(ExpetimentConst.GATEWAY_ID, AiravataConfig.getProperty("gateway"));
 
             //List<File> inputFiles = inputFilePanel.getInputFiles();
             //experimentParmas.put(ExpetimentConst.INPUT_FILES, inputFiles);

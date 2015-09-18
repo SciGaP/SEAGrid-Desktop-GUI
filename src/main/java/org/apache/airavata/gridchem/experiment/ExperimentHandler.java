@@ -31,7 +31,7 @@ public class ExperimentHandler {
 
     public String createExperiment(Map<String, Object> params) throws ExperimentCreationException {
 
-        String projectID = null, userID = null, expName = null, expDesc = null, appId = null, hostID = null, queue = null, projectAccount = null;
+        String projectID = null, userID = null, expName = null, expDesc = null, appId = null, gatewayId = null, hostID = null, queue = null, projectAccount = null;
         Integer cpuCount = null, threadCount = null, nodeCount = null, wallTime = null, startTime = null, physicalMemory = null;
         List<InputDataObjectType> inputs = null;
 
@@ -46,6 +46,9 @@ public class ExperimentHandler {
 
         if (params.get(ExpetimentConst.APP_ID) != null)
             appId = (String) params.get(ExpetimentConst.APP_ID);
+
+        if (params.get(ExpetimentConst.GATEWAY_ID) != null)
+            gatewayId = (String) params.get(ExpetimentConst.GATEWAY_ID);
 
         if (params.get(ExpetimentConst.RESOURCE_HOST_ID) != null)
             hostID = (String) params.get(ExpetimentConst.RESOURCE_HOST_ID);
@@ -89,6 +92,7 @@ public class ExperimentHandler {
         exp.setDescription(expDesc);
         exp.setExecutionId(appId);
         exp.setExperimentInputs(inputs);
+        exp.setGatewayId(gatewayId);
         try {
             exp.setExperimentOutputs(AiravataManager
                     .getClient()
@@ -155,7 +159,7 @@ public class ExperimentHandler {
             progressDialog = (ProgressDialog)params.get("progressDialog");
             progressDialog.beginSubTask("Submitting experiment to queue ... ",2);
         }
-        String sshTokenId = "bdc612fe-401e-4684-88e9-317f99409c45";
+        String sshTokenId = AiravataConfig.getProperty("ssh_token_id");
         try {
             AiravataManager.getClient().launchExperiment(AiravataManager.authzToken, expID, sshTokenId);
             ExperimentState state = AiravataManager.getClient().getExperiment(AiravataManager.authzToken,

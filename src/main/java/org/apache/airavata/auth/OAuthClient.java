@@ -123,20 +123,6 @@ public class OAuthClient {
         }
     }
 
-
-    public static void main(String args[]){
-        OAuthClient client = new OAuthClient("https://localhost:9443/oauth2/token");
-        try {
-            client.authenticate("dimuthu", "dimu1234");
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-    }
-
-
-
-
-
     public static void registerSSL(){
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(
                 new javax.net.ssl.HostnameVerifier(){

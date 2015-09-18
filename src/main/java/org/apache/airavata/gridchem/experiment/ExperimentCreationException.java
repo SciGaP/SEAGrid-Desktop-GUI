@@ -1,8 +1,5 @@
 package org.apache.airavata.gridchem.experiment;
 
-/**
- * @author Dimuthu
- */
 public class ExperimentCreationException extends Exception{
     public ExperimentCreationException () {
 

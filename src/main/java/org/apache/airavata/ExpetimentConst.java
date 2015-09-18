@@ -15,4 +15,5 @@ public class ExpetimentConst {
     public static final String MEMORY="MEMORY";
     public static final String PROJECT_ACCOUNT="PROJECT_ACCOUNT";
     public static final String INPUTS="INPUTS";
+    public static final String GATEWAY_ID = "GATEWAY_ID";
 }
