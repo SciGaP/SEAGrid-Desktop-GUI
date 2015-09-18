@@ -13,6 +13,7 @@ import org.apache.airavata.model.experiment.UserConfigurationDataModel;
 import org.apache.airavata.model.scheduling.ComputationalResourceSchedulingModel;
 import org.apache.airavata.model.status.ExperimentState;
 import org.apache.airavata.model.util.ExperimentModelUtil;
+import org.gridchem.client.common.Settings;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -144,10 +145,10 @@ public class ExperimentHandler {
                     }
                     String parent = file.getParent();
                     String fileName = file.getName();
-                    String productId = fb.ingestFile(parent,fileName, randSeq, "GenericFile");
+                    String productId = fb.ingestFile(parent,fileName, Settings.gridchemusername+randSeq, "GenericFile");
                     System.out.println("Product ID : "+productId);
-                    //FIXME
-                    inputs.get(i).setValue("file://airavata@localhost:/home/airavata/oodt/archive/"+randSeq+"/"+fileName);
+                    inputs.get(i).setValue("file://"+AiravataConfig.getProperty("data_archive_path")+"/"+
+                            Settings.gridchemusername+randSeq+"/"+fileName);
                 }
             }
         }

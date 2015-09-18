@@ -1,5 +1,6 @@
 package org.apache.airavata.gridchem;
 
+import org.apache.airavata.AiravataConfig;
 import org.apache.commons.lang.Validate;
 import org.apache.oodt.cas.filemgr.datatransfer.DataTransfer;
 import org.apache.oodt.cas.filemgr.datatransfer.RemoteDataTransferFactory;
@@ -14,13 +15,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * @author Dimuthu
- */
 public class FileBrowserAiravata {
     private static final String transferServiceFacClass = "org.apache.oodt.cas.filemgr.datatransfer.RemoteDataTransferFactory";
-    private static final String FILE_SERVER = "http://gw77.iu.xsede.org";
-    private static final int PORT = 9000;
+    private static final String FILE_SERVER_URL = AiravataConfig.getProperty("file_server_url");
     private XmlRpcFileManagerClient client;
 
     /**
@@ -94,7 +91,7 @@ public class FileBrowserAiravata {
     }
 
     private String getUrl() {
-        return FILE_SERVER + ":" + PORT;
+        return FILE_SERVER_URL;
     }
 
     private XmlRpcFileManagerClient getClient()
@@ -108,17 +105,4 @@ public class FileBrowserAiravata {
             return client;
         }
     }
-
-    public static void main (String args[]) {
-        FileBrowserAiravata fb = new FileBrowserAiravata();
-
-        try {
-            //fb.ingestFile("/tmp", "blah2.txt", "blah32424", "GenericFile");
-            fb.retrieveFile(null, "blah32424", new File("/tmp/out"));
-            System.out.println(fb.hasProduct("blah32424"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
