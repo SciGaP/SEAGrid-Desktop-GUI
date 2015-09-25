@@ -17,9 +17,7 @@ import org.gridchem.client.common.Settings;
 
 import java.io.File;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class ExperimentHandler {
 
@@ -92,7 +90,21 @@ public class ExperimentHandler {
         exp.setExperimentName(expName);
         exp.setDescription(expDesc);
         exp.setExecutionId(appId);
-        exp.setExperimentInputs(inputs);
+
+        List<InputDataObjectType> applicationInputs = AiravataManager.getApplicationInputs(appId);
+        Collections.sort(applicationInputs, new Comparator<InputDataObjectType>() {
+            @Override
+            public int compare(InputDataObjectType o1, InputDataObjectType o2) {
+                return o1.getInputOrder() - o2.getInputOrder();
+            }
+        });
+        for(int i=0;i < applicationInputs.size();i++){
+            applicationInputs.get(i).setType(inputs.get(i).getType());
+            applicationInputs.get(i).setValue(inputs.get(i).getValue());
+        }
+        exp.setExperimentInputs(applicationInputs);
+
+        exp.setExperimentOutputs(AiravataManager.getApplicationOutputs(appId));
         exp.setGatewayId(gatewayId);
         try {
             exp.setExperimentOutputs(AiravataManager

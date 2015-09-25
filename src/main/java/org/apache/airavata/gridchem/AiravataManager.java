@@ -5,6 +5,8 @@ import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentD
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationModule;
 import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDescription;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
+import org.apache.airavata.model.application.io.InputDataObjectType;
+import org.apache.airavata.model.application.io.OutputDataObjectType;
 import org.apache.airavata.model.error.AiravataClientException;
 import org.apache.airavata.model.error.AiravataErrorType;
 import org.apache.airavata.model.experiment.ExperimentModel;
@@ -18,9 +20,12 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.gridchem.client.common.Settings;
-import org.gridchem.service.beans.*;
-import org.gridchem.service.exceptions.*;
+import org.gridchem.service.beans.UserBean;
+import org.gridchem.service.exceptions.ProjectException;
+import org.gridchem.service.exceptions.SessionException;
+import org.gridchem.service.exceptions.UserException;
 import org.json.JSONObject;
+
 import java.util.*;
 
 public class AiravataManager {
@@ -68,7 +73,7 @@ public class AiravataManager {
         }catch (Exception e) {
             //User does not exists in the system - creating default project
             try{
-                getClient().createProject(authzToken, AiravataConfig.GATEWAY
+                getClient().createProject(authzToken, AiravataConfig.getProperty(AiravataConfig.GATEWAY)
                         , new Project("no-id",Settings.gridchemusername,"Default Project"));
                 airavataProjects = getClient().getUserProjects(
                         authzToken, AiravataConfig.getProperty(AiravataConfig.GATEWAY)
@@ -296,5 +301,23 @@ public class AiravataManager {
             ex.printStackTrace();
         }
         return exp;
+    }
+
+    public static List<OutputDataObjectType> getApplicationOutputs(String appId) {
+        try{
+            return getClient().getApplicationOutputs(authzToken, appId);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<InputDataObjectType> getApplicationInputs(String appId) {
+        try{
+            return getClient().getApplicationInputs(authzToken, appId);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
     }
 }
