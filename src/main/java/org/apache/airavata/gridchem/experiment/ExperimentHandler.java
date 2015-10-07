@@ -109,7 +109,7 @@ public class ExperimentHandler {
         try {
             exp.setExperimentOutputs(AiravataManager
                     .getClient()
-                    .getApplicationInterface(AiravataManager.authzToken,appId)
+                    .getApplicationInterface(AiravataManager.getAuthzToken(),appId)
                     .getApplicationOutputs());
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,7 +135,7 @@ public class ExperimentHandler {
 
         String experimentId = null;
         try {
-            experimentId = AiravataManager.getClient().createExperiment(AiravataManager.authzToken,
+            experimentId = AiravataManager.getClient().createExperiment(AiravataManager.getAuthzToken(),
                     AiravataConfig.getProperty(AiravataConfig.GATEWAY),exp);
         } catch (Exception e) {
             e.printStackTrace();
@@ -174,12 +174,12 @@ public class ExperimentHandler {
         }
         String sshTokenId = AiravataConfig.getProperty("ssh_token_id");
         try {
-            AiravataManager.getClient().launchExperiment(AiravataManager.authzToken, expID, sshTokenId);
-            ExperimentState state = AiravataManager.getClient().getExperiment(AiravataManager.authzToken,
+            AiravataManager.getClient().launchExperiment(AiravataManager.getAuthzToken(), expID, sshTokenId);
+            ExperimentState state = AiravataManager.getClient().getExperiment(AiravataManager.getAuthzToken(),
                     expID).getExperimentStatus().getState();
             while (ExperimentState.CREATED.equals(state)){
                 Thread.sleep(1000);
-                state = AiravataManager.getClient().getExperiment(AiravataManager.authzToken,expID)
+                state = AiravataManager.getClient().getExperiment(AiravataManager.getAuthzToken(),expID)
                         .getExperimentStatus().getState();
             }
         } catch (Exception ex) {

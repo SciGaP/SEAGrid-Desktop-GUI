@@ -13,6 +13,7 @@ import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.airavata.model.security.AuthzToken;
 import org.apache.airavata.model.status.ExperimentState;
 import org.apache.airavata.model.workspace.Project;
+import org.apache.http.auth.AUTH;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -30,11 +31,25 @@ import java.util.*;
 
 public class AiravataManager {
 
-    public static String accessToken="";
-    public static String refreshToken="";
+    private static String username="";
+    private static String password="";
 
-    public static AuthzToken authzToken;
+    private static String accessToken="";
+    private static String refreshToken="";
+
+    private static AuthzToken authzToken;
     private static Project currentProject;
+
+    public static AuthzToken getAuthzToken(){
+        try {
+            getClient().getAPIVersion(AiravataManager.getAuthzToken());
+        } catch (TException e) {
+            e.printStackTrace();
+            AiravataManager.logout();
+            AiravataManager.login(AiravataManager.username,AiravataManager.password);
+        }
+        return AiravataManager.authzToken;
+    }
 
     public static boolean login(String uname, String passwd) {
         try {
@@ -47,6 +62,10 @@ public class AiravataManager {
         }catch (Exception e){
             throw new SessionException(e.getMessage());
         }
+        AiravataManager.username = uname;
+        AiravataManager.password = passwd;
+
+
         Settings.gridchemusername = uname;
         Settings.authenticated = true;
 
