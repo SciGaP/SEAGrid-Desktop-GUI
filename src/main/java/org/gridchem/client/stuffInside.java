@@ -76,7 +76,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 
 	JButton editButton;
 	JButton newJButton;
-	DropDownButton inputGeneratorGuiButton;
+//	DropDownButton inputGeneratorGuiButton;
 	JButton delButton;
 	JButton submButton;
 	JButton suballButton;
@@ -174,7 +174,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		// buttonBoxPane
 		editButton = new JButton("Edit a job");
 		newJButton = new JButton("Create New Job");
-		inputGeneratorGuiButton = createDDB();
+//		inputGeneratorGuiButton = createDDB();
 		delButton = new JButton("Delete Selected Job");
 		submButton = new JButton("Submit Selected Jobs to Queue");
 		suballButton = new JButton("Submit All Jobs to Queue"); // lixh_3_3
@@ -188,7 +188,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		buttonBox.add(editButton);
 		buttonBox.add(newJButton);
 		newJButton.requestFocusInWindow(); // Create job gets initial focus
-		buttonBox.add(inputGeneratorGuiButton);
+//		buttonBox.add(inputGeneratorGuiButton);
 		buttonBox.add(delButton);
 		buttonBox.add(submButton);
 		buttonBox.add(suballButton); // lixh_3_3
@@ -386,35 +386,35 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 
 	}
 
-	private DropDownButton createDDB() {
-		PopupListener popupListener = new PopupListener();
-
-		inputGeneratorGuiButton = new DropDownButton("Open Gaussian GUI");
-		// ((JButton)inputGeneratorGuiButton.getComponent(1)).setBorderPainted(true);
-
-		// buttonPopup = new JPopupMenu("Open Application GUI");
-		// //leftClickPopup.setMnemonic(KeyEvent.VK_A);
-		// buttonPopup.getAccessibleContext().setAccessibleDescription("Drop Down Menu for selecting GUI");
-		//
-		gaussianMenuItem = new ApplicationMenuItem("Gaussian", KeyEvent.VK_1);
-		gaussianMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,
-				ActionEvent.ALT_MASK));
-		gaussianMenuItem.getAccessibleContext().setAccessibleDescription(
-				"Opens the Gaussian GUI");
-		gaussianMenuItem.addActionListener(popupListener);
-
-		gamessMenuItem = new ApplicationMenuItem("GAMESS", KeyEvent.VK_2);
-		gamessMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,
-				ActionEvent.ALT_MASK));
-		gamessMenuItem.getAccessibleContext().setAccessibleDescription(
-				"Opens the GAMESS GUI");
-		gamessMenuItem.addActionListener(popupListener);
-
-		inputGeneratorGuiButton.getMenu().add(gaussianMenuItem);
-		inputGeneratorGuiButton.getMenu().add(gamessMenuItem);
-
-		return inputGeneratorGuiButton;
-	}
+//	private DropDownButton createDDB() {
+//		PopupListener popupListener = new PopupListener();
+//
+//		inputGeneratorGuiButton = new DropDownButton("Open Gaussian GUI");
+//		// ((JButton)inputGeneratorGuiButton.getComponent(1)).setBorderPainted(true);
+//
+//		// buttonPopup = new JPopupMenu("Open Application GUI");
+//		// //leftClickPopup.setMnemonic(KeyEvent.VK_A);
+//		// buttonPopup.getAccessibleContext().setAccessibleDescription("Drop Down Menu for selecting GUI");
+//		//
+//		gaussianMenuItem = new ApplicationMenuItem("Gaussian", KeyEvent.VK_1);
+//		gaussianMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,
+//				ActionEvent.ALT_MASK));
+//		gaussianMenuItem.getAccessibleContext().setAccessibleDescription(
+//				"Opens the Gaussian GUI");
+//		gaussianMenuItem.addActionListener(popupListener);
+//
+//		gamessMenuItem = new ApplicationMenuItem("GAMESS", KeyEvent.VK_2);
+//		gamessMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,
+//				ActionEvent.ALT_MASK));
+//		gamessMenuItem.getAccessibleContext().setAccessibleDescription(
+//				"Opens the GAMESS GUI");
+//		gamessMenuItem.addActionListener(popupListener);
+//
+//		inputGeneratorGuiButton.getMenu().add(gaussianMenuItem);
+//		inputGeneratorGuiButton.getMenu().add(gamessMenuItem);
+//
+//		return inputGeneratorGuiButton;
+//	}
 
 	public class PopupListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
@@ -446,8 +446,8 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 				gamessMenuItem.setLastSelected(true);
 			}
 
-			inputGeneratorGuiButton.getButton().setText(
-					"Open " + item.getText() + " GUI");
+//			inputGeneratorGuiButton.getButton().setText(
+//					"Open " + item.getText() + " GUI");
 		}
 	}
 
@@ -484,11 +484,11 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 				startWaiting("Opening Create New Experiment Window", "Please wait few seconds", worker);
 				worker.start();
 
-			} else if (e.getSource() == inputGeneratorGuiButton) {
-
-				showApplicationPopupMenu(inputGeneratorGuiButton,
-						inputGeneratorGuiButton.getLocationOnScreen());
-
+//			} else if (e.getSource() == inputGeneratorGuiButton) {
+//
+//				showApplicationPopupMenu(inputGeneratorGuiButton,
+//						inputGeneratorGuiButton.getLocationOnScreen());
+//
 			} else if (e.getSource() == delButton) {
 				int index = queueList.getSelectedIndex();
 				if (index == -1) {

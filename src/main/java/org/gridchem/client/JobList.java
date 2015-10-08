@@ -124,8 +124,9 @@ public class JobList implements java.util.List {
 		while (!(t.isEmpty())) {
 			j = (ExperimentModel) t.remove(0);
 
-			// s.add(j.getJobName()+ "  " + j.getApp() + "  " + j.getMachine());
-			s.add(j.getExperimentName() +  " " + j.getExperimentStatus().getState().name());
+//			 s.add(j.getJobName()+ "  " + j.getApp() + "  " + j.getMachine());
+//			s.add(j.getExperimentName() +  " " + j.getExperimentStatus().getState().name());
+			s.add(j.getExperimentName());
 		}
 		return s;
 	}
