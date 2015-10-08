@@ -421,12 +421,13 @@ public class MonitorVO extends JFrame implements Timeable {
             tabbedPane.addTab("Job History", null, jobPanel,
                               "Show historical job information.");
             tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-    
-            resourcePanel = new ResourcePanel(GridChem.systems);
-            //JComponent panel2 = makeTextPanel("Resource Status");
-            tabbedPane.addTab("Resource Status", null, resourcePanel,
-                              "Show current status of HPC resources on the CCG");
-            tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+
+//  Currently we don't support resource status in AiravataR
+//            resourcePanel = new ResourcePanel(GridChem.systems);
+//            //JComponent panel2 = makeTextPanel("Resource Status");
+//            tabbedPane.addTab("Resource Status", null, resourcePanel,
+//                              "Show current status of HPC resources on the CCG");
+//            tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
     
             //usagePanel = new UsagePanel(GridChem.projects);
             //tabbedPane.addTab("Project Usage", null, usagePanel,
