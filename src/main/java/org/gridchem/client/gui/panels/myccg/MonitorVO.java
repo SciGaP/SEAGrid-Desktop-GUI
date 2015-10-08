@@ -135,8 +135,7 @@ public class MonitorVO extends JFrame implements Timeable {
      * This method will create a new MonitorPanel if none exist.  
      * Otherwise, it will call the MonitorPanel.refresh() with the
      * current VO.
-     * 
-     * @param userVO
+     *
      */
     public void refresh() {
         
@@ -492,7 +491,7 @@ public class MonitorVO extends JFrame implements Timeable {
         }
 
         /**
-         * @param resourceStatusPanel the resourceStatusPanel to set
+         * @param resourcePanel the resourceStatusPanel to set
          */
         public void setResourcePanel(ResourcePanel resourcePanel) {
             this.resourcePanel = resourcePanel;

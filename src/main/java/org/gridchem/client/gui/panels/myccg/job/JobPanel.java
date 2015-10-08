@@ -127,10 +127,9 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	public static String HPCsys;
 	public static String[] columnNames =
 	// {"Name","Research Project","Date","Time","Machine","Queue","Allocation","Status","ID"};
-	{ "ID", "Name", "Research Project", "Date", "Time", "Machine",
-			"LocalJobID", "Status" };
+	{ "ID", "Name", "Research Project", "Date", "Time", "Machine", "Status" };
 
-	int defaultColumns[] = { 0, 1, 13, 4, 5, 7, 10 };
+	int defaultColumns[] = { 0, 1, 13, 4, 5, 10 };
 
 	public static int num_column = columnNames.length;
 	private List<ExperimentModel> experiments;
@@ -4136,9 +4135,18 @@ class JobTableData extends AbstractTableModel implements
 		case 3:
 			return row.experiment.getProjectId();
 		case 4:
-			return row.experiment.getExecutionId();
+			try{
+				return row.experiment.getExecutionId().split("_")[0];
+			}catch (Exception ex){
+				return row.experiment.getExecutionId();
+			}
 		case 5:
-			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId();
+			try {
+				return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId()
+						.split("_")[0];
+			}catch (Exception ex){
+				return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId();
+			}
 		case 6:
 			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName();
 		case 7:
@@ -4154,14 +4162,15 @@ class JobTableData extends AbstractTableModel implements
 		case 12:
 			return "----";
 		case 13:
-//			if (isToday(row.jobBean.getCreated())) {
-//				return new SimpleDateFormat("hh:mm a").format(row.jobBean
-//						.getCreated());
-//			} else {
-//				return new SimpleDateFormat("MM/dd/yyyy").format(row.jobBean
-//						.getCreated());
-//			}
-			return row.experiment.getCreationTime();
+			try{
+				Date date = new Date(row.experiment.getCreationTime());
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+				sdf.setTimeZone(TimeZone.getTimeZone("GMT-4"));
+				return sdf.format(date);
+			}catch (Exception ex){
+				return row.experiment.getCreationTime();
+			}
+
 		case 14:
 //			return row.jobBean.getUsedCpus();
 			return 0;
