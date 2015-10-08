@@ -79,10 +79,12 @@ public class LoginDialog extends JDialog implements ActionListener {
 		authTabbedPane = new JTabbedPane();
 		authTabbedPane.addTab("Community", new AuthenticationForm(
 				AccessType.COMMUNITY, this));
-		authTabbedPane.addTab("XSEDE", new AuthenticationForm(
-				AccessType.TERAGRID, this));
-		authTabbedPane.addTab("External", new AuthenticationForm(
-				AccessType.EXTERNAL, this));
+
+// Currently we support only community login through WSO2 IS
+//		authTabbedPane.addTab("XSEDE", new AuthenticationForm(
+//				AccessType.TERAGRID, this));
+//		authTabbedPane.addTab("External", new AuthenticationForm(
+//				AccessType.EXTERNAL, this));
 
 		loginButton = new JButton("Login");
 		loginButton.addActionListener(this);
