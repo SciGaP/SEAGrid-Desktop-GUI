@@ -137,8 +137,8 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 	}
 
 	public void initLists(){
-		queueJobList = new JobList(AiravataManager.getQueuedExperiments(GridChem.user.getUserName()));
-		doneJobList = new JobList(AiravataManager.getLaunchedExperiments(GridChem.user.getUserName()));
+		queueJobList = new JobList(AiravataManager.getQueuedExperiments(GridChem.project.getProjectID()));
+		doneJobList = new JobList(AiravataManager.getLaunchedExperiments(GridChem.project.getProjectID()));
 
 		ArrayList serializedJobList = queueJobList.getJobNamesList();
 		System.out.println("ListOfJobs:nl is empty:"
@@ -368,9 +368,9 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 
 		// rebuild the job queue list
 		queueJobList.clear();
-		queueJobList.addAll(AiravataManager.getQueuedExperiments(GridChem.user.getUserName()));
+		queueJobList.addAll(AiravataManager.getQueuedExperiments(GridChem.project.getProjectID()));
 		doneJobList.clear();
-		doneJobList.addAll(AiravataManager.getLaunchedExperiments(GridChem.user.getUserName()));
+		doneJobList.addAll(AiravataManager.getLaunchedExperiments(GridChem.project.getProjectID()));
 
 		queueModel.clear();
 		for (String entry : queueJobList.getJobNamesList()) {

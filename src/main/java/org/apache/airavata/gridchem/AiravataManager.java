@@ -42,7 +42,7 @@ public class AiravataManager {
 
     public static AuthzToken getAuthzToken(){
         try {
-            getClient().getAPIVersion(AiravataManager.getAuthzToken());
+            getClient().getAPIVersion(authzToken);
         } catch (TException e) {
             e.printStackTrace();
             AiravataManager.logout();
@@ -291,11 +291,11 @@ public class AiravataManager {
         }
     }
 
-    public static List<ExperimentModel> getQueuedExperiments(String userName){
+    public static List<ExperimentModel> getQueuedExperiments(String projectId){
         List<ExperimentModel> exp = new ArrayList<>();
         try{
-            List<ExperimentModel> allexp = getClient().getUserExperiments(
-                    authzToken, AiravataConfig.getProperty(AiravataConfig.GATEWAY), userName, -1, 0);
+            List<ExperimentModel> allexp = getClient().getExperimentsInProject(
+                    authzToken, projectId, -1, 0);
             for(ExperimentModel experiment:allexp){
                 if(experiment.getExperimentStatus().getState()==ExperimentState.CREATED)
                     exp.add(experiment);
@@ -306,11 +306,11 @@ public class AiravataManager {
         return exp;
     }
 
-    public static List<ExperimentModel> getLaunchedExperiments(String userName){
+    public static List<ExperimentModel> getLaunchedExperiments(String projectId){
         List<ExperimentModel> exp = new ArrayList<>();
         try{
-            List<ExperimentModel> allexp = getClient().getUserExperiments(
-                    authzToken,AiravataConfig.getProperty(AiravataConfig.GATEWAY), userName, -1, 0);
+            List<ExperimentModel> allexp = getClient().getExperimentsInProject(
+                    authzToken, projectId, -1, 0);
             for(ExperimentModel experiment:allexp){
                 ExperimentState state = experiment.getExperimentStatus().getState();
                 if(state!=ExperimentState.CREATED)

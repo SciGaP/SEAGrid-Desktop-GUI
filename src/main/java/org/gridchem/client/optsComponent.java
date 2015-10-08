@@ -147,7 +147,8 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
 
     DropDownButton inputGeneratorGuiButton;
     DropDownButton moleditorGuiButton; //added -nik
-    DropDownButton submGuiButton; //added -nik
+//    DropDownButton submGuiButton; //added -nik
+    JButton submGuiButton; //added -nik
     ApplicationMenuItem jobMenuItem; //added -nik
     ApplicationMenuItem flowMenuItem; //added -nik
     ApplicationMenuItem gaussianMenuItem;
@@ -177,8 +178,8 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         readButton = new JButton("Announcements");
         prefButton = new JButton("Preferences");
         usageButton = new JButton("Show Usage");
-        submGuiButton = createJobDDB();
-        //submButton = new JButton("Submit Jobs");
+//        submGuiButton = createJobDDB();
+        submGuiButton = new JButton("Submit Jobs");
         mangButton = new JButton("My CCG");
         moleditorGuiButton = createMolEdDDB();
         //nanocadButton = new JButton("Molecular Editor");
@@ -211,9 +212,8 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         inputGeneratorGuiButton.setDropDownToolTipText("<html><p>Launch the Gaussian/GAMESS input builder.</p>" +
                 "<p>Press Alt + 1 for Gaussian</p>" +
                 "<p>Press Alt + 2 for GAMESS</p><html>");
-        submGuiButton.setDropDownToolTipText("<html><p>Launch Job/Work Flow Editor.</p>+" +
-                "<p> Press Alt + 3 for Job Editor</p>" +
-                "<p> Press Alt + 4 for Work Flow Editor </p>");
+        submGuiButton.setToolTipText("<html><p>Launch Job Editor.</p>+" +
+                "<p> Press Alt + 3 for Job Editor</p>");
 
         JPanel buttonBox = new JPanel();
         Container messageBox = Box.createVerticalBox();
@@ -315,7 +315,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         authButton.addActionListener(this);
         readButton.addActionListener(this);
         prefButton.addActionListener(this);
-        //submButton.addActionListener(this); commented nik
+        submGuiButton.addActionListener(this);
         mangButton.addActionListener(this);
         usageButton.addActionListener(this);
         licenseButton.addActionListener(this);
@@ -394,31 +394,31 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         return moleditorGuiButton;
     }
 
-    private DropDownButton createJobDDB() {
-        PopupListener popupListener = new PopupListener();
-
-        submGuiButton = new DropDownButton("Create Job");
-        submGuiButton.getButton().setToolTipText(
-                "Open the Job/Work Flow Editor.");
-        jobMenuItem = new ApplicationMenuItem("Job", KeyEvent.VK_3);
-        jobMenuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_3, ActionEvent.ALT_MASK));
-        jobMenuItem.getAccessibleContext().setAccessibleDescription(
-                "Opens the Job Editor");
-        jobMenuItem.addActionListener(popupListener);
-
-        flowMenuItem = new ApplicationMenuItem("Work Flow", KeyEvent.VK_4);
-        flowMenuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_4, ActionEvent.ALT_MASK));
-        flowMenuItem.getAccessibleContext().setAccessibleDescription(
-                "Opens the Work Flow Editor");
-        flowMenuItem.addActionListener(popupListener);
-
-        submGuiButton.getMenu().add(jobMenuItem);
-        submGuiButton.getMenu().add(flowMenuItem);
-
-        return submGuiButton;
-    }
+//    private JButton createJobDDB() {
+//        PopupListener popupListener = new PopupListener();
+//
+//        submGuiButton = new DropDownButton("Create Job");
+//        submGuiButton.getButton().setToolTipText(
+//                "Open the Job/Work Flow Editor.");
+//        jobMenuItem = new ApplicationMenuItem("Job", KeyEvent.VK_3);
+//        jobMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+//                KeyEvent.VK_3, ActionEvent.ALT_MASK));
+//        jobMenuItem.getAccessibleContext().setAccessibleDescription(
+//                "Opens the Job Editor");
+//        jobMenuItem.addActionListener(popupListener);
+//
+//        flowMenuItem = new ApplicationMenuItem("Work Flow", KeyEvent.VK_4);
+//        flowMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+//                KeyEvent.VK_4, ActionEvent.ALT_MASK));
+//        flowMenuItem.getAccessibleContext().setAccessibleDescription(
+//                "Opens the Work Flow Editor");
+//        flowMenuItem.addActionListener(popupListener);
+//
+//        submGuiButton.getMenu().add(jobMenuItem);
+//        submGuiButton.getMenu().add(flowMenuItem);
+//
+//        return submGuiButton;
+//    }
 
     private DropDownButton createDDB() {
         PopupListener popupListener = new PopupListener();
@@ -589,11 +589,13 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                 inputGeneratorGuiButton.getButton().setText("Open " + item.getText() + " GUI");
                 inputGeneratorGuiButton.getButton().setToolTipText("Open " + item.getText() + " GUI");
             } else if (item.equals(jobMenuItem)) {
-                submGuiButton.getButton().setText("Create Job");
-                submGuiButton.getButton().setToolTipText("Open Job Editor GUI");
+//                submGuiButton.getButton().setText("Create Job");
+//                submGuiButton.getButton().setToolTipText("Open Job Editor GUI");
+                submGuiButton.setText("Create Job");
+                submGuiButton.setToolTipText("Open Job Editor GUI");
             } else if (item.equals(flowMenuItem)) {
-                submGuiButton.getButton().setText("Create Work Flow");
-                submGuiButton.getButton().setToolTipText("Open Work Flow Editor GUI");
+//                submGuiButton.getButton().setText("Create Work Flow");
+//                submGuiButton.getButton().setToolTipText("Open Work Flow Editor GUI");
             }
             //inputGeneratorGuiButton.getButton().setText("Open " + item.getText() + " GUI");
             //inputGeneratorGuiButton.getButton().setToolTipText("Open " + item.getText() + " GUI");
@@ -761,7 +763,31 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                 }
                 doShutdown();
             }
-        } 
+        } else if (e.getSource() == submGuiButton) {
+            CheckAuth ca = new CheckAuth();
+            if (ca.authorized) {
+                if (Settings.WEBSERVICE) {
+                    SwingWorker worker = new SwingWorker() {
+                        @Override
+                        public Object construct() {
+                            updateProgress("Loading");
+                            SubmitJobsWindow.getInstance();
+                            updateProgress("Finished loading");
+                            return null;
+                        }
+
+                        @Override
+                        public void finished() {
+                            stopWaiting();
+                        }
+                    };
+                    progressCancelPrompt = new CancelCommandPrompt(buttonBox,"Loading Submit Jobs","Please wait few seconds", -1,worker);
+                    worker.start();
+                }
+            } else {
+                doWarning();
+            }
+        }
         
         /*
         else if (e.getSource() == nanocadButton) {
