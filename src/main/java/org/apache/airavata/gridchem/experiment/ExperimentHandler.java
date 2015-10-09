@@ -174,7 +174,8 @@ public class ExperimentHandler {
         }
         String sshTokenId = AiravataConfig.getProperty("ssh_token_id");
         try {
-            AiravataManager.getClient().launchExperiment(AiravataManager.getAuthzToken(), expID, sshTokenId);
+            AiravataManager.getClient().launchExperiment(AiravataManager.getAuthzToken(), expID,
+                    AiravataConfig.getProperty("gateway"));
             ExperimentState state = AiravataManager.getClient().getExperiment(AiravataManager.getAuthzToken(),
                     expID).getExperimentStatus().getState();
             while (ExperimentState.CREATED.equals(state)){
