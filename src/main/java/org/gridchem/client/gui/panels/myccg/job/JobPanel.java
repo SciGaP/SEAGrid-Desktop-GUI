@@ -45,6 +45,7 @@ import cct.modelling.MolecularGeometry;
 import cct.vecmath.vPoint3f;
 import nanocad.nanocadFrame2;
 import nanocad.newNanocad;
+import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.airavata.model.status.ExperimentState;
 import org.gridchem.client.*;
@@ -55,8 +56,11 @@ import org.gridchem.client.common.StatusEvent;
 import org.gridchem.client.exceptions.VisualizationException;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
 import org.gridchem.client.gui.jobsubmission.commands.*;
+import org.gridchem.client.gui.login.LoginDialog;
 import org.gridchem.client.gui.metadataeditor.MetaDataEditor;
 import org.gridchem.client.gui.panels.CancelCommandPrompt;
+import org.gridchem.client.gui.panels.WarningDialog;
+import org.gridchem.client.gui.panels.myccg.MonitorVO;
 import org.gridchem.client.gui.panels.myccg.job.notification.NotificationManagerDialog;
 import org.gridchem.client.interfaces.StatusListener;
 import org.gridchem.client.util.Env;
@@ -127,9 +131,9 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	public static String HPCsys;
 	public static String[] columnNames =
 	// {"Name","Research Project","Date","Time","Machine","Queue","Allocation","Status","ID"};
-	{ "ID", "Name", "Research Project", "Date", "Time", "Machine", "Status" };
+	{"Name", "Research Project", "Date", "Time", "Machine", "Status" };
 
-	int defaultColumns[] = { 0, 1, 13, 4, 5, 10 };
+	int defaultColumns[] = { 1, 13, 4, 5, 10 };
 
 	public static int num_column = columnNames.length;
 	private List<ExperimentModel> experiments;
@@ -598,16 +602,31 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * listing.
 	 */
 	protected void refreshJobs() {
-		if (updatedWithSearchResults) {
-			statusChanged(new StatusEvent(lastSearch, Status.START));
+
+		List<ExperimentModel> jobs = AiravataManager.getLaunchedExperiments(GridChem.project.getProjectID());
+
+		jobTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+		if (isUpdatedWithSearchResults()) {
+			System.out.println("Search is present.  Loading new jobs...");
 		} else {
-			try {
-				m_data.retrieveData();
-			} catch (Exception e) {
-				System.out.println("Error refeshing monitoring info: "
-						+ e.getMessage());
-			}
+			System.out.println("Refeshing jobs...");
 		}
+
+		m_data.loadData(jobs);
+
+		jobTable.setCursor(Cursor.getDefaultCursor());
+
+//		if (updatedWithSearchResults) {
+//			statusChanged(new StatusEvent(lastSearch, Status.START));
+//		} else {
+//			try {
+//				m_data.retrieveData();
+//			} catch (Exception e) {
+//				System.out.println("Error refeshing monitoring info: "
+//						+ e.getMessage());
+//			}
+//		}
 	}
 
 	/**
