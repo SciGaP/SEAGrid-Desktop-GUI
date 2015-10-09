@@ -238,8 +238,12 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 		rightClickPopup = createPopupMenu();
 
-		refresh();
+//		Sorting based on creation time
+		m_data.m_sortCol = 13;
+		m_data.m_sortAsc = false;
+		m_data.sortData();
 
+		refresh();
 	}
 
 	/**
@@ -4378,7 +4382,8 @@ class JobComparator implements Comparator {
 			result = 0;
 			break;
 		case 13: // created
-			result = 0;
+			result = (""+s1.experiment.getCreationTime()).compareTo(
+					(""+s2.experiment.getCreationTime()));
 			break;
 		case 14: // used cpus
 			result = 0;
