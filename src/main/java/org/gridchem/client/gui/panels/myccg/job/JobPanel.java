@@ -379,8 +379,8 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		estTimeButton = new JButton("Est. Start/End Time");
 		dataButton = new JButton("Monitor Output");
 		moldenButton = new JButton("View in Molden");
-		killButton = new JButton("Kill Job");
-		retrieveButton = new JButton("Browse Mass Storage");
+		killButton = new JButton("Cancel Job");
+		retrieveButton = new JButton("Browse Job Data");
 		deleteButton = new JButton("Delete Job from List");
 		refreshButton = new JButton("Refresh Jobs");
 		searchButton = new JButton("Search for Jobs");
@@ -401,11 +401,12 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		buttonBoxPane.setLayout(new BoxLayout(buttonBoxPane, BoxLayout.Y_AXIS));
 		buttonBoxPane.add(buttonBox);
 		buttonBox.add(statusButton);
-		// buttonBox.add(estTimeButton);
-		buttonBox.add(dataButton);
-		buttonBox.add(moldenButton);
+//		buttonBox.add(estTimeButton);
+//		buttonBox.add(dataButton);
+//		buttonBox.add(moldenButton);
 		buttonBox.add(killButton);
-		buttonBox.add(searchButton);
+//		buttonBox.add(searchButton);
+
 		buttonBox.add(retrieveButton);
 		buttonBox.add(refreshButton);
 		buttonBox.add(cancelButton);
@@ -2518,35 +2519,36 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	}
 
 	private void showPopupMenu(Component component, Point p) {
-		int row = jobTable.rowAtPoint(p);
-
-		ExperimentModel experiment = getSelectedJob();
-
-		// disable kill depending on job status
-		if (experiment.getExperimentStatus().getState().equals(ExperimentState.EXECUTING)
-				|| experiment.getExperimentStatus().getState().equals(ExperimentState.SCHEDULED)) {
-			killMenuItem.setEnabled(true);
-			editNotificationsMenuItem.setEnabled(true);
-		} else {
-			killMenuItem.setEnabled(false);
-			editNotificationsMenuItem.setEnabled(false);
-		}
-
-		// disable clear search depending on existence of search results
-		if (updatedWithSearchResults) {
-			clearSearchMenuItem.setEnabled(true);
-		} else {
-			clearSearchMenuItem.setEnabled(false);
-		}
-
-		// option only shows up if there are hidden jobs in the table model
-		if (m_data.hasHiddenJobs()) {
-			showHiddenMenuItem.setEnabled(true);
-		} else {
-			showHiddenMenuItem.setEnabled(false);
-		}
-
-		rightClickPopup.show(component, p.x, p.y);
+//		Disabling right click for the moment - Supun
+//		int row = jobTable.rowAtPoint(p);
+//
+//		ExperimentModel experiment = getSelectedJob();
+//
+//		// disable kill depending on job status
+//		if (experiment.getExperimentStatus().getState().equals(ExperimentState.EXECUTING)
+//				|| experiment.getExperimentStatus().getState().equals(ExperimentState.SCHEDULED)) {
+//			killMenuItem.setEnabled(true);
+//			editNotificationsMenuItem.setEnabled(true);
+//		} else {
+//			killMenuItem.setEnabled(false);
+//			editNotificationsMenuItem.setEnabled(false);
+//		}
+//
+//		// disable clear search depending on existence of search results
+//		if (updatedWithSearchResults) {
+//			clearSearchMenuItem.setEnabled(true);
+//		} else {
+//			clearSearchMenuItem.setEnabled(false);
+//		}
+//
+//		// option only shows up if there are hidden jobs in the table model
+//		if (m_data.hasHiddenJobs()) {
+//			showHiddenMenuItem.setEnabled(true);
+//		} else {
+//			showHiddenMenuItem.setEnabled(false);
+//		}
+//
+//		rightClickPopup.show(component, p.x, p.y);
 	}
 
 	class ColumnListener extends MouseAdapter {

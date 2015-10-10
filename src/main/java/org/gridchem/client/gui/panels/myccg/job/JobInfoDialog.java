@@ -106,21 +106,35 @@ public class JobInfoDialog extends JDialog {
                 " </span><html>";
         toolTip = "The research project under study by this job: " + experiment.getExperimentName();
         JLabel researchProject = createLabel(text,toolTip);
-        
-        text = "<html><b>User Project: </b><span style='background:#F0F0F0'>" + 
-                ((experiment.getProjectId().length() > 20)?
-                        experiment.getProjectId().substring(0,20):experiment.getProjectId()) +
+
+        String temp = "";
+        try{
+            temp = experiment.getProjectId().split("_")[0];
+        }catch(Exception ex){
+            temp = experiment.getProjectId();
+        }
+        text = "<html><b>User Project: </b><span style='background:#F0F0F0'>" + temp +
                 "</span></html>";
-        toolTip = "The CCG project associated with this job: " + experiment.getProjectId();
+        toolTip = "The CCG project associated with this job: " + temp;
         JLabel project= createLabel(text,toolTip);
-        
-        text = "<html><b>Application: </b><span style='background:#F0F0F0'>" + experiment.getExecutionId() + "</span></html>";
+
+        try{
+            temp = experiment.getExecutionId().split("_")[0];
+        }catch(Exception ex){
+            temp = experiment.getExecutionId();
+        }
+        text = "<html><b>Application: </b><span style='background:#F0F0F0'>" + temp + "</span></html>";
         toolTip = "The application run by this job.";
         JLabel app = createLabel(text,toolTip); 
 
         ComputationalResourceSchedulingModel crs= experiment.getUserConfigurationData().getComputationalResourceScheduling();
-        
-        text = "<html><b>HPC System: </b><span style='background:#F0F0F0'>" + crs.getResourceHostId() + "</span></html>";
+
+        try{
+            temp = experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId().split("_")[0];
+        }catch(Exception ex){
+            temp = experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId();
+        }
+        text = "<html><b>HPC System: </b><span style='background:#F0F0F0'>" + temp + "</span></html>";
         toolTip = "The HPC system on which this job ran.";
         JLabel hpc = createLabel(text,toolTip); 
 
@@ -138,7 +152,7 @@ public class JobInfoDialog extends JDialog {
         JLabel rcpu = createLabel(text,toolTip);
         
         text = "<html><b>Requested Memory: </b><span style='background:#F0F0F0'>" + 
-            ((crs.getTotalPhysicalMemory() == 0)?" ---":crs.getTotalPhysicalMemory()) +
+            ((crs.getTotalPhysicalMemory() == 0)?"":crs.getTotalPhysicalMemory()) +
             "</span></html>";
         toolTip = "The amount of memory requested during job submission.";
         JLabel rmem = createLabel(text,toolTip);
@@ -182,9 +196,9 @@ public class JobInfoDialog extends JDialog {
         getInfoDialogPanel.add(hpc);
         getInfoDialogPanel.add(rcpu);
         
-        getInfoDialogPanel.add(researchProject);
+//        getInfoDialogPanel.add(researchProject);
         getInfoDialogPanel.add(queue);
-        getInfoDialogPanel.add(rmem);
+//        getInfoDialogPanel.add(rmem);
         
         getInfoDialogPanel.add(project);
         getInfoDialogPanel.add(localID);
@@ -195,9 +209,9 @@ public class JobInfoDialog extends JDialog {
         
         getInfoDialogPanel.add(status);
         getInfoDialogPanel.add(umem);
-        getInfoDialogPanel.add(stop);
+//        getInfoDialogPanel.add(stop);
         
-        getInfoDialogPanel.add(cost);
+//        getInfoDialogPanel.add(cost);
 //        if (experiment.getStatus().equals(JobStatusType.SUBMITTING) ||
 //                experiment.getStatus().equals(JobStatusType.INITIAL) ||
 //                experiment.getStatus().equals(JobStatusType.SCHEDULED) ||

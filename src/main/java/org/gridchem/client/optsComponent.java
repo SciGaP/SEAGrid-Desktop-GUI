@@ -241,12 +241,15 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         //buttonBox.add(submButton);
         //buttonBox.add(prefButton);
         buttonBox.add(submGuiButton);
-        buttonBox.add(moleditorGuiButton);
-        // commented nik buttonBox.add(nanocadButton);
-        buttonBox.add(inputGeneratorGuiButton);
+
+        //Commenting some not available features
+        //buttonBox.add(moleditorGuiButton);
+        //commented nik buttonBox.add(nanocadButton);
+        //buttonBox.add(inputGeneratorGuiButton);
         if (!Settings.WEBSERVICE) {
             buttonBox.add(usageButton);
         }
+
         buttonBox.add(readButton);
         buttonBox.add(licenseButton);
         buttonBox.add(helpButton);
@@ -1261,7 +1264,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         mangButton.setEnabled(Settings.authenticated);
         // commented nik submButton.setEnabled(Settings.authenticated);
         //submGuiButton.setEnabled(Settings.authenticated);
-        submGuiButton.setEnabled(true);
+        submGuiButton.setEnabled(Settings.authenticated);
         if (!Settings.WEBSERVICE) {
             usageButton.setEnabled(Settings.authenticated);
         }
