@@ -180,7 +180,7 @@ public class GridChem
 
 	    init();
 
-        frame.setTitle("GridChem " + Env.getVersion());
+        frame.setTitle("SEAGrid Desktop Client");
 		frame.getContentPane().add(oc);
 		frame.addWindowListener(new WindowListener() {
 

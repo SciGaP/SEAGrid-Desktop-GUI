@@ -83,6 +83,7 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.TreePath;
 
+import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.log4j.Logger;
 import org.gridchem.client.common.MimeHandler;
 import org.gridchem.client.gui.panels.PathInputPanelImpl;
@@ -140,7 +141,42 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
     public FileBrowserImpl(FileBean file) throws Exception {
         
     }
-    
+
+
+    public FileBrowserImpl(ExperimentModel experimentModel){
+        super(new GridBagLayout());
+
+        GridBagConstraints c = new GridBagConstraints();
+
+        dbworker = new FileBrowserWorkerImpl(this);
+        mimehandler = new MimeHandler();
+
+        //create all the action listener classes
+        buttonListener = new ButtonListener();
+
+        c.gridy=2;
+        c.weightx = 2.0;
+        c.weighty = 2.0;
+        c.fill = GridBagConstraints.BOTH;
+        this.add(this.createTreePanel(), c);
+
+        //build the bottom panel
+        c.gridy = 3;
+        c.weightx =0.0;
+        c.weighty = 0.0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        this.add(this.createBottomPanel(), c) ;
+
+        //Build the popup menu
+        rightClickPopup = this.createPopupMenu();
+
+        //JDialog outputDialog = new JDialog((JFrame)null, "Directory Browser Log");
+        //outputDialog.getContentPane().add(logArea);
+        //outputDialog.setVisible(true);
+
+        dbworker.goButtonPushed();
+    }
+
     public FileBrowserImpl(String path) {
         super(new GridBagLayout());
         
@@ -162,7 +198,7 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
         topPanel = this.createTopPanel();
         this.add(topPanel, c);
         topURIPanel.setPath(path);
-        
+
         //build the icon panel
         c.gridy = 1;
         this.add(this.createIconPanel(), c);

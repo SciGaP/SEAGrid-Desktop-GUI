@@ -54,6 +54,7 @@ import org.gridchem.client.common.Settings;
 import org.gridchem.client.common.Status;
 import org.gridchem.client.common.StatusEvent;
 import org.gridchem.client.exceptions.VisualizationException;
+import org.gridchem.client.gui.filebrowser.FileBrowserImpl;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
 import org.gridchem.client.gui.jobsubmission.commands.*;
 import org.gridchem.client.gui.login.LoginDialog;
@@ -375,15 +376,15 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	private JPanel createButtonPanel() {
 
 		// create all buttons
-		statusButton = new JButton("Get Job Status");
+		statusButton = new JButton("Get Experiment Status");
 		estTimeButton = new JButton("Est. Start/End Time");
 		dataButton = new JButton("Monitor Output");
 		moldenButton = new JButton("View in Molden");
-		killButton = new JButton("Cancel Job");
-		retrieveButton = new JButton("Browse Job Data");
-		deleteButton = new JButton("Delete Job from List");
-		refreshButton = new JButton("Refresh Jobs");
-		searchButton = new JButton("Search for Jobs");
+		killButton = new JButton("Cancel Experiment");
+		retrieveButton = new JButton("Browse Experiment Data");
+		deleteButton = new JButton("Delete Experiments from List");
+		refreshButton = new JButton("Refresh Experiments");
+		searchButton = new JButton("Search for Experiments");
 		cancelButton = new JButton("Close");
 
 		// lay them out in the button panel
@@ -2211,6 +2212,13 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	}
 
 	private void doBrowseFiles(ExperimentModel experiment) {
+
+		jobFrame = new JFrame("SEAGrid File Browser");
+		jobFrame.getContentPane().add(new FileBrowserImpl(experiment));
+		jobFrame.pack();
+		jobFrame.setVisible(true);
+		jobFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+
 		/*try {
 
 			String fileUri = "";

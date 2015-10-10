@@ -179,8 +179,8 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         prefButton = new JButton("Preferences");
         usageButton = new JButton("Show Usage");
 //        submGuiButton = createJobDDB();
-        submGuiButton = new JButton("Submit Jobs");
-        mangButton = new JButton("My CCG");
+        submGuiButton = new JButton("Launch Experiments");
+        mangButton = new JButton("My SEAGrid");
         moleditorGuiButton = createMolEdDDB();
         //nanocadButton = new JButton("Molecular Editor");
         inputGeneratorGuiButton = createDDB();
@@ -530,7 +530,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                                 stopWaiting();
                             }
                         };
-                        progressCancelPrompt = new CancelCommandPrompt(buttonBox,"Loading Submit Jobs","Please wait few seconds", -1,worker);
+                        progressCancelPrompt = new CancelCommandPrompt(buttonBox,"Loading Submit Experiments","Please wait few seconds", -1,worker);
                         worker.start();
                     }
                 } else {
@@ -784,7 +784,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                             stopWaiting();
                         }
                     };
-                    progressCancelPrompt = new CancelCommandPrompt(buttonBox,"Loading Submit Jobs","Please wait few seconds", -1,worker);
+                    progressCancelPrompt = new CancelCommandPrompt(buttonBox,"Loading Submit Experiments","Please wait few seconds", -1,worker);
                     worker.start();
                 }
             } else {

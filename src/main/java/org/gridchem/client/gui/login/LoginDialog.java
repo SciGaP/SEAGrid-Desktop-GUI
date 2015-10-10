@@ -52,7 +52,7 @@ public class LoginDialog extends JDialog implements ActionListener {
 	private static JButton cancelButton;
 
 	public LoginDialog(Frame frame, boolean modal) {
-		super(frame, "GridChem Login", modal);
+		super(frame, "SEAGrid Login", modal);
 
 		initLayout();
 

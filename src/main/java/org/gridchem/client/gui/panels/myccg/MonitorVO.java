@@ -105,7 +105,7 @@ public class MonitorVO extends JFrame implements Timeable {
      * event-dispatching thread.
      */
     public MonitorVO() {
-        super("My CCG");
+        super("My SEAGrid");
         
         monitorPanel = new MonitorPanel();
         
@@ -417,8 +417,8 @@ public class MonitorVO extends JFrame implements Timeable {
     
             jobPanel = new JobPanel(AiravataManager.getLaunchedExperiments(GridChem.project.getProjectID()));
             //JComponent panel1 = makeTextPanel("Job History");
-            tabbedPane.addTab("Job History", null, jobPanel,
-                              "Show historical job information.");
+            tabbedPane.addTab("Experiment History", null, jobPanel,
+                              "Show historical experiment information.");
             tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
 //  Currently we don't support resource status in Airavata

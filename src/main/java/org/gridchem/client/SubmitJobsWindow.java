@@ -81,7 +81,7 @@ public class SubmitJobsWindow
     }
     
     private static void init() { 
-    	frame = new JFrame("GridChem: Submit Jobs");
+    	frame = new JFrame("SEAGrid: Launch Experiments");
     	//	frame.getContentPane().add(new stuffInside(ListOfJobs));
     	frame.getContentPane().add(si);
     	frame.pack();

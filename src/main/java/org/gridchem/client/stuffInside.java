@@ -172,12 +172,12 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 				.createEtchedBorder(EtchedBorder.LOWERED);
 
 		// buttonBoxPane
-		editButton = new JButton("Edit a job");
-		newJButton = new JButton("Create New Job");
+		editButton = new JButton("Edit an Experiment");
+		newJButton = new JButton("Create New Experiment");
 //		inputGeneratorGuiButton = createDDB();
-		delButton = new JButton("Delete Selected Job");
-		submButton = new JButton("Submit Selected Jobs to Queue");
-		suballButton = new JButton("Submit All Jobs to Queue"); // lixh_3_3
+		delButton = new JButton("Delete Selected Experiment");
+		submButton = new JButton("Launch Selected Experiments");
+		suballButton = new JButton("Launch All Experiments"); // lixh_3_3
 		cancelButton = new JButton("Close");
 
 
@@ -230,7 +230,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		JPanel queueBoxPane = new JPanel();
 		queueBoxPane.add(queueupperBox);
 		TitledBorder appPaneTitled1 = BorderFactory.createTitledBorder(
-				leBorder, "Queued Jobs", TitledBorder.LEFT,
+				leBorder, "Unlaunched Experiments", TitledBorder.LEFT,
 				TitledBorder.DEFAULT_POSITION);
 		queueBoxPane.setBorder(BorderFactory.createCompoundBorder(
 				appPaneTitled1, eBorder));
@@ -324,7 +324,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		JPanel jobDonePane = new JPanel();
 		jobDonePane.add(queuelowerBox);
 		TitledBorder appPaneTitled2 = BorderFactory.createTitledBorder(
-				leBorder, "Submitted Jobs", TitledBorder.LEFT,
+				leBorder, "Launched Experiments", TitledBorder.LEFT,
 				TitledBorder.DEFAULT_POSITION);
 		jobDonePane.setBorder(BorderFactory.createCompoundBorder(
 				appPaneTitled2, eBorder));
