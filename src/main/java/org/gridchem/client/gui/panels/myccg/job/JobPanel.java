@@ -381,7 +381,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		dataButton = new JButton("Monitor Output");
 		moldenButton = new JButton("View in Molden");
 		killButton = new JButton("Cancel Experiment");
-		retrieveButton = new JButton("Browse Experiment Data");
+		retrieveButton = new JButton("Browse Experiment File Data");
 		deleteButton = new JButton("Delete Experiments from List");
 		refreshButton = new JButton("Refresh Experiments");
 		searchButton = new JButton("Search for Experiments");
@@ -2214,6 +2214,8 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	private void doBrowseFiles(ExperimentModel experiment) {
 
 		jobFrame = new JFrame("SEAGrid File Browser");
+		jobFrame.setMinimumSize(new Dimension(400, 400));
+
 		jobFrame.getContentPane().add(new FileBrowserImpl(experiment));
 		jobFrame.pack();
 		jobFrame.setVisible(true);

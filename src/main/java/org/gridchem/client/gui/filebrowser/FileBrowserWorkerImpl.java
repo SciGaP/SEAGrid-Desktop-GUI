@@ -830,12 +830,12 @@ public class FileBrowserWorkerImpl implements StatusListener{
         logger.info("Connecting....");
         Trace.entry();
         try {
-            rootPath = dbgui.getPath();
-        
-            if (rootPath == null){
-                dbgui.errorOpen();
-                return;
-            }
+//            rootPath = dbgui.getPath();
+//
+//            if (rootPath == null){
+//                dbgui.errorOpen();
+//                return;
+//            }
             
 //            String uriScheme = topURI.getScheme();
 //            String uriHost = topURI.getHost();

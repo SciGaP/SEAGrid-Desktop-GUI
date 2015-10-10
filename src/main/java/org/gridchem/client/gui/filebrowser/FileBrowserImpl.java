@@ -47,7 +47,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -81,8 +80,12 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeWillExpandListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.airavata.model.application.io.DataType;
+import org.apache.airavata.model.application.io.InputDataObjectType;
+import org.apache.airavata.model.application.io.OutputDataObjectType;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.log4j.Logger;
 import org.gridchem.client.common.MimeHandler;
@@ -134,6 +137,8 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
     private JMenuItem refresh; 
     
     private boolean connected;
+
+    private ExperimentModel experimentModel;
     
     public FileBrowserImpl(JobBean job) throws Exception {
     }
@@ -146,6 +151,8 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
     public FileBrowserImpl(ExperimentModel experimentModel){
         super(new GridBagLayout());
 
+        this.experimentModel = experimentModel;
+
         GridBagConstraints c = new GridBagConstraints();
 
         dbworker = new FileBrowserWorkerImpl(this);
@@ -158,14 +165,7 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
         c.weightx = 2.0;
         c.weighty = 2.0;
         c.fill = GridBagConstraints.BOTH;
-        this.add(this.createTreePanel(), c);
-
-        //build the bottom panel
-        c.gridy = 3;
-        c.weightx =0.0;
-        c.weighty = 0.0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        this.add(this.createBottomPanel(), c) ;
+        this.add(this.createExperimentDataBrowsePanel(experimentModel), c);
 
         //Build the popup menu
         rightClickPopup = this.createPopupMenu();
@@ -178,53 +178,53 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
     }
 
     public FileBrowserImpl(String path) {
-        super(new GridBagLayout());
-        
-        GridBagConstraints c = new GridBagConstraints();
-        
-        dbworker = new FileBrowserWorkerImpl(this);
-        mimehandler = new MimeHandler();
-        
-        //create all the action listener classes
-        buttonListener = new ButtonListener();
-        
-        //Build the top panel
-        c.ipadx = 0;
-        c.ipady = 0;
-        c.insets = new Insets(2,2,2,2);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        topPanel = this.createTopPanel();
-        this.add(topPanel, c);
-        topURIPanel.setPath(path);
-
-        //build the icon panel
-        c.gridy = 1;
-        this.add(this.createIconPanel(), c);
-        
-        //build the tree scroll window
-        c.gridy=2;
-        c.weightx = 2.0;
-        c.weighty = 2.0;
-        c.fill = GridBagConstraints.BOTH;
-        this.add(this.createTreePanel(), c);
-        
-        //build the bottom panel
-        c.gridy = 3;
-        c.weightx =0.0;
-        c.weighty = 0.0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        this.add(this.createBottomPanel(), c) ;
-        
-        //Build the popup menu
-        rightClickPopup = this.createPopupMenu();
-        
-        //JDialog outputDialog = new JDialog((JFrame)null, "Directory Browser Log");
-        //outputDialog.getContentPane().add(logArea);
-        //outputDialog.setVisible(true);
-        
-        dbworker.goButtonPushed();
+//        super(new GridBagLayout());
+//
+//        GridBagConstraints c = new GridBagConstraints();
+//
+//        dbworker = new FileBrowserWorkerImpl(this);
+//        mimehandler = new MimeHandler();
+//
+//        //create all the action listener classes
+//        buttonListener = new ButtonListener();
+//
+//        //Build the top panel
+//        c.ipadx = 0;
+//        c.ipady = 0;
+//        c.insets = new Insets(2,2,2,2);
+//        c.gridx = 0;
+//        c.gridy = 0;
+//        c.anchor = GridBagConstraints.FIRST_LINE_START;
+//        topPanel = this.createTopPanel();
+//        this.add(topPanel, c);
+//        topURIPanel.setPath(path);
+//
+//        //build the icon panel
+//        c.gridy = 1;
+//        this.add(this.createIconPanel(), c);
+//
+//        //build the tree scroll window
+//        c.gridy=2;
+//        c.weightx = 2.0;
+//        c.weighty = 2.0;
+//        c.fill = GridBagConstraints.BOTH;
+//        this.add(this.createTreePanel(), c);
+//
+//        //build the bottom panel
+//        c.gridy = 3;
+//        c.weightx =0.0;
+//        c.weighty = 0.0;
+//        c.fill = GridBagConstraints.HORIZONTAL;
+//        this.add(this.createBottomPanel(), c) ;
+//
+//        //Build the popup menu
+//        rightClickPopup = this.createPopupMenu();
+//
+//        //JDialog outputDialog = new JDialog((JFrame)null, "Directory Browser Log");
+//        //outputDialog.getContentPane().add(logArea);
+//        //outputDialog.setVisible(true);
+//
+//        dbworker.goButtonPushed();
     }
     
     //protected JTextArea getLogWindow() {
@@ -251,10 +251,10 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
         System.out.println("Start waiting called from " + queue);
         progress.setIndeterminate(true);
         progressInfo.setText(message);
-        topURIPanel.setEnabled(false);
-        if(canStop) {
-            stopButton.setEnabled(true);
-        }
+//        topURIPanel.setEnabled(false);
+//        if(canStop) {
+//            stopButton.setEnabled(true);
+//        }
     }
     
     /**
@@ -269,8 +269,8 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
         progress.setIndeterminate(false);
         progress.setValue(0);
         progressInfo.setText(" ");
-        topURIPanel.setEnabled(true);
-        stopButton.setEnabled(false);
+//        topURIPanel.setEnabled(true);
+//        stopButton.setEnabled(false);
     }
     
     protected void startDownload(int increments) {
@@ -413,21 +413,56 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
         return topPanel;
     }
     
-    private JScrollPane createTreePanel() {
-        TreeListener treeListener = new TreeListener();
+    private JScrollPane createExperimentDataBrowsePanel(ExperimentModel experimentModel) {
+
+        //create the root node
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(experimentModel.getExperimentName());
+
+        //create the input output nodes
+        DefaultMutableTreeNode inputNode = new DefaultMutableTreeNode("File Inputs");
+        for(InputDataObjectType inputDataObjectType : experimentModel.getExperimentInputs()){
+            if(inputDataObjectType.getType() == DataType.URI){
+                String[] bits = inputDataObjectType.getValue().split("/");
+                String lastOne = bits[bits.length-1];
+                DefaultMutableTreeNode inputFileNode = new DefaultMutableTreeNode(lastOne);
+                inputNode.add(inputFileNode);
+            }
+        }
+
+        DefaultMutableTreeNode outputNode = new DefaultMutableTreeNode("File Outputs");
+        for(OutputDataObjectType outputDataObjectType : experimentModel.getExperimentOutputs()){
+            if(outputDataObjectType.getType() == DataType.URI){
+                String[] bits = outputDataObjectType.getValue().split("/");
+                String lastOne = bits[bits.length-1];
+                DefaultMutableTreeNode outputFileNode = new DefaultMutableTreeNode(lastOne);
+                outputNode.add(outputFileNode);
+            }
+        }
+
+        root.add(inputNode);
+        root.add(outputNode);
+
+        tree = new JTree(root);
         TreeMouseListener treeMouseListener = new TreeMouseListener();
-        //Build the directory tree area
-        tree = new JTree(dbworker.getTreeDataModel());
-        tree.addTreeWillExpandListener(treeListener);
         tree.addMouseListener(treeMouseListener);
-        ///tree.addMouseMotionListener(treeMouseListener);
-        tree.setRootVisible(false);
-        
-        //Drag and drop stuff
-        tree.setDragEnabled(false);
-//        tree.setTransferHandler(new DirectoryBrowserTransferHandler(this));
-//        tree.setDropTarget(new DropTarget(tree,new DirectoryBrowserDropTargetListener(this)));
+
         return new JScrollPane(tree);
+
+//        TreeListener treeListener = new TreeListener();
+//        TreeMouseListener treeMouseListener = new TreeMouseListener();
+//        //Build the directory tree area
+//        tree = new JTree(dbworker.getTreeDataModel());
+//        tree.addTreeWillExpandListener(treeListener);
+//        tree.addMouseListener(treeMouseListener);
+//        ///tree.addMouseMotionListener(treeMouseListener);
+//        tree.setRootVisible(false);
+//
+//        //Drag and drop stuff
+//        tree.setDragEnabled(false);
+////        tree.setTransferHandler(new DirectoryBrowserTransferHandler(this));
+////        tree.setDropTarget(new DropTarget(tree,new DirectoryBrowserDropTargetListener(this)));
+
+//        return new JScrollPane(tree);
     }
     
     private JPanel createBottomPanel() {
