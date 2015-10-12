@@ -46,7 +46,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -54,6 +53,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
 import java.text.SimpleDateFormat;
@@ -83,14 +83,15 @@ import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.airavata.gridchem.file.FileBrowserAiravata;
 import org.apache.airavata.model.application.io.DataType;
 import org.apache.airavata.model.application.io.InputDataObjectType;
 import org.apache.airavata.model.application.io.OutputDataObjectType;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.log4j.Logger;
+import org.gridchem.client.GridChem;
 import org.gridchem.client.common.MimeHandler;
 import org.gridchem.client.gui.panels.PathInputPanelImpl;
-import org.gridchem.client.gui.panels.myccg.job.JobPanel;
 import org.gridchem.client.util.Env;
 import org.gridchem.service.beans.FileBean;
 import org.gridchem.service.beans.JobBean;
@@ -418,33 +419,44 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
         //create the root node
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(experimentModel.getExperimentName());
 
+        boolean haveInputs = false;
         //create the input output nodes
-        DefaultMutableTreeNode inputNode = new DefaultMutableTreeNode("File Inputs");
+        DefaultMutableTreeNode inputNode = new DefaultMutableTreeNode("Inputs");
         for(InputDataObjectType inputDataObjectType : experimentModel.getExperimentInputs()){
             if(inputDataObjectType.getType() == DataType.URI){
                 String[] bits = inputDataObjectType.getValue().split("/");
                 String lastOne = bits[bits.length-1];
                 DefaultMutableTreeNode inputFileNode = new DefaultMutableTreeNode(lastOne);
                 inputNode.add(inputFileNode);
+                haveInputs = true;
             }
         }
 
-        DefaultMutableTreeNode outputNode = new DefaultMutableTreeNode("File Outputs");
+        boolean haveOutputs = false;
+        DefaultMutableTreeNode outputNode = new DefaultMutableTreeNode("Outputs");
         for(OutputDataObjectType outputDataObjectType : experimentModel.getExperimentOutputs()){
             if(outputDataObjectType.getType() == DataType.URI){
                 String[] bits = outputDataObjectType.getValue().split("/");
                 String lastOne = bits[bits.length-1];
                 DefaultMutableTreeNode outputFileNode = new DefaultMutableTreeNode(lastOne);
                 outputNode.add(outputFileNode);
+                haveOutputs = true;
             }
         }
 
-        root.add(inputNode);
-        root.add(outputNode);
+        if(haveInputs) {
+            root.add(inputNode);
+        }
 
-        tree = new JTree(root);
-        TreeMouseListener treeMouseListener = new TreeMouseListener();
-        tree.addMouseListener(treeMouseListener);
+        if(haveOutputs){
+            root.add(outputNode);
+        }
+
+        if(haveInputs || haveOutputs){
+            tree = new JTree(root);
+            TreeMouseListener treeMouseListener = new TreeMouseListener();
+            tree.addMouseListener(treeMouseListener);
+        }
 
         return new JScrollPane(tree);
 
@@ -966,107 +978,162 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
         System.out.println("Showing right click popup menu");
         rightClickPopup.show(component, x, y);
     }
-    
+
     protected class TreeMouseListener implements MouseListener {
-        
+
         public void mouseClicked(MouseEvent mEvent) {
-            
-            int mouseRow = tree.getRowForLocation(mEvent.getX(), mEvent.getY());
+
             int[] mouseRows = tree.getSelectionRows();
             if (mouseRows != null){
-            	System.out.println("Clicked multiple real rows");
-            	tree.setSelectionRows(mouseRows);
-            	//if a single right click, popup the menu
-                if(isRightClickEvent(mEvent)) {
-                    System.out.println("Right clicked, showing popup menu.");
-                    showPopupMenu(tree,mEvent.getX(), mEvent.getY());
-                }
-                else if ((mEvent.getButton()==MouseEvent.BUTTON1) && (mEvent.getClickCount()==2)) {
-                	//String path = dbworker.getPathFromTreePath(getSelectedItemsTreePath());
-                	TreePath[] paths = tree.getSelectionPaths();
-                
-                 for (TreePath pathT : paths ){
-                	 String pathf = dbworker.getPathFromTreePath(pathT);
-                    logger.debug("path = " + pathf);
-                    int index = pathf.lastIndexOf(".") + 1;
-                    String extension =  "";
-                    if(index > 0) {
-                        extension = pathf.substring(index);
-                    }
-                    logger.debug("extension = " + extension);
-                    try {  
-                      // have a provider
-                      if(isProvider(pathf)) {
-                          System.out.println("Downloading file");
-                          dbworker.downloadFile(pathT);
-                      
-                      } else {
-                          System.out.println("No provider, starting program");
-//                          startProgram(lookupURI);
-                          JobPanel.openEditor(pathf);
-                      }
-                     }catch(Exception exception) {
-                         logger.error("exception ",exception);
-                         //startProgram(lookupURI);
-                     }
-                	}
-                	
-                }
-            }
-            	
-            if (mouseRow != -1){
-                System.out.println("Clicked on a real row");
-                
-                //If we have clicked a real row, select it, and continue with our logic
-                tree.setSelectionRow(mouseRow);
-                //if a single right click, popup the menu
-                if(isRightClickEvent(mEvent)) {
-                    System.out.println("Right clicked, showing popup menu.");
-                    showPopupMenu(tree, mEvent.getX(), mEvent.getY());
-                //if a double click:    
-                } else if ((mEvent.getButton()==MouseEvent.BUTTON1) && (mEvent.getClickCount()==2)) {
-                    TreePath treePath = tree.getPathForRow(mouseRow);
-                    GridFileTreeNode selectedNode = (GridFileTreeNode) treePath.getLastPathComponent();
-                    if(selectedNode.getAllowsChildren()){
-                    //If here, user has double clicked on a directory
-                    } else {
-//                        JDialog newDialog = new JDialog();
-                        String path = dbworker.getPathFromTreePath(getSelectedItemsTreePath());
-//                        JPanel newPanel = (JPanel) mimehandler.lookup(dbworker.processURIForTopPanel(lookupURI));
-//                        if(newPanel==null) {
-//                            errorMimeType();
-//                        } else {
-//                            newDialog.getContentPane().add(newPanel);
-//                            newDialog.pack();
-//                            newDialog.setVisible(true);
-//                        }
-                        
-                        logger.debug("path = " + path);
-                        int index = path.lastIndexOf(".") + 1;
-                        String extension =  "";
-                        if(index > 0) {
-                            extension = path.substring(index);
+                System.out.println("Clicked multiple real rows");
+                tree.setSelectionRows(mouseRows);
+
+                //Going to download the file
+                if ((mEvent.getButton()==MouseEvent.BUTTON1) && (mEvent.getClickCount()==2)) {
+                    TreePath[] paths = tree.getSelectionPaths();
+
+                    for (TreePath pathT : paths ){
+                        String lastPathComp = pathT.getLastPathComponent().toString();
+                        boolean matchFound = false;
+                        for(InputDataObjectType inputDataObjectType : experimentModel.getExperimentInputs()){
+                            if(inputDataObjectType.getType() == DataType.URI){
+                                String[] bits = inputDataObjectType.getValue().split("/");
+                                String lastOne = bits[bits.length-1];
+                                if(lastPathComp.equals(lastOne)){
+                                    try {
+                                        FileBrowserAiravata fileBrowserAiravata = new FileBrowserAiravata();
+                                        fileBrowserAiravata.retreiveFile(inputDataObjectType.getValue());
+                                        matchFound = true;
+                                        break;
+                                    }catch (Exception ex){
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            }
                         }
-                        logger.debug("extension = " + extension);
-                        try {  
-                          // have a provider
-                          if(isProvider(path)) {
-                              System.out.println("Downloading file");
-                              dbworker.downloadFile(treePath);
-                          
-                          } else {
-                              System.out.println("No provider, starting program");
-//                              startProgram(lookupURI);
-                              JobPanel.openEditor(path);
-                          }
-                        }catch(Exception exception) {
-                             logger.error("exception ",exception);
-                             //startProgram(lookupURI);
+                        if(!matchFound){
+                            for(OutputDataObjectType outputDataObjectType : experimentModel.getExperimentOutputs()){
+                                if(outputDataObjectType.getType() == DataType.URI){
+                                    String[] bits = outputDataObjectType.getValue().split("/");
+                                    String lastOne = bits[bits.length-1];
+                                    if(lastPathComp.equals(lastOne)){
+                                        try {
+                                            FileBrowserAiravata fileBrowserAiravata = new FileBrowserAiravata();
+                                            fileBrowserAiravata.retreiveFile(outputDataObjectType.getValue());
+                                            break;
+                                        }catch (Exception ex){
+                                            ex.printStackTrace();
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
+
                 }
             }
         }
+    
+//    protected class TreeMouseListener implements MouseListener {
+//
+//        public void mouseClicked(MouseEvent mEvent) {
+//
+//            int mouseRow = tree.getRowForLocation(mEvent.getX(), mEvent.getY());
+//            int[] mouseRows = tree.getSelectionRows();
+//            if (mouseRows != null){
+//            	System.out.println("Clicked multiple real rows");
+//            	tree.setSelectionRows(mouseRows);
+//            	//if a single right click, popup the menu
+//                if(isRightClickEvent(mEvent)) {
+//                    System.out.println("Right clicked, showing popup menu.");
+//                    showPopupMenu(tree,mEvent.getX(), mEvent.getY());
+//                }
+//                else if ((mEvent.getButton()==MouseEvent.BUTTON1) && (mEvent.getClickCount()==2)) {
+//                	//String path = dbworker.getPathFromTreePath(getSelectedItemsTreePath());
+//                	TreePath[] paths = tree.getSelectionPaths();
+//
+//                 for (TreePath pathT : paths ){
+//                	 String pathf = dbworker.getPathFromTreePath(pathT);
+//                    logger.debug("path = " + pathf);
+//                    int index = pathf.lastIndexOf(".") + 1;
+//                    String extension =  "";
+//                    if(index > 0) {
+//                        extension = pathf.substring(index);
+//                    }
+//                    logger.debug("extension = " + extension);
+//                    try {
+//                      // have a provider
+//                      if(isProvider(pathf)) {
+//                          System.out.println("Downloading file");
+//                          dbworker.downloadFile(pathT);
+//
+//                      } else {
+//                          System.out.println("No provider, starting program");
+////                          startProgram(lookupURI);
+//                          JobPanel.openEditor(pathf);
+//                      }
+//                     }catch(Exception exception) {
+//                         logger.error("exception ",exception);
+//                         //startProgram(lookupURI);
+//                     }
+//                	}
+//
+//                }
+//            }
+//
+//            if (mouseRow != -1){
+//                System.out.println("Clicked on a real row");
+//
+//                //If we have clicked a real row, select it, and continue with our logic
+//                tree.setSelectionRow(mouseRow);
+//                //if a single right click, popup the menu
+//                if(isRightClickEvent(mEvent)) {
+//                    System.out.println("Right clicked, showing popup menu.");
+//                    showPopupMenu(tree, mEvent.getX(), mEvent.getY());
+//                //if a double click:
+//                } else if ((mEvent.getButton()==MouseEvent.BUTTON1) && (mEvent.getClickCount()==2)) {
+//                    TreePath treePath = tree.getPathForRow(mouseRow);
+//                    GridFileTreeNode selectedNode = (GridFileTreeNode) treePath.getLastPathComponent();
+//                    if(selectedNode.getAllowsChildren()){
+//                    //If here, user has double clicked on a directory
+//                    } else {
+////                        JDialog newDialog = new JDialog();
+//                        String path = dbworker.getPathFromTreePath(getSelectedItemsTreePath());
+////                        JPanel newPanel = (JPanel) mimehandler.lookup(dbworker.processURIForTopPanel(lookupURI));
+////                        if(newPanel==null) {
+////                            errorMimeType();
+////                        } else {
+////                            newDialog.getContentPane().add(newPanel);
+////                            newDialog.pack();
+////                            newDialog.setVisible(true);
+////                        }
+//
+//                        logger.debug("path = " + path);
+//                        int index = path.lastIndexOf(".") + 1;
+//                        String extension =  "";
+//                        if(index > 0) {
+//                            extension = path.substring(index);
+//                        }
+//                        logger.debug("extension = " + extension);
+//                        try {
+//                          // have a provider
+//                          if(isProvider(path)) {
+//                              System.out.println("Downloading file");
+//                              dbworker.downloadFile(treePath);
+//
+//                          } else {
+//                              System.out.println("No provider, starting program");
+////                              startProgram(lookupURI);
+//                              JobPanel.openEditor(path);
+//                          }
+//                        }catch(Exception exception) {
+//                             logger.error("exception ",exception);
+//                             //startProgram(lookupURI);
+//                        }
+//                    }
+//                }
+//            }
+//        }
         
         /**
          * Check to see if the user right clicks with a single button mouse.

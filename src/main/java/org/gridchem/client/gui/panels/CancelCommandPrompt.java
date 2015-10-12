@@ -101,7 +101,6 @@ public class CancelCommandPrompt  {
         
         progressDialog = 
             new ProgressDialog(callingWindow,title);
-        
         progressDialog.beginTask(message, increments, true);
              
 //        

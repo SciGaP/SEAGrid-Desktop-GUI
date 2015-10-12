@@ -1,4 +1,6 @@
-package org.apache.airavata.gridchem;
+package org.apache.airavata.gridchem.file;
+
+import java.io.*;
 
 import org.apache.airavata.AiravataConfig;
 import org.apache.commons.lang.Validate;
@@ -11,7 +13,7 @@ import org.apache.oodt.cas.filemgr.structs.exceptions.ConnectionException;
 import org.apache.oodt.cas.filemgr.system.XmlRpcFileManagerClient;
 import org.apache.oodt.cas.metadata.Metadata;
 
-import java.io.File;
+import javax.swing.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -46,7 +48,7 @@ public class FileBrowserAiravata {
     }
 
     /**
-     * Downloads a file from remote repository
+     * Downloads a file from remote repository using file name or file id.
      * @param productId product id
      * @param productName product name. If product id is not known, give file name as product name
      * @param destination output directory
@@ -74,6 +76,21 @@ public class FileBrowserAiravata {
             e.printStackTrace();
             throw new FileHandlerException(e.getMessage());
         }
+    }
+
+    /**
+     * Download a file from remote repository using file path
+     * @param remoteFilePath
+     * @throws IOException
+     */
+    public void retreiveFile(String remoteFilePath) throws IOException {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new FileDownloadDialog("https://dev.testdrive.airavata.org/portal/experimentData/" +
+                        "PROCESS_b7fe5921-56c0-4eb7-8721-5a8b95a9993c/gaussian.out").setVisible(true);
+            }
+        });
     }
 
     /**
