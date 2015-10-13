@@ -83,12 +83,14 @@ public class FileBrowserAiravata {
      * @param remoteFilePath
      * @throws IOException
      */
-    public void retreiveFile(String remoteFilePath) throws IOException {
+    public void retrieveFile(String remoteFilePath) throws IOException {
+        String[] bits = AiravataConfig.getProperty("http_file_repo_location").split("/");
+        String temp = bits[bits.length-1];
+        final String remoteHttpPath = AiravataConfig.getProperty("http_file_repo_location") + remoteFilePath.split(temp)[1];
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new FileDownloadDialog("https://dev.testdrive.airavata.org/portal/experimentData/" +
-                        "PROCESS_b7fe5921-56c0-4eb7-8721-5a8b95a9993c/gaussian.out").setVisible(true);
+                new FileDownloadDialog(remoteHttpPath).setVisible(true);
             }
         });
     }

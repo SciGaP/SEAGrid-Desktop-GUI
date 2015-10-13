@@ -58,7 +58,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     public static final String SCHEDULER = "Grid Scheduler";
     public static final String UNSPECIFIED = "Unspecified";
-    public static final String DEFAULT_QUEUE = "normal";
     public static final Hashtable<String, HashSet> APP_MODULE_HASHTABLE = new Hashtable<String, HashSet>();
     public static final HashSet<String> APP_NAME_HASHSET = new HashSet<String>();
 
@@ -84,7 +83,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private JLabel timeLable;
     private JLabel appModuleLabel;
     private JLabel memSizeLabel;
-    private JLabel numThreadLabel;
+    private JLabel numCoreLabel;
     private JLabel numNodesLabel;
 
 
@@ -96,7 +95,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private JSpinner hr; // Seconds removed
     private JSpinner min;
     private JSpinner numProcSpin = new JSpinner();
-    private JSpinner numThreadSpin = new JSpinner();
+    private JSpinner numCoreSpin = new JSpinner();
     private JSpinner numNodeSpin = new JSpinner();
 
 
@@ -166,10 +165,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         experimentParmas.put(ExpetimentConst.CPU_COUNT, 1);
         experimentParmas.put(ExpetimentConst.NODE_COUNT, 1);
-        experimentParmas.put(ExpetimentConst.THREADS, 1);
         experimentParmas.put(ExpetimentConst.QUEUE, "normal");
         experimentParmas.put(ExpetimentConst.WALL_TIME, 30);
-        experimentParmas.put(ExpetimentConst.START_TIME, 0);
         experimentParmas.put(ExpetimentConst.MEMORY, 1);
         experimentParmas.put(ExpetimentConst.PROJECT_ACCOUNT, "sds128");
         //TODO remove calling this twise
@@ -337,7 +334,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         changeQueue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName());
         numProcSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount());
         numNodeSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getNodeCount());
-        numThreadSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getNumberOfThreads());
+        numCoreSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getNumberOfThreads());
         memSizeTextField.setText(experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory() + "");
     }
 
@@ -502,7 +499,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         qLabel = new JLabel("Choose a queue:");
         qCombo = new JComboBox();
         qCombo.setEditable(true);
-        timeLable = new JLabel("Est. walltime (hr:min):");
+        timeLable = new JLabel("Wall Time Limit(minutes)");
 
         int maximum = 2048, maxmint = 59, minimum = 0, initial = 0, step = 1;
 
@@ -538,13 +535,13 @@ public class EditJobPanel extends JDialog implements ActionListener,
         timeConstraints.weightx = 1.0;
         timeConstraints.gridx = 0; // next-to-last
         timeConstraints.fill = GridBagConstraints.HORIZONTAL;
-        timePanel.add(hr, timeConstraints);
+        //timePanel.add(hr, timeConstraints);
         timeConstraints.weightx = 0.25;
         timeConstraints.gridx = 1; // next-to-last
         timeConstraints.fill = GridBagConstraints.NONE;
         JLabel timeSeparator = new JLabel(":");
         timeSeparator.setPreferredSize(new Dimension(15, 15));
-        timePanel.add(timeSeparator, timeConstraints);
+        //timePanel.add(timeSeparator, timeConstraints);
         timeConstraints.weightx = 1.0;
         timeConstraints.gridx = 2;
         timeConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -562,7 +559,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         numNodeSpin.setModel(new SpinnerNumberModel(1, 1, 1000, 1));
 
-        numThreadSpin.setModel(new SpinnerNumberModel(1, 1, 1000, 1));
+        numCoreSpin.setModel(new SpinnerNumberModel(1, 1, 1000, 1));
 
         // Create Memory Configuration
         memSizeLabel = new JLabel("Preferred Memory (Mbytes):");
@@ -756,11 +753,11 @@ public class EditJobPanel extends JDialog implements ActionListener,
             }
         });
 
-        numThreadSpin.addChangeListener(new ChangeListener() {
+        numCoreSpin.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                String threads = numThreadSpin.getValue().toString();
-                experimentParmas.put(ExpetimentConst.THREADS, Integer.parseInt(threads));
+                String coreCount = numCoreSpin.getValue().toString();
+                experimentParmas.put(ExpetimentConst.CPU_COUNT, Integer.parseInt(coreCount));
             }
         });
 
@@ -840,19 +837,21 @@ public class EditJobPanel extends JDialog implements ActionListener,
         reqPane.setLayout(rpgbl);
         gbcons.fill = GridBagConstraints.BOTH;
         gbcons.weightx = 1.0;
-        gbcons.gridwidth = GridBagConstraints.RELATIVE;
-        gbcons.gridx = 0;
-        rpgbl.setConstraints(psnLabel, gbcons);
-        if (Settings.userType.equals(AccessType.EXTERNAL)) {
-            reqPane.add(psnLabel);
-        }
-        gbcons.gridwidth = GridBagConstraints.REMAINDER;
-        gbcons.gridx = 1;
-        rpgbl.setConstraints(projCombo, gbcons);
-        // If the user authenticated is a GridChem Community User then do not add projCombo
-        if (Settings.userType.equals(AccessType.EXTERNAL)) {
-            reqPane.add(projCombo);
-        }
+//        gbcons.gridwidth = GridBagConstraints.RELATIVE;
+//        gbcons.gridx = 0;
+//        rpgbl.setConstraints(psnLabel, gbcons);
+//        if (Settings.userType.equals(AccessType.EXTERNAL)) {
+//            //reqPane.add(psnLabel);
+//        }
+//        gbcons.gridwidth = GridBagConstraints.REMAINDER;
+//        gbcons.gridx = 1;
+//        rpgbl.setConstraints(projCombo, gbcons);
+//        // If the user authenticated is a GridChem Community User then do not add projCombo
+//        if (Settings.userType.equals(AccessType.EXTERNAL)) {
+//            //reqPane.add(projCombo);
+//        }
+
+        //Adding queue selection
         gbcons.weightx = 1.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
         gbcons.gridx = 0;
@@ -862,6 +861,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         gbcons.gridx = 1;
         rpgbl.setConstraints(qCombo, gbcons);
         reqPane.add(qCombo);
+
         gbcons.weightx = 0.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
         gbcons.gridx = 0;
@@ -872,36 +872,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         rpgbl.setConstraints(timePanel, gbcons);
         reqPane.add(timePanel);
 
-        // here we display the number of processors
-        // differently depending on the application
-        if (getAppPackageName().equalsIgnoreCase(Invariants.APP_NAME_GAUSSIAN)) {
-            numProcEdLabel
-                    .setText("Use %NprocShared(SMP)/%NProcLinda(Clusters) in the G09 input");
-            numProcSpin.setValue(4);// This is a dummy value and will be reset
-            // in getnumProc method Sudhakar
-            memSizeLabel.setText("Use %mem in the G09 input");
-            memSizeTextField.setText("1000");
-            gbcons.weightx = 1.0;
-            gbcons.fill = GridBagConstraints.HORIZONTAL;
-            gbcons.gridx = 0;
-            rpgbl.setConstraints(numProcEdLabel, gbcons);
-            reqPane.add(numProcEdLabel);
-
-        } else {
-            numProcEdLabel.setText("Number of Processors:");
-            memSizeLabel.setText("Preferred Memory (Mbytes):");
-            gbcons.weightx = 0.0;
-            gbcons.gridwidth = GridBagConstraints.RELATIVE;
-            gbcons.gridx = 0;
-            rpgbl.setConstraints(numProcEdLabel, gbcons);
-            reqPane.add(numProcEdLabel);
-            gbcons.gridwidth = GridBagConstraints.REMAINDER;
-            gbcons.gridx = 1;
-            rpgbl.setConstraints(numProcSpin, gbcons);
-            reqPane.add(numProcSpin);
-        }
-
-        numNodesLabel = new JLabel("Number of Nodes");
+        numNodesLabel = new JLabel("Node Count");
         gbcons.weightx = 0.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
         gbcons.gridx = 0;
@@ -914,18 +885,18 @@ public class EditJobPanel extends JDialog implements ActionListener,
         rpgbl.setConstraints(numNodeSpin, gbcons);
         reqPane.add(numNodeSpin);
 
-        numThreadLabel = new JLabel("Number of Threads");
+        numCoreLabel = new JLabel("Total Core Count");
         gbcons.weightx = 0.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
         gbcons.gridx = 0;
-        rpgbl.setConstraints(numThreadLabel, gbcons);
-        reqPane.add(numThreadLabel);
+        rpgbl.setConstraints(numCoreLabel, gbcons);
+        reqPane.add(numCoreLabel);
 
         gbcons.weightx = 0.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
         gbcons.gridx = 1;
-        rpgbl.setConstraints(numThreadSpin, gbcons);
-        reqPane.add(numThreadSpin);
+        rpgbl.setConstraints(numCoreSpin, gbcons);
+        reqPane.add(numCoreSpin);
 
         gbcons.weightx = 0.0;
         gbcons.gridwidth = GridBagConstraints.RELATIVE;
@@ -1052,7 +1023,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         qCombo.removeAllItems();
 
         ComputeResourceDescription bean = GridChem.getMachineByName(machine);
-        qCombo.addItem(DEFAULT_QUEUE);
         if (bean.isSetBatchQueues()) {
             for (BatchQueue queue : bean.getBatchQueues()) {
                 qCombo.addItem(queue.getQueueName());
@@ -1131,27 +1101,26 @@ public class EditJobPanel extends JDialog implements ActionListener,
             experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, availableCompResources.get(hpcList.getSelectedIndex()).getComputeResourceId());
             experimentParmas.put(ExpetimentConst.APP_ID,(String)appModuleCombo.getSelectedItem());
             experimentParmas.put(ExpetimentConst.GATEWAY_ID, AiravataConfig.getProperty("gateway"));
+            experimentParmas.put(ExpetimentConst.PROJECT_ID, GridChem.project.getProjectID());
 
-            //List<File> inputFiles = inputFilePanel.getInputFiles();
-            //experimentParmas.put(ExpetimentConst.INPUT_FILES, inputFiles);
+            Integer nodeCount = (Integer)numNodeSpin.getValue();
+            experimentParmas.put(ExpetimentConst.NODE_COUNT, nodeCount);
+
+            Integer totalCoreCount = (Integer)numCoreSpin.getValue();
+            experimentParmas.put(ExpetimentConst.CPU_COUNT, totalCoreCount);
+
+            Integer wallTimeLimit = (Integer)min.getValue();
+            experimentParmas.put(ExpetimentConst.WALL_TIME, wallTimeLimit);
+
+            try{
+                Integer totalPhysicalMem = Integer.parseInt(memSizeTextField.getText());
+                experimentParmas.put(ExpetimentConst.MEMORY, totalPhysicalMem);
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
 
             String queue = qCombo.getSelectedItem().toString();
-            System.out.println("Changing queue to : "+queue);
             experimentParmas.put(ExpetimentConst.QUEUE,queue);
-
-            System.out.println(experimentParmas.get(ExpetimentConst.EXP_NAME));
-            System.out.println(experimentParmas.get(ExpetimentConst.APP_ID));
-            System.out.println(experimentParmas.get(ExpetimentConst.RESOURCE_HOST_ID));
-            System.out.println(experimentParmas.get(ExpetimentConst.PROJECT_ID));
-            System.out.println(experimentParmas.get(ExpetimentConst.QUEUE));
-            System.out.println(experimentParmas.get(ExpetimentConst.CPU_COUNT));
-            System.out.println(experimentParmas.get(ExpetimentConst.USER_ID));
-            System.out.println(experimentParmas.get(ExpetimentConst.NODE_COUNT));
-            System.out.println(experimentParmas.get(ExpetimentConst.THREADS));
-            System.out.println(experimentParmas.get(ExpetimentConst.WALL_TIME));
-            System.out.println(experimentParmas.get(ExpetimentConst.START_TIME));
-            System.out.println(experimentParmas.get(ExpetimentConst.MEMORY));
-            System.out.println();
 
             ExperimentHandler experimentHandler = ExperimentHandlerUtils
                     .getExperimentHandler((String) experimentParmas.get(ExpetimentConst.APP_ID));

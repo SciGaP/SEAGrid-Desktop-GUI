@@ -9,9 +9,7 @@ public class ExpetimentConst {
     public static final String CPU_COUNT="CPU_COUNT";
     public static final String USER_ID="USER_ID";
     public static final String NODE_COUNT="NODE_COUNT";
-    public static final String THREADS="THREADS";
     public static final String WALL_TIME="WALL_TIME";
-    public static final String START_TIME="START_TIME";
     public static final String MEMORY="MEMORY";
     public static final String PROJECT_ACCOUNT="PROJECT_ACCOUNT";
     public static final String INPUTS="INPUTS";

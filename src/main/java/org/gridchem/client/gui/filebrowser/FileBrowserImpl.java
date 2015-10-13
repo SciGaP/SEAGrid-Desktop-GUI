@@ -53,7 +53,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
 import java.text.SimpleDateFormat;
@@ -89,7 +88,6 @@ import org.apache.airavata.model.application.io.InputDataObjectType;
 import org.apache.airavata.model.application.io.OutputDataObjectType;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.log4j.Logger;
-import org.gridchem.client.GridChem;
 import org.gridchem.client.common.MimeHandler;
 import org.gridchem.client.gui.panels.PathInputPanelImpl;
 import org.gridchem.client.util.Env;
@@ -1002,7 +1000,7 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
                                 if(lastPathComp.equals(lastOne)){
                                     try {
                                         FileBrowserAiravata fileBrowserAiravata = new FileBrowserAiravata();
-                                        fileBrowserAiravata.retreiveFile(inputDataObjectType.getValue());
+                                        fileBrowserAiravata.retrieveFile(inputDataObjectType.getValue());
                                         matchFound = true;
                                         break;
                                     }catch (Exception ex){
@@ -1019,7 +1017,7 @@ public class FileBrowserImpl extends JPanel implements Serializable, FileBrowser
                                     if(lastPathComp.equals(lastOne)){
                                         try {
                                             FileBrowserAiravata fileBrowserAiravata = new FileBrowserAiravata();
-                                            fileBrowserAiravata.retreiveFile(outputDataObjectType.getValue());
+                                            fileBrowserAiravata.retrieveFile(outputDataObjectType.getValue());
                                             break;
                                         }catch (Exception ex){
                                             ex.printStackTrace();

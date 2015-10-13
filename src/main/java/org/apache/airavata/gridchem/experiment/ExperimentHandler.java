@@ -31,7 +31,7 @@ public class ExperimentHandler {
     public String createExperiment(Map<String, Object> params) throws ExperimentCreationException {
 
         String projectID = null, userID = null, expName = null, expDesc = null, appId = null, gatewayId = null, hostID = null, queue = null, projectAccount = null;
-        Integer cpuCount = null, threadCount = null, nodeCount = null, wallTime = null, startTime = null, physicalMemory = null;
+        Integer cpuCount = null, nodeCount = null, wallTime = null, physicalMemory = null;
         List<InputDataObjectType> inputs = null;
 
         if (params.get(ExpetimentConst.PROJECT_ID) != null)
@@ -58,17 +58,11 @@ public class ExperimentHandler {
         if (params.get(ExpetimentConst.CPU_COUNT) != null)
             cpuCount = (Integer) params.get(ExpetimentConst.CPU_COUNT);
 
-        if (params.get(ExpetimentConst.THREADS) != null)
-            threadCount = (Integer) params.get(ExpetimentConst.THREADS);
-
         if (params.get(ExpetimentConst.NODE_COUNT) != null)
             nodeCount = (Integer) params.get(ExpetimentConst.NODE_COUNT);
 
         if (params.get(ExpetimentConst.WALL_TIME) != null)
             wallTime = (Integer) params.get(ExpetimentConst.WALL_TIME);
-
-        if (params.get(ExpetimentConst.START_TIME) != null)
-            startTime = (Integer) params.get(ExpetimentConst.START_TIME);
 
         if (params.get(ExpetimentConst.MEMORY) != null)
             physicalMemory = (Integer) params.get(ExpetimentConst.MEMORY);
@@ -121,7 +115,6 @@ public class ExperimentHandler {
         scheduling.setResourceHostId(hostID);
         scheduling.setTotalCPUCount(cpuCount);
         scheduling.setNodeCount(nodeCount);
-        scheduling.setNumberOfThreads(threadCount);
         scheduling.setQueueName(queue);
         scheduling.setWallTimeLimit(wallTime);
         scheduling.setTotalPhysicalMemory(physicalMemory);

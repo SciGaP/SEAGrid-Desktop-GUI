@@ -61,6 +61,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 
@@ -142,6 +143,11 @@ public class GridChem
     
     public static void main (String[] args)
     {
+		//System Property Setting
+		System.setProperty("jsse.enableSNIExtension", "false");
+		URL cacertPath = GridChem.class.getClassLoader().getResource("cacerts");
+		System.setProperty("javax.net.ssl.trustStore", cacertPath.getPath());
+
 		Trace.traceOff();
         Trace.entry();
 
