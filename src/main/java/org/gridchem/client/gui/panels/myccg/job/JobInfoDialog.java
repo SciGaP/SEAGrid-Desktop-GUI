@@ -38,6 +38,7 @@
 
 package org.gridchem.client.gui.panels.myccg.job;
 
+import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.airavata.model.scheduling.ComputationalResourceSchedulingModel;
 
@@ -91,21 +92,13 @@ public class JobInfoDialog extends JDialog {
         
         getInfoDialogPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), 
-                "Information about job [" + experiment.getExperimentId() + "]: " + experiment.getExperimentName()));
+                "Information about experiment [" + experiment.getExperimentId() + "]: " + experiment.getExperimentName()));
               
         createJobInfoPopupMenu();
         
         String text = "<html><b>Name: </b><span style='background:#F0F0F0'>" + experiment.getExperimentName() + "</span></html>";
-        String toolTip = "The name of the job.";
+        String toolTip = "The name of the Experiment.";
         JLabel name = createLabel(text,toolTip);
-        
-        
-        text = "<html><b>Research Project: </b><span style='background:#F0F0F0'>" + 
-                ((experiment.getExperimentName().length() > 20)?
-                        experiment.getExperimentName().substring(0,20):experiment.getExperimentName()) +
-                " </span><html>";
-        toolTip = "The research project under study by this job: " + experiment.getExperimentName();
-        JLabel researchProject = createLabel(text,toolTip);
 
         String temp = "";
         try{
@@ -115,7 +108,7 @@ public class JobInfoDialog extends JDialog {
         }
         text = "<html><b>User Project: </b><span style='background:#F0F0F0'>" + temp +
                 "</span></html>";
-        toolTip = "The CCG project associated with this job: " + temp;
+        toolTip = "The SEAGrid project associated with this experiment: " + temp;
         JLabel project= createLabel(text,toolTip);
 
         try{
@@ -124,7 +117,7 @@ public class JobInfoDialog extends JDialog {
             temp = experiment.getExecutionId();
         }
         text = "<html><b>Application: </b><span style='background:#F0F0F0'>" + temp + "</span></html>";
-        toolTip = "The application run by this job.";
+        toolTip = "The application run by this experiment.";
         JLabel app = createLabel(text,toolTip); 
 
         ComputationalResourceSchedulingModel crs= experiment.getUserConfigurationData().getComputationalResourceScheduling();
@@ -135,15 +128,16 @@ public class JobInfoDialog extends JDialog {
             temp = experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId();
         }
         text = "<html><b>HPC System: </b><span style='background:#F0F0F0'>" + temp + "</span></html>";
-        toolTip = "The HPC system on which this job ran.";
+        toolTip = "The HPC system on which this experiment ran.";
         JLabel hpc = createLabel(text,toolTip); 
 
         text = "<html><b>Queue: </b><span style='background:#F0F0F0'>" + crs.getQueueName() + "</span></html>";
-        toolTip = "<html>The queue in which this job ran. This may<br>" + 
+        toolTip = "<html>The queue in which this experiment ran. This may<br>" +
                             "not necessarily be the same queue requested<br>during job submission.</html>";
         JLabel queue = createLabel(text,toolTip); 
         
-        text = "<html><b>Local Job ID: </b><span style='background:#F0F0F0'>" + "Local ID" + "</span></html>";
+        text = "<html><b>Local Job ID: </b><span style='background:#F0F0F0'>"
+                + AiravataManager.getLocalJobId(experiment.getExperimentId()) + "</span></html>";
         toolTip = "The local job id of this job on the remote resource.";
         JLabel localID = createLabel(text,toolTip);
         
@@ -158,7 +152,7 @@ public class JobInfoDialog extends JDialog {
         JLabel rmem = createLabel(text,toolTip);
         
         text = "<html><b>Requested WallTime: </b><span style='background:#F0F0F0'>" + 
-        ((crs.getTotalCPUCount() == 0)?" ---":(crs.getTotalCPUCount())) +
+        ((crs.getWallTimeLimit() == 0)?" ---":(crs.getWallTimeLimit())) +
         "</span></html>";
         toolTip = "The amount of wall clock time requested during job submission.";
         JLabel rwct = createLabel(text,toolTip);
@@ -173,7 +167,7 @@ public class JobInfoDialog extends JDialog {
         JLabel ucpu = createLabel(text,toolTip);         
         
         text = "<html><b>Used Memory: </b><span style='background:#F0F0F0'>" + 
-            0 +
+            crs.getTotalCPUCount() +
             "</span></html>";
         toolTip = "The amount of memory actually allocated during the running of this job.";
         JLabel umem = createLabel(text,toolTip);         
@@ -205,7 +199,7 @@ public class JobInfoDialog extends JDialog {
         getInfoDialogPanel.add(rwct);
         
         getInfoDialogPanel.add(app);
-        getInfoDialogPanel.add(ucpu);
+//        getInfoDialogPanel.add(ucpu);
         
         getInfoDialogPanel.add(status);
         getInfoDialogPanel.add(umem);

@@ -699,49 +699,16 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		ExperimentModel experiment = getSelectedJob();
 		if (e.getSource() == statusButton) {
 			if (experiment == null) {
-				JOptionPane.showMessageDialog(null, "Please select a job.", "",
+				JOptionPane.showMessageDialog(null, "Please select an experiment.", "",
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-
-			/*System.out.println("Estimating Start and End Time of submitted Job");
-			if (!experiment.getStatus().equals(JobStatusType.FINISHED)
-					& !experiment.getStatus().equals(JobStatusType.STOPPED)
-					& !experiment.getStatus().equals(JobStatusType.TIME_ELAPSED)) {
-
-				PredictTimeCommand predicttimeCommand = new PredictTimeCommand(
-						this);
-
-				predicttimeCommand.getArguments().put("job", job);
-
-				statusChanged(new StatusEvent(predicttimeCommand, Status.START));
-
-			} else {
-				createJobInfoDialog(experiment);
-			}*/
 			createJobInfoDialog(experiment);
-
-			/*
-			 * new SwingWorker() { public Object construct() { int range = 10;
-			 * com.asprise.util.ui.progress.ProgressDialog progressDialog = new
-			 * com.asprise.util.ui.progress.ProgressDialog(frame, "Progress");
-			 * progressDialog.beginTask("Number Counting", range, true);
-			 * 
-			 * for(int i=0; i<range; i++) { if(progressDialog.isCanceled()) {
-			 * System.out.println("CANCELED.\n\n"); break; }
-			 * //JTextArea.append() is thread-safe. System.out.println(i +
-			 * " of " + range + "\n"); progressDialog.worked(1); try {
-			 * Thread.sleep(500); } catch (InterruptedException e) {
-			 * e.printStackTrace(); } } return progressDialog; } }.start();
-			 */
-
 		} else if (e.getSource() == estTimeButton) {
 			System.out.println("Right now this is a just dummy Button");
 		} else if (e.getSource() == searchButton) {
-
 			// search requires no job selection
 			doSearchJobs();
-
 		} else if (e.getSource() == killButton) {
 			if (experiment == null) {
 				JOptionPane.showMessageDialog(null, "Please select a job.", "",
@@ -749,7 +716,6 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 				return;
 			}
 			doKillJob(experiment);
-
 		} else if (e.getSource() == dataButton) {
 			if (experiment == null) {
 				JOptionPane.showMessageDialog(null, "Please select a job.", "",
@@ -757,7 +723,6 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 				return;
 			}
 			doVisualizeJob(experiment);
-
 		} else if (e.getSource() == moldenButton) {
 			if (experiment == null) {
 				JOptionPane.showMessageDialog(null, "Please select a job.", "",
@@ -765,21 +730,15 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 				return;
 			}
 			new moldenClass().start();
-
 		} else if (e.getSource() == retrieveButton) {
-
 			// if job is null, file browser will open at user's root directory
 			doBrowseFiles(getSelectedJob());
-
 		} else if (e.getSource() == refreshButton) {
 			// refresh requires no job selection since the entire list of jobs
 			// is refreshed every time
 			refreshJobs();
-
 		} else if (e.getSource() == cancelButton) {
-
 			GridChem.oc.monitorWindow.dispose();
-
 		} else {
 			JOptionPane.showMessageDialog(null, "huh?",
 					"This should not happen", JOptionPane.INFORMATION_MESSAGE);
@@ -839,10 +798,6 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 	private void createJobInfoDialog(ExperimentModel experiment) {
 		getInfoDialog = new JobInfoDialog(experiment);
-	}
-	
-	private void createJobInfoDialog(ExperimentModel experiment, String estStartTime) {
-		getInfoDialog = new JobInfoDialog(experiment, estStartTime);
 	}
 
 	/**
