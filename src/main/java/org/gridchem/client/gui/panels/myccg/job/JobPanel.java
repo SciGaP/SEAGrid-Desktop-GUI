@@ -414,37 +414,37 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 		// add all event listeners here
 		statusButton.addActionListener(this);
-		statusButton.setToolTipText("Find the status of the selected job.");
+		statusButton.setToolTipText("Find the status of the selected experiment.");
 		estTimeButton.addActionListener(this);
 		estTimeButton
-				.setToolTipText("Estimate Start/End of Time of a Scheduled Job");
+				.setToolTipText("Estimate Start/End of Time of a Scheduled Experiment");
 		dataButton.addActionListener(this);
 		moldenButton.addActionListener(this);
 		moldenButton
 				.setToolTipText("Visualize and Post-Process Output using Molden");
 		dataButton
-				.setToolTipText("<html>View the progress of the selected job."
+				.setToolTipText("<html>View the progress of the selected experiment."
 						+ "<br>The current output will be retrieved and post-processed."
 						+ "<br>Convergence information may be plotted."
 						+ "</html>");
 		killButton.addActionListener(this);
-		killButton.setToolTipText("Kill the selected job.");
+		killButton.setToolTipText("Kill the selected experiment.");
 		retrieveButton.addActionListener(this);
 		retrieveButton
 				.setToolTipText("<html>Obtain a file listing of the mass storage area for"
-						+ "<br>the selected job.  In addition to output files,"
+						+ "<br>the selected experiment.  In addition to output files,"
 						+ "<br>the input file and checkpoint file may be available."
 						+ "<br>The population of mass storage occurs after the job"
 						+ "<br>terminates and may require a significant amount of time."
 						+ "</html>");
 		refreshButton.addActionListener(this);
 		refreshButton
-				.setToolTipText("<html>Refresh the jobs in the current window with the latest"
+				.setToolTipText("<html>Refresh the experiments in the current window with the latest"
 						+ "<br>status infomation.  All job information is subject to, at "
 						+ "<br>worst, a 60 second lag.</html>");
 		searchButton.addActionListener(this);
 		searchButton
-				.setToolTipText("Search for jobs matching a specific description.");
+				.setToolTipText("Search for experiments matching a specific description.");
 		cancelButton.addActionListener(this);
 		cancelButton.setToolTipText("Close this window.");
 
@@ -711,7 +711,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			doSearchJobs();
 		} else if (e.getSource() == killButton) {
 			if (experiment == null) {
-				JOptionPane.showMessageDialog(null, "Please select a job.", "",
+				JOptionPane.showMessageDialog(null, "Please select an experiment.", "",
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
@@ -834,23 +834,22 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		worker.start();
 	}
 
-	private void doKillJob(final ExperimentModel job) {
-		/*if (job.getStatus().equals(JobStatusType.RUNNING)
-				|| job.getStatus().equals(JobStatusType.SUBMITTING)
-				|| job.getStatus().equals(JobStatusType.INITIAL)
-				|| job.getStatus().equals(JobStatusType.SCHEDULED)
-				|| job.getStatus().equals(JobStatusType.MIGRATING)) {
-
-			KILLCommand killCommand = new KILLCommand(this);
-
-			killCommand.getArguments().put("jobIDs", job.getId());
-
-			statusChanged(new StatusEvent(killCommand, Status.START));
-
+	private void doKillJob(final ExperimentModel experimentModel) {
+		if (experimentModel.getExperimentStatus().getState().equals(ExperimentState.EXECUTING)
+				|| experimentModel.getExperimentStatus().getState().equals(ExperimentState.LAUNCHED)
+				|| experimentModel.getExperimentStatus().getState().equals(ExperimentState.SCHEDULED)) {
+			boolean result = AiravataManager.cancelExperiment(experimentModel.getExperimentId());
+			if(result){
+				JOptionPane.showMessageDialog(this, "Experiment cancelling request sent",
+						"Cancel Experiment", JOptionPane.INFORMATION_MESSAGE);
+			}else{
+				JOptionPane.showMessageDialog(this, "Could not cancel the experiment",
+						"Cancel Experiment", JOptionPane.OK_OPTION);
+			}
 		} else {
-			JOptionPane.showMessageDialog(this, "Job is already stopped.",
-					"Job Management Error", JOptionPane.OK_OPTION);
-		}*/
+			JOptionPane.showMessageDialog(this, "Experiment is not in a cancellable state",
+					"Cancel Experiment", JOptionPane.OK_OPTION);
+		}
 	}
 
 	private void doSteerJob(ExperimentModel job) {

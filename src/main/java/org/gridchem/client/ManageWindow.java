@@ -278,19 +278,19 @@ class InternalStuff extends JComponent implements ListSelectionListener, WindowL
 		bs = new ButtonSelectionListener(); //lixh_3_14
 	
 		statusButton.addActionListener(b);
-		statusButton.setToolTipText("Find the status of the currently selected job");
+		statusButton.setToolTipText("Find the status of the currently selected experiment");
 		dataButton.addActionListener(b);
-		dataButton.setToolTipText("View the convergence progress of the currently selected job");
+		dataButton.setToolTipText("View the convergence progress of the currently selected experiment");
 		//dataButton.setEnabled(false);
 		//visButton.addActionListener(b);
 		editButton.addActionListener(b);
-		editButton.setToolTipText("Edit the log file associated with the currently selected job");
+		editButton.setToolTipText("Edit the log file associated with the currently selected experiment");
 		killButton.addActionListener(b); //lixh_3_4
-		killButton.setToolTipText("Kill the currently selected job");
+		killButton.setToolTipText("Kill the currently selected experiment");
 		retrieveButton.addActionListener(b);
-		retrieveButton.setToolTipText("Retrieve ouput data from previously run jobs");
+		retrieveButton.setToolTipText("Retrieve ouput data from previously run experiments");
 		deleteButton.addActionListener(b);
-		deleteButton.setToolTipText("Delete the currently selected job from user history");
+		deleteButton.setToolTipText("Delete the currently selected experiment from user history");
 		cancelButton.addActionListener(b);
 		cancelButton.setToolTipText("Close this window");
 		

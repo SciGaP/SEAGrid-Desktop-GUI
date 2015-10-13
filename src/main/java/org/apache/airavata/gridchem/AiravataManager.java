@@ -353,4 +353,14 @@ public class AiravataManager {
             return null;
         }
     }
+
+    public static boolean cancelExperiment(String experimentId){
+        try{
+            getClient().terminateExperiment(getAuthzToken(), experimentId, AiravataConfig.getProperty("gateway"));
+            return true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+    }
 }
