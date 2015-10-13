@@ -50,7 +50,6 @@ import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
 import org.apache.airavata.gridchem.experiment.ExperimentHandlerUtils;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.gridchem.client.gui.buttons.ApplicationMenuItem;
-import org.gridchem.client.gui.buttons.DropDownButton;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
 import org.gridchem.client.gui.panels.CancelCommandPrompt;
 
@@ -472,7 +471,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 						RouteClass.initCount = 0;
 						OptTable.optC = 0;
 						selectedGUI = 0;
-						doEditNewJob();
+						doEditNewExperiment();
 						return null;
 					}
 
@@ -496,7 +495,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							"No job selected!!", "Delete Job",
 							JOptionPane.ERROR_MESSAGE);
 				} else {
-					doDeleteJob();
+					doDeleteExperiment();
 				}
 			} else if (e.getSource() == submButton) {
 				int index = queueList.getSelectedIndex();
@@ -510,7 +509,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 									"Job Submission Error",
 									JOptionPane.YES_NO_OPTION);
 					if (createNewJobResponse == JOptionPane.YES_OPTION) {
-						doEditNewJob();
+						doEditNewExperiment();
 					}
 				} else {
 
@@ -559,7 +558,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 									"Job Submission Error",
 									JOptionPane.YES_NO_OPTION);
 					if (createNewJobResponse == JOptionPane.YES_OPTION) {
-						doEditNewJob();
+						doEditNewExperiment();
 					}
 				} else {
 					// for (int i=0; i<size; i++) {
@@ -671,7 +670,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		}
 	}
 
-	public void doEditNewJob() {
+	public void doEditNewExperiment() {
 
 		jobEditor = new EditJobPanel();
 
@@ -692,27 +691,17 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		System.err.println("job index is: " + (size + 1));
 	}
 
-	public void doDeleteJob() {
+	public void doDeleteExperiment() {
 		int index = queueList.getSelectedIndex();
 
 		int[] indices = queueList.getSelectedIndices();
 
 		for (int i = 0; i < indices.length; i++) {
-			queueModel.remove(indices[i] - i);
-			SubmitJobsWindow.jobQueue.remove(indices[i] - i);
+			ExperimentModel experimentModel = SubmitJobsWindow.si.queueJobList.get(indices[i]);
+			AiravataManager.deleteExperiment(experimentModel.getExperimentId());
 		}
 
-		int size = queueModel.getSize();
-
-		if (size == 0) {
-			delButton.setEnabled(false);
-			submButton.setEnabled(false); // lixh_add
-		} else {
-			if (index == queueModel.getSize()) {
-				index--;
-			}
-			queueList.setSelectedIndex(index);
-		}
+		update();
 	}
 
 	public void doSubmitJobs() {

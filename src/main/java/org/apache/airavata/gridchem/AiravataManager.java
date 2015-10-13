@@ -363,4 +363,14 @@ public class AiravataManager {
             return false;
         }
     }
+
+    public static boolean deleteExperiment(String experimentId){
+        try{
+            getClient().deleteExperiment(getAuthzToken(), experimentId);
+            return true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+    }
 }
