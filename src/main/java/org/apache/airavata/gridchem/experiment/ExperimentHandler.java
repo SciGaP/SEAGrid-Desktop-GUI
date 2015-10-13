@@ -159,13 +159,13 @@ public class ExperimentHandler {
         }
     }
 
-    public void launchExperiment(String expID,Map<String,Object> params) throws ExperimentCreationException {
+    public void launchExperiment(String expID,Map<String,Object> params) throws Exception {
         ProgressDialog progressDialog=null;
         if(params.containsKey("progressDialog")){
             progressDialog = (ProgressDialog)params.get("progressDialog");
             progressDialog.beginSubTask("Submitting experiment to queue ... ",2);
         }
-        String sshTokenId = AiravataConfig.getProperty("ssh_token_id");
+
         try {
             AiravataManager.getClient().launchExperiment(AiravataManager.getAuthzToken(), expID,
                     AiravataConfig.getProperty("gateway"));
@@ -178,8 +178,40 @@ public class ExperimentHandler {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            throw new ExperimentCreationException("Error at creating experiment "+expID +" with ssh "+sshTokenId,ex);
+            throw new Exception("Error at launching experiment "+ expID ,ex);
         }
+        if(progressDialog!=null){
+            progressDialog.finished();
+        }
+    }
+
+    public void launchExperiment(ArrayList<String> expIDs,Map<String,Object> params) throws Exception {
+        ProgressDialog progressDialog=null;
+        if(params.containsKey("progressDialog")){
+            progressDialog = (ProgressDialog)params.get("progressDialog");
+            progressDialog.beginSubTask("Submitting experiments to queue ... ",2);
+        }
+
+        for(String expID : expIDs){
+            try {
+                AiravataManager.getClient().launchExperiment(AiravataManager.getAuthzToken(), expID,
+                        AiravataConfig.getProperty("gateway"));
+                ExperimentState state = AiravataManager.getClient().getExperiment(AiravataManager.getAuthzToken(),
+                        expID).getExperimentStatus().getState();
+                while (ExperimentState.CREATED.equals(state)){
+                    Thread.sleep(1000);
+                    state = AiravataManager.getClient().getExperiment(AiravataManager.getAuthzToken(),expID)
+                            .getExperimentStatus().getState();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                if(progressDialog!=null){
+                    progressDialog.finished();
+                }
+                throw new Exception("Error at launching experiment "+ expID ,ex);
+            }
+        }
+
         if(progressDialog!=null){
             progressDialog.finished();
         }

@@ -47,6 +47,7 @@ import Gamess.gamessGUI.GamessGUI;
 import com.asprise.util.ui.progress.ProgressDialog;
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
+import org.apache.airavata.gridchem.experiment.ExperimentHandler;
 import org.apache.airavata.gridchem.experiment.ExperimentHandlerUtils;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.gridchem.client.gui.buttons.ApplicationMenuItem;
@@ -518,25 +519,27 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 						public Object construct() {
 
 							submittingJob = true;
-							ExperimentModel experiment = SubmitJobsWindow.si.queueJobList.get(queueList.getSelectedIndex());
-
 							progressDialog = new ProgressDialog(
-									SubmitJobsWindow.frame,
-									"Job \"" + experiment.getExperimentName() + "\" Submission Progress");
+									SubmitJobsWindow.frame,"Experiment Submission Progress");
 							progressDialog.millisToPopup = 0;
 							progressDialog.millisToDecideToPopup = 0;
 							progressDialog.displayTimeLeft = false;
 							Map params = new HashMap();
 							params.put("progressDialog",progressDialog);
 							try {
-								ExperimentHandlerUtils
-										.getExperimentHandler(experiment.getExecutionId())
-										.launchExperiment(experiment.getExperimentId(), params);
-								//initLists();
+								ExperimentHandler experimentHandler = new ExperimentHandler();
+								ArrayList<String> expIds = new ArrayList();
+								int[] indices = queueList.getSelectedIndices();
+								for(int index : indices){
+									ExperimentModel experiment = SubmitJobsWindow.si.queueJobList.get(index);
+									expIds.add(experiment.getExperimentId());
+								}
+								experimentHandler.launchExperiment(expIds, params);
 								update();
-							}catch (ExperimentCreationException e) {
+							}catch (Exception e) {
 								e.printStackTrace();
-								JOptionPane.showMessageDialog(mainFrame, "Error at launching experiment", e.getMessage(), JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(mainFrame, "Error at launching experiment",
+										e.getMessage(), JOptionPane.ERROR_MESSAGE);
 								return null;
 							}
 							return progressDialog;
@@ -692,7 +695,6 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 	}
 
 	public void doDeleteExperiment() {
-		int index = queueList.getSelectedIndex();
 
 		int[] indices = queueList.getSelectedIndices();
 
@@ -757,20 +759,5 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 	int qbModelGetSize() {
 		return queueModel.getSize();
 	}
-
-	// private javax.swing.Timer doSubTimer() {
-	// return new javax.swing.Timer(Invariants.ONE_SECOND, new ActionListener()
-	// {
-	// public void actionPerformed(ActionEvent evt) {
-	// if (dsb.done()) {
-	// timer.stop();
-	// delButton.setEnabled(true);
-	// submButton.setEnabled(true);
-	// suballButton.setEnabled(true);
-	// editButton.setEnabled(true);
-	// }
-	// }
-	// });
-	// }
 
 }
