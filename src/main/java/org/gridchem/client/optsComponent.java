@@ -189,31 +189,31 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         helpButton = new JButton("Help");
 
         // set their tool tip texts
-        authButton.setToolTipText("<html><p>Authenticate to the CCG.</p><html>");
+        authButton.setToolTipText("<html><p>Authenticate to SEAGrid.</p><html>");
         readButton.setToolTipText("<html><p>View real-time announcements</p>" +
-                "<p>from across the CCG.");
+                "<p>from across the SEAGrid.");
         prefButton.setToolTipText("<html><p>View and edit user preferences.</p><html>");
         usageButton.setToolTipText("<html><p>View comprehensive individual</p>" +
                 "<p>and group usage across all projects.</p><html>");
         //submButton.setToolTipText("<html><p>Create and submit jobs.</p><html>");
         mangButton.setToolTipText(
-                "<html><p>Manage your jobs, monitor</p>" +
-                        "<p>CCG resources and view </p>" +
+                "<html><p>Manage your experiments, monitor</p>" +
+                        "<p>SEAGrid resources and view </p>" +
                         "<p>individual and group</p>" +
                         "<p>usage across all projects.</p><html>");
         //nanocadButton.setToolTipText("<html><p>Launch the Nanocad editor.</p><html>");
         moleditorGuiButton.setToolTipText("<html><p>Launch the Molecular editor.</p><html>");
-        licenseButton.setToolTipText("<html><p>View the full GridChem</p>" +
+        licenseButton.setToolTipText("<html><p>View the full SEAGrid</p>" +
                 "<p>licensing agreement.</p><html>");
-        exitButton.setToolTipText("<html><p>Exit GridChem.</p><html>");
+        exitButton.setToolTipText("<html><p>Exit SEAGrid.</p><html>");
         helpButton.setToolTipText("<html><p>View comprehensive help:</p>" +
-                "<p>documentation on GridChem and </p>" +
+                "<p>documentation on SEAGrid and </p>" +
                 "<p>its supported applications.</p><html>");
         inputGeneratorGuiButton.setDropDownToolTipText("<html><p>Launch the Gaussian/GAMESS input builder.</p>" +
                 "<p>Press Alt + 1 for Gaussian</p>" +
                 "<p>Press Alt + 2 for GAMESS</p><html>");
-        submGuiButton.setToolTipText("<html><p>Launch Job Editor.</p>+" +
-                "<p> Press Alt + 3 for Job Editor</p>");
+        submGuiButton.setToolTipText("<html><p>Launch Experiment Editor.</p>+" +
+                "<p> Press Alt + 3 for Experiment Editor</p>");
 
         JPanel buttonBox = new JPanel();
         Container messageBox = Box.createVerticalBox();
@@ -1271,10 +1271,10 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
 
         if (Settings.authenticated) {
             setAuthButton("Sign Out",
-                    "<html><p>Disconnect from the CCG.</p><html>");
+                    "<html><p>Disconnect from the SEAGrid.</p><html>");
         } else {
             setAuthButton("Sign In",
-                    "<html><p>Authenticate to the CCG.</p><html>");
+                    "<html><p>Authenticate to the SEAGrid.</p><html>");
         }
     }
 
