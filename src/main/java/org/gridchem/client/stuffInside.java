@@ -452,7 +452,9 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 	}
 
 	class ButtonListener implements ActionListener {
+
 		public void actionPerformed(ActionEvent e) {
+
 			if (e.getSource() == editButton) {
 				editJobIndex = queueList.getSelectedIndex();
 				if (editJobIndex == -1) {
@@ -484,12 +486,8 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 				startWaiting("Opening Create New Experiment Window", "Please wait few seconds", worker);
 				worker.start();
 
-//			} else if (e.getSource() == inputGeneratorGuiButton) {
-//
-//				showApplicationPopupMenu(inputGeneratorGuiButton,
-//						inputGeneratorGuiButton.getLocationOnScreen());
-//
 			} else if (e.getSource() == delButton) {
+
 				int index = queueList.getSelectedIndex();
 				if (index == -1) {
 					JOptionPane.showMessageDialog(SubmitJobsWindow.frame,
@@ -513,45 +511,27 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 						doEditNewExperiment();
 					}
 				} else {
-
-					new SwingWorker() {
-
+					SwingWorker worker = new SwingWorker() {
 						public Object construct() {
-
-							submittingJob = true;
-							progressDialog = new ProgressDialog(
-									SubmitJobsWindow.frame,"Experiment Submission Progress");
-							progressDialog.millisToPopup = 0;
-							progressDialog.millisToDecideToPopup = 0;
-							progressDialog.displayTimeLeft = false;
-							Map params = new HashMap();
-							params.put("progressDialog",progressDialog);
-							try {
-								ExperimentHandler experimentHandler = new ExperimentHandler();
-								ArrayList<String> expIds = new ArrayList();
-								int[] indices = queueList.getSelectedIndices();
-								for(int index : indices){
-									ExperimentModel experiment = SubmitJobsWindow.si.queueJobList.get(index);
-									expIds.add(experiment.getExperimentId());
-								}
-								experimentHandler.launchExperiment(expIds, params);
-								update();
-							}catch (Exception e) {
-								e.printStackTrace();
-								JOptionPane.showMessageDialog(mainFrame, "Error at launching experiment",
-										e.getMessage(), JOptionPane.ERROR_MESSAGE);
-								return null;
-							}
-							return progressDialog;
+							RouteClass.keyIndex = 0;
+							RouteClass.initCount = 0;
+							OptTable.optC = 0;
+							selectedGUI = 0;
+							doSubmitExperiments();
+							return null;
 						}
+git
+						@Override
+						public void finished() {
+							stopWaiting();
+						}
+					};
 
-					}.start();
+					startWaiting("Launching selected Experiments", "Please wait few seconds", worker);
+					worker.start();
+
 				}
 			} else if (e.getSource() == suballButton) {
-				// int size = queueModel.getSize();
-				// size = queueList.getModel().getSize();
-				// int[] indices = new int[size];
-
 				if (queueModel.getSize() == 0) {
 					int createNewJobResponse = JOptionPane
 							.showConfirmDialog(
@@ -564,44 +544,26 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 						doEditNewExperiment();
 					}
 				} else {
-					// for (int i=0; i<size; i++) {
-					// indices[i] = i;
-					// }
-					// queueList.setSelectionInterval(0, queueModel.getSize() -
-					// 1);
-					// setButtonsEnabled(false);
-					// timer = doSubTimer();
-					// dsb.go();
-					// timer.start();
-					// doSubmitJobs();
-					// setButtonsEnabled(true);
 
-					new SwingWorker() {
+					SwingWorker worker = new SwingWorker() {
 
 						public Object construct() {
-
-							submittingJob = true;
-
-							// JobBean job =
-							// SubmitJobsWindow.jobQueue.get(queueList.getSelectedIndex());
-
-							progressDialog = new ProgressDialog(
-									SubmitJobsWindow.frame,
-									"Job Submission Progress");
-							progressDialog.millisToPopup = 0;
-							progressDialog.millisToDecideToPopup = 0;
-							progressDialog.displayTimeLeft = false;
-
-							/*SubmitJob sj = new SubmitJob(
-									SubmitJobsWindow.jobQueue.get(0));
-							sj.addProgressMonitor(progressDialog);
-							sj.setSumitMultiple();
-							sj.submitAll1();*/
-
-							return progressDialog;
+							RouteClass.keyIndex = 0;
+							RouteClass.initCount = 0;
+							OptTable.optC = 0;
+							selectedGUI = 0;
+							doSubmitAllExperiment();
+							return null;
 						}
 
-					}.start();
+						@Override
+						public void finished() {
+							stopWaiting();
+						}
+
+					};
+					startWaiting("Launching all Experiments", "Please wait few seconds", worker);
+					worker.start();
 				}
 			} else if (e.getSource() == cancelButton) {
 				SubmitJobsWindow.frame.setVisible(false);
@@ -696,51 +658,55 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 
 	public void doDeleteExperiment() {
 
-		int[] indices = queueList.getSelectedIndices();
+		try{
+			int[] indices = queueList.getSelectedIndices();
 
-		for (int i = 0; i < indices.length; i++) {
-			ExperimentModel experimentModel = SubmitJobsWindow.si.queueJobList.get(indices[i]);
-			AiravataManager.deleteExperiment(experimentModel.getExperimentId());
+			for (int i = 0; i < indices.length; i++) {
+				ExperimentModel experimentModel = SubmitJobsWindow.si.queueJobList.get(indices[i]);
+				AiravataManager.deleteExperiment(experimentModel.getExperimentId());
+				update();
+			}
+		}catch (Exception ex){
+			ex.printStackTrace();
 		}
 
-		update();
 	}
 
-	public void doSubmitJobs() {
-		int size = queueModel.getSize();
-
-		final stuffInside sj = this;
-		System.out.println("doSubmitJob: Invoked in event dispatch thread "
-				+ SwingUtilities.isEventDispatchThread());
-		new Thread() {
-			public void run() {
-
-				ExperimentModel experiment = SubmitJobsWindow.jobQueue.get(queueList
-						.getSelectedIndex());
-				// SubmitJobsWindow.jobQueue.remove(0);
-				System.out
-						.println("SJ Worker: Invoked in event dispatch thread "
-								+ SwingUtilities.isEventDispatchThread());
-
-				ProgressDialog progressDialog = new ProgressDialog(sj,
-						"Job Submission Progress");
-				progressDialog
-						.beginTask("Submitting " + experiment.getExperimentName(), 5, true);
-
-				// submit the Job j to the queue
-				/*SubmitJob sj = new SubmitJob(job);
-				sj.addProgressMonitor(progressDialog);
-				sj.submit();
-
-				GridChem.appendMessage("Job " + experiment.getName()
-						+ " successfully submitted to machine \n"
-						+ job.getSystemName() + "\n");*/
-
-				// return null;
+	public void doSubmitAllExperiment(){
+		try {
+			ExperimentHandler experimentHandler = new ExperimentHandler();
+			while(queueList.getModel().getSize()>0){
+				ExperimentModel experiment = SubmitJobsWindow.si.queueJobList.get(0);
+				experimentHandler.launchExperiment(experiment.getExperimentId());
+				update();
 			}
-		}.start();
-
+		}catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(mainFrame, "Error at launching experiment",
+					e.getMessage(), JOptionPane.ERROR_MESSAGE);
+		}
 	}
+
+	public void doSubmitExperiments(){
+		try {
+			ExperimentHandler experimentHandler = new ExperimentHandler();
+			ArrayList<String> expIds = new ArrayList();
+			int[] indices = queueList.getSelectedIndices();
+			for(int index : indices){
+				ExperimentModel experiment = SubmitJobsWindow.si.queueJobList.get(index);
+				expIds.add(experiment.getExperimentId());
+			}
+			for(String expId : expIds) {
+				experimentHandler.launchExperiment(expId);
+				update();
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(mainFrame, "Error at launching experiment",
+					e.getMessage(), JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
 
 	public static void AddElement(String s) {
 		queueModel.addElement(s);

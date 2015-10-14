@@ -428,7 +428,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 						+ "<br>Convergence information may be plotted."
 						+ "</html>");
 		killButton.addActionListener(this);
-		killButton.setToolTipText("Kill the selected experiment.");
+		killButton.setToolTipText("Cancel the selected experiment.");
 		retrieveButton.addActionListener(this);
 		retrieveButton
 				.setToolTipText("<html>Obtain a file listing of the mass storage area for"

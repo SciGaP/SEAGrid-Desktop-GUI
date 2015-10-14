@@ -159,13 +159,7 @@ public class ExperimentHandler {
         }
     }
 
-    public void launchExperiment(String expID,Map<String,Object> params) throws Exception {
-        ProgressDialog progressDialog=null;
-        if(params.containsKey("progressDialog")){
-            progressDialog = (ProgressDialog)params.get("progressDialog");
-            progressDialog.beginSubTask("Submitting experiment to queue ... ",2);
-        }
-
+    public void launchExperiment(String expID) throws Exception {
         try {
             AiravataManager.getClient().launchExperiment(AiravataManager.getAuthzToken(), expID,
                     AiravataConfig.getProperty("gateway"));
@@ -180,18 +174,9 @@ public class ExperimentHandler {
             ex.printStackTrace();
             throw new Exception("Error at launching experiment "+ expID ,ex);
         }
-        if(progressDialog!=null){
-            progressDialog.finished();
-        }
     }
 
-    public void launchExperiment(ArrayList<String> expIDs,Map<String,Object> params) throws Exception {
-        ProgressDialog progressDialog=null;
-        if(params.containsKey("progressDialog")){
-            progressDialog = (ProgressDialog)params.get("progressDialog");
-            progressDialog.beginSubTask("Submitting experiments to queue ... ",2);
-        }
-
+    public void launchExperiment(ArrayList<String> expIDs) throws Exception {
         for(String expID : expIDs){
             try {
                 AiravataManager.getClient().launchExperiment(AiravataManager.getAuthzToken(), expID,
@@ -205,15 +190,8 @@ public class ExperimentHandler {
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-                if(progressDialog!=null){
-                    progressDialog.finished();
-                }
                 throw new Exception("Error at launching experiment "+ expID ,ex);
             }
-        }
-
-        if(progressDialog!=null){
-            progressDialog.finished();
         }
     }
 

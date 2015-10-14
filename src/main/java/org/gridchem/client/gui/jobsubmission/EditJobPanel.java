@@ -376,7 +376,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         JPanel namePane = new JPanel();
 
         TitledBorder namePaneTitled = BorderFactory.createTitledBorder(
-                leBorder, "Project/Job name", TitledBorder.LEFT,
+                leBorder, "Project/Experiment name", TitledBorder.LEFT,
                 TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD, 14));
 
         namePane.setBorder(BorderFactory.createCompoundBorder(namePaneTitled,
@@ -616,7 +616,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
                 BorderFactory.createEmptyBorder(5, 0, 0, 0)));
 
         // buttonBox
-        OKButton = new JButton("Submit");
+        OKButton = new JButton("Save");
         CancelButton = new JButton("Cancel");
         // defaultButton = new JButton("Create Default Job");
         // loadButton = new JButton("Load");
@@ -1096,7 +1096,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
             doMakeDefaultJob();
 
-        } else if (e.getActionCommand() == "Submit") {
+        } else if (e.getActionCommand() == "Save") {
             experimentParmas.put(ExpetimentConst.EXP_NAME, expNameText.getText());
             experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, availableCompResources.get(hpcList.getSelectedIndex()).getComputeResourceId());
             experimentParmas.put(ExpetimentConst.APP_ID,(String)appModuleCombo.getSelectedItem());
