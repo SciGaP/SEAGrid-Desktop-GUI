@@ -48,6 +48,7 @@ public class DynamicInputPanel extends JPanel {
             if (input.getType().equals(DataType.STRING)) {
                 JLabel lbl = new JLabel(input.getName());
                 JTextField txtField = new JTextField();
+                txtField.setText(input.getValue());
                 innerPanel.add(lbl);
                 innerPanel.add(txtField);
                 inputFields.add(txtField);
@@ -55,6 +56,7 @@ public class DynamicInputPanel extends JPanel {
             } else if (input.getType().equals(DataType.FLOAT)) {
                 JLabel lbl = new JLabel(input.getName());
                 JTextField txtField = new JTextField();
+                txtField.setText(input.getValue());
                 innerPanel.add(lbl);
                 innerPanel.add(txtField);
                 inputFields.add(txtField);
@@ -62,6 +64,7 @@ public class DynamicInputPanel extends JPanel {
             } else if (input.getType().equals(DataType.INTEGER)) {
                 JLabel lbl = new JLabel(input.getName());
                 JTextField txtField = new JTextField();
+                txtField.setText(input.getValue());
                 innerPanel.add(lbl);
                 innerPanel.add(txtField);
                 inputFields.add(txtField);
@@ -70,8 +73,10 @@ public class DynamicInputPanel extends JPanel {
                 JLabel lbl = new JLabel(input.getName());
                 JPanel filePanel = new JPanel();
                 filePanel.setLayout(new GridLayout(2,1,5,5));
-                final JTextField txtPath = new JTextField();
+                final JTextField txtPath = new JTextField(10);
+                txtPath.setText(input.getValue());
                 txtPath.setSize(60,30);
+                txtPath.setMaximumSize(new Dimension());
                 JButton selectButton = new JButton("Add");
                 final JFileChooser fc = new JFileChooser();
 

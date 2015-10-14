@@ -22,7 +22,6 @@ import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.airavata.model.util.ExperimentModelUtil;
-import org.apache.airavata.model.workspace.Project;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.Invariants;
 import org.gridchem.client.SubmitJobsWindow;
@@ -78,7 +77,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private GridBagConstraints gbcons = new GridBagConstraints();
 
     private JLabel numProcEdLabel;
-    private JLabel psnLabel;
     private JLabel qLabel;
     private JLabel timeLable;
     private JLabel appModuleLabel;
@@ -87,14 +85,11 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private JLabel numNodesLabel;
 
 
-    private JComboBox projCombo;
     private JComboBox qCombo;
     private JComboBox appCombo;
     private JComboBox appModuleCombo;
 
-    private JSpinner hr; // Seconds removed
     private JSpinner min;
-    private JSpinner numProcSpin = new JSpinner();
     private JSpinner numCoreSpin = new JSpinner();
     private JSpinner numNodeSpin = new JSpinner();
 
@@ -128,6 +123,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private boolean isLoading = false;
 
     private boolean isUpdating = false;
+
+    private ExperimentModel experimentModel = null;
 
     private boolean isSubmittingScript = false;
 
@@ -169,34 +166,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         experimentParmas.put(ExpetimentConst.WALL_TIME, 30);
         experimentParmas.put(ExpetimentConst.MEMORY, 1);
         experimentParmas.put(ExpetimentConst.PROJECT_ACCOUNT, "sds128");
-        //TODO remove calling this twise
-
-       // ComputeResourceDescription hw = GridChem.getMachineList().get(0);
-        /*for (ComputeResourceDescription cb : GridChem.getMachineList()) {
-            System.out.println("*a******************************");
-            System.out.println(cb.getHostName());
-            if (cb.getHostName().equals(Preferences.getString("last_machine"))) {
-                System.out.println("Found last used machine");
-                hw = cb;
-            }
-        }*/
-
-        //experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, hw.getComputeResourceId());
-
-        /*for (ApplicationInterfaceDescription ifd : interfaceDescriptions) {
-            String intefaceID = ifd.getApplicationInterfaceId();
-            List<ComputeResourceDescription> compds = AiravataManager.getComputationalResources(intefaceID);
-            for (ComputeResourceDescription bean : compds) {
-                if (bean.getComputeResourceId().equals(hw.getComputeResourceId())) {
-                    System.out.println("Found App " + ifd.getApplicationName() + "in resource " + bean.getComputeResourceId());
-                    experimentParmas.put(ExpetimentConst.APP_ID, ifd.getApplicationInterfaceId());
-                    break;
-                }
-            }
-            if (experimentParmas.get(ExpetimentConst.APP_ID) != null) {
-                break;
-            }
-        }*/
 
         ArrayList<LogicalFileBean> inFiles = new ArrayList<LogicalFileBean>();
         for (File f : FileUtility.getDefaultInputFiles(this.application)) {
@@ -205,12 +174,10 @@ public class EditJobPanel extends JDialog implements ActionListener,
             lf.setLocalPath(f.getAbsolutePath());
             inFiles.add(lf);
         }
-        //this.job.setInputFiles(inFiles); // remove comment
+
         Calendar cal = Calendar.getInstance();
         cal.clear();
         cal.add(Calendar.MINUTE, 30);
-
-        //this.job.setRequestedCpuTime(cal); //remove coomet
 
         init();
 
@@ -239,12 +206,10 @@ public class EditJobPanel extends JDialog implements ActionListener,
     public EditJobPanel(Frame owner, ExperimentModel experiment) throws HeadlessException {
         super(owner);
 
-        //this.job = job;
+        this.experimentModel = experiment;
 
         this.isUpdating = true;
         interfaceDescriptions = AiravataManager.getAllAppInterfaces();
-        experimentParmas.put(ExpetimentConst.APP_ID, experiment.getExecutionId());
-        //experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID,experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId());
         init();
         updateForm(experiment);
 
@@ -253,7 +218,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     private void init() {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        jbInit();
+        expInit();
 
 
         try {
@@ -287,21 +252,12 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
             changeMachine(machineName);
 
-            //changeProject(job.getProjectName());
             populateQueues(machineName);
-
-            changeQueue((String) experimentParmas.get(ExpetimentConst.QUEUE));
-
-            changeNumProc((int) experimentParmas.get(ExpetimentConst.CPU_COUNT));
-
-//            updateInputInfoPanel(job,FileUtility.getDefaultInputFiles(job.getApplication()));
 
             System.out.println("Updated editing stuff with values for job "
                     + (String) experimentParmas.get(ExpetimentConst.EXP_NAME));
 
-
             isLoading = false;
-            //this.inputFilePanel.addMultipleLogicalFileInput(job.getInputFiles()); //remove comment
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -328,13 +284,9 @@ public class EditJobPanel extends JDialog implements ActionListener,
             }
         }
         hpcList.setSelectedIndex(compResourceIndex);
-        populateProjects();
-        Project expProject = AiravataManager.getProject(experiment.getProjectId());
-        //projCombo.setSelectedItem(expProject.getName());
         changeQueue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName());
-        numProcSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount());
         numNodeSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getNodeCount());
-        numCoreSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getNumberOfThreads());
+        numCoreSpin.setValue(experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount());
         memSizeTextField.setText(experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory() + "");
     }
 
@@ -359,7 +311,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         return arrowButtonPane;
     }
 
-    private void jbInit() {
+    private void expInit() {
 
 
         // Border
@@ -368,9 +320,12 @@ public class EditJobPanel extends JDialog implements ActionListener,
         Border leBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 
         // left panel for choicesBoxs
-        // --->namePane
         expNameText = new JTextField(20);
         expNameText.setText((String) experimentParmas.get(ExpetimentConst.EXP_NAME));
+        if(isUpdating){
+            expNameText.setEnabled(false);
+        }
+
         JLabel projNameLabel = new JLabel("Experiment name: ");
         projNameLabel.setLabelFor(expNameText);
         JPanel namePane = new JPanel();
@@ -470,30 +425,20 @@ public class EditJobPanel extends JDialog implements ActionListener,
         appPane.setBorder(BorderFactory.createCompoundBorder(appPaneTitled,
                 eBorder2));
         appPane.setLayout(new BoxLayout(appPane, BoxLayout.X_AXIS));
+        if(isUpdating){
+            appCombo.setEnabled(false);
+        }
         appPane.add(appCombo);
         appPane.add(Box.createRigidArea(new Dimension(30, 0)));
         appPane.add(appModuleLabel); // JK
+        if(isUpdating){
+            appModuleCombo.setEnabled(false);
+        }
         appPane.add(appModuleCombo); // JK
 
         TitledBorder appPaneTitled1 = BorderFactory.createTitledBorder(leBorder, "HPC Systems", TitledBorder.LEFT, TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD, 14));
         apphpcBoxPane.setBorder(BorderFactory.createCompoundBorder(appPaneTitled1, eBorder2));
 
-
-        /**
-         * Populating projects
-         */
-        psnLabel = new JLabel("Choose a project:");
-        projCombo = new JComboBox();
-        populateProjects();
-        if (experimentParmas.get("PROJECT_ID") != null) {
-            String projId = (String) experimentParmas.get(ExpetimentConst.PROJECT_ID);
-            Project expProject = AiravataManager.getProject(projId);
-            if (expProject != null) {
-                projCombo.setSelectedItem(expProject.getName());
-            }
-        }
-
-        projCombo.setEditable(true);
 
         // create queue drop down box
         qLabel = new JLabel("Choose a queue:");
@@ -518,10 +463,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             initial = 30;
             minnm = new SpinnerNumberModel(30, 0, 59, 1);
         }
-        // hrnm.addChangeListener(tscl);
-        hr = new JSpinner(hrnm);
-        ((JSpinner.NumberEditor) hr.getEditor()).getTextField()
-                .setInputVerifier(new HourFieldVerifier());
+
         min = new JSpinner(minnm);
         ((JSpinner.NumberEditor) min.getEditor()).getTextField()
                 .setInputVerifier(new MinuteFieldVerifier());
@@ -554,8 +496,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         initial = 1;
         numProcEdLabel = new JLabel("Number of Processors:");
         numProcnm = new SpinnerNumberModel(initial, minimum, maximum, step);
-        numProcSpin.setModel(numProcnm);
-        numProcSpin.setInputVerifier(new NumProcFieldVerifier());
 
         numNodeSpin.setModel(new SpinnerNumberModel(1, 1, 1000, 1));
 
@@ -568,7 +508,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         // create layout for requirements panel
         layoutRequirementsPane();
 
-        //changeNumProc(this.job.getRequestedCpus().intValue());
+        //changeNumCore(this.job.getRequestedCpus().intValue());
 
         leftPanelForchoicesBox = new JPanel();
 
@@ -589,24 +529,9 @@ public class EditJobPanel extends JDialog implements ActionListener,
         // right panel for inputInfoPanel and buttonBox
         rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-//        rightPanel.setBorder(eBorder1);
-
-//        GridBagConstraints rightPanelConstraints = new GridBagConstraints();
-
-        // inputFilePanel
-        /*System.out.println("\n(DEBUG) # of inputs: " + this.job.getInputFiles().size());
-        for(LogicalFileBean lFile: this.job.getInputFiles()) {
-            System.out.println("\n(DEBUG) inputFile :"+ lFile.getLocalPath());
-            System.out.println("\n(DEBUG) inputLength :\n"+ new File(lFile.getLocalPath()).length());
-        }*/ //remove comment
 
         dynamicInputPanel = new DynamicInputPanel(this);
         initializeDynamicInputPanel();
-
-        // We do not add defaut input files to inputFilePanel if isUpdating is true (editing a job)
-        if (this.isUpdating == false) {
-            //	inputFilePanel.addMultipleFileInput(FileUtility.getDefaultInputFiles(this.job.getSoftwareName())); remove comment
-        }
 
         dynamicInputPanel.setMinimumSize(new Dimension(250, 700));
         TitledBorder inputInfoTitled = BorderFactory.createTitledBorder(
@@ -685,11 +610,15 @@ public class EditJobPanel extends JDialog implements ActionListener,
     }
 
     private void initializeDynamicInputPanel() {
-        if(appModuleCombo.getSelectedItem() != null) {
-            String ifId = (String)appModuleCombo.getSelectedItem();
-            for (ApplicationInterfaceDescription aid : interfaceDescriptions) {
-                if (ifId.equals(aid.getApplicationInterfaceId())) {
-                   dynamicInputPanel.draw(aid.getApplicationInputs());
+        if(isUpdating){
+            dynamicInputPanel.draw(experimentModel.getExperimentInputs());
+        }else {
+            if (appModuleCombo.getSelectedItem() != null) {
+                String ifId = (String) appModuleCombo.getSelectedItem();
+                for (ApplicationInterfaceDescription aid : interfaceDescriptions) {
+                    if (ifId.equals(aid.getApplicationInterfaceId())) {
+                        dynamicInputPanel.draw(aid.getApplicationInputs());
+                    }
                 }
             }
         }
@@ -714,15 +643,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
             public void actionPerformed(ActionEvent e) {
                 initializeDynamicInputPanel();
                 populateMachineList();
-            }
-        });
-
-        projCombo.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                String project = projCombo.getSelectedItem().toString();
-                System.out.println("Changing project to : " + project);
-                experimentParmas.put(ExpetimentConst.PROJECT_ID, project);
             }
         });
 
@@ -769,52 +689,13 @@ public class EditJobPanel extends JDialog implements ActionListener,
             }
         });
 
-        numProcSpin.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                String cpus = numProcSpin.getValue().toString();
-                experimentParmas.put(ExpetimentConst.CPU_COUNT, Integer.parseInt(cpus));
-            }
-        });
-
-        hr.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int time = ((int) min.getValue()) + ((int) hr.getValue()) * 60;
-                experimentParmas.put(ExpetimentConst.WALL_TIME, time);
-            }
-
-        });
-
-
         min.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                int time = ((int) min.getValue()) + ((int) hr.getValue()) * 60;
+                int time = ((int) min.getValue());
                 experimentParmas.put(ExpetimentConst.WALL_TIME, time);
             }
 
-        });
-
-        memSizeTextField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                update();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                update();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                update();
-            }
-
-            public void update() {
-                experimentParmas.put(ExpetimentConst.MEMORY, Integer.parseInt(memSizeTextField.getText()));
-            }
         });
 
     }
@@ -923,7 +804,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
             // reqPane.remove(numProcEdLabel);
             numProcEdLabel
                     .setText("Use %NprocShared(SMP)/%NProcLinda(Clusters) in the G09 input");
-            numProcSpin.setValue(4);// This is a dummy value and will be reset
             // in getnumProc method Sudhakar
             memSizeLabel.setText("Use %mem in the G09 input");
             memSizeTextField.setText("1000");
@@ -944,10 +824,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
                 rpgbl.setConstraints(numProcEdLabel, gbcons);
                 reqPane.add(numProcEdLabel);
                 gbcons.gridwidth = GridBagConstraints.REMAINDER;
-                rpgbl.setConstraints(numProcSpin, gbcons);
-                reqPane.add(numProcSpin);
                 reqPane.repaint();
-                // gbcons.gridwidth = GridBagConstraints.REMAINDER;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1007,15 +884,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
             hpcList.setModel(hpcListModel);
             hpcList.setSelectedIndex(0);
-        }
-    }
-
-    public void populateProjects() {
-        projCombo.removeAllItems();
-
-        List<Project> projectList = AiravataManager.getProjects();
-        for (Project p : projectList) {
-            projCombo.addItem(p.getName());
         }
     }
 
@@ -1102,6 +970,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             experimentParmas.put(ExpetimentConst.APP_ID,(String)appModuleCombo.getSelectedItem());
             experimentParmas.put(ExpetimentConst.GATEWAY_ID, AiravataConfig.getProperty("gateway"));
             experimentParmas.put(ExpetimentConst.PROJECT_ID, GridChem.project.getProjectID());
+            experimentParmas.put(ExpetimentConst.USER_ID, GridChem.user.getUserName());
 
             Integer nodeCount = (Integer)numNodeSpin.getValue();
             experimentParmas.put(ExpetimentConst.NODE_COUNT, nodeCount);
@@ -1125,46 +994,35 @@ public class EditJobPanel extends JDialog implements ActionListener,
             ExperimentHandler experimentHandler = ExperimentHandlerUtils
                     .getExperimentHandler((String) experimentParmas.get(ExpetimentConst.APP_ID));
             experimentParmas.put(ExpetimentConst.INPUTS, dynamicInputPanel.getInputs());
-            try {
-                String expId = experimentHandler.createExperiment(experimentParmas);
-                doClose();
-            } catch (ExperimentCreationException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error at creating experiment", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
+
+            if(isUpdating){
+                try {
+                    experimentParmas.put(ExpetimentConst.EXPERIMENT_ID, experimentModel.getExperimentId());
+                    experimentHandler.updateExperiment(experimentParmas);
+                    doClose();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Error at updating experiment", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
+                }
+            }else{
+                try {
+                    experimentHandler.createExperiment(experimentParmas);
+                    doClose();
+                } catch (ExperimentCreationException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Error at creating experiment", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
+                }
             }
 
         } else if (e.getActionCommand() == "Cancel") {
-
             doCancel();
-//            System.out.println("Size:" + leftPanelForchoicesBox.getWidth() + ", " + leftPanelForchoicesBox.getHeight());
         } else {
-
             JOptionPane.showMessageDialog(null, "huh?", " should not happen",
                     JOptionPane.INFORMATION_MESSAGE);
-
         }
 
     }
 
-    private void enableReqPane() {
-
-        this.projCombo.setEnabled(true);
-        this.qCombo.setEnabled(true);
-        this.hr.setEnabled(true);
-        this.min.setEnabled(true);
-        this.numProcSpin.setEnabled(true);
-        this.memSizeTextField.setEnabled(true);
-    }
-
-    private void disableReqPane() {
-
-        this.projCombo.setEnabled(false);
-        this.qCombo.setEnabled(false);
-        this.hr.setEnabled(false);
-        this.min.setEnabled(false);
-        this.numProcSpin.setEnabled(false);
-        this.memSizeTextField.setEnabled(false);
-    }
 
     public String readTextArea(File f) throws IOException {
         String line = "";
@@ -1286,7 +1144,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
             this.changeModule(newNanocad.exportedApplication);
 
             this.populateMachineList();
-            this.populateProjects();
             numProcMethod();
 
             ArrayList<File> newInputs = new ArrayList<File>();
@@ -1335,7 +1192,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
             this.changeModule(newNanocad.exportedApplication);
 
             this.populateMachineList();
-            this.populateProjects();
 
             System.out.println("****Application name: " + application);
             application = newNanocad.exportedApplication;
@@ -1372,67 +1228,11 @@ public class EditJobPanel extends JDialog implements ActionListener,
         return this.expNameText.getText();
     }
 
-    private String getProject() {
-        //return (String) this.projCombo.getSelectedItem();
-        return (String) this.projCombo.getEditor().getItem();
-    }
-
-    private String getSubmitMachine() {
-
-        return (String) this.hpcList.getSelectedValue();
-//        int[] indices = hpcList.getSelectedIndex()
-//        int N = indices.length;
-//        String[] apphpc = new String[N];
-//        for (int i = 0; i < N; i++) {
-//            // System.out.println("indices["+i+"]="+indices[i]+"\n");
-//            apphpc[i] = hpcListModel.getElementAt(indices[i]).toString();
-//            System.out.print("apphpc[" + i + "]=" + apphpc[i] + "\n");
-//        }
-//        return apphpc;
-    }
-
-    private String getQueueName() {
-        return (String) this.qCombo.getSelectedItem();
-    }
-
-//    public String getStringTime() {
-//        String time;
-//        String temp;
-//        // time = (String) this.hr.getSelectedItem() + ":";
-//        temp = ((Integer) this.hr.getValue()).toString();
-//        if (temp.length() == 1)
-//            temp = "0" + temp;
-//        // time = ((Integer) this.hr.getValue()).toString() + ":";
-//        time = temp + ":";
-//        // time = (String) this.min.getSelectedItem() + ":";
-//        temp = ((Integer) this.min.getValue()).toString();
-//        if (temp.length() == 1)
-//            temp = "0" + temp;
-//        time = time + temp + ":";
-//        // time = (String) this.sec.getSelectedItem();
-//        // temp = ((Integer) this.sec.getValue()).toString();
-//        // Sec removed but set to 0 here pvs 24 Apr 06 temp = ((Integer)
-//        // this.sec.getValue()).toString();
-//        temp = "0";
-//        if (temp.length() == 1)
-//            temp = "0" + temp;
-//        time = time + temp;
-//        return time;
-//    }
-
-    private Calendar getCalendarTime() {
-        Calendar cal = Calendar.getInstance();
-        cal.clear();
-        cal.add(Calendar.MINUTE, ((Integer) hrnm.getValue()).intValue());
-        cal.add(Calendar.HOUR, ((Integer) hrnm.getValue()).intValue());
-        return cal;
-    }
 
     protected String getAppPackageName() {
         System.out.println("Getting application name");
         return (String) this.appCombo.getSelectedItem();
     }
-
 
 
     private String getInputText(File f) {
@@ -1471,11 +1271,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         expNameText.replaceSelection(newname);
     }
 
-    private void changeProject(String p) {
-        projCombo.setSelectedItem(p);
-        System.out.println("Getting account name " + p);
-    }
-
     private void changeMachine(String m) {
         int size = hpcList.getModel().getSize();
         int index = 0;
@@ -1491,10 +1286,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
         hpcList.setSelectedIndex(index);
     }
 
-    private void changeProjectPSN(String p) {
-        projCombo.setSelectedItem(p);
-    }
-
     private void changeQueue(String q) {
         qCombo.setSelectedItem(q);
     }
@@ -1503,8 +1294,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private void changeModuleList(SoftwareBean software) {
 
         appModuleCombo.removeAllItems();
-
-//        HashSet<String> set = new HashSet<String>(APP_MODULE_HASHTABLE.get((Object) appPackageName));
 
         if (software.getModules().isEmpty()) {
             appModuleCombo.addItem(software.getAcronym().toLowerCase());
@@ -1563,9 +1352,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
     }
 
 
-    private void changeNumProc(int n) {
-        // numProcSpin.setSelectedItem(n);
-        numProcnm.setValue(new Integer(n));
+    private void changeNumCore(int n) {
+        numCoreSpin.setValue(new Integer(n));
     }
 
     public void changeInputFiles(ArrayList<File> newFiles) {
@@ -1576,45 +1364,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
     }
 
 
-    /**
-     * Get rid of all the web characters.
-     *
-     * @param string
-     * @return
-     */
-    private String removeWebCharacters(String string) {
-        return string.replaceAll("&lt;", "<").replaceAll("&gt;", ">")
-                .replaceAll("&quot;", "\"").replaceAll("&amp;amp;#x0D;", "\n");
-    }
-
-    /**
-     * Create a string representation of the Calendar object in hh:mm format and
-     * where the hours field ranges from 0 - 32k
-     */
-    private String resolveTimeLimit(Calendar cal) {
-
-        int days = (cal.get(Calendar.DAY_OF_YEAR) - 1) * 24;
-        int hours = cal.get(Calendar.HOUR_OF_DAY);
-        int minutes = cal.get(Calendar.MINUTE);
-
-        return (days + hours) + ":" + ((minutes == 0) ? "00" : minutes);
-    }
-
-
-    private int getIntegerHours(Calendar cal) {
-
-        int days = (cal.get(Calendar.DAY_OF_YEAR) - 1) * 24;
-        int hours = cal.get(Calendar.HOUR_OF_DAY);
-        return days + hours;
-    }
-
-    private double getDoubleHours(Calendar cal) {
-
-        double days = (cal.get(Calendar.DAY_OF_YEAR) - 1) * 24;
-        double hours = cal.get(Calendar.HOUR_OF_DAY);
-        double minutes = cal.get(Calendar.MINUTE);
-        return days + hours + (minutes / 60);
-    }
 
     // called when the different machine is selected
     private class machListSelectionListener implements ListSelectionListener {
@@ -2021,226 +1770,3 @@ public class EditJobPanel extends JDialog implements ActionListener,
         });
     }
 }
-
-//    // (Jan. 2007) This is a temporary strategy until JobBean and FileBean are used.
-//    //  Briefly, input text delivered with JobBean contains the main input and file names and other files are transferred
-//    // via PutFile.
-//    // In the server-side, there will be a perl script that extracts the main input as well as file names
-//    String prepareInputForMultipleInputApp(String appName){
-// // called in doAddJobToQueue()
-//        String header1 = "[Gridchem_multiple_input] \n";
-//        String header2 = "[App_Name : "+appName+"] \n";
-//        String file_start = "[File_Name:";
-//        String file_end = "[End:";
-//        
-//        String inp = "" + header1 + header2;
-//        
-//        for(int i=0 ; i < getFileNames().size(); i++){
-//            String fname = getFileNames().get(i);
-//            String input = getInputs().get(i);
-//    
-//            // we will try sending only the main input and filenames but additional files will be sent separately
-//            // using CGI (currently) or FileTransfer Techniques
-//
-//            if (fname.contains(File.separator)){
-//                String tmpStr = fname.substring(fname.lastIndexOf(File.separator)+1);
-//                fname = tmpStr;
-//            }
-//            
-//            if (i==0){
-//                inp = inp + file_start+fname+"] \n" + input + "\n" + file_end+fname+"] \n";
-//            }else{
-//                File tmpFile = new File(getFileNames().get(i));
-//                if(tmpFile.exists()){
-//                    PutInputFile(fname);
-//                }else{
-//                    PutInputFile(fname, input);
-//                }
-//                inp = inp + file_start+fname+"] \n"  + file_end+fname+"] \n";
-//            }
-//        }
-//
-//        return inp;
-//    }
-
-//    private void  PutInputFile(String fName){
-//        
-//        try{
-//            System.setProperty("javax.net.ssl.trustStore", Env.getTrustedCaDir()+ File.separator +"ccgkeystore");
-//            System.out.println("trustStore is in :"+Env.getTrustedCaDir() + File.separator +"ccgkeystore");
-//            
-//            URL cgiURL = new URL(Invariants.httpsGateway + "putinputfile.cgi");
-//            System.out.println("PutFile: URL cgiURL " + cgiURL.toString() + 
-//                    " successfully initialized");
-//
-//            URLConnection connex = cgiURL.openConnection();
-//            connex.setDoOutput(true);
-//
-//            PrintWriter outStream = new PrintWriter(connex.getOutputStream());
-//
-//            File f = new File(fName);   
-//            BufferedReader br ;
-//            StringBuilder fileText = new StringBuilder();
-//            String line=null;
-//            String s=null;      
-//            String userName;
-//            
-//            try{
-//                br = new BufferedReader(new FileReader(f));
-//                while ((line = br.readLine()) != null){
-//                    fileText = fileText.append(line + "\n");
-//                }
-//                
-//            }catch(IOException ioex){
-//                System.out.println("File reading error :" + ioex + "with " + fName);
-//            }
-//            
-//            String fText = URLEncoder.encode(fileText.toString());
-//             
-//            if (Settings.authenticatedGridChem) {
-//                    userName = URLEncoder.encode("ccguser");
-//                    outStream.println("IsGridChem=" + URLEncoder.encode("true"));
-//                    System.err.println("PutInutFile:IsGridChem=" + "true");
-//            } else {
-//                    userName = URLEncoder.encode(Settings.name.getText());
-//                    outStream.println("IsGridChem=" + URLEncoder.encode("false"));
-//                    System.err.println("PutInputFile:IsGridChem=" + "false");
-//            }
-//                
-//            outStream.println("Username=" + userName);
-//            System.err.println("PutFile:Username="+userName); 
-//            
-//            outStream.println("GridChemUsername="+URLEncoder.encode(Settings.gridchemusername));
-//            System.out.println("PutInputFile:GridChemUsername=" + URLEncoder.encode(Settings.gridchemusername));
-//            
-//            outStream.println("fileName=" + fName);
-//            System.out.println("PutInputFile:FileName="+fName);
-//            
-//            outStream.println("fileText=" + fText);
-//            System.out.println("PutFile:fileText="+fText);
-//        
-//            outStream.close();
-//            
-//            BufferedReader inStream = new BufferedReader(new InputStreamReader(connex.getInputStream()));
-//            
-//            while ((s = inStream.readLine()) != null){
-//                    int sLength = s.length();
-//            }
-//                
-//            inStream.close();
-//            
-//        }catch (IOException ioe){
-//                System.out.println("PutInputFile in editingStuff:IOException");
-//                System.out.println(ioe.toString());
-//                ioe.printStackTrace();
-//        }
-//
-//    }
-//    
-//    private void  PutInputFile(String fName, String fileText){
-//        System.out.println("\n(DEBUG) this is in PutInputFile with inputs generated without a saved file :"+fName); 
-//        
-//        try{
-//            
-//            System.setProperty("javax.net.ssl.trustStore", Env.getTrustedCaDir()+ File.separator +"ccgkeystore");
-//            System.out.println("trustStore is in :"+Env.getTrustedCaDir() + File.separator +"ccgkeystore");
-//            
-//            URL cgiURL = new URL(Invariants.httpsGateway + "putinputfile.cgi");
-//            System.out.println("PutFile: URL cgiURL " + cgiURL.toString() + 
-//                    " successfully initialized");
-//            URLConnection connex = cgiURL.openConnection();
-////          char[] filetext = {};
-//            connex.setDoOutput(true);
-//            PrintWriter outStream = new PrintWriter(connex.getOutputStream());
-//            String s;
-//            String userName;
-//            
-//            String fText = URLEncoder.encode(fileText);
-//             
-//            if (Settings.authenticatedGridChem) {
-//                    userName = URLEncoder.encode("ccguser");
-//                    outStream.println("IsGridChem=" + URLEncoder.encode("true"));
-//                    System.err.println("PutInutFile:IsGridChem=" + "true");
-//            } else {
-//                    userName = URLEncoder.encode(Settings.name.getText());
-//                    outStream.println("IsGridChem=" + URLEncoder.encode("false"));
-//                    System.err.println("PutInputFile:IsGridChem=" + "false");
-//            }
-//                
-//            outStream.println("Username=" + userName);
-//            System.err.println("PutFile:Username="+userName); 
-//            
-//            outStream.println("GridChemUsername="+URLEncoder.encode(Settings.gridchemusername));
-//            System.out.println("PutInputFile:GridChemUsername=" + URLEncoder.encode(Settings.gridchemusername));
-//            
-//            outStream.println("fileName=" + fName);
-//            System.out.println("PutInputFile:FileName="+fName);
-//            
-//            outStream.println("fileText=" + fText);
-//            System.out.println("PutFile:fileText="+fText);
-//       
-//            outStream.close();
-//            
-//            BufferedReader inStream = new BufferedReader(new 
-//                    InputStreamReader(connex.getInputStream()));
-//            
-//            while ((s = inStream.readLine()) != null){
-//                    int sLength = s.length();
-//            }
-//                
-//            inStream.close();
-//
-//            
-//        }catch (IOException ioe){
-//                System.out.println("SendInputFile in editingStuff:IOException");
-//                System.out.println(ioe.toString());
-//                ioe.printStackTrace();
-//        }
-//
-//    }
-
-
-//    private void verifyInputsForMultipleInputApp(){
-//// called in init()     
-//        
-//        ArrayList<File> inputFiles = new ArrayList<File>();
-//        ArrayList<String> inputs = new ArrayList<String>();
-//        String headerString1 = "[Gridchem_multiple_input]";
-//        String headerString2 = "[App_Name :";
-//        String fileStartString = "[File_Name:";
-//        String fileEndString = "[End:"; 
-//        
-//        String[] lines = this.job.getInput().split("\n");
-//
-//        if(lines[0].contains(headerString1)){
-//            String inputText = "";
-//            for(String line : lines){
-//                if(line.contains(headerString2)){
-//                    String App_Name = line.split(":")[1].replace("]","").trim();
-//                    System.out.println("\n(INFO) Now found "+ App_Name + " from a merged input");
-//                }else if(line.contains(fileStartString)){
-//                    String FileName = line.split(":")[1].replace("]","").trim();
-//                    System.out.println("\nNow "+ FileName + " is extracted \n");
-//                    File newFile = new File(FileName);
-//                    inputFiles.add(newFile);
-//                    inputText = "";
-//                }else if(line.contains(fileEndString)){
-//                    System.out.println("\nExtraction of "+ inputFiles.get(inputFiles.size()-1).getName()+ " is finished \n");
-//                
-//                    inputs.add(inputText);
-//                    
-//                    System.out.println("\nDEBUG input"+inputText);
-//                }else {
-//                    if(!(line.equals(lines[0]))){
-//                        inputText = inputText.concat(line + "\n");
-//                    }
-//                }
-//            }
-//            
-//            this.job.setInputs(inputs);
-//            this.job.setInputFiles(inputFiles);
-//        }
-//        
-//    }
-//
-//}

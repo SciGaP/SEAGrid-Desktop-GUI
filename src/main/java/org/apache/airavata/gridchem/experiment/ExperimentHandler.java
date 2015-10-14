@@ -30,9 +30,43 @@ public class ExperimentHandler {
 
     public String createExperiment(Map<String, Object> params) throws ExperimentCreationException {
 
-        String projectID = null, userID = null, expName = null, expDesc = null, appId = null, gatewayId = null, hostID = null, queue = null, projectAccount = null;
+        ExperimentModel exp = assembleExperiment(params);
+
+        String experimentId = null;
+        try {
+            experimentId = AiravataManager.getClient().createExperiment(AiravataManager.getAuthzToken(),
+                    AiravataConfig.getProperty(AiravataConfig.GATEWAY),exp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ExperimentCreationException("Error at creating experiment "+exp.getExperimentName()+ " on machine "+
+                    exp.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId(),e);
+        }
+        return experimentId;
+
+    }
+
+
+    public void updateExperiment(Map<String, Object> params) throws Exception {
+        ExperimentModel exp = assembleExperiment(params);
+        try {
+            AiravataManager.getClient().updateExperiment(AiravataManager.getAuthzToken(),
+                    (String)params.get(ExpetimentConst.EXPERIMENT_ID), exp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Error at updating experiment "+exp.getExperimentId()+ " on machine "
+                    +exp.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId(),e);
+        }
+    }
+
+    private ExperimentModel assembleExperiment(Map<String, Object> params){
+
+        String projectID = null, experimentId = null, userID = null, expName = null, expDesc = null,
+                appId = null, gatewayId = null, hostID = null, queue = null, projectAccount = null;
         Integer cpuCount = null, nodeCount = null, wallTime = null, physicalMemory = null;
         List<InputDataObjectType> inputs = null;
+
+        if (params.get(ExpetimentConst.EXPERIMENT_ID) != null)
+            experimentId = (String) params.get(ExpetimentConst.EXPERIMENT_ID);
 
         if (params.get(ExpetimentConst.PROJECT_ID) != null)
             projectID = (String) params.get(ExpetimentConst.PROJECT_ID);
@@ -79,6 +113,9 @@ public class ExperimentHandler {
 
         ExperimentModel exp =
                 ExperimentModelUtil.createSimpleExperiment(null, null, null, null, null, null,null);
+        if(experimentId!=null){
+            exp.setExperimentId(experimentId);
+        }
         exp.setProjectId(projectID);
         exp.setUserName(userID);
         exp.setExperimentName(expName);
@@ -100,14 +137,6 @@ public class ExperimentHandler {
 
         exp.setExperimentOutputs(AiravataManager.getApplicationOutputs(appId));
         exp.setGatewayId(gatewayId);
-        try {
-            exp.setExperimentOutputs(AiravataManager
-                    .getClient()
-                    .getApplicationInterface(AiravataManager.getAuthzToken(),appId)
-                    .getApplicationOutputs());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         ComputationalResourceSchedulingModel scheduling =
                 ExperimentModelUtil.createComputationResourceScheduling(null, 0, 0, 0, null, 0, 0);
@@ -126,16 +155,7 @@ public class ExperimentHandler {
         userConfigurationData.setComputationalResourceScheduling(scheduling);
         exp.setUserConfigurationData(userConfigurationData);
 
-        String experimentId = null;
-        try {
-            experimentId = AiravataManager.getClient().createExperiment(AiravataManager.getAuthzToken(),
-                    AiravataConfig.getProperty(AiravataConfig.GATEWAY),exp);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ExperimentCreationException("Error at creating experiment "+expName+ " on machine "+hostID,e);
-        }
-        return experimentId;
-
+        return exp;
     }
 
     private void validateInputs(List<InputDataObjectType> inputs) throws FileHandlerException{
@@ -143,6 +163,7 @@ public class ExperimentHandler {
             if (DataType.URI.equals(inputs.get(i).getType())) {
 
                 File file = new File(inputs.get(i).getValue());
+                //If the file exists in local file system
                 if (file.exists()) {
                     String randSeq = new BigInteger(130, random).toString(32);
                     while (fb.hasProduct(randSeq)) {
