@@ -40,6 +40,7 @@ DEALINGS WITH THE SOFTWARE.
 
 package org.gridchem.client;
 
+import com.apple.eawt.Application;
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationModule;
@@ -60,6 +61,7 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -161,7 +163,15 @@ public class GridChem
 
         //JFrame.setDefaultLookAndFeelDecorated(true);
         JFrame frame = new JFrame();
-		
+
+
+		//Setting Image Icon
+		Image dockImage = loadIcon(Env.getGridChemLogoLocation());
+		if(dockImage != null){
+			Application application = Application.getApplication();
+			application.setDockIconImage(dockImage);
+		}
+
 		// Edited by Shashank & Sandeep @ CCS,UKY April 10 2005
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
@@ -231,9 +241,20 @@ public class GridChem
 	    frame.setLocation(upperLeftX, upperLeftY);
 	    frame.setVisible(true);
 
-        Trace.exit();
+		Trace.exit();
     }
-        
+
+
+	private static Image loadIcon(String strPath)
+	{
+		try{
+			Image image = Toolkit.getDefaultToolkit().getImage(strPath);
+			return image;
+		}catch (Exception ex){
+			ex.printStackTrace();
+			return null;
+		}
+	}
     
     //Amr April 11,2005
     public static boolean isCCG_MW1Active(){

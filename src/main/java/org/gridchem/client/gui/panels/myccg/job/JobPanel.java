@@ -611,7 +611,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 */
 	protected void refreshJobs() {
 
-		List<ExperimentModel> jobs = AiravataManager.getLaunchedExperiments(GridChem.project.getProjectID());
+		List<ExperimentModel> jobs = AiravataManager.getAllExperimentsInProject(GridChem.project.getProjectID());
 
 		jobTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -759,7 +759,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 					stopWaiting();
 				}
 			};
-			startWaiting("Refreshing My SEAGrid", "Please wait few seconds", worker);
+			startWaiting("Refreshing Experiment History", "Please wait few seconds", worker);
 			worker.start();
 		} else if (e.getSource() == cancelButton) {
 			GridChem.oc.monitorWindow.dispose();

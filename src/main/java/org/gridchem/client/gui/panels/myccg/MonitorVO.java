@@ -415,7 +415,7 @@ public class MonitorVO extends JFrame implements Timeable {
             tabbedPane = new JTabbedPane();
             //ImageIcon icon = createImageIcon("etc/ccglogo1.jpg");
     
-            jobPanel = new JobPanel(AiravataManager.getLaunchedExperiments(GridChem.project.getProjectID()));
+            jobPanel = new JobPanel(AiravataManager.getAllExperimentsInProject(GridChem.project.getProjectID()));
             //JComponent panel1 = makeTextPanel("Job History");
             tabbedPane.addTab("Experiment History", null, jobPanel,
                               "Show historical experiment information.");
@@ -545,8 +545,8 @@ public class MonitorVO extends JFrame implements Timeable {
 //          has to be updated here by default.
             refreshing = true;
             jobPanel.refresh();
-            resourcePanel.refresh();
-            usagePanel.refresh();
+//            resourcePanel.refresh();
+//            usagePanel.refresh();
             refreshing = false;
         }
         

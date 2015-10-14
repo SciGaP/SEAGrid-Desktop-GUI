@@ -314,9 +314,20 @@ public class AiravataManager {
                     getAuthzToken(), projectId, -1, 0);
             for(ExperimentModel experiment:allexp){
                 ExperimentState state = experiment.getExperimentStatus().getState();
-                if(state!=ExperimentState.CREATED)
+                if(state==ExperimentState.LAUNCHED || state==ExperimentState.EXECUTING || state==ExperimentState.SCHEDULED )
                     exp.add(experiment);
             }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return exp;
+    }
+
+    public static List<ExperimentModel> getAllExperimentsInProject(String projectId){
+        List<ExperimentModel> exp = new ArrayList<>();
+        try{
+            exp = getClient().getExperimentsInProject(
+                    getAuthzToken(), projectId, -1, 0);
         }catch (Exception ex){
             ex.printStackTrace();
         }
