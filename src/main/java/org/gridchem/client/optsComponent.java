@@ -736,7 +736,22 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
             if (ca.authorized) {
 
                 if (GridChem.user != null) {
-                    doMonitor();
+                    SwingWorker worker = new SwingWorker() {
+                        @Override
+                        public Object construct() {
+                            updateProgress("Loading");
+                            doMonitor();
+                            updateProgress("Finished loading");
+                            return null;
+                        }
+
+                        @Override
+                        public void finished() {
+                            stopWaiting();
+                        }
+                    };
+                    progressCancelPrompt = new CancelCommandPrompt(buttonBox,"Loading MySEAGrid","Please wait few seconds", -1,worker);
+                    worker.start();
                 } else {
                     JOptionPane.showMessageDialog(
                             this,
@@ -784,7 +799,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                             stopWaiting();
                         }
                     };
-                    progressCancelPrompt = new CancelCommandPrompt(buttonBox,"Loading Submit Experiments","Please wait few seconds", -1,worker);
+                    progressCancelPrompt = new CancelCommandPrompt(buttonBox,"Loading Launch Experiments","Please wait few seconds", -1,worker);
                     worker.start();
                 }
             } else {

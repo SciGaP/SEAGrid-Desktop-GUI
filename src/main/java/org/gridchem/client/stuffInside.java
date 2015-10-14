@@ -491,10 +491,30 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 				int index = queueList.getSelectedIndex();
 				if (index == -1) {
 					JOptionPane.showMessageDialog(SubmitJobsWindow.frame,
-							"No job selected!!", "Delete Job",
+							"No experiment selected!!", "Delete Experiment",
 							JOptionPane.ERROR_MESSAGE);
 				} else {
-					doDeleteExperiment();
+					int response = JOptionPane.showConfirmDialog(null, "Confirm Delete Experiment");
+					if(response == JOptionPane.OK_OPTION){
+						SwingWorker worker = new SwingWorker() {
+							@Override
+							public Object construct() {
+								RouteClass.keyIndex = 0;
+								RouteClass.initCount = 0;
+								OptTable.optC = 0;
+								selectedGUI = 0;
+								doDeleteExperiment();
+								return null;
+							}
+
+							@Override
+							public void finished() {
+								stopWaiting();
+							}
+						};
+						startWaiting("Deleting Experiment", "Please wait few seconds", worker);
+						worker.start();
+					}
 				}
 			} else if (e.getSource() == submButton) {
 				int index = queueList.getSelectedIndex();
@@ -520,7 +540,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							doSubmitExperiments();
 							return null;
 						}
-git
+
 						@Override
 						public void finished() {
 							stopWaiting();

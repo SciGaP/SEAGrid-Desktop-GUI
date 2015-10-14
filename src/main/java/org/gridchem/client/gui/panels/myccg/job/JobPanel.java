@@ -38,6 +38,8 @@ package org.gridchem.client.gui.panels.myccg.job;
  * DEALINGS WITH THE SOFTWARE.
  */
 
+import G03Input.OptTable;
+import G03Input.RouteClass;
 import cct.dialogs.JEditorFrame;
 import cct.interfaces.AtomInterface;
 import cct.interfaces.MoleculeInterface;
@@ -90,9 +92,9 @@ import java.util.Timer;
  * difference between the two is that this class expands the job display window,
  * provides mouseover events for the individual jobs, and popup panels providing
  * job manipulation previously available from several different places.
- * 
+ *
  * @author Rion Dooley < dooley [at] tacc [dot] utexas [dot] edu >
- * 
+ *
  */
 public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		ListSelectionListener {
@@ -251,7 +253,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * Creates the popup menu the user sees when they right click on the jobs
 	 * table. In general, the popup menu provides job specific functionality,
 	 * whereas the panel buttons provide general job related functionality.
-	 * 
+	 *
 	 * @return
 	 */
 	private JPopupMenu createPopupMenu() {
@@ -370,7 +372,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * represent general job related functionality that may or may not relate to
 	 * a specific job. This is not a strict statement right now, however, due to
 	 * the migration from pre-ws to ws.
-	 * 
+	 *
 	 * @return
 	 */
 	private JPanel createButtonPanel() {
@@ -453,7 +455,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 	/**
 	 * Creates, populates, and initializes the container for the job table.
-	 * 
+	 *
 	 * @return
 	 */
 	private Container createJobContainer(List<ExperimentModel> experiments) {
@@ -638,7 +640,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	/**
 	 * Refresh the job windows with a new set of jobs. This is useful after a
 	 * search and when synching with the GMS_WS.
-	 * 
+	 *
 	 * @param jobs
 	 */
 	public synchronized void updateJobTable(List<ExperimentModel> jobs) {
@@ -731,12 +733,34 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			}
 			new moldenClass().start();
 		} else if (e.getSource() == retrieveButton) {
-			// if job is null, file browser will open at user's root directory
-			doBrowseFiles(getSelectedJob());
+			ExperimentModel selectedExperiment = getSelectedJob();
+			if (selectedExperiment == null) {
+				JOptionPane.showMessageDialog(SubmitJobsWindow.frame,
+						"No experiment selected!!", "Browse Experiment File Data",
+						JOptionPane.ERROR_MESSAGE);
+			} else {
+				doBrowseFiles(getSelectedJob());
+			}
 		} else if (e.getSource() == refreshButton) {
 			// refresh requires no job selection since the entire list of jobs
 			// is refreshed every time
-			refreshJobs();
+			SwingWorker worker = new SwingWorker() {
+				@Override
+				public Object construct() {
+					RouteClass.keyIndex = 0;
+					RouteClass.initCount = 0;
+					OptTable.optC = 0;
+					refreshJobs();
+					return null;
+				}
+
+				@Override
+				public void finished() {
+					stopWaiting();
+				}
+			};
+			startWaiting("Refreshing My SEAGrid", "Please wait few seconds", worker);
+			worker.start();
 		} else if (e.getSource() == cancelButton) {
 			GridChem.oc.monitorWindow.dispose();
 		} else {
