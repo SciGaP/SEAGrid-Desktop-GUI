@@ -40,7 +40,6 @@ DEALINGS WITH THE SOFTWARE.
 
 package org.gridchem.client;
 
-import com.apple.eawt.Application;
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationModule;
@@ -61,7 +60,6 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -146,9 +144,9 @@ public class GridChem
     public static void main (String[] args)
     {
 		//System Property Setting
-		System.setProperty("jsse.enableSNIExtension", "false");
-		URL cacertPath = GridChem.class.getClassLoader().getResource("cacerts");
-		System.setProperty("javax.net.ssl.trustStore", cacertPath.getPath());
+//		System.setProperty("jsse.enableSNIExtension", "false");
+//		URL cacertPath = GridChem.class.getClassLoader().getResource("cacerts");
+//		System.setProperty("javax.net.ssl.trustStore", cacertPath.getPath());
 
 		Trace.traceOff();
         Trace.entry();
@@ -166,10 +164,9 @@ public class GridChem
 
 
 		//Setting Image Icon
-		Image dockImage = loadIcon(Env.getGridChemLogoLocation());
-		if(dockImage != null){
-			Application application = Application.getApplication();
-			application.setDockIconImage(dockImage);
+		Image iconImage = loadIcon(Env.getGridChemLogoLocation());
+		if(iconImage != null){
+			frame.setIconImage(iconImage);
 		}
 
 		// Edited by Shashank & Sandeep @ CCS,UKY April 10 2005
