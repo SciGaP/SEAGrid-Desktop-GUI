@@ -30,7 +30,7 @@ public class OAuthClient {
     }
 
     public AuthResponse authenticate(String username,String password) throws OAuthAuthorisationException {
-        registerSSL();
+        //registerSSL();
         try {
             OAuthClientRequest request = OAuthClientRequest.tokenLocation(hostName).
                     setClientId(clientId).setClientSecret(clientSecret).
