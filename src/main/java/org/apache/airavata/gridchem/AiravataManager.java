@@ -61,7 +61,8 @@ public class AiravataManager {
             authzToken = new AuthzToken();
             authzToken.setAccessToken(accessToken);
         }catch (Exception e){
-            throw new SessionException(e.getMessage());
+            e.printStackTrace();
+            throw new SessionException("Login failed! Please try again");
         }
         AiravataManager.username = uname;
         AiravataManager.password = passwd;
