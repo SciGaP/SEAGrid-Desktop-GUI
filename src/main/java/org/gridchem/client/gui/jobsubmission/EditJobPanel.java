@@ -555,7 +555,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 //        buttonBox.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 10));
         buttonBox.setLayout(new BoxLayout(buttonBox, BoxLayout.X_AXIS));
         buttonBox.add(new Box.Filler(minSize, prefSize, maxSize));
-        buttonBox.add(edbumolButton);
+//        buttonBox.add(edbumolButton);
         buttonBox.add(OKButton);
         buttonBox.add(CancelButton);
 
