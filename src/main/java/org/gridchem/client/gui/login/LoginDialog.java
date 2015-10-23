@@ -12,6 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.BorderFactory;
@@ -26,6 +29,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
+import org.apache.airavata.AiravataConfig;
 import org.gridchem.client.GetFile;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.SubmitJobsWindow;
@@ -46,7 +50,7 @@ public class LoginDialog extends JDialog implements ActionListener {
 
 	private JTabbedPane authTabbedPane;
 
-	private static JLabel statusLabel;
+	private static HyperlinkLabel statusLabel;
 
 	protected static JButton loginButton;
 	private static JButton cancelButton;
@@ -77,7 +81,7 @@ public class LoginDialog extends JDialog implements ActionListener {
 		Border buttonBorder = BorderFactory.createEmptyBorder(0, 10, 0, 10);
 
 		authTabbedPane = new JTabbedPane();
-		authTabbedPane.addTab("Community", new AuthenticationForm(
+		authTabbedPane.addTab("Login", new AuthenticationForm(
 				AccessType.COMMUNITY, this));
 
 // Currently we support only community login through WSO2 IS
@@ -98,7 +102,7 @@ public class LoginDialog extends JDialog implements ActionListener {
 		buttonPanel.add(cancelButton);
 		buttonPanel.setBorder(buttonBorder);
 
-		statusLabel = new JLabel("");
+		statusLabel = new HyperlinkLabel("");
 		statusLabel.setPreferredSize(new Dimension(authTabbedPane.getWidth(),
 				25));
 		statusLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -127,6 +131,13 @@ public class LoginDialog extends JDialog implements ActionListener {
 		});
 
 		this.getRootPane().setDefaultButton(loginButton);
+		try{
+			URL url = new URL(AiravataConfig.getProperty("create_user_account_url"));
+			updateMessage("Don't have an account?", url);
+		}catch (MalformedURLException ex){
+			ex.printStackTrace();
+		}
+
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -157,15 +168,16 @@ public class LoginDialog extends JDialog implements ActionListener {
 	}
 
 	public void updateMessage(final String message) {
-		// EventQueue.invokeLater(new Runnable() {
-		// public void run() {
-		// statusLabel.setText(message);
-		// }
-		// });
+		updateMessage(message, null);
+	}
 
+	public void updateMessage(final String message, final URL url) {
 		SwingWorker worker = new SwingWorker() {
 			public Object construct() {
 				statusLabel.setText(message);
+				if(url!=null){
+					statusLabel.setURL(url);
+				}
 				return null;
 			}
 		};
