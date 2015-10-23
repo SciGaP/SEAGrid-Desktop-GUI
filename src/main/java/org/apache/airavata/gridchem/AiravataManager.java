@@ -88,31 +88,24 @@ public class AiravataManager {
 
         List<Project> airavataProjects;
         try {
-            List<Project> allProjects = getClient().getUserProjects(
+            List<Project> allProjects = getClient().searchProjectsByProjectName(
                     getAuthzToken(), AiravataConfig.getProperty(AiravataConfig.GATEWAY)
-                    ,Settings.gridchemusername, -1, 0);
-            for(Project proj: allProjects){
-                if(proj.getName().equals("Default Project")){
-                    airavataProjects = new ArrayList();
-                    airavataProjects.add(proj);
-                    return airavataProjects;
-                }
-            }
-        }catch (Exception e) {
-            //User does not exists in the system - creating default project
-            e.printStackTrace();
-        }finally {
-            try{
+                    , Settings.gridchemusername, "Default Project", -1, 0);
+            if(allProjects==null || allProjects.isEmpty()){
                 getClient().createProject(getAuthzToken(), AiravataConfig.getProperty(AiravataConfig.GATEWAY)
                         , new Project("no-id",Settings.gridchemusername,"Default Project"));
                 airavataProjects = getClient().getUserProjects(
                         getAuthzToken(), AiravataConfig.getProperty(AiravataConfig.GATEWAY)
                         , Settings.gridchemusername, -1, 0);
-            }catch (Exception ex){
-                throw new ProjectException(ex.getMessage());
+            }else{
+                airavataProjects = new ArrayList<>();
+                airavataProjects.add(allProjects.get(0));
             }
+            return airavataProjects;
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new ProjectException(e);
         }
-        return airavataProjects;
     }
 
     public static Project getProject(String projectId){

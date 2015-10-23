@@ -541,7 +541,11 @@ public class EditJobPanel extends JDialog implements ActionListener,
                 BorderFactory.createEmptyBorder(5, 0, 0, 0)));
 
         // buttonBox
-        OKButton = new JButton("Create Experiment");
+        if(isUpdating){
+            OKButton = new JButton("Update Experiment");
+        }else {
+            OKButton = new JButton("Create Experiment");
+        }
         CancelButton = new JButton("Cancel");
         // defaultButton = new JButton("Create Default Job");
         // loadButton = new JButton("Load");
@@ -964,7 +968,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
             doMakeDefaultJob();
 
-        } else if (e.getActionCommand() == "Save") {
+        } else if (e.getActionCommand() == "Create Experiment" || e.getActionCommand() == "Update Experiment") {
             experimentParmas.put(ExpetimentConst.EXP_NAME, expNameText.getText());
             experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, availableCompResources.get(hpcList.getSelectedIndex()).getComputeResourceId());
             experimentParmas.put(ExpetimentConst.APP_ID,(String)appModuleCombo.getSelectedItem());
