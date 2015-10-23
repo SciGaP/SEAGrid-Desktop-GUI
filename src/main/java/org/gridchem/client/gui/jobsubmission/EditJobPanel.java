@@ -541,7 +541,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
                 BorderFactory.createEmptyBorder(5, 0, 0, 0)));
 
         // buttonBox
-        OKButton = new JButton("Save");
+        OKButton = new JButton("Create Experiment");
         CancelButton = new JButton("Cancel");
         // defaultButton = new JButton("Create Default Job");
         // loadButton = new JButton("Load");
