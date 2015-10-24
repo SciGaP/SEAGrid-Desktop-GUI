@@ -252,7 +252,7 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
 
         buttonBox.add(readButton);
         buttonBox.add(licenseButton);
-        buttonBox.add(helpButton);
+//        buttonBox.add(helpButton);
         buttonBox.add(exitButton);
 
 
