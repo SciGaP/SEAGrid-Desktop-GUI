@@ -49,7 +49,9 @@ import nanocad.nanocadFrame2;
 import nanocad.newNanocad;
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.experiment.ExperimentModel;
+import org.apache.airavata.model.experiment.ExperimentSummaryModel;
 import org.apache.airavata.model.status.ExperimentState;
+import org.apache.airavata.model.workspace.Project;
 import org.gridchem.client.*;
 import org.gridchem.client.SwingWorker;
 import org.gridchem.client.common.Settings;
@@ -58,6 +60,7 @@ import org.gridchem.client.common.StatusEvent;
 import org.gridchem.client.exceptions.VisualizationException;
 import org.gridchem.client.gui.filebrowser.FileBrowserImpl;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
+import org.gridchem.client.gui.jobsubmission.ProjectComboModel;
 import org.gridchem.client.gui.jobsubmission.commands.*;
 import org.gridchem.client.gui.login.LoginDialog;
 import org.gridchem.client.gui.metadataeditor.MetaDataEditor;
@@ -139,7 +142,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	int defaultColumns[] = { 1, 13, 4, 5, 10 };
 
 	public static int num_column = columnNames.length;
-	private List<ExperimentModel> experiments;
+	private List<ExperimentSummaryModel> experiments;
 	private Clipboard clipboard;
 	private JFrame jobFrame;
 
@@ -181,6 +184,8 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	private JMenuItem viewJMOLItem; // this is JMOL
 	private JMenuItem viewAbaqusCAEItem; // this is Abaqus CAE
 
+	private JComboBox projectComboBox;
+
 	private JMenu viewMenu;
 
 	private static boolean updatedWithSearchResults = false;
@@ -214,14 +219,27 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,
 			ActionEvent.CTRL_MASK, false);
 
-	public JobPanel(List<ExperimentModel> experiments) {
+	public JobPanel() {
 
 		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-		this.experiments = experiments;
+		projectComboBox = new JComboBox();
+		List<Project> projectList = AiravataManager.getProjects();
+		for (Project p : projectList) {
+			projectComboBox.addItem(new ProjectComboModel(p.getName(),p.getProjectID()));
+		}
+		this.experiments = AiravataManager.getAllExperimentSummariesInProject((
+				(ProjectComboModel) projectComboBox.getSelectedItem()).getProjectId());
+		projectComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				experiments = AiravataManager.getAllExperimentSummariesInProject((
+						(ProjectComboModel) projectComboBox.getSelectedItem()).getProjectId());
+				refresh();
+			}
+		});
 
 		setLayout(new GridBagLayout());
-
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.weighty = 1.0;
@@ -403,6 +421,11 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		buttonBoxPane.setBorder(eBorder1);
 		buttonBoxPane.setLayout(new BoxLayout(buttonBoxPane, BoxLayout.Y_AXIS));
 		buttonBoxPane.add(buttonBox);
+
+		buttonBox.add(new JLabel(" Select Project"));
+		buttonBox.add(projectComboBox);
+		buttonBox.add(new JSeparator());
+
 		buttonBox.add(statusButton);
 //		buttonBox.add(estTimeButton);
 //		buttonBox.add(dataButton);
@@ -458,7 +481,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 *
 	 * @return
 	 */
-	private Container createJobContainer(List<ExperimentModel> experiments) {
+	private Container createJobContainer(List<ExperimentSummaryModel> experiments) {
 		jobBox = Box.createVerticalBox();
 
 		m_data = new JobTableData(experiments);
@@ -611,7 +634,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 */
 	protected void refreshJobs() {
 
-		List<ExperimentModel> jobs = AiravataManager.getAllExperimentsInProject(GridChem.project.getProjectID());
+		List<ExperimentSummaryModel> jobs = AiravataManager.getAllExperimentSummariesInProject(GridChem.project.getProjectID());
 
 		jobTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -643,7 +666,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 *
 	 * @param jobs
 	 */
-	public synchronized void updateJobTable(List<ExperimentModel> jobs) {
+	public synchronized void updateJobTable(List<ExperimentSummaryModel> jobs) {
 
 		jobTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -698,14 +721,17 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		ExperimentModel experiment = getSelectedJob();
+		ExperimentSummaryModel experiment = getSelectedJob();
 		if (e.getSource() == statusButton) {
 			if (experiment == null) {
 				JOptionPane.showMessageDialog(null, "Please select an experiment.", "",
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-			createJobInfoDialog(experiment);
+			ExperimentModel experimentModel = AiravataManager.getExperiment(getSelectedJob().getExperimentId());
+			if(experimentModel!=null) {
+				createJobInfoDialog(experimentModel);
+			}
 		} else if (e.getSource() == estTimeButton) {
 			System.out.println("Right now this is a just dummy Button");
 		} else if (e.getSource() == searchButton) {
@@ -717,14 +743,20 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-			doKillJob(experiment);
+			ExperimentModel experimentModel = AiravataManager.getExperiment(getSelectedJob().getExperimentId());
+			if(experimentModel!=null) {
+				doKillJob(experimentModel);
+			}
 		} else if (e.getSource() == dataButton) {
 			if (experiment == null) {
 				JOptionPane.showMessageDialog(null, "Please select a job.", "",
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-			doVisualizeJob(experiment);
+			ExperimentModel experimentModel = AiravataManager.getExperiment(getSelectedJob().getExperimentId());
+			if(experimentModel!=null) {
+				doVisualizeJob(experimentModel);
+			}
 		} else if (e.getSource() == moldenButton) {
 			if (experiment == null) {
 				JOptionPane.showMessageDialog(null, "Please select a job.", "",
@@ -733,13 +765,16 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			}
 			new moldenClass().start();
 		} else if (e.getSource() == retrieveButton) {
-			ExperimentModel selectedExperiment = getSelectedJob();
+			ExperimentSummaryModel selectedExperiment = getSelectedJob();
 			if (selectedExperiment == null) {
 				JOptionPane.showMessageDialog(SubmitJobsWindow.frame,
 						"No experiment selected!!", "Browse Experiment File Data",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
-				doBrowseFiles(getSelectedJob());
+				ExperimentModel experimentModel = AiravataManager.getExperiment(getSelectedJob().getExperimentId());
+				if(experimentModel!=null) {
+					doBrowseFiles(experimentModel);
+				}
 			}
 		} else if (e.getSource() == refreshButton) {
 			// refresh requires no job selection since the entire list of jobs
@@ -920,7 +955,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		String jobDir = Settings.jobDir;
 		String goutFileName = jobName + ".out";
 		String goutFileNameWithPath = jobDir + File.separator
-				+ getSelectedJob().getExperimentName() + ".out";
+				+ getSelectedJob().getName() + ".out";
 		String delete1 = Env.getApplicationDataDir() + File.separator
 				+ "vibrational_analysis" + File.separator + "*.out";
 		delete1 = '"' + delete1 + '"';
@@ -969,9 +1004,10 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 			}
 
 			if (isOKtoGO == true) {
-
-				SpectraViewer sv = new SpectraViewer(getSelectedJob());
-
+				ExperimentModel experimentModel = AiravataManager.getExperiment(getSelectedJob().getExperimentId());
+				if(experimentModel!=null) {
+					SpectraViewer sv = new SpectraViewer(experimentModel);
+				}
 			}
 
 		} else {
@@ -983,7 +1019,10 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 	public class moldenClass extends Thread {
 		public void run() {
-			viewMoldenJob(getSelectedJob());
+			ExperimentModel experimentModel = AiravataManager.getExperiment(getSelectedJob().getExperimentId());
+			if(experimentModel!=null) {
+				viewMoldenJob(experimentModel);
+			}
 		}
 	}
 
@@ -998,9 +1037,12 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 		class RemindTask extends TimerTask {
 			public void run() {
-				viewVMDJob(getSelectedJob());
-				System.out.println("Time's up!");
-				timer.cancel(); // Terminate the timer thread
+				ExperimentModel experimentModel = AiravataManager.getExperiment(getSelectedJob().getExperimentId());
+				if(experimentModel!=null) {
+					viewVMDJob(experimentModel);
+					System.out.println("Time's up!");
+					timer.cancel(); // Terminate the timer thread
+				}
 			}
 		}
 
@@ -1017,9 +1059,13 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 		class RemindTask extends TimerTask {
 			public void run() {
-				viewJMolJob(getSelectedJob());
-				System.out.println("Time's up!");
-				timer.cancel(); // Terminate the timer thread
+				ExperimentModel experimentModel = AiravataManager.getExperiment(getSelectedJob().getExperimentId());
+				if(experimentModel!=null) {
+					viewJMolJob(experimentModel);
+					System.out.println("Time's up!");
+					timer.cancel(); // Terminate the timer thread
+				}
+
 			}
 		}
 
@@ -1036,18 +1082,23 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 
 		class RemindTask extends TimerTask {
 			public void run() {
-				viewJMOLJob(getSelectedJob());
-				System.out.println("Time's up!");
-				timer.cancel(); // Terminate the timer thread
+				ExperimentModel experimentModel = AiravataManager.getExperiment(getSelectedJob().getExperimentId());
+				if(experimentModel!=null) {
+					viewJMOLJob(experimentModel);
+					System.out.println("Time's up!");
+					timer.cancel(); // Terminate the timer thread
+				}
 			}
 		}
 	}
 
 	// Run Abaqus CAE editor in a separate thread
 	public class AbaqusCAEClass implements Runnable {
-
 		public void run() {
-			viewAbaqusCAEJob(getSelectedJob());
+			ExperimentModel experimentModel = AiravataManager.getExperiment(getSelectedJob().getExperimentId());
+			if(experimentModel!=null) {
+				viewAbaqusCAEJob(experimentModel);
+			}
 		}
 
 	}
@@ -2346,7 +2397,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @return the JobBean associated with the selected row
 	 */
-	public ExperimentModel getSelectedJob() {
+	public ExperimentSummaryModel getSelectedJob() {
 		int k = jobTable.getSelectedRow();
 
 		if (k == -1) {
@@ -2364,13 +2415,13 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 	 * 
 	 * @return the JobBean associated with the selected row
 	 */
-	public ExperimentModel[] getSelectedJobs() {
-		ExperimentModel[] jobs;
+	public ExperimentSummaryModel[] getSelectedJobs() {
+		ExperimentSummaryModel[] jobs;
 
 		int[] k = jobTable.getSelectedRows();
 
 		if (k.length > 0) {
-			jobs = new ExperimentModel[k.length];
+			jobs = new ExperimentSummaryModel[k.length];
 			for (int i = 0; i < k.length; i++) {
 				System.out.println("Job " + m_data.getJobAtRow(k[i]));
 				jobs[i] = m_data.getJobAtRow(k[i]);
@@ -2612,7 +2663,10 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 				//		jobTable.getColumnCount() - 1);
 				showPopupMenu(e.getComponent(), e.getPoint());
 			} else if (e.getClickCount() == 2) {
-				createJobInfoDialog(m_data.getJobAtRow(row));
+				ExperimentModel experimentModel = AiravataManager.getExperiment(m_data.getJobAtRow(row).getExperimentId());
+				if(experimentModel != null){
+					createJobInfoDialog(experimentModel);
+				}
 			}
 		}
 
@@ -3901,12 +3955,12 @@ class JobData {
 					+ "sortdown.gif");
 	public static ImageIcon ICON_BLANK = new ImageIcon("blank.gif");
 
-	public ExperimentModel experiment;
+	public ExperimentSummaryModel experiment;
 	public ColorData status;
 
-	public JobData(ExperimentModel experiment) {
+	public JobData(ExperimentSummaryModel experiment) {
 		this.experiment = experiment;
-		this.status = new ColorData(experiment.getExperimentStatus().getState());
+		this.status = new ColorData(ExperimentState.valueOf(experiment.getExperimentStatus()));
 	}
 
 	public static ImageIcon getIcon(double change) {
@@ -3966,7 +4020,7 @@ class JobTableData extends AbstractTableModel implements
 	public int m_sortCol = 0;
 	public boolean m_sortAsc = false;
 
-	public JobTableData(List<ExperimentModel> experiments) {
+	public JobTableData(List<ExperimentSummaryModel> experiments) {
 		m_vector = new Vector<JobData>();
 		hidden_vector = new Vector<JobData>();
 		setDefaultData(experiments);
@@ -3978,10 +4032,10 @@ class JobTableData extends AbstractTableModel implements
 	 * 
 	 * @param experiments
 	 */
-	public void setDefaultData(List<ExperimentModel> experiments) {
+	public void setDefaultData(List<ExperimentSummaryModel> experiments) {
 		m_vector.removeAllElements();
 		hidden_vector.removeAllElements();
-		for (ExperimentModel experiment : experiments) {
+		for (ExperimentSummaryModel experiment : experiments) {
 			// if (!job.isHidden()) {
 			m_vector.add(new JobData(experiment));
 			// } else {
@@ -4142,7 +4196,7 @@ class JobTableData extends AbstractTableModel implements
 		case 0:
 			return row.experiment.getExperimentId();
 		case 1:
-			return row.experiment.getExperimentName();
+			return row.experiment.getName();
 		case 2:
 			return row.experiment.getDescription();
 		case 3:
@@ -4154,20 +4208,20 @@ class JobTableData extends AbstractTableModel implements
 				return row.experiment.getExecutionId();
 			}
 		case 5:
-			try {
-				return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId()
-						.split("_")[0];
-			}catch (Exception ex){
-				return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId();
-			}
+//			try {
+//				return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId()
+//						.split("_")[0];
+//			}catch (Exception ex){
+//				return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId();
+//			}
 		case 6:
-			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName();
+//			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName();
 		case 7:
 			return "Local Id";
 		case 8:
-			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount();
+//			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount();
 		case 9:
-			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory();
+//			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory();
 		case 10:
 			return row.status;
 		case 11:
@@ -4195,7 +4249,7 @@ class JobTableData extends AbstractTableModel implements
 			return 0;
 		case 17:
 //			return resolveTimeLimit(row.jobBean.getRequestedCpuTime());
-			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getWallTimeLimit();
+//			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getWallTimeLimit();
 		}
 		return "";
 	}
@@ -4247,12 +4301,12 @@ class JobTableData extends AbstractTableModel implements
 		}
 	}
 
-	public void loadData(final List<ExperimentModel> experiments) {
+	public void loadData(final List<ExperimentSummaryModel> experiments) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				m_vector.removeAllElements();
 				m_vector = new Vector();
-				for (ExperimentModel experiment : experiments) {
+				for (ExperimentSummaryModel experiment : experiments) {
 					// if (!job.isHidden()) {
 					m_vector.add(new JobData(experiment));
 					// } else {
@@ -4277,7 +4331,7 @@ class JobTableData extends AbstractTableModel implements
 			m_sortCol = -1;
 	}
 
-	public ExperimentModel getJobAtRow(int row) {
+	public ExperimentSummaryModel getJobAtRow(int row) {
 		return ((JobData) m_vector.elementAt(row)).experiment;
 	}
 
@@ -4325,7 +4379,7 @@ class JobComparator implements Comparator {
 			result = s1.experiment.getExperimentId().compareTo(s2.experiment.getExperimentId());
 			break;
 		case 1: // name
-			result = s1.experiment.getExperimentName().compareTo(s2.experiment.getExperimentName());
+			result = s1.experiment.getName().compareTo(s2.experiment.getName());
 			break;
 		case 2: // research project
 			result = s1.experiment.getDescription().compareTo(
@@ -4340,29 +4394,29 @@ class JobComparator implements Comparator {
 					.compareTo(s2.experiment.getExecutionId());
 			break;
 		case 5: // hpc system
-			result = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId()
-					.compareTo(s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId());
+//			result = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId()
+//					.compareTo(s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId());
 			break;
 		case 6: // queue
-			result = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName()
-					.compareTo(s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName());
+//			result = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName()
+//					.compareTo(s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName());
 			break;
 		case 7: // local job id
 			result = 0;
 			break;
 		case 8: // requested cpus
-			l1 = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount();
-			l2 = s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount();
-			result = l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
+//			l1 = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount();
+//			l2 = s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalCPUCount();
+//			result = l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
 			break;
 		case 9: // requested memory
-			l1 = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory();
-			l2 = s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory();
-			result = l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
+//			l1 = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory();
+//			l2 = s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getTotalPhysicalMemory();
+//			result = l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
 			break;
 		case 10: // status
-			result = s1.experiment.getExperimentStatus().getState().name()
-					.compareTo(s2.experiment.getExperimentStatus().getState().name());
+//			result = s1.experiment.getExperimentStatus().getState().name()
+//					.compareTo(s2.experiment.getExperimentStatus().getState().name());
 			break;
 		case 11: // start time
 			result = (""+s1.experiment.getCreationTime()).compareTo(

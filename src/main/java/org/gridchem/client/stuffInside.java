@@ -44,12 +44,10 @@ package org.gridchem.client;
 
 import G03Input.*;
 import Gamess.gamessGUI.GamessGUI;
-import com.asprise.util.ui.progress.ProgressDialog;
 import org.apache.airavata.gridchem.AiravataManager;
-import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
 import org.apache.airavata.gridchem.experiment.ExperimentHandler;
-import org.apache.airavata.gridchem.experiment.ExperimentHandlerUtils;
 import org.apache.airavata.model.experiment.ExperimentModel;
+import org.apache.airavata.model.experiment.ExperimentSummaryModel;
 import org.gridchem.client.gui.buttons.ApplicationMenuItem;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
 import org.gridchem.client.gui.panels.CancelCommandPrompt;
@@ -61,10 +59,11 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 // TODO: refactor as internal class of SubmitJobsWindow
 public class stuffInside extends JComponent // implements ListSelectionListener
@@ -130,15 +129,14 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		}
 	}
 
-	public stuffInside(ExperimentModel experiment) {
+	public stuffInside(ExperimentSummaryModel experiment) {
 		this();
-
 		doEditNewJob(experiment);
 	}
 
 	public void initLists(){
-		queueJobList = new JobList(AiravataManager.getQueuedExperiments(GridChem.project.getProjectID()));
-		doneJobList = new JobList(AiravataManager.getLaunchedExperiments(GridChem.project.getProjectID()));
+		queueJobList = new JobList(AiravataManager.getQueuedExperiments());
+		doneJobList = new JobList(AiravataManager.getLaunchedExperiments());
 
 		ArrayList serializedJobList = queueJobList.getJobNamesList();
 		System.out.println("ListOfJobs:nl is empty:"
@@ -368,9 +366,9 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 
 		// rebuild the job queue list
 		queueJobList.clear();
-		queueJobList.addAll(AiravataManager.getQueuedExperiments(GridChem.project.getProjectID()));
+		queueJobList.addAll(AiravataManager.getQueuedExperiments());
 		doneJobList.clear();
-		doneJobList.addAll(AiravataManager.getLaunchedExperiments(GridChem.project.getProjectID()));
+		doneJobList.addAll(AiravataManager.getLaunchedExperiments());
 
 		queueModel.clear();
 		for (String entry : queueJobList.getJobNamesList()) {
@@ -650,8 +648,11 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 			JOptionPane.showMessageDialog(null, "You must select a job",
 					"Error", JOptionPane.INFORMATION_MESSAGE);
 		} else {// edit the job that was selected
-			ExperimentModel selectedExperiment = (ExperimentModel)queueJobList.get(n);
-			jobEditor = new EditJobPanel(null, selectedExperiment);
+			ExperimentSummaryModel experimentSummaryModel = (ExperimentSummaryModel)queueJobList.get(n);
+			ExperimentModel experimentModel = AiravataManager.getExperiment(experimentSummaryModel.getExperimentId());
+			if(experimentModel!=null){
+				jobEditor = new EditJobPanel(null, experimentModel);
+			}
 		}
 	}
 
@@ -666,14 +667,18 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		System.err.println("job index is: " + (size + 1));
 	}
 
-	public void doEditNewJob(ExperimentModel experiment) {
-		jobEditor = new EditJobPanel(null, experiment);
+	public void doEditNewJob(ExperimentSummaryModel experiment) {
+		ExperimentModel experimentModel = AiravataManager.getExperiment(experiment.getExperimentId());
+		if(experimentModel != null){
+			jobEditor = new EditJobPanel(null, experimentModel);
 
-		int size = queueModel.getSize();
+			int size = queueModel.getSize();
 
-		queueList.setSelectedIndex(size + 1);
+			queueList.setSelectedIndex(size + 1);
 
-		System.err.println("job index is: " + (size + 1));
+			System.err.println("job index is: " + (size + 1));
+		}
+
 	}
 
 	public void doDeleteExperiment() {
@@ -682,7 +687,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 			int[] indices = queueList.getSelectedIndices();
 
 			for (int i = 0; i < indices.length; i++) {
-				ExperimentModel experimentModel = SubmitJobsWindow.si.queueJobList.get(indices[i]);
+				ExperimentSummaryModel experimentModel = SubmitJobsWindow.si.queueJobList.get(indices[i]);
 				AiravataManager.deleteExperiment(experimentModel.getExperimentId());
 				update();
 			}
@@ -696,7 +701,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		try {
 			ExperimentHandler experimentHandler = new ExperimentHandler();
 			while(queueList.getModel().getSize()>0){
-				ExperimentModel experiment = SubmitJobsWindow.si.queueJobList.get(0);
+				ExperimentSummaryModel experiment = SubmitJobsWindow.si.queueJobList.get(0);
 				experimentHandler.launchExperiment(experiment.getExperimentId());
 				update();
 			}
@@ -713,7 +718,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 			ArrayList<String> expIds = new ArrayList();
 			int[] indices = queueList.getSelectedIndices();
 			for(int index : indices){
-				ExperimentModel experiment = SubmitJobsWindow.si.queueJobList.get(index);
+				ExperimentSummaryModel experiment = SubmitJobsWindow.si.queueJobList.get(index);
 				expIds.add(experiment.getExperimentId());
 			}
 			for(String expId : expIds) {

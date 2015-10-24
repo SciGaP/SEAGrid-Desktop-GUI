@@ -42,6 +42,7 @@ DEALINGS WITH THE SOFTWARE.
 package org.gridchem.client;
 
 import org.apache.airavata.model.experiment.ExperimentModel;
+import org.apache.airavata.model.experiment.ExperimentSummaryModel;
 import org.gridchem.service.exceptions.JobException;
 
 import javax.swing.*;
@@ -68,8 +69,8 @@ public class SubmitJobsWindow
             frame.setVisible(true);
         }
     }
-    
-    public static void getInstance(ExperimentModel job) {
+
+    public static void getInstance(ExperimentSummaryModel job) {
         if (frame == null) {
             si = new stuffInside(job);
             init();

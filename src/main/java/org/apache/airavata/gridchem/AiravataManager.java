@@ -10,17 +10,19 @@ import org.apache.airavata.model.application.io.OutputDataObjectType;
 import org.apache.airavata.model.error.AiravataClientException;
 import org.apache.airavata.model.error.AiravataErrorType;
 import org.apache.airavata.model.experiment.ExperimentModel;
+import org.apache.airavata.model.experiment.ExperimentSearchFields;
+import org.apache.airavata.model.experiment.ExperimentSummaryModel;
 import org.apache.airavata.model.job.JobModel;
 import org.apache.airavata.model.security.AuthzToken;
 import org.apache.airavata.model.status.ExperimentState;
 import org.apache.airavata.model.workspace.Project;
-import org.apache.http.auth.AUTH;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
+import org.gridchem.client.GridChem;
 import org.gridchem.client.common.Settings;
 import org.gridchem.service.beans.UserBean;
 import org.gridchem.service.exceptions.ProjectException;
@@ -88,24 +90,21 @@ public class AiravataManager {
 
         List<Project> airavataProjects;
         try {
-            List<Project> allProjects = getClient().searchProjectsByProjectName(
+            airavataProjects = getClient().getUserProjects(
                     getAuthzToken(), AiravataConfig.getProperty(AiravataConfig.GATEWAY)
-                    , Settings.gridchemusername, "Default Project", -1, 0);
-            if(allProjects==null || allProjects.isEmpty()){
+                    , Settings.gridchemusername, -1, 0);
+        }catch (Exception e) {
+            try{
                 getClient().createProject(getAuthzToken(), AiravataConfig.getProperty(AiravataConfig.GATEWAY)
                         , new Project("no-id",Settings.gridchemusername,"Default Project"));
                 airavataProjects = getClient().getUserProjects(
                         getAuthzToken(), AiravataConfig.getProperty(AiravataConfig.GATEWAY)
                         , Settings.gridchemusername, -1, 0);
-            }else{
-                airavataProjects = new ArrayList<>();
-                airavataProjects.add(allProjects.get(0));
+            }catch (Exception ex){
+                throw new ProjectException(ex);
             }
-            return airavataProjects;
-        }catch (Exception e) {
-            e.printStackTrace();
-            throw new ProjectException(e);
         }
+        return airavataProjects;
     }
 
     public static Project getProject(String projectId){
@@ -295,35 +294,56 @@ public class AiravataManager {
         }
     }
 
-    public static List<ExperimentModel> getQueuedExperiments(String projectId){
-        List<ExperimentModel> exp = new ArrayList<>();
+    public static List<ExperimentSummaryModel> getQueuedExperiments(){
+        List<ExperimentSummaryModel> exp = new ArrayList<>();
         try{
-            List<ExperimentModel> allexp = getClient().getExperimentsInProject(
-                    getAuthzToken(), projectId, -1, 0);
-            for(ExperimentModel experiment:allexp){
-                if(experiment.getExperimentStatus().getState()==ExperimentState.CREATED)
-                    exp.add(experiment);
-            }
+            Map<ExperimentSearchFields,String> filters = new HashMap<>();
+            filters.put(ExperimentSearchFields.STATUS,"CREATED");
+            exp = getClient().searchExperiments(
+                    getAuthzToken(), AiravataConfig.getProperty(AiravataConfig.GATEWAY), GridChem.user.getUserName(), filters, -1, 0);
         }catch (Exception ex){
             ex.printStackTrace();
         }
         return exp;
     }
 
-    public static List<ExperimentModel> getLaunchedExperiments(String projectId){
-        List<ExperimentModel> exp = new ArrayList<>();
+    public static List<ExperimentSummaryModel> getLaunchedExperiments(){
+        List<ExperimentSummaryModel> allExps = new ArrayList<>();
         try{
-            List<ExperimentModel> allexp = getClient().getExperimentsInProject(
-                    getAuthzToken(), projectId, -1, 0);
-            for(ExperimentModel experiment:allexp){
-                ExperimentState state = experiment.getExperimentStatus().getState();
-                if(state==ExperimentState.LAUNCHED || state==ExperimentState.EXECUTING || state==ExperimentState.SCHEDULED )
-                    exp.add(experiment);
-            }
+            Map<ExperimentSearchFields,String> filters = new HashMap<>();
+            filters.put(ExperimentSearchFields.STATUS,"LAUNCHED");
+            List<ExperimentSummaryModel> exp = getClient().searchExperiments(
+                    getAuthzToken(), AiravataConfig.getProperty(AiravataConfig.GATEWAY), GridChem.user.getUserName(), filters, -1, 0);
+            allExps.addAll(exp);
+            filters.put(ExperimentSearchFields.STATUS,"EXECUTING");
+            exp = getClient().searchExperiments(
+                    getAuthzToken(), AiravataConfig.getProperty(AiravataConfig.GATEWAY), GridChem.user.getUserName(), filters, -1, 0);
+            allExps.addAll(exp);
+            filters.put(ExperimentSearchFields.STATUS,"SCHEDULED");
+            exp = getClient().searchExperiments(
+                    getAuthzToken(), AiravataConfig.getProperty(AiravataConfig.GATEWAY), GridChem.user.getUserName(), filters, -1, 0);
+            allExps.addAll(exp);
+
+            Collections.sort(allExps, new Comparator<ExperimentSummaryModel>() {
+                @Override
+                public int compare(ExperimentSummaryModel o1, ExperimentSummaryModel o2) {
+                    return (int)(o1.getStatusUpdateTime()-o2.getStatusUpdateTime());
+                }
+            });
         }catch (Exception ex){
             ex.printStackTrace();
         }
-        return exp;
+        return allExps;
+    }
+
+    public static ExperimentModel getExperiment(String experimentId){
+        try{
+            ExperimentModel experimentModel = getClient().getExperiment(getAuthzToken(),experimentId);
+            return experimentModel;
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     public static List<ExperimentModel> getAllExperimentsInProject(String projectId){
@@ -331,6 +351,19 @@ public class AiravataManager {
         try{
             exp = getClient().getExperimentsInProject(
                     getAuthzToken(), projectId, -1, 0);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return exp;
+    }
+
+    public static List<ExperimentSummaryModel> getAllExperimentSummariesInProject(String projectId){
+        List<ExperimentSummaryModel> exp = new ArrayList<>();
+        try{
+            Map<ExperimentSearchFields, String> fields = new HashMap<ExperimentSearchFields, String>();
+            fields.put(ExperimentSearchFields.PROJECT_ID, projectId);
+            exp = getClient().searchExperiments(
+                    getAuthzToken(), AiravataConfig.getProperty("gateway"), GridChem.user.getUserName(), fields, -1, 0);
         }catch (Exception ex){
             ex.printStackTrace();
         }

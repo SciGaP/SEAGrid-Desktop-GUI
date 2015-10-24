@@ -153,39 +153,41 @@ public class AuthenticationForm extends JPanel {
 			loginDialog.updateMessage("Retrieved projects...");
 
 			Thread.currentThread().sleep(500);
-			if (GridChem.projects.size() == 1) {
-				Thread.currentThread().sleep(500);
-				loginDialog.updateMessage("Setting session project...");
-				AiravataManager.setCurrentProject(GridChem.projects.get(0));
-				
-				Thread.currentThread().sleep(500);
-				loginDialog.updateMessage("Updating details...");
-				GridChem.project = AiravataManager.getCurrentProject();
 
-			} else {
-				ProjectSelectionDialog psd = new ProjectSelectionDialog(
-						GridChem.projects, loginDialog);
-				if (psd.getProject() == null) {
-					loginDialog.updateMessage("Login cancelled.");
-					SwingWorker worker = new SwingWorker() {
-						public Object construct() {
-							loginDialog.loginButton.setEnabled(true);
-							return null;
-						}
-					};
-
-					worker.start();
-					return;
-				} else {
-					Thread.currentThread().sleep(500);
-					loginDialog.updateMessage("Setting session project...");
-					AiravataManager.setCurrentProject(psd.getProject());
-
-					Thread.currentThread().sleep(500);
-					loginDialog.updateMessage("Updating details...");
-					GridChem.project = AiravataManager.getCurrentProject();
-				}
-			}
+//			No project selection at the time of login
+//			if (GridChem.projects.size() == 1) {
+//				Thread.currentThread().sleep(500);
+//				loginDialog.updateMessage("Setting session project...");
+//				AiravataManager.setCurrentProject(GridChem.projects.get(0));
+//
+//				Thread.currentThread().sleep(500);
+//				loginDialog.updateMessage("Updating details...");
+//				GridChem.project = AiravataManager.getCurrentProject();
+//
+//			} else {
+//				ProjectSelectionDialog psd = new ProjectSelectionDialog(
+//						GridChem.projects, loginDialog);
+//				if (psd.getProject() == null) {
+//					loginDialog.updateMessage("Login cancelled.");
+//					SwingWorker worker = new SwingWorker() {
+//						public Object construct() {
+//							loginDialog.loginButton.setEnabled(true);
+//							return null;
+//						}
+//					};
+//
+//					worker.start();
+//					return;
+//				} else {
+//					Thread.currentThread().sleep(500);
+//					loginDialog.updateMessage("Setting session project...");
+//					AiravataManager.setCurrentProject(psd.getProject());
+//
+//					Thread.currentThread().sleep(500);
+//					loginDialog.updateMessage("Updating details...");
+//					GridChem.project = AiravataManager.getCurrentProject();
+//				}
+//			}
 
 			Thread.currentThread().sleep(500);
 			loginDialog.updateMessage("Retrieving user profile...");

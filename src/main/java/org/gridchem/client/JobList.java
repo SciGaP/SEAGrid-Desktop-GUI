@@ -41,6 +41,7 @@ DEALINGS WITH THE SOFTWARE.
 package org.gridchem.client;
 
 import org.apache.airavata.model.experiment.ExperimentModel;
+import org.apache.airavata.model.experiment.ExperimentSummaryModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -117,16 +118,16 @@ public class JobList implements java.util.List {
 	public ArrayList<String> getJobNamesList() {
 		ArrayList<String> s = new ArrayList<String>();
 		ArrayList t = new ArrayList(this.getList());
-		ExperimentModel j;
+		ExperimentSummaryModel j;
 		// JobList t = new JobList(this.getList());
 		// Iterator i = t.iterator();
 		// while (i.hasNext())
 		while (!(t.isEmpty())) {
-			j = (ExperimentModel) t.remove(0);
+			j = (ExperimentSummaryModel) t.remove(0);
 
 //			 s.add(j.getJobName()+ "  " + j.getApp() + "  " + j.getMachine());
 //			s.add(j.getExperimentName() +  " " + j.getExperimentStatus().getState().name());
-			s.add(j.getExperimentName());
+			s.add(j.getName());
 		}
 		return s;
 	}
@@ -202,8 +203,8 @@ public class JobList implements java.util.List {
 		return theList.retainAll(c);
 	}
 
-	public ExperimentModel get(int index) {
-		ExperimentModel jobOnDeck = theList.get(index)==null?null:(ExperimentModel)theList.get(index);
+	public ExperimentSummaryModel get(int index) {
+		ExperimentSummaryModel jobOnDeck = theList.get(index)==null?null:(ExperimentSummaryModel)theList.get(index);
 		return jobOnDeck;
 	}
 

@@ -22,6 +22,7 @@ import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.airavata.model.util.ExperimentModelUtil;
+import org.apache.airavata.model.workspace.Project;
 import org.gridchem.client.GridChem;
 import org.gridchem.client.Invariants;
 import org.gridchem.client.SubmitJobsWindow;
@@ -84,7 +85,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private JLabel numCoreLabel;
     private JLabel numNodesLabel;
 
-
+    private JComboBox projCombo;
     private JComboBox qCombo;
     private JComboBox appCombo;
     private JComboBox appModuleCombo;
@@ -156,24 +157,24 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         String expName = GridChem.user.getUserName() + "_experiment";
         experimentParmas.put(ExpetimentConst.EXP_NAME, expName);
-        experimentParmas.put(ExpetimentConst.PROJECT_ID, GridChem.project.getProjectID());
-        experimentParmas.put(ExpetimentConst.USER_ID, GridChem.user.getUserName());
-        ExperimentModelUtil.createComputationResourceScheduling(null, 1, 1, 1, "normal", 30, 0);
-
-        experimentParmas.put(ExpetimentConst.CPU_COUNT, 1);
-        experimentParmas.put(ExpetimentConst.NODE_COUNT, 1);
-        experimentParmas.put(ExpetimentConst.QUEUE, "normal");
-        experimentParmas.put(ExpetimentConst.WALL_TIME, 30);
-        experimentParmas.put(ExpetimentConst.MEMORY, 1);
-        experimentParmas.put(ExpetimentConst.PROJECT_ACCOUNT, "sds128");
-
-        ArrayList<LogicalFileBean> inFiles = new ArrayList<LogicalFileBean>();
-        for (File f : FileUtility.getDefaultInputFiles(this.application)) {
-            LogicalFileBean lf = new LogicalFileBean();
-            lf.setJobId(-1);
-            lf.setLocalPath(f.getAbsolutePath());
-            inFiles.add(lf);
-        }
+//        experimentParmas.put(ExpetimentConst.PROJECT_ID, GridChem.project.getProjectID());
+//        experimentParmas.put(ExpetimentConst.USER_ID, GridChem.user.getUserName());
+//        ExperimentModelUtil.createComputationResourceScheduling(null, 1, 1, 1, "normal", 30, 0);
+//
+//        experimentParmas.put(ExpetimentConst.CPU_COUNT, 1);
+//        experimentParmas.put(ExpetimentConst.NODE_COUNT, 1);
+//        experimentParmas.put(ExpetimentConst.QUEUE, "normal");
+//        experimentParmas.put(ExpetimentConst.WALL_TIME, 30);
+//        experimentParmas.put(ExpetimentConst.MEMORY, 1);
+//        experimentParmas.put(ExpetimentConst.PROJECT_ACCOUNT, "sds128");
+//
+//        ArrayList<LogicalFileBean> inFiles = new ArrayList<LogicalFileBean>();
+//        for (File f : FileUtility.getDefaultInputFiles(this.application)) {
+//            LogicalFileBean lf = new LogicalFileBean();
+//            lf.setJobId(-1);
+//            lf.setLocalPath(f.getAbsolutePath());
+//            inFiles.add(lf);
+//        }
 
         Calendar cal = Calendar.getInstance();
         cal.clear();
@@ -265,6 +266,12 @@ public class EditJobPanel extends JDialog implements ActionListener,
     }
 
     private void updateForm(ExperimentModel experiment){
+        for(int i=0;i<projCombo.getItemCount();i++) {
+            if (((ProjectComboModel) projCombo.getItemAt(i)).getProjectId().equals(experiment.getProjectId())) {
+                projCombo.setSelectedIndex(i);
+                break;
+            }
+        }
         expNameText.setText(experiment.getExperimentName());
         ApplicationInterfaceDescription appDesc =null;
         for (ApplicationInterfaceDescription desc: interfaceDescriptions){
@@ -320,14 +327,23 @@ public class EditJobPanel extends JDialog implements ActionListener,
         Border leBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 
         // left panel for choicesBoxs
+
+        projCombo = new JComboBox();
+        populateProjects();
+        if(isUpdating){
+            projCombo.setEnabled(false);
+        }
+        JLabel projNameLabel = new JLabel("Project name: ");
+        projNameLabel.setLabelFor(projCombo);
+
         expNameText = new JTextField(20);
         expNameText.setText((String) experimentParmas.get(ExpetimentConst.EXP_NAME));
         if(isUpdating){
             expNameText.setEnabled(false);
         }
 
-        JLabel projNameLabel = new JLabel("Experiment name: ");
-        projNameLabel.setLabelFor(expNameText);
+        JLabel expNameLabel = new JLabel("Experiment name: ");
+        expNameLabel.setLabelFor(expNameText);
         JPanel namePane = new JPanel();
 
         TitledBorder namePaneTitled = BorderFactory.createTitledBorder(
@@ -337,7 +353,11 @@ public class EditJobPanel extends JDialog implements ActionListener,
         namePane.setBorder(BorderFactory.createCompoundBorder(namePaneTitled,
                 eBorder2));
         namePane.setLayout(new GridLayout(2, 2));
+
         namePane.add(projNameLabel);
+        namePane.add(projCombo);
+
+        namePane.add(expNameLabel);
         namePane.add(expNameText);
 
         /**
@@ -430,11 +450,13 @@ public class EditJobPanel extends JDialog implements ActionListener,
         }
         appPane.add(appCombo);
         appPane.add(Box.createRigidArea(new Dimension(30, 0)));
-        appPane.add(appModuleLabel); // JK
-        if(isUpdating){
-            appModuleCombo.setEnabled(false);
-        }
-        appPane.add(appModuleCombo); // JK
+
+//        App Module is not supported in the current version
+//        appPane.add(appModuleLabel); // JK
+//        if(isUpdating){
+//            appModuleCombo.setEnabled(false);
+//        }
+//        appPane.add(appModuleCombo); // JK
 
         TitledBorder appPaneTitled1 = BorderFactory.createTitledBorder(leBorder, "HPC Systems", TitledBorder.LEFT, TitledBorder.DEFAULT_POSITION, new Font("Sansserif", Font.BOLD, 14));
         apphpcBoxPane.setBorder(BorderFactory.createCompoundBorder(appPaneTitled1, eBorder2));
@@ -891,6 +913,15 @@ public class EditJobPanel extends JDialog implements ActionListener,
         }
     }
 
+    public void populateProjects() {
+        projCombo.removeAllItems();
+
+        List<Project> projectList = AiravataManager.getProjects();
+        for (Project p : projectList) {
+            projCombo.addItem(new ProjectComboModel(p.getName(),p.getProjectID()));
+        }
+    }
+
     private void populateQueues(String machine) {
         qCombo.removeAllItems();
 
@@ -973,7 +1004,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             experimentParmas.put(ExpetimentConst.RESOURCE_HOST_ID, availableCompResources.get(hpcList.getSelectedIndex()).getComputeResourceId());
             experimentParmas.put(ExpetimentConst.APP_ID,(String)appModuleCombo.getSelectedItem());
             experimentParmas.put(ExpetimentConst.GATEWAY_ID, AiravataConfig.getProperty("gateway"));
-            experimentParmas.put(ExpetimentConst.PROJECT_ID, GridChem.project.getProjectID());
+            experimentParmas.put(ExpetimentConst.PROJECT_ID, ((ProjectComboModel)projCombo.getSelectedItem()).getProjectId());
             experimentParmas.put(ExpetimentConst.USER_ID, GridChem.user.getUserName());
 
             Integer nodeCount = (Integer)numNodeSpin.getValue();
