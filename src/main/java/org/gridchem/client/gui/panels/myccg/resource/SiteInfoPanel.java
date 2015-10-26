@@ -131,10 +131,10 @@ public class SiteInfoPanel extends JPanel {
         nameLabel = new JLabel();
         imageLabel = new JLabel();
         // include the logo of the site with it's acronmym below it
-        imageLabel.setIcon(new ImageIcon(Env.getImagesDir() + "/logos/CCG.jpg"));
+        imageLabel.setIcon(new ImageIcon(Env.getImagesDir() + "/logos/SEAGrid.jpg"));
         
         imageLabel.setSize(new Dimension(88,56));
-        acronymLabel = new JLabel("CCG");
+        acronymLabel = new JLabel("SEAGrid");
         box.removeAll();
         box.add(imageLabel);
         box.add(acronymLabel);

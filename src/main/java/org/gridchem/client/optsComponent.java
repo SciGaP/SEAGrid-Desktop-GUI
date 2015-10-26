@@ -264,19 +264,18 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         //System.out.println("Image info "+ Env.getGridChemLogoLocation()+" "+imgtext);
         String textinfo1 = "<div style=\"background-color:#E7EEF6; color:#000000\">" +
                 "<div style=\"background-color:#A7B3C7; color:#FFFFFF;\">" +
-                imgtext + "<font size=5> Welcome to GridChem: " +
-                "Portal to the Computational Chemistry Grid!! </font>" +
-                "<p><br></div>" +
-                "You are running the " +
-                "<Font color='green'>AXIS2 Web Service </font>" +
+                imgtext + "<font size=5> Welcome to SEAGrid !!" +
+                "Portal for Science and Engineering Applications Grid !!</font>" +
+                "<br></div>" +
+                "<p>You are running the " +
+                "<Font color='green'>SciGaP Service </font>" +
                 "version of the client with the <Font color='blue'>" +
                 ((Settings.DEVEL) ? "DEVELOPMENT" :
                         ((Settings.FAILOVER) ? "FAILOVER" :
                                 ((Settings.LOCAL) ? "LOCAL" : "PRODUCTION"))) +
-                " </font> cyberinfrastructure. <p>" +
-                "Developed by: CCS(UKy), CCT(LSU), NCSA(UIUC), OSC(OSU), and TACC(UTAustin).\n\n<p>";
-        String textinfo2 = "For more information, " +
-                "please visit http://www.gridchem.org/</div>";
+                " </font> cyberinfrastructure.</p>";
+        String textinfo2 = "<p>For more information, " +
+                "please visit <a href='https://seagrid.org/'>https://seagrid.org/</a></div></p>";
         URL rssurl;
         try {
             rssurl = new URL(Invariants.CCGRSSFeed);

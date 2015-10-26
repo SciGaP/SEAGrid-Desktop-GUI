@@ -1643,7 +1643,7 @@ public final class Env {
 	 * @return location of gridchem logo as a String
 	 */
 	public static String getGridChemLogoLocation() {
-		return getImagesDir() + separator() + "logos/CCG.jpg";
+		return getImagesDir() + separator() + "logos/SEAGrid.jpg";
 	}
 
 	public static String getTrustStoreLocation() {
