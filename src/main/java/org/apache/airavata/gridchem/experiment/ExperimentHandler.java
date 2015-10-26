@@ -28,7 +28,7 @@ public class ExperimentHandler {
         fb = new FileBrowserAiravata();
     }
 
-    public String createExperiment(Map<String, Object> params) throws ExperimentCreationException {
+    public String createExperiment(Map<String, Object> params) throws ExperimentCreationException, FileHandlerException {
 
         ExperimentModel exp = assembleExperiment(params);
 
@@ -46,19 +46,19 @@ public class ExperimentHandler {
     }
 
 
-    public void updateExperiment(Map<String, Object> params) throws Exception {
+    public void updateExperiment(Map<String, Object> params) throws ExperimentCreationException, FileHandlerException {
         ExperimentModel exp = assembleExperiment(params);
         try {
             AiravataManager.getClient().updateExperiment(AiravataManager.getAuthzToken(),
                     (String)params.get(ExpetimentConst.EXPERIMENT_ID), exp);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Error at updating experiment "+exp.getExperimentId()+ " on machine "
+            throw new ExperimentCreationException("Error at updating experiment "+exp.getExperimentId()+ " on machine "
                     +exp.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId(),e);
         }
     }
 
-    private ExperimentModel assembleExperiment(Map<String, Object> params){
+    private ExperimentModel assembleExperiment(Map<String, Object> params) throws FileHandlerException {
 
         String projectID = null, experimentId = null, userID = null, expName = null, expDesc = null,
                 appId = null, gatewayId = null, hostID = null, queue = null, projectAccount = null;
@@ -105,11 +105,7 @@ public class ExperimentHandler {
             inputs = (List<InputDataObjectType>)params.get(ExpetimentConst.INPUTS);
         }
 
-        try {
-            validateInputs(inputs);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        validateInputs(inputs);
 
         ExperimentModel exp =
                 ExperimentModelUtil.createSimpleExperiment(null, null, null, null, null, null,null);

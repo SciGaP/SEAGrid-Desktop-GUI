@@ -9,6 +9,9 @@
 
 package org.gridchem.client.gui.jobsubmission;
 
+import G03Input.OptTable;
+import G03Input.RouteClass;
+import com.asprise.util.ui.progress.ProgressDialog;
 import nanocad.nanocadFrame2;
 import nanocad.newNanocad;
 import org.apache.airavata.AiravataConfig;
@@ -17,21 +20,21 @@ import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
 import org.apache.airavata.gridchem.experiment.ExperimentHandler;
 import org.apache.airavata.gridchem.experiment.ExperimentHandlerUtils;
+import org.apache.airavata.gridchem.file.FileHandlerException;
 import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDescription;
 import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
+import org.apache.airavata.model.application.io.DataType;
 import org.apache.airavata.model.application.io.InputDataObjectType;
 import org.apache.airavata.model.experiment.ExperimentModel;
-import org.apache.airavata.model.util.ExperimentModelUtil;
 import org.apache.airavata.model.workspace.Project;
-import org.gridchem.client.GridChem;
-import org.gridchem.client.Invariants;
-import org.gridchem.client.SubmitJobsWindow;
+import org.gridchem.client.*;
+import org.gridchem.client.SwingWorker;
 import org.gridchem.client.common.Preferences;
 import org.gridchem.client.common.Settings;
+import org.gridchem.client.gui.panels.CancelCommandPrompt;
 import org.gridchem.client.util.Env;
 import org.gridchem.client.util.GMS3;
-import org.gridchem.client.util.file.FileUtility;
 import org.gridchem.service.beans.*;
 import org.gridchem.service.model.enumeration.AccessType;
 
@@ -137,6 +140,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
     private Map<String, Object> experimentParmas = new HashMap<>();
     private List<ApplicationInterfaceDescription> interfaceDescriptions = null;
     private List<ComputeResourceDescription> availableCompResources = null;
+
+    private CancelCommandPrompt progressCancelPrompt = null;
 
     /**
      * Create a new job.
@@ -644,7 +649,13 @@ public class EditJobPanel extends JDialog implements ActionListener,
                 String ifId = (String) appModuleCombo.getSelectedItem();
                 for (ApplicationInterfaceDescription aid : interfaceDescriptions) {
                     if (ifId.equals(aid.getApplicationInterfaceId())) {
-                        dynamicInputPanel.draw(aid.getApplicationInputs());
+                        List<InputDataObjectType> applicationInputs = aid.getApplicationInputs();
+                        for(InputDataObjectType applicationInput : applicationInputs){
+                            if(applicationInput.getType() == DataType.URI){
+                                applicationInput.setValue(null);
+                            }
+                        }
+                        dynamicInputPanel.draw(applicationInputs);
                     }
                 }
             }
@@ -1027,7 +1038,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             String queue = qCombo.getSelectedItem().toString();
             experimentParmas.put(ExpetimentConst.QUEUE,queue);
 
-            ExperimentHandler experimentHandler = ExperimentHandlerUtils
+            final ExperimentHandler experimentHandler = ExperimentHandlerUtils
                     .getExperimentHandler((String) experimentParmas.get(ExpetimentConst.APP_ID));
             List<InputDataObjectType> inputs = dynamicInputPanel.getInputs();
             for(InputDataObjectType input : inputs){
@@ -1039,25 +1050,64 @@ public class EditJobPanel extends JDialog implements ActionListener,
             }
             experimentParmas.put(ExpetimentConst.INPUTS, dynamicInputPanel.getInputs());
 
-            if(isUpdating){
-                try {
-                    experimentParmas.put(ExpetimentConst.EXPERIMENT_ID, experimentModel.getExperimentId());
-                    experimentHandler.updateExperiment(experimentParmas);
-                    doClose();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Error at updating experiment", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
-                }
-            }else{
-                try {
-                    experimentHandler.createExperiment(experimentParmas);
-                    doClose();
-                } catch (ExperimentCreationException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Error at creating experiment", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
-                }
-            }
 
+            if(isUpdating){
+                org.gridchem.client.SwingWorker worker = new org.gridchem.client.SwingWorker() {
+                    @Override
+                    public Object construct() {
+                        RouteClass.keyIndex = 0;
+                        RouteClass.initCount = 0;
+                        OptTable.optC = 0;
+                        experimentParmas.put(ExpetimentConst.EXPERIMENT_ID, experimentModel.getExperimentId());
+                        try {
+                            experimentHandler.updateExperiment(experimentParmas);
+                        } catch (ExperimentCreationException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(EditJobPanel.this, "Error in updating experiment", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
+                        } catch (FileHandlerException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(EditJobPanel.this, "Error staging input data files. Please try again", ex.getMessage(),
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                        doClose();
+                        return null;
+                    }
+                    @Override
+                    public void finished() {
+                        stopWaiting();
+                    }
+                };
+                startWaiting("Updating Experiment", "Please wait few seconds", worker);
+                worker.start();
+            }else{
+                org.gridchem.client.SwingWorker worker = new org.gridchem.client.SwingWorker() {
+                    @Override
+                    public Object construct() {
+                        RouteClass.keyIndex = 0;
+                        RouteClass.initCount = 0;
+                        OptTable.optC = 0;
+                        experimentParmas.put(ExpetimentConst.EXPERIMENT_ID, experimentModel.getExperimentId());
+                        try {
+                            experimentHandler.createExperiment(experimentParmas);
+                        } catch (ExperimentCreationException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(EditJobPanel.this, "Error in creating experiment", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
+                        } catch (FileHandlerException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(EditJobPanel.this, "Error staging input data files. Please try again", ex.getMessage(),
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                        doClose();
+                        return null;
+                    }
+                    @Override
+                    public void finished() {
+                        stopWaiting();
+                    }
+                };
+                startWaiting("Creating Experiment", "Please wait few seconds", worker);
+                worker.start();
+            }
         } else if (e.getActionCommand() == "Cancel") {
             doCancel();
         } else {
@@ -1067,6 +1117,17 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
     }
 
+    private void startWaiting(String title, String labelText, SwingWorker worker) {
+        progressCancelPrompt =
+                new CancelCommandPrompt(this,title,labelText,-1,worker);
+    }
+
+    private void stopWaiting() {
+        if (progressCancelPrompt != null) {
+            progressCancelPrompt.finished();
+            progressCancelPrompt = null;
+        }
+    }
 
     public String readTextArea(File f) throws IOException {
         String line = "";

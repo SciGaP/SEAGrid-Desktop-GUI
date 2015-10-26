@@ -228,6 +228,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		for (Project p : projectList) {
 			projectComboBox.addItem(new ProjectComboModel(p.getName(),p.getProjectID()));
 		}
+		projectComboBox.addItem(new ProjectComboModel("All","*"));
 		this.experiments = AiravataManager.getAllExperimentSummariesInProject((
 				(ProjectComboModel) projectComboBox.getSelectedItem()).getProjectId());
 		projectComboBox.addActionListener(new ActionListener() {

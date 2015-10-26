@@ -74,6 +74,7 @@ public class DynamicInputPanel extends JPanel {
                 JPanel filePanel = new JPanel();
                 filePanel.setLayout(new GridLayout(2,1,5,5));
                 final JTextField txtPath = new JTextField(10);
+                txtPath.setEnabled(false);
                 txtPath.setText(input.getValue());
                 txtPath.setSize(60,30);
                 txtPath.setMaximumSize(new Dimension());

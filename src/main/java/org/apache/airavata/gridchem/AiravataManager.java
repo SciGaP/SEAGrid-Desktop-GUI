@@ -361,7 +361,9 @@ public class AiravataManager {
         List<ExperimentSummaryModel> exp = new ArrayList<>();
         try{
             Map<ExperimentSearchFields, String> fields = new HashMap<ExperimentSearchFields, String>();
-            fields.put(ExperimentSearchFields.PROJECT_ID, projectId);
+            if(!projectId.equals("*")) {
+                fields.put(ExperimentSearchFields.PROJECT_ID, projectId);
+            }
             exp = getClient().searchExperiments(
                     getAuthzToken(), AiravataConfig.getProperty("gateway"), GridChem.user.getUserName(), fields, -1, 0);
         }catch (Exception ex){
