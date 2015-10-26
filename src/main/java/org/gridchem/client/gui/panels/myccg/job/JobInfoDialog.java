@@ -38,7 +38,9 @@
 
 package org.gridchem.client.gui.panels.myccg.job;
 
+import org.apache.airavata.AiravataConfig;
 import org.apache.airavata.gridchem.AiravataManager;
+import org.apache.airavata.model.commons.ErrorModel;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.airavata.model.scheduling.ComputationalResourceSchedulingModel;
 
@@ -88,8 +90,10 @@ public class JobInfoDialog extends JDialog {
         getInfoDialogPanel = new JPanel(new GridLayout(6,1,5,5));
 
         //          ((GridLayout) getInfoDialogPanel.getLayout()).setVgap(5);
-        String jobStatus = experiment.getExperimentStatus().getState().name();
-        
+        String experimentStatus = experiment.getExperimentStatus().getState().name();
+        String jobStatus = AiravataManager.getJobStatus(experiment.getExperimentId());
+        java.util.List<ErrorModel> errors = experiment.getErrors();
+
         getInfoDialogPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), 
                 "Information about experiment [" + experiment.getExperimentId() + "]: " + experiment.getExperimentName()));
@@ -102,7 +106,7 @@ public class JobInfoDialog extends JDialog {
 
         String temp = "";
         try{
-            temp = experiment.getProjectId().split("_")[0];
+            temp = experiment.getProjectId().substring(0, experiment.getExecutionId().length()-37);
         }catch(Exception ex){
             temp = experiment.getProjectId();
         }
@@ -157,11 +161,28 @@ public class JobInfoDialog extends JDialog {
         toolTip = "The amount of wall clock time requested during job submission.";
         JLabel rwct = createLabel(text,toolTip);
         
-        text = "<html><b>Status: </b><span style='background:#F0F0F0'>" + jobStatus + "</span></html>";
-        toolTip = "The current status of the job.";
-        JLabel status = createLabel(text,toolTip);
-        
-        
+        text = "<html><b>Experiment Status: </b><span style='background:#F0F0F0'>" + experimentStatus + "</span></html>";
+        toolTip = "The current status of the experiment.";
+        JLabel experimentStatusLabel = createLabel(text,toolTip);
+
+        JLabel jobStatusLabel = null;
+        if(jobStatus != null) {
+            text = "<html><b>Job Status: </b><span style='background:#F0F0F0'>" + experimentStatus + "</span></html>";
+            toolTip = "The current status of the job.";
+            jobStatusLabel = createLabel(text, toolTip);
+        }
+
+        JLabel errorLabel = null;
+        if(errors != null && errors.size()>0){
+            text = "";
+            for(ErrorModel errorModel : errors) {
+                text = text + errorModel.getActualErrorMessage() + "<br/>";
+            }
+            text = "<html><b>Errors: </b><span style='background:#F0F0F0'>" + text + "</span></html>";
+            toolTip = "The errors when executing the experiment/job.";
+            errorLabel = createLabel(text, toolTip);
+        }
+
         text = "<html><b>Used CPUs: </b><span style='background:#F0F0F0'>" + 0 + "</span></html>";
         toolTip = "The number of CPU's actually used by this job.";
         JLabel ucpu = createLabel(text,toolTip);         
@@ -187,22 +208,25 @@ public class JobInfoDialog extends JDialog {
         
         // panel prints out in 1x3 rows
         getInfoDialogPanel.add(name);
-        getInfoDialogPanel.add(hpc);
-        getInfoDialogPanel.add(rcpu);
-        
-//        getInfoDialogPanel.add(researchProject);
-        getInfoDialogPanel.add(queue);
-//        getInfoDialogPanel.add(rmem);
-        
         getInfoDialogPanel.add(project);
-        getInfoDialogPanel.add(localID);
-        getInfoDialogPanel.add(rwct);
-        
         getInfoDialogPanel.add(app);
-//        getInfoDialogPanel.add(ucpu);
-        
-        getInfoDialogPanel.add(status);
+        getInfoDialogPanel.add(hpc);
+        getInfoDialogPanel.add(experimentStatusLabel);
+        if(jobStatusLabel != null){
+            getInfoDialogPanel.add(jobStatusLabel);
+        }
+        getInfoDialogPanel.add(localID);
+        getInfoDialogPanel.add(rcpu);
+        getInfoDialogPanel.add(queue);
+        getInfoDialogPanel.add(rwct);
         getInfoDialogPanel.add(umem);
+
+        if(errorLabel != null){
+            getInfoDialogPanel.add(errorLabel);
+        }
+//        getInfoDialogPanel.add(researchProject);
+//        getInfoDialogPanel.add(rmem);
+//        getInfoDialogPanel.add(ucpu);
 //        getInfoDialogPanel.add(stop);
         
 //        getInfoDialogPanel.add(cost);

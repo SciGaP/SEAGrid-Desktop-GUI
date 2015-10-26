@@ -492,7 +492,8 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							"No experiment selected!!", "Delete Experiment",
 							JOptionPane.ERROR_MESSAGE);
 				} else {
-					int response = JOptionPane.showConfirmDialog(null, "Confirm Delete Experiment");
+					int response = JOptionPane.showConfirmDialog(null, "The experiment data will be completely deleted",
+							"Do you want to continue", JOptionPane.YES_NO_OPTION);
 					if(response == JOptionPane.OK_OPTION){
 						SwingWorker worker = new SwingWorker() {
 							@Override
@@ -657,14 +658,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 	}
 
 	public void doEditNewExperiment() {
-
 		jobEditor = new EditJobPanel();
-
-		int size = queueModel.getSize();
-
-		queueList.setSelectedIndex(size + 1);
-
-		System.err.println("job index is: " + (size + 1));
 	}
 
 	public void doEditNewJob(ExperimentSummaryModel experiment) {

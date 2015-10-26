@@ -420,4 +420,17 @@ public class AiravataManager {
             return false;
         }
     }
+
+    public static String getJobStatus(String experimentId){
+        try{
+            List<JobModel> jobDetails = getClient().getJobDetails(getAuthzToken(), experimentId);
+            if(jobDetails != null && jobDetails.size()>0){
+                return jobDetails.get(0).getJobStatus().getJobState().toString();
+            }
+            return null;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+    }
 }

@@ -3995,7 +3995,7 @@ class JobTableData extends AbstractTableModel implements
 			new ColumnData("Local Job ID", 85, JLabel.RIGHT),
 			new ColumnData("Requested CPUs", 50, JLabel.RIGHT),
 			new ColumnData("Requested Memory", 75, JLabel.RIGHT),
-			new ColumnData("Status", 150, JLabel.RIGHT),
+			new ColumnData("Experiment Status", 150, JLabel.RIGHT),
 			new ColumnData("Start Time", 100, JLabel.RIGHT),
 			new ColumnData("Stop Time", 100, JLabel.RIGHT),
 			new ColumnData("Created", 100, JLabel.RIGHT),
@@ -4203,17 +4203,17 @@ class JobTableData extends AbstractTableModel implements
 			return row.experiment.getProjectId();
 		case 4:
 			try{
-				return row.experiment.getExecutionId().split("_")[0];
+				return row.experiment.getExecutionId().substring(0, row.experiment.getExecutionId().length() - 37);
 			}catch (Exception ex){
 				return row.experiment.getExecutionId();
 			}
 		case 5:
-//			try {
-//				return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId()
-//						.split("_")[0];
-//			}catch (Exception ex){
-//				return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId();
-//			}
+			try {
+				return row.experiment.getResourceHostId()
+						.split("_")[0];
+			}catch (Exception ex){
+				return row.experiment.getResourceHostId();
+			}
 		case 6:
 //			return row.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName();
 		case 7:
@@ -4231,8 +4231,8 @@ class JobTableData extends AbstractTableModel implements
 		case 13:
 			try{
 				Date date = new Date(row.experiment.getCreationTime());
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-				sdf.setTimeZone(TimeZone.getTimeZone("GMT-4"));
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//				sdf.setTimeZone(TimeZone.getTimeZone("GMT-4"));
 				return sdf.format(date);
 			}catch (Exception ex){
 				return row.experiment.getCreationTime();
@@ -4394,8 +4394,8 @@ class JobComparator implements Comparator {
 					.compareTo(s2.experiment.getExecutionId());
 			break;
 		case 5: // hpc system
-//			result = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId()
-//					.compareTo(s2.experiment.getUserConfigurationData().getComputationalResourceScheduling().getResourceHostId());
+			result = s1.experiment.getResourceHostId()
+					.compareTo(s2.experiment.getResourceHostId());
 			break;
 		case 6: // queue
 //			result = s1.experiment.getUserConfigurationData().getComputationalResourceScheduling().getQueueName()
@@ -4415,8 +4415,8 @@ class JobComparator implements Comparator {
 //			result = l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
 			break;
 		case 10: // status
-//			result = s1.experiment.getExperimentStatus().getState().name()
-//					.compareTo(s2.experiment.getExperimentStatus().getState().name());
+			result = s1.experiment.getExperimentStatus()
+					.compareTo(s2.experiment.getExperimentStatus());
 			break;
 		case 11: // start time
 			result = (""+s1.experiment.getCreationTime()).compareTo(

@@ -20,6 +20,7 @@ import org.apache.airavata.gridchem.experiment.ExperimentHandlerUtils;
 import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDescription;
 import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
+import org.apache.airavata.model.application.io.InputDataObjectType;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.airavata.model.util.ExperimentModelUtil;
 import org.apache.airavata.model.workspace.Project;
@@ -181,7 +182,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         cal.add(Calendar.MINUTE, 30);
 
         init();
-
+        this.setAlwaysOnTop(true);
     }
 
     public EditJobPanel(String input, String appName) {
@@ -479,7 +480,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
             int tHours = diffInMinutes / 60;
             int tMins = diffInMinutes % 60;
             hrnm = new SpinnerNumberModel(10, 0, 60, 1);
-            minnm = new SpinnerNumberModel(10, 0, 59, 1);
+            minnm = new SpinnerNumberModel(30, 0, 59, 1);
         } else {
             hrnm = new SpinnerNumberModel(0, 0, 60, 1);
             initial = 30;
@@ -521,7 +522,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         numNodeSpin.setModel(new SpinnerNumberModel(1, 1, 1000, 1));
 
-        numCoreSpin.setModel(new SpinnerNumberModel(1, 1, 1000, 1));
+        numCoreSpin.setModel(new SpinnerNumberModel(16, 1, 1000, 1));
 
         // Create Memory Configuration
         memSizeLabel = new JLabel("Preferred Memory (Mbytes):");
@@ -1028,6 +1029,14 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
             ExperimentHandler experimentHandler = ExperimentHandlerUtils
                     .getExperimentHandler((String) experimentParmas.get(ExpetimentConst.APP_ID));
+            List<InputDataObjectType> inputs = dynamicInputPanel.getInputs();
+            for(InputDataObjectType input : inputs){
+                if(input.getValue()==null || input.getValue().isEmpty()){
+                    JOptionPane.showMessageDialog(this, "Please select valid input to "+input.getName(), "Incomplete Experiment Data",
+                            JOptionPane.OK_OPTION);
+                    return;
+                }
+            }
             experimentParmas.put(ExpetimentConst.INPUTS, dynamicInputPanel.getInputs());
 
             if(isUpdating){
