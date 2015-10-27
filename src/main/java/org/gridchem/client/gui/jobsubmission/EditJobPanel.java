@@ -212,14 +212,14 @@ public class EditJobPanel extends JDialog implements ActionListener,
      */
     public EditJobPanel(Frame owner, ExperimentModel experiment) throws HeadlessException {
         super(owner);
-
+        this.setVisible(false);
         this.experimentModel = experiment;
 
         this.isUpdating = true;
         interfaceDescriptions = AiravataManager.getAllAppInterfaces();
         init();
         updateForm(experiment);
-
+        this.setVisible(true);
     }
 
 
@@ -336,17 +336,12 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         projCombo = new JComboBox();
         populateProjects();
-        if(isUpdating){
-            projCombo.setEnabled(false);
-        }
+
         JLabel projNameLabel = new JLabel("Project name: ");
         projNameLabel.setLabelFor(projCombo);
 
         expNameText = new JTextField(20);
         expNameText.setText((String) experimentParmas.get(ExpetimentConst.EXP_NAME));
-        if(isUpdating){
-            expNameText.setEnabled(false);
-        }
 
         JLabel expNameLabel = new JLabel("Experiment name: ");
         expNameLabel.setLabelFor(expNameText);
@@ -1177,13 +1172,21 @@ public class EditJobPanel extends JDialog implements ActionListener,
     }
 
     public void doClose(){
-        SubmitJobsWindow.getInstance();
-        this.dispose();
+        int response = JOptionPane.showConfirmDialog(null, "The updated experiment data will be lost",
+                "Do you want to continue", JOptionPane.YES_NO_OPTION);
+        if(response == JOptionPane.OK_OPTION){
+            SubmitJobsWindow.getInstance();
+            this.dispose();
+        }
     }
-    public void doCancel() {
 
-        SubmitJobsWindow.getInstance();
-        this.dispose();
+    public void doCancel() {
+        int response = JOptionPane.showConfirmDialog(null, "The updated experiment data will be lost",
+                "Do you want to continue", JOptionPane.YES_NO_OPTION);
+        if(response == JOptionPane.OK_OPTION){
+            SubmitJobsWindow.getInstance();
+            this.dispose();
+        }
     }
 
 

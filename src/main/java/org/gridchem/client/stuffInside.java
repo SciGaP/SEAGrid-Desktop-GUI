@@ -460,7 +460,24 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							"No job selected!!", "Edit Job",
 							JOptionPane.ERROR_MESSAGE);
 				} else {
-					doEditJobPanel();
+					SwingWorker worker = new SwingWorker() {
+						@Override
+						public Object construct() {
+							RouteClass.keyIndex = 0;
+							RouteClass.initCount = 0;
+							OptTable.optC = 0;
+							selectedGUI = 0;
+							doEditJobPanel();
+							return null;
+						}
+
+						@Override
+						public void finished() {
+							stopWaiting();
+						}
+					};
+					startWaiting("Loading Experiment", "Please wait few seconds", worker);
+					worker.start();
 				}
 
 			} else if (e.getSource() == newJButton) {
