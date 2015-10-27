@@ -61,16 +61,11 @@ import org.gridchem.client.common.Settings;
 import org.gridchem.client.common.Status;
 import org.gridchem.client.common.StatusEvent;
 import org.gridchem.client.exceptions.VisualizationException;
-import org.gridchem.client.gui.filebrowser.FileBrowser;
-import org.gridchem.client.gui.filebrowser.FileBrowserImpl;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
 import org.gridchem.client.gui.jobsubmission.ProjectComboModel;
 import org.gridchem.client.gui.jobsubmission.commands.*;
-import org.gridchem.client.gui.login.LoginDialog;
 import org.gridchem.client.gui.metadataeditor.MetaDataEditor;
 import org.gridchem.client.gui.panels.CancelCommandPrompt;
-import org.gridchem.client.gui.panels.WarningDialog;
-import org.gridchem.client.gui.panels.myccg.MonitorVO;
 import org.gridchem.client.gui.panels.myccg.job.notification.NotificationManagerDialog;
 import org.gridchem.client.interfaces.StatusListener;
 import org.gridchem.client.util.Env;
@@ -269,7 +264,13 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		m_data.m_sortAsc = false;
 		m_data.sortData();
 
-		refresh();
+		javax.swing.Timer timer = new javax.swing.Timer(5000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				refresh();
+			}
+		});
+		timer.start();
 	}
 
 	/**
