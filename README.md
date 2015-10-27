@@ -1,4 +1,4 @@
-<h1>GridChem-Client Maven version</h1>
+<h1>Desktop Client Application to SEAGrid Science Gateways</h1>
 
 
 <h5>To build the project</h5>
