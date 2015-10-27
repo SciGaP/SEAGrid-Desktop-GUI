@@ -264,24 +264,30 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
         //System.out.println("Image info "+ Env.getGridChemLogoLocation()+" "+imgtext);
         String textinfo1 = "<div style=\"background-color:#E7EEF6; color:#000000\">" +
                 "<div style=\"background-color:#A7B3C7; color:#FFFFFF;\">" +
-                imgtext + "<font size=5> Welcome to SEAGrid !!" +
-                "Portal for Science and Engineering Applications Grid !!</font>" +
+                imgtext + "<font size=5> Welcome to Science and Engineering Applications Grid (SEAGrid) !!" +
+                "</font>" +
                 "<br></div>" +
                 "<p>You are running the " +
-                "<Font color='green'>SciGaP Service </font>" +
-                "version of the client with the <Font color='blue'>" +
-                ((Settings.DEVEL) ? "DEVELOPMENT" :
-                        ((Settings.FAILOVER) ? "FAILOVER" :
-                                ((Settings.LOCAL) ? "LOCAL" : "PRODUCTION"))) +
-                " </font> cyberinfrastructure.</p>";
-        String textinfo2 = "<p>For more information, " +
-                "please visit <a href='https://seagrid.org/'>https://seagrid.org/</a></div></p>";
+                "<Font color='green'>SciGaP Desktop Client </font>" +
+                "Application.<Font color='blue'>" +
+//                ((Settings.DEVEL) ? "DEVELOPMENT" :
+//                        ((Settings.FAILOVER) ? "FAILOVER" :
+//                                ((Settings.LOCAL) ? "LOCAL" : "PRODUCTION"))) +
+                " </font></p>";
+        String textinfo2 = "<p>To use Web Portal and for more information, " +
+                " visit <a href='https://seagrid.org/'>https://seagrid.org/</a></div></p>";
+        String textinfo3 = "<p>If you do not have SEAGrid account, you may request one on the web portal." +
+                "</div></p>";
+
+        String textinfo4 = "<br><p><Font color='red'>Note: This version is in active development and will" +
+                " be auto-updated periodically.</font></p>";
+
         URL rssurl;
         try {
             rssurl = new URL(Invariants.CCGRSSFeed);
             dyninfoPane = new JTextPane();
             dyninfoPane.setEditorKit(new HTMLEditorKit());
-            dyninfoPane.setText(textinfo1 + /**prss.parseRSS(rssurl)**/  textinfo2);
+            dyninfoPane.setText(textinfo1 + /**prss.parseRSS(rssurl)**/  textinfo2 + textinfo3 + textinfo4);
             dyninfoPane.setCaretPosition(0);
 
         } catch (MalformedURLException e) {

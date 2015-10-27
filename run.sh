@@ -1,1 +1,1 @@
-java -cp target/GridChem-Client-Maven-1.0.0.jar:target/lib/* org.gridchem.client.GridChem
+java -cp target/SEAGrid-Client-0.9.1.jar:target/lib/* org.gridchem.client.GridChem
