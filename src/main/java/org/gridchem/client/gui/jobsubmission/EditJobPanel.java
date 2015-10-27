@@ -1170,12 +1170,8 @@ public class EditJobPanel extends JDialog implements ActionListener,
     }
 
     public void doClose(){
-        int response = JOptionPane.showConfirmDialog(null, "The updated experiment data will be lost",
-                "Do you want to continue", JOptionPane.YES_NO_OPTION);
-        if(response == JOptionPane.OK_OPTION){
-            SubmitJobsWindow.getInstance();
-            this.dispose();
-        }
+        SubmitJobsWindow.getInstance();
+        this.dispose();
     }
 
     public void doCancel() {

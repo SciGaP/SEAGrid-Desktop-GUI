@@ -626,40 +626,42 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 				System.out
 						.println("Skipped update because gui was already busy.");
 		}*/
+		experiments = AiravataManager.getAllExperimentSummariesInProject(((ProjectComboModel)projectComboBox
+				.getSelectedItem()).getProjectId());
 		updateJobTable(experiments);
 	}
 
-	/**
-	 * This is the internal refresh jobs method. It will update the appropriate
-	 * listing.
-	 */
-	protected void refreshJobs() {
-
-		List<ExperimentSummaryModel> jobs = AiravataManager.getAllExperimentSummariesInProject(GridChem.project.getProjectID());
-
-		jobTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-		if (isUpdatedWithSearchResults()) {
-			System.out.println("Search is present.  Loading new jobs...");
-		} else {
-			System.out.println("Refeshing jobs...");
-		}
-
-		m_data.loadData(jobs);
-
-		jobTable.setCursor(Cursor.getDefaultCursor());
-
-//		if (updatedWithSearchResults) {
-//			statusChanged(new StatusEvent(lastSearch, Status.START));
+//	/**
+//	 * This is the internal refresh jobs method. It will update the appropriate
+//	 * listing.
+//	 */
+//	protected void refreshJobs() {
+//
+//		List<ExperimentSummaryModel> jobs = AiravataManager.getAllExperimentSummariesInProject(GridChem.project.getProjectID());
+//
+//		jobTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//
+//		if (isUpdatedWithSearchResults()) {
+//			System.out.println("Search is present.  Loading new jobs...");
 //		} else {
-//			try {
-//				m_data.retrieveData();
-//			} catch (Exception e) {
-//				System.out.println("Error refeshing monitoring info: "
-//						+ e.getMessage());
-//			}
+//			System.out.println("Refeshing jobs...");
 //		}
-	}
+//
+//		m_data.loadData(jobs);
+//
+//		jobTable.setCursor(Cursor.getDefaultCursor());
+//
+////		if (updatedWithSearchResults) {
+////			statusChanged(new StatusEvent(lastSearch, Status.START));
+////		} else {
+////			try {
+////				m_data.retrieveData();
+////			} catch (Exception e) {
+////				System.out.println("Error refeshing monitoring info: "
+////						+ e.getMessage());
+////			}
+////		}
+//	}
 
 	/**
 	 * Refresh the job windows with a new set of jobs. This is useful after a
@@ -786,7 +788,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 					RouteClass.keyIndex = 0;
 					RouteClass.initCount = 0;
 					OptTable.optC = 0;
-					refreshJobs();
+					refresh();
 					return null;
 				}
 
