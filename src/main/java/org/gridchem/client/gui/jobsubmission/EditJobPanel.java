@@ -212,14 +212,12 @@ public class EditJobPanel extends JDialog implements ActionListener,
      */
     public EditJobPanel(Frame owner, ExperimentModel experiment) throws HeadlessException {
         super(owner);
-        this.setVisible(false);
         this.experimentModel = experiment;
 
         this.isUpdating = true;
         interfaceDescriptions = AiravataManager.getAllAppInterfaces();
         init();
         updateForm(experiment);
-        this.setVisible(true);
     }
 
 
