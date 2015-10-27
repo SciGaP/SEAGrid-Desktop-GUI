@@ -187,7 +187,7 @@ public class EditJobPanel extends JDialog implements ActionListener,
         cal.add(Calendar.MINUTE, 30);
 
         init();
-        this.setAlwaysOnTop(true);
+//        this.setAlwaysOnTop(true);
     }
 
     public EditJobPanel(String input, String appName) {
@@ -1086,7 +1086,6 @@ public class EditJobPanel extends JDialog implements ActionListener,
                         RouteClass.keyIndex = 0;
                         RouteClass.initCount = 0;
                         OptTable.optC = 0;
-                        experimentParmas.put(ExpetimentConst.EXPERIMENT_ID, experimentModel.getExperimentId());
                         try {
                             experimentHandler.createExperiment(experimentParmas);
                         } catch (ExperimentCreationException ex) {
