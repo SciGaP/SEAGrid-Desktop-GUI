@@ -75,7 +75,7 @@ public class Settings {
   public static boolean VERBOSE = true;
   public static boolean FAILOVER = false;
   public static boolean WEBSERVICE = false;
-  public static boolean DEVEL = false;  // whether a -devel flag was given or not
+  public static boolean DEVEL = true;  // whether a -devel flag was given or not
   public static boolean LOCAL = false;
   // length of session with GMS
   public static final int SESSION_LENGTH_MINUTES = 120;
