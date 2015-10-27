@@ -48,6 +48,9 @@ import cct.vecmath.vPoint3f;
 import nanocad.nanocadFrame2;
 import nanocad.newNanocad;
 import org.apache.airavata.gridchem.AiravataManager;
+import org.apache.airavata.gridchem.file.FileBrowserAiravata;
+import org.apache.airavata.model.application.io.InputDataObjectType;
+import org.apache.airavata.model.application.io.OutputDataObjectType;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.airavata.model.experiment.ExperimentSummaryModel;
 import org.apache.airavata.model.status.ExperimentState;
@@ -58,6 +61,7 @@ import org.gridchem.client.common.Settings;
 import org.gridchem.client.common.Status;
 import org.gridchem.client.common.StatusEvent;
 import org.gridchem.client.exceptions.VisualizationException;
+import org.gridchem.client.gui.filebrowser.FileBrowser;
 import org.gridchem.client.gui.filebrowser.FileBrowserImpl;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
 import org.gridchem.client.gui.jobsubmission.ProjectComboModel;
@@ -402,7 +406,7 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		dataButton = new JButton("Monitor Output");
 		moldenButton = new JButton("View in Molden");
 		killButton = new JButton("Cancel Experiment");
-		retrieveButton = new JButton("Browse Experiment File Data");
+		retrieveButton = new JButton("Download Experiment File Data");
 		deleteButton = new JButton("Delete Experiments from List");
 		refreshButton = new JButton("Refresh Experiments");
 		searchButton = new JButton("Search for Experiments");
@@ -773,10 +777,14 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 				JOptionPane.showMessageDialog(SubmitJobsWindow.frame,
 						"No experiment selected!!", "Browse Experiment File Data",
 						JOptionPane.ERROR_MESSAGE);
+			} else if(!selectedExperiment.getExperimentStatus().equals("COMPLETED")){
+				JOptionPane.showMessageDialog(SubmitJobsWindow.frame,
+						"Experiment is not completed yet!!", "Download Experiment File Data",
+						JOptionPane.ERROR_MESSAGE);
 			} else {
 				ExperimentModel experimentModel = AiravataManager.getExperiment(getSelectedJob().getExperimentId());
 				if(experimentModel!=null) {
-					doBrowseFiles(experimentModel);
+					doDownloadFiles(experimentModel);
 				}
 			}
 		} else if (e.getSource() == refreshButton) {
@@ -2243,15 +2251,46 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		}*/
 	}
 
-	private void doBrowseFiles(ExperimentModel experiment) {
+	private void doDownloadFiles(ExperimentModel experiment) {
 
-		jobFrame = new JFrame("SEAGrid File Browser");
-		jobFrame.setMinimumSize(new Dimension(400, 400));
+		SwingWorker worker = new SwingWorker() {
+			@Override
+			public Object construct() {
+				RouteClass.keyIndex = 0;
+				RouteClass.initCount = 0;
+				OptTable.optC = 0;
+				List<String> experimentFileVals = new ArrayList<>();
+				for(InputDataObjectType input : experiment.getExperimentInputs()){
+					experimentFileVals.add(input.getValue());
+				}
+				for(OutputDataObjectType output : experiment.getExperimentOutputs()){
+					experimentFileVals.add(output.getValue());
+				}
+				FileBrowserAiravata fileBrowserAiravata = new FileBrowserAiravata();
 
-		jobFrame.getContentPane().add(new FileBrowserImpl(experiment));
-		jobFrame.pack();
-		jobFrame.setVisible(true);
-		jobFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+				String outputDir = Env.getUserDataDir() + File.separator + GridChem.user.getUserName() +
+						File.separator + experiment.getExperimentId();
+				fileBrowserAiravata.retrieveFiles(experimentFileVals, outputDir);
+				return null;
+			}
+
+			@Override
+			public void finished() {
+				stopWaiting();
+			}
+		};
+		startWaiting("Downloading Experiment File Data", "Please wait few seconds", worker);
+		worker.start();
+
+
+
+//		jobFrame = new JFrame("SEAGrid File Browser");
+//		jobFrame.setMinimumSize(new Dimension(400, 400));
+//
+//		jobFrame.getContentPane().add(new FileBrowserImpl(experiment));
+//		jobFrame.pack();
+//		jobFrame.setVisible(true);
+//		jobFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
 		/*try {
 

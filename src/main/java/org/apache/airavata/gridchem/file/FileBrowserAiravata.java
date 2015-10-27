@@ -16,6 +16,7 @@ import org.apache.oodt.cas.metadata.Metadata;
 import javax.swing.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 public class FileBrowserAiravata {
     private static final String transferServiceFacClass = "org.apache.oodt.cas.filemgr.datatransfer.RemoteDataTransferFactory";
@@ -94,6 +95,29 @@ public class FileBrowserAiravata {
             }
         });
     }
+
+    /**
+     * Download a list of files from remote repository using file path
+     * @param remoteFilePaths
+     * @param outputPath
+     * @throws IOException
+     */
+    public void retrieveFiles(List<String> remoteFilePaths, String outputPath){
+        File outputDir = new File(outputPath);
+        if(!outputDir.exists()){
+            outputDir.mkdirs();
+        }
+        for(String remoteFilePath : remoteFilePaths) {
+            String[] bits = AiravataConfig.getProperty("http_file_repo_location").split("/");
+            String temp = bits[bits.length - 1];
+            final String remoteHttpPath = AiravataConfig.getProperty("http_file_repo_location") + remoteFilePath.split(temp)[1];
+            DownloadTask task = new DownloadTask(remoteHttpPath, outputPath);
+            task.execute();
+        }
+
+        DesktopUtil.openAndWarn(new File(outputPath), null);
+    }
+
 
     /**
      * Checks weather a product is available in the repository

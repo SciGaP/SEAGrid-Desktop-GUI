@@ -15,6 +15,11 @@ public class DownloadTask extends SwingWorker<Void, Void> {
     private String saveDirectory;
     private FileDownloadDialog gui;
 
+
+    public DownloadTask(String downloadURL, String saveDirectory) {
+        this(null, downloadURL, saveDirectory);
+    }
+
     public DownloadTask(FileDownloadDialog gui, String downloadURL, String saveDirectory) {
         this.gui = gui;
         this.downloadURL = downloadURL;
@@ -31,7 +36,9 @@ public class DownloadTask extends SwingWorker<Void, Void> {
             util.downloadFile(downloadURL);
 
             // set file information on the GUI
-            gui.setFileInfo(util.getFileName(), util.getContentLength());
+            if(gui!=null) {
+                gui.setFileInfo(util.getFileName(), util.getContentLength());
+            }
 
             String saveFilePath = saveDirectory + File.separator + util.getFileName();
 
@@ -57,8 +64,8 @@ public class DownloadTask extends SwingWorker<Void, Void> {
 
             util.disconnect();
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(gui, "Error downloading file: " + ex.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+//            JOptionPane.showMessageDialog(gui, "Error downloading file: " + ex.getMessage(),
+//                    "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
             setProgress(0);
             cancel(true);
@@ -71,10 +78,10 @@ public class DownloadTask extends SwingWorker<Void, Void> {
      */
     @Override
     protected void done() {
-        if (!isCancelled()) {
-            JOptionPane.showMessageDialog(gui,
-                    "File has been downloaded successfully!", "Message",
-                    JOptionPane.INFORMATION_MESSAGE);
-        }
+//        if (!isCancelled()) {
+//            JOptionPane.showMessageDialog(null,
+//                    "File has been downloaded successfully!", "Message",
+//                    JOptionPane.INFORMATION_MESSAGE);
+//        }
     }
 }
