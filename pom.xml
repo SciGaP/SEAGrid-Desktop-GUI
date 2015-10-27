@@ -475,7 +475,14 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>webstart-maven-plugin</artifactId>
-                        <version>1.0-beta-7-SNAPSHOT</version>
+                        <version>1.0-beta-6</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>keytool-api-1.7</artifactId>
+                                <version>1.5</version>
+                            </dependency>
+                        </dependencies>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -485,21 +492,25 @@
                             </execution>
                         </executions>
                         <configuration>
+                            <resourcesDirectory>${project.basedir}/src/main/resources</resourcesDirectory>
                             <unsignAlreadySignedJars>true</unsignAlreadySignedJars>
-                            <codebase>file://${project.basedir}/target/jnlp/</codebase> <!-- url of the place where the codebase will be hosted -->
+                            <codebase>https://seagrid.org/jnlp/</codebase> <!-- url of the place where the codebase will be hosted -->
+                            <libPath>lib</libPath>
                             <jnlp>
+                                <j2seVersion>1.8</j2seVersion>
+                                <outputFile>seagrid.jnlp</outputFile>
                                 <mainClass>org.gridchem.client.GridChem</mainClass>
+                                <offlineAllowed>false</offlineAllowed>
                             </jnlp>
                             <!--pack200>true</pack200-->
                             <sign>
-                                <keystore>fillme</keystore>
-                                <keypass>fillme</keypass>  <!-- we need to override passwords easily from the command line. ${keypass} -->
-                                <storepass>fillme</storepass> <!-- ${storepass} -->
-                                <!--storetype>fillme</storetype-->
-                                <alias>fillme</alias>
+                                <keystore>${sign.keystore}</keystore>
+                                <keypass>${sign.keypass}</keypass>  <!-- we need to override passwords easily from the command line. ${keypass} -->
+                                <storepass>${sign.storepass}</storepass> <!-- ${storepass} -->
+                                <storetype>${sign.storetype}</storetype>
+                                <alias>${sign.alias}</alias>
 
                                 <!--validity>fillme</validity-->
-
                                 <!-- only required for generating the keystore -->
                                 <dnameCn>fillme</dnameCn>
                                 <dnameOu>fillme</dnameOu>
@@ -507,11 +518,11 @@
                                 <dnameL>fillme</dnameL>
                                 <dnameSt>fillme</dnameSt>
                                 <dnameC>fillme</dnameC>
-                                <verify>true</verify> <!-- verify that the signing operation succeeded -->
+                                <verify>fillme</verify> <!-- verify that the signing operation succeeded -->
                                 <!-- KEYSTORE MANAGEMENT -->
                                 <keystoreConfig>
-                                    <delete>true</delete> <!-- delete the keystore -->
-                                    <gen>true</gen>       <!-- optional shortcut to generate the store. -->
+                                    <delete>false</delete> <!-- delete the keystore -->
+                                    <gen>false</gen>       <!-- optional shortcut to generate the store. -->
                                 </keystoreConfig>
                             </sign>
                             <verbose>true</verbose>
@@ -540,12 +551,6 @@
                 https://repository-master.mulesoft.org/nexus/content/groups/public/
             </url>
             <layout>default</layout>
-        </repository>
-        <repository>
-            <id>snapshots-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
         </repository>
     </repositories>
 </project>
