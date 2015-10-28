@@ -16,10 +16,13 @@ public class DynamicInputPanel extends JPanel {
     private JPanel innerPanel;
     private List<InputDataObjectType> inputs;
     private List<JTextField> inputFields;
+    private final JFileChooser fc;
 
     public DynamicInputPanel (EditJobPanel parent){
         super();
         this.parent = parent;
+
+        fc = new JFileChooser();
         setLayout(new FlowLayout(FlowLayout.LEADING));
     }
 
@@ -79,7 +82,6 @@ public class DynamicInputPanel extends JPanel {
                 txtPath.setSize(60,30);
                 txtPath.setMaximumSize(new Dimension());
                 JButton selectButton = new JButton("Add");
-                final JFileChooser fc = new JFileChooser();
 
                 selectButton.addActionListener(new ActionListener() {
                     @Override
