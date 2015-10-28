@@ -153,7 +153,7 @@ public class MonitorVO extends JFrame implements Timeable {
         } else {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    monitorPanel.refresh();
+                    //monitorPanel.refresh();
                 }
             });
         } 
