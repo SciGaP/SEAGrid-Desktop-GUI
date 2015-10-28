@@ -268,12 +268,8 @@ public class optsComponent extends JComponent implements ActionListener, WindowL
                 "</font>" +
                 "<br></div>" +
                 "<p>You are running the " +
-                "<Font color='green'>SciGaP Desktop Client </font>" +
-                "Application.<Font color='blue'>" +
-//                ((Settings.DEVEL) ? "DEVELOPMENT" :
-//                        ((Settings.FAILOVER) ? "FAILOVER" :
-//                                ((Settings.LOCAL) ? "LOCAL" : "PRODUCTION"))) +
-                " </font></p>";
+                "<Font color='green'>SEAGrid Desktop Client </font>" +
+                "Application. </p>";
         String textinfo2 = "<p>To use Web Portal and for more information, " +
                 " visit <a href='https://seagrid.org/'>https://seagrid.org/</a></div></p>";
         String textinfo3 = "<p>If you do not have SEAGrid account, you may request one on the web portal." +
