@@ -38,7 +38,6 @@
 
 package org.gridchem.client.gui.panels.myccg.job;
 
-import org.apache.airavata.AiravataConfig;
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.commons.ErrorModel;
 import org.apache.airavata.model.experiment.ExperimentModel;
@@ -167,7 +166,7 @@ public class JobInfoDialog extends JDialog {
 
         JLabel jobStatusLabel = null;
         if(jobStatus != null) {
-            text = "<html><b>Job Status: </b><span style='background:#F0F0F0'>" + experimentStatus + "</span></html>";
+            text = "<html><b>Job Status: </b><span style='background:#F0F0F0'>" + jobStatus + "</span></html>";
             toolTip = "The current status of the job.";
             jobStatusLabel = createLabel(text, toolTip);
         }

@@ -56,6 +56,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.apache.airavata</groupId>
+            <artifactId>File-Service</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.apache.oodt</groupId>
             <artifactId>cas-filemgr</artifactId>
             <version>0.9</version>

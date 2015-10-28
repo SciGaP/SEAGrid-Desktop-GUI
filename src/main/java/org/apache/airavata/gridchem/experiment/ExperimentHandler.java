@@ -6,6 +6,7 @@ import org.apache.airavata.ExpetimentConst;
 import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.gridchem.file.FileBrowserAiravata;
 import org.apache.airavata.gridchem.file.FileHandlerException;
+import org.apache.airavata.gridchem.file.FileSizeTooLargeException;
 import org.apache.airavata.model.application.io.DataType;
 import org.apache.airavata.model.application.io.InputDataObjectType;
 import org.apache.airavata.model.experiment.ExperimentModel;
@@ -28,7 +29,8 @@ public class ExperimentHandler {
         fb = new FileBrowserAiravata();
     }
 
-    public String createExperiment(Map<String, Object> params) throws ExperimentCreationException, FileHandlerException {
+    public String createExperiment(Map<String, Object> params) throws ExperimentCreationException, FileHandlerException,
+            FileSizeTooLargeException {
 
         ExperimentModel exp = assembleExperiment(params);
 
@@ -46,7 +48,8 @@ public class ExperimentHandler {
     }
 
 
-    public void updateExperiment(Map<String, Object> params) throws ExperimentCreationException, FileHandlerException {
+    public void updateExperiment(Map<String, Object> params) throws ExperimentCreationException, FileHandlerException,
+            FileSizeTooLargeException {
         ExperimentModel exp = assembleExperiment(params);
         try {
             AiravataManager.getClient().updateExperiment(AiravataManager.getAuthzToken(),
@@ -58,7 +61,7 @@ public class ExperimentHandler {
         }
     }
 
-    private ExperimentModel assembleExperiment(Map<String, Object> params) throws FileHandlerException {
+    private ExperimentModel assembleExperiment(Map<String, Object> params) throws FileHandlerException, FileSizeTooLargeException {
 
         String projectID = null, experimentId = null, userID = null, expName = null, expDesc = null,
                 appId = null, gatewayId = null, hostID = null, queue = null, projectAccount = null;
@@ -105,7 +108,10 @@ public class ExperimentHandler {
             inputs = (List<InputDataObjectType>)params.get(ExpetimentConst.INPUTS);
         }
 
-        validateInputs(inputs);
+
+        List<InputDataObjectType> applicationInputs = AiravataManager.getApplicationInputs(appId);
+
+        validateInputs(inputs, applicationInputs);
 
         ExperimentModel exp =
                 ExperimentModelUtil.createSimpleExperiment(null, null, null, null, null, null,null);
@@ -118,7 +124,6 @@ public class ExperimentHandler {
         exp.setDescription(expDesc);
         exp.setExecutionId(appId);
 
-        List<InputDataObjectType> applicationInputs = AiravataManager.getApplicationInputs(appId);
         Collections.sort(applicationInputs, new Comparator<InputDataObjectType>() {
             @Override
             public int compare(InputDataObjectType o1, InputDataObjectType o2) {
@@ -154,26 +159,45 @@ public class ExperimentHandler {
         return exp;
     }
 
-    private void validateInputs(List<InputDataObjectType> inputs) throws FileHandlerException{
+    private void validateInputs(List<InputDataObjectType> inputs, List<InputDataObjectType> applicationInouts) throws FileHandlerException, FileSizeTooLargeException {
         for (int i=0; i<inputs.size(); i++) {
             if (DataType.URI.equals(inputs.get(i).getType())) {
 
                 File file = new File(inputs.get(i).getValue());
                 //If the file exists in local file system
                 if (file.exists()) {
+                    if(file.length() > 16384000){
+                        throw new FileSizeTooLargeException(file.getName() + " is larger than the max allowed file size of 16 MB.");
+                    }
                     String randSeq = new BigInteger(130, random).toString(32);
                     while (fb.hasProduct(randSeq)) {
                         randSeq = new BigInteger(130, random).toString(32);
                     }
                     String parent = file.getParent();
                     String fileName = file.getName();
-                    String productId = fb.ingestFile(parent,fileName, Settings.gridchemusername+randSeq, "GenericFile");
+                    String destName = fileName;
+                    InputDataObjectType matchingAppInput = getApplicationInput(inputs.get(i).getName(), applicationInouts);
+                    if(matchingAppInput != null && matchingAppInput.getValue()!=null && !matchingAppInput.getValue().isEmpty()){
+                        destName = matchingAppInput.getValue();
+                    }
+
+                    String productId = fb.ingestFile(parent,fileName, Settings.gridchemusername+randSeq, destName,  "GenericFile");
                     System.out.println("Product ID : "+productId);
-                    inputs.get(i).setValue("file://"+AiravataConfig.getProperty("data_archive_path")+"/"+
-                            Settings.gridchemusername+randSeq+"/"+fileName);
+                    inputs.get(i).setValue("file://"+AiravataConfig.getProperty("data_archive_path")+File.separator+
+                            Settings.gridchemusername+randSeq+File.separator+destName);
                 }
             }
         }
+    }
+
+    private InputDataObjectType getApplicationInput(String name, List<InputDataObjectType> applicationInputs){
+        for(InputDataObjectType appInput: applicationInputs){
+            if(appInput.getName().equals(name)){
+                return appInput;
+            }
+        }
+
+        return null;
     }
 
     public void launchExperiment(String expID) throws Exception {

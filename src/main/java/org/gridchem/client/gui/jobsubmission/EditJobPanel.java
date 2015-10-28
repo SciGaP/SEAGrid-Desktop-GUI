@@ -11,7 +11,6 @@ package org.gridchem.client.gui.jobsubmission;
 
 import G03Input.OptTable;
 import G03Input.RouteClass;
-import com.asprise.util.ui.progress.ProgressDialog;
 import nanocad.nanocadFrame2;
 import nanocad.newNanocad;
 import org.apache.airavata.AiravataConfig;
@@ -21,6 +20,7 @@ import org.apache.airavata.gridchem.experiment.ExperimentCreationException;
 import org.apache.airavata.gridchem.experiment.ExperimentHandler;
 import org.apache.airavata.gridchem.experiment.ExperimentHandlerUtils;
 import org.apache.airavata.gridchem.file.FileHandlerException;
+import org.apache.airavata.gridchem.file.FileSizeTooLargeException;
 import org.apache.airavata.model.appcatalog.appinterface.ApplicationInterfaceDescription;
 import org.apache.airavata.model.appcatalog.computeresource.BatchQueue;
 import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
@@ -28,7 +28,9 @@ import org.apache.airavata.model.application.io.DataType;
 import org.apache.airavata.model.application.io.InputDataObjectType;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.airavata.model.workspace.Project;
-import org.gridchem.client.*;
+import org.gridchem.client.GridChem;
+import org.gridchem.client.Invariants;
+import org.gridchem.client.SubmitJobsWindow;
 import org.gridchem.client.SwingWorker;
 import org.gridchem.client.common.Preferences;
 import org.gridchem.client.common.Settings;
@@ -469,19 +471,18 @@ public class EditJobPanel extends JDialog implements ActionListener,
 
         int maximum = 2048, maxmint = 59, minimum = 0, initial = 0, step = 1;
 
-        if (true) {
-            Calendar timewallCal = Calendar.getInstance();
-            //this.scheduling.getRequestedCpuTime();
-            Calendar baseCal = Calendar.getInstance();
-            baseCal.clear();
-            int diffInMinutes = (int) (timewallCal.getTimeInMillis() - baseCal.getTimeInMillis()) / 1000 / 60;
-            int tHours = diffInMinutes / 60;
-            int tMins = diffInMinutes % 60;
-            hrnm = new SpinnerNumberModel(10, 0, 60, 1);
-            minnm = new SpinnerNumberModel(30, 0, 59, 1);
-        } else {
-            hrnm = new SpinnerNumberModel(0, 0, 60, 1);
-            initial = 30;
+        Calendar timewallCal = Calendar.getInstance();
+        //this.scheduling.getRequestedCpuTime();
+        Calendar baseCal = Calendar.getInstance();
+        baseCal.clear();
+        int diffInMinutes = (int) (timewallCal.getTimeInMillis() - baseCal.getTimeInMillis()) / 1000 / 60;
+        int tHours = diffInMinutes / 60;
+        int tMins = diffInMinutes % 60;
+        hrnm = new SpinnerNumberModel(10, 0, 60, 1);
+        if(isUpdating){
+            minnm = new SpinnerNumberModel(experimentModel.getUserConfigurationData()
+                    .getComputationalResourceScheduling().getWallTimeLimit(), 0, 59, 1);
+        }else{
             minnm = new SpinnerNumberModel(30, 0, 59, 1);
         }
 
@@ -1061,6 +1062,10 @@ public class EditJobPanel extends JDialog implements ActionListener,
                             ex.printStackTrace();
                             JOptionPane.showMessageDialog(EditJobPanel.this, "Error staging input data files. Please try again", ex.getMessage(),
                                     JOptionPane.ERROR_MESSAGE);
+                        } catch (FileSizeTooLargeException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(EditJobPanel.this, ex.getMessage(), "Error staging input data files.",
+                                    JOptionPane.ERROR_MESSAGE);
                         }
                         doClose();
                         return null;
@@ -1087,6 +1092,10 @@ public class EditJobPanel extends JDialog implements ActionListener,
                         } catch (FileHandlerException ex) {
                             ex.printStackTrace();
                             JOptionPane.showMessageDialog(EditJobPanel.this, "Error staging input data files. Please try again", ex.getMessage(),
+                                    JOptionPane.ERROR_MESSAGE);
+                        } catch (FileSizeTooLargeException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(EditJobPanel.this, ex.getMessage(), "Error staging input data files.",
                                     JOptionPane.ERROR_MESSAGE);
                         }
                         doClose();

@@ -3,6 +3,7 @@ package org.apache.airavata.gridchem.file;
 import java.io.*;
 
 import org.apache.airavata.AiravataConfig;
+import org.apache.airavata.services.impl.SampleFileResourceClient;
 import org.apache.commons.lang.Validate;
 import org.apache.oodt.cas.filemgr.datatransfer.DataTransfer;
 import org.apache.oodt.cas.filemgr.datatransfer.RemoteDataTransferFactory;
@@ -22,6 +23,11 @@ public class FileBrowserAiravata {
     private static final String transferServiceFacClass = "org.apache.oodt.cas.filemgr.datatransfer.RemoteDataTransferFactory";
     private static final String FILE_SERVER_URL = AiravataConfig.getProperty("file_server_url");
     private XmlRpcFileManagerClient client;
+    private static  SampleFileResourceClient sampleFileResourceClient = new SampleFileResourceClient();
+
+    public FileBrowserAiravata(){
+
+    }
 
     /**
      * Uploads files to file server
@@ -30,22 +36,25 @@ public class FileBrowserAiravata {
      * @param destName product name of the destination file. If this is null, srcName is used
      * @param productType default type is "GenericFile"
      */
-    public String ingestFile(String fileLocationDir, String srcName, String destName, String productType) throws FileHandlerException {
-        StdIngester ingester;
-        ingester = new StdIngester(transferServiceFacClass);
-        Metadata prodMet = new Metadata();
-        prodMet.addMetadata("Filename", srcName);
-        prodMet.addMetadata("ProductName", destName);
-        prodMet.addMetadata("ProductType", productType);
-        prodMet.addMetadata("DataVersion", "1.0");
-
-        try {
-            prodMet.addMetadata(CoreMetKeys.FILE_LOCATION, fileLocationDir);
-            return ingester.ingest(new URL(getUrl()), new File(fileLocationDir+File.separator+srcName), prodMet);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new FileHandlerException(e.getMessage());
-        }
+    public String ingestFile(String fileLocationDir, String srcName, String destPath, String destName, String productType) throws FileHandlerException {
+//        StdIngester ingester;
+//        ingester = new StdIngester(transferServiceFacClass);
+//        Metadata prodMet = new Metadata();
+//        prodMet.addMetadata("Filename", srcName);
+//        prodMet.addMetadata("ProductName", destName);
+//        prodMet.addMetadata("ProductType", productType);
+//        prodMet.addMetadata("DataVersion", "1.0");
+//
+//        try {
+//            prodMet.addMetadata(CoreMetKeys.FILE_LOCATION, fileLocationDir);
+//            return ingester.ingest(new URL(getUrl()), new File(fileLocationDir+File.separator+srcName), prodMet);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new FileHandlerException(e.getMessage());
+//        }
+        sampleFileResourceClient.uploadFile(fileLocationDir+File.separator+srcName, destPath,
+                destName);
+        return "";
     }
 
     /**
@@ -127,7 +136,8 @@ public class FileBrowserAiravata {
      */
     public boolean hasProduct (String productName)  throws FileHandlerException {
         try {
-            return getClient().hasProduct(productName);
+//            return getClient().hasProduct(productName);
+            return sampleFileResourceClient.isDirectoryExists(productName);
         } catch (Exception e) {
             throw new FileHandlerException(e.getMessage());
         }
