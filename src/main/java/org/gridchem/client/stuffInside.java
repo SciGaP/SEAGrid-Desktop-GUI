@@ -51,6 +51,8 @@ import org.apache.airavata.model.experiment.ExperimentSummaryModel;
 import org.gridchem.client.gui.buttons.ApplicationMenuItem;
 import org.gridchem.client.gui.jobsubmission.EditJobPanel;
 import org.gridchem.client.gui.panels.CancelCommandPrompt;
+import org.gridchem.client.gui.panels.myccg.MonitorVO;
+import org.gridchem.client.gui.project.NewProjDialog;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -75,6 +77,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 
 	JButton editButton;
 	JButton newJButton;
+	JButton newProjButton;
 //	DropDownButton inputGeneratorGuiButton;
 	JButton delButton;
 	JButton submButton;
@@ -170,8 +173,9 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 				.createEtchedBorder(EtchedBorder.LOWERED);
 
 		// buttonBoxPane
-		editButton = new JButton("Edit an Experiment");
+		editButton = new JButton("Edit An Experiment");
 		newJButton = new JButton("Create New Experiment");
+		newProjButton = new JButton("Create New Project");
 //		inputGeneratorGuiButton = createDDB();
 		delButton = new JButton("Delete Selected Experiment");
 		submButton = new JButton("Launch Selected Experiments");
@@ -183,8 +187,10 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		// buttonBox.setPreferredSize(new Dimension(200,400));
 		buttonBox.setLayout(new GridLayout(7, 1, 0, 5));
 		buttonBox.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-		buttonBox.add(editButton);
+
+		buttonBox.add(newProjButton);
 		buttonBox.add(newJButton);
+		buttonBox.add(editButton);
 		newJButton.requestFocusInWindow(); // Create job gets initial focus
 //		buttonBox.add(inputGeneratorGuiButton);
 		buttonBox.add(delButton);
@@ -351,6 +357,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 		b = new ButtonListener();
 		editButton.addActionListener(b);
 		newJButton.addActionListener(b);
+		newProjButton.addActionListener(b);
 		// inputGeneratorGuiButton.addActionListener(b);
 		delButton.addActionListener(b);
 		submButton.addActionListener(b);
@@ -484,6 +491,27 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 				startWaiting("Opening Create New Experiment Window", "Please wait few seconds", worker);
 				worker.start();
 
+			} else if (e.getSource() == newProjButton) {
+
+				SwingWorker worker = new SwingWorker() {
+					@Override
+					public Object construct() {
+						RouteClass.keyIndex = 0;
+						RouteClass.initCount = 0;
+						OptTable.optC = 0;
+						selectedGUI = 0;
+						doCreateNewProject();
+						return null;
+					}
+
+					@Override
+					public void finished() {
+						stopWaiting();
+					}
+				};
+				startWaiting("Opening Create New Project Window", "Please wait few seconds", worker);
+				worker.start();
+
 			} else if (e.getSource() == delButton) {
 
 				int index = queueList.getSelectedIndex();
@@ -537,6 +565,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							OptTable.optC = 0;
 							selectedGUI = 0;
 							doSubmitExperiments();
+							GridChem.oc.monitorWindow = new MonitorVO();
 							return null;
 						}
 
@@ -572,6 +601,7 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							OptTable.optC = 0;
 							selectedGUI = 0;
 							doSubmitAllExperiment();
+							GridChem.oc.monitorWindow = new MonitorVO();
 							return null;
 						}
 
@@ -655,6 +685,22 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 				jobEditor = new EditJobPanel(null, experimentModel);
 			}
 		}
+	}
+
+	public void doCreateNewProject() {
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				NewProjDialog dialog = new NewProjDialog(new javax.swing.JFrame(), true);
+				dialog.setLocationRelativeTo(null);
+				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+					@Override
+					public void windowClosing(java.awt.event.WindowEvent e) {
+						System.exit(0);
+					}
+				});
+				dialog.setVisible(true);
+			}
+		});
 	}
 
 	public void doEditNewExperiment() {

@@ -86,6 +86,18 @@ public class AiravataManager {
         Settings.authenticated = false;
     }
 
+    public static void createNewProject(String projectName) throws Exception{
+        Project project = new Project();
+        project.setName(projectName);
+        project.setOwner(GridChem.user.getUserName());
+        try{
+            getClient().createProject(getAuthzToken(), AiravataConfig.getProperty(AiravataConfig.GATEWAY), project);
+        }catch(Exception ex){
+            ex.printStackTrace();
+            throw ex;
+        }
+    }
+
     public static List<Project> getProjects() throws ProjectException {
 
         List<Project> airavataProjects;
