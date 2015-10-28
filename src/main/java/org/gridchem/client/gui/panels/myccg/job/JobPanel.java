@@ -264,13 +264,14 @@ public class JobPanel extends JPanel implements StatusListener, ActionListener,
 		m_data.m_sortAsc = false;
 		m_data.sortData();
 
-		javax.swing.Timer timer = new javax.swing.Timer(5000, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				refresh();
-			}
-		});
-		timer.start();
+//		javax.swing.Timer timer = new javax.swing.Timer(5000, new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				refresh();
+//			}
+//		});
+//		timer.start();
+		refresh();
 	}
 
 	/**
