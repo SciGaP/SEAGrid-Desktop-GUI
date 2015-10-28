@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp
+    spec="1.0+"
+    codebase="https://seagrid.org/jnlp/"
+    href="$outputFile">
+  <information>
+    <title>SEAGrid Science Gateway</title>
+    <vendor>SciGaP - Apache Airavata hosted services<vendor/>
+    <homepage>https://seagrid.org/<homepage/>
+    <description kind="one-line">The Science and Engineering Grid (SEAGrid) is a tool that allows researchers to easily use scientific applications deployed across a wide range of supercomputers, campus clusters, and computing cloud. </description>
+    <icon href="logos/SEAGrid.jpg"/>
+    <icon kind="splash" href="logos/SEAGrid.jpg"/>
+    <icon kind="shortcut" href="logos/SEAGrid.jpg"/>
+
+  </information>
+  <security>
+     <all-permissions/>
+  </security>
+  <resources>
+    <j2se version="1.8+"/>
+     $dependencies
+  </resources>
+  <application-desc main-class="org.gridchem.client.GridChem">
+  </application-desc>
+</jnlp>

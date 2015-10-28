@@ -494,13 +494,11 @@
                         <configuration>
                             <resourcesDirectory>${project.basedir}/src/main/resources</resourcesDirectory>
                             <unsignAlreadySignedJars>true</unsignAlreadySignedJars>
-                            <codebase>https://seagrid.org/jnlp/</codebase> <!-- url of the place where the codebase will be hosted -->
                             <libPath>lib</libPath>
                             <jnlp>
-                                <j2seVersion>1.8</j2seVersion>
+                                <inputTemplateResourcePath>${project.basedir}</inputTemplateResourcePath>
+                                <inputTemplate>src/main/resources/template.vm</inputTemplate>
                                 <outputFile>seagrid.jnlp</outputFile>
-                                <mainClass>org.gridchem.client.GridChem</mainClass>
-                                <offlineAllowed>false</offlineAllowed>
                             </jnlp>
                             <!--pack200>true</pack200-->
                             <sign>
