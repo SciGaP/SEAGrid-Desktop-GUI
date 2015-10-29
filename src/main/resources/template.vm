@@ -5,13 +5,13 @@
     href="$outputFile">
   <information>
     <title>SEAGrid Science Gateway</title>
-    <vendor>SciGaP - Apache Airavata hosted services</vendor>
-    <homepage>https://seagrid.org/</homepage>
+    <vendor>Indiana University</vendor>
+    <homepage ref="https://seagrid.org/" />
     <description kind="one-line">The Science and Engineering Grid (SEAGrid) is a tool that allows researchers to easily use scientific applications deployed across a wide range of supercomputers, campus clusters, and computing cloud. </description>
-    <icon href="SEAGrid.jpg"/>
-    <icon kind="splash" href="SEAGrid.jpg"/>
-    <icon kind="shortcut" href="SEAGrid.jpg"/>
-
+    <icon href="https://seagrid.org/jnlp/SEAGrid-icon-64x64.png/>
+    <icon kind="splash" href="https://seagrid.org/jnlp/SEAGrid-icon-64x64.png/>
+    <icon kind="shortcut" href="https://seagrid.org/jnlp/SEAGrid-icon-64x64.png/>
+    <offline-allowed/>
   </information>
   <security>
      <all-permissions/>
