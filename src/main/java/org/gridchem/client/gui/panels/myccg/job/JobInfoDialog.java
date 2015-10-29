@@ -42,6 +42,7 @@ import org.apache.airavata.gridchem.AiravataManager;
 import org.apache.airavata.model.commons.ErrorModel;
 import org.apache.airavata.model.experiment.ExperimentModel;
 import org.apache.airavata.model.scheduling.ComputationalResourceSchedulingModel;
+import org.apache.airavata.model.workspace.Project;
 
 import javax.swing.*;
 import java.awt.*;
@@ -105,7 +106,8 @@ public class JobInfoDialog extends JDialog {
 
         String temp = "";
         try{
-            temp = experiment.getProjectId().substring(0, experiment.getExecutionId().length()-37);
+            Project project  = AiravataManager.getProject(experiment.getProjectId());
+            temp = project.getName();
         }catch(Exception ex){
             temp = experiment.getProjectId();
         }
