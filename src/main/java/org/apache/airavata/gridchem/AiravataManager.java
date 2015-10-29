@@ -1,5 +1,6 @@
 package org.apache.airavata.gridchem;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.airavata.AiravataConfig;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationDeploymentDescription;
 import org.apache.airavata.model.appcatalog.appdeployment.ApplicationModule;
@@ -57,6 +58,21 @@ public class AiravataManager {
     public static boolean login(String uname, String passwd) {
         try {
             String[] response = getClient().login(uname, passwd);
+            String profile = getClient().getProfile(response[0]);
+            HashMap<String,Object> result =
+                    new ObjectMapper().readValue(profile, HashMap.class);
+
+            String[] roles = ((String)result.get("roles")).split(",");
+            boolean authorized = false;
+            for(String role : roles){
+                if(AiravataConfig.getProperty("authorized_roles").contains(role)){
+                    authorized = true;
+                    break;
+                }
+            }
+            if(!authorized){
+                throw new SessionException("You are not authorized to use this client. Please contact gateway admin");
+            }
             accessToken = response[0];
             refreshToken = response[1];
 
