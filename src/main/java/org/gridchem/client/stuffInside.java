@@ -565,7 +565,11 @@ public class stuffInside extends JComponent // implements ListSelectionListener
 							OptTable.optC = 0;
 							selectedGUI = 0;
 							doSubmitExperiments();
-							GridChem.oc.monitorWindow = new MonitorVO();
+							if(GridChem.oc.monitorWindow==null) {
+								GridChem.oc.monitorWindow = new MonitorVO();
+							}else{
+								GridChem.oc.monitorWindow.getMonitorPanel().getJobPanel().refresh();
+							}
 							return null;
 						}
 

@@ -183,8 +183,8 @@ public class ExperimentHandler {
 
                     String productId = fb.ingestFile(parent,fileName, Settings.gridchemusername+randSeq, destName,  "GenericFile");
                     System.out.println("Product ID : "+productId);
-                    inputs.get(i).setValue("file://"+AiravataConfig.getProperty("data_archive_path")+File.separator+
-                            Settings.gridchemusername+randSeq+File.separator+destName);
+                    inputs.get(i).setValue("file://"+AiravataConfig.getProperty("data_archive_path")+"/"+
+                            Settings.gridchemusername+randSeq+"/"+destName);
                 }
             }
         }
