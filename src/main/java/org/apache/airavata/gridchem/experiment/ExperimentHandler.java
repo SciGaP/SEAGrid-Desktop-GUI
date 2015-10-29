@@ -124,16 +124,16 @@ public class ExperimentHandler {
         exp.setDescription(expDesc);
         exp.setExecutionId(appId);
 
-        Collections.sort(applicationInputs, new Comparator<InputDataObjectType>() {
-            @Override
-            public int compare(InputDataObjectType o1, InputDataObjectType o2) {
-                return o1.getInputOrder() - o2.getInputOrder();
-            }
-        });
+
         for(int i=0;i < applicationInputs.size();i++){
-            applicationInputs.get(i).setType(inputs.get(i).getType());
-            applicationInputs.get(i).setValue(inputs.get(i).getValue());
+            for(int j=0;j<inputs.size();j++){
+                if(inputs.get(j).getName().equals(applicationInputs.get(i).getName())){
+                    applicationInputs.get(i).setValue(inputs.get(j).getValue());
+                }
+            }
+
         }
+
         exp.setExperimentInputs(applicationInputs);
 
         exp.setExperimentOutputs(AiravataManager.getApplicationOutputs(appId));
